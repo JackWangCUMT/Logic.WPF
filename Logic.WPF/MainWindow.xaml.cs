@@ -426,10 +426,15 @@ namespace Logic.WPF
                         }
                         break;
                     // save
+                    // tool selection
                     case Key.S:
                         if (control)
                         {
                             Save();
+                        }
+                        else
+                        {
+                            SetToolSelection();
                         }
                         break;
                 }
@@ -468,6 +473,7 @@ namespace Logic.WPF
             editToggleInvertEnd.Click += (s, e) => ToggleInvertEnd();
 
             toolNone.Click += (s, e) => SetToolNone();
+            toolSelection.Click += (s, e) => SetToolSelection();
             toolWire.Click += (s, e) => SetToolWire();
             toolPin.Click += (s, e) => SetToolPin();
             toolLine.Click += (s, e) => SetToolLine();
@@ -612,6 +618,12 @@ namespace Logic.WPF
             UpdateToolMenu();
         }
 
+        private void SetToolSelection()
+        {
+            controller.editorLayer.CurrentTool = XCanvas.Tool.Selection;
+            UpdateToolMenu();
+        }
+
         private void SetToolLine()
         {
             controller.editorLayer.CurrentTool = XCanvas.Tool.Line;
@@ -652,6 +664,7 @@ namespace Logic.WPF
         {
             var tool = controller.editorLayer.CurrentTool;
             toolNone.IsChecked = (tool == XCanvas.Tool.None);
+            toolSelection.IsChecked = (tool == XCanvas.Tool.Selection);
             toolWire.IsChecked = (tool == XCanvas.Tool.Wire);
             toolPin.IsChecked = (tool == XCanvas.Tool.Pin);
             toolLine.IsChecked = (tool == XCanvas.Tool.Line);

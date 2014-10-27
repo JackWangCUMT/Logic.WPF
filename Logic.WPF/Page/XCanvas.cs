@@ -32,6 +32,7 @@ namespace Logic.WPF.Page
         public enum Tool
         {
             None,
+            Selection,
             Line,
             Ellipse,
             Rectangle,
@@ -43,6 +44,7 @@ namespace Logic.WPF.Page
         public enum Mode
         {
             None,
+            Selection,
             Create,
             Move
         }
@@ -79,6 +81,8 @@ namespace Logic.WPF.Page
         private XText _text = null;
         private XWire _wire = null;
         private XPin _pin = null;
+
+        private XRectangle _selection = null;
 
         private Mode _mode = Mode.None;
         private Element _element = Element.None;
@@ -178,6 +182,30 @@ namespace Logic.WPF.Page
 
                                     #endregion
 
+                                    #region Selection
+
+                                    case Tool.Selection:
+                                        {
+                                            var p = e.GetPosition(this);
+
+                                            IShape shape = Layers != null ? HitTest(p) : null;
+                                            if (shape != null)
+                                            {
+                                                MoveInit(shape, p);
+
+                                                _mode = Mode.Move;
+                                            }
+                                            else
+                                            {
+                                                SelectionInit(p);
+
+                                                _mode = Mode.Selection;
+                                            }
+                                        }
+                                        break;
+
+                                    #endregion
+
                                     #region Shapes
 
                                     case Tool.Line:
@@ -218,6 +246,15 @@ namespace Logic.WPF.Page
                                     #endregion
                                 }
                             }
+                        }
+                        break;
+
+                    #endregion
+
+                    #region Selection
+
+                    case Mode.Selection:
+                        {
                         }
                         break;
 
@@ -299,10 +336,38 @@ namespace Logic.WPF.Page
                 {
                     switch (_mode)
                     {
+                        #region None
+
+		                case Mode.None:
+                            {
+                            }
+                            break;
+
+                        #endregion
+
+                        #region Selection
+
+		                case Mode.Selection:
+                            {
+                                SelectionFinish(e.GetPosition(this));
+
+                                _mode = Mode.None;
+                            }
+                            break; 
+
+	                    #endregion
+
+                        #region Create
+
                         case Mode.Create:
                             {
                             }
                             break;
+
+	                    #endregion
+
+                        #region Move
+
                         case Mode.Move:
                             {
                                 MoveFinish();
@@ -310,6 +375,8 @@ namespace Logic.WPF.Page
                                 _mode = Mode.None;
                             }
                             break;
+
+	                    #endregion
                     }
                 }
             };
@@ -324,6 +391,27 @@ namespace Logic.WPF.Page
                 {
                     switch (_mode)
                     {
+                        #region None
+
+                        case Mode.None:
+                            {
+                            }
+                            break;
+
+                        #endregion
+
+                        #region Selection
+
+                        case Mode.Selection:
+                            {
+                                SelectionMove(e.GetPosition(this));
+                            }
+                            break; 
+
+                        #endregion
+
+                        #region Create
+
                         case Mode.Create:
                             {
                                 var p = e.GetPosition(this);
@@ -341,12 +429,19 @@ namespace Logic.WPF.Page
 
                                 CreateMove(x, y);
                             }
-                            break;
+                            break; 
+
+                        #endregion
+
+                        #region Move
+
                         case Mode.Move:
                             {
                                 Move(e.GetPosition(this));
                             }
-                            break;
+                            break; 
+
+                        #endregion
                     };
                 }
             };
@@ -361,20 +456,50 @@ namespace Logic.WPF.Page
                 {
                     switch (_mode)
                     {
+                        #region None
+
+                        case Mode.None:
+                            {
+                            }
+                            break;
+
+                        #endregion
+
+                        #region Selection
+
+                        case Mode.Selection:
+                            {
+                                SelectionCancel();
+
+                                _mode = Mode.None;
+                            }
+                            break; 
+
+                        #endregion
+
+                        #region Create
+
                         case Mode.Create:
                             {
                                 CreateCancel();
 
                                 _mode = Mode.None;
                             }
-                            break;
+                            break; 
+
+                        #endregion
+
+                        #region Move
+
                         case Mode.Move:
                             {
                                 MoveCancel();
 
                                 _mode = Mode.None;
                             }
-                            break;
+                            break; 
+
+                        #endregion
                     }
                 }
             };
@@ -639,6 +764,58 @@ namespace Logic.WPF.Page
 
             return null;
         } 
+
+        #endregion
+
+        #region Selection Mode
+
+        private void SelectionInit(Point p)
+        {
+            _startx = p.X;
+            _starty = p.Y;
+            _selection = new XRectangle()
+            {
+                X = p.X,
+                Y = p.Y,
+                Width = 0.0,
+                Height = 0.0,
+                IsFilled = true
+            };
+            Shapes.Add(_selection);
+            CaptureMouse();
+            InvalidateVisual();
+        }
+
+        private void SelectionMove(Point p)
+        {
+            _selection.X = Math.Min(_startx, p.X);
+            _selection.Y = Math.Min(_starty, p.Y);
+            _selection.Width = Math.Abs(p.X - _startx);
+            _selection.Height = Math.Abs(p.Y - _starty);
+            InvalidateVisual();
+        }
+
+        private void SelectionFinish(Point p)
+        {
+            var rect = new Rect(
+                Math.Min(_startx, p.X),
+                Math.Min(_starty, p.Y),
+                Math.Abs(p.X - _startx),
+                Math.Abs(p.Y - _starty));
+
+            // TODO:
+
+            ReleaseMouseCapture();
+            Shapes.Remove(_selection);
+            InvalidateVisual();
+        }
+
+        private void SelectionCancel()
+        {
+            ReleaseMouseCapture();
+            Shapes.Remove(_selection);
+            InvalidateVisual();
+        }
 
         #endregion
 
@@ -1135,6 +1312,61 @@ namespace Logic.WPF.Page
             }
         }
 
+        private void CreateMove(double x, double y)
+        {
+            switch (CurrentTool)
+            {
+                case Tool.Line:
+                    {
+                        _line.X2 = x;
+                        _line.Y2 = y;
+                        InvalidateVisual();
+                    }
+                    break;
+                case Tool.Ellipse:
+                    {
+                        _ellipse.RadiusX = Math.Abs(x - _startx) / 2.0;
+                        _ellipse.RadiusY = Math.Abs(y - _starty) / 2.0;
+                        _ellipse.X = Math.Min(_startx, x) + _ellipse.RadiusX;
+                        _ellipse.Y = Math.Min(_starty, y) + _ellipse.RadiusY;
+                        InvalidateVisual();
+                    }
+                    break;
+                case Tool.Rectangle:
+                    {
+                        _rectangle.X = Math.Min(_startx, x);
+                        _rectangle.Y = Math.Min(_starty, y);
+                        _rectangle.Width = Math.Abs(x - _startx);
+                        _rectangle.Height = Math.Abs(y - _starty);
+                        InvalidateVisual();
+                    }
+                    break;
+                case Tool.Text:
+                    {
+                        _text.X = Math.Min(_startx, x);
+                        _text.Y = Math.Min(_starty, y);
+                        _text.Width = Math.Abs(x - _startx);
+                        _text.Height = Math.Abs(y - _starty);
+                        InvalidateVisual();
+                    }
+                    break;
+                case Tool.Wire:
+                    {
+                        _wire.X2 = x;
+                        _wire.Y2 = y;
+                        InvalidateVisual();
+                    }
+                    break;
+                case Tool.Pin:
+                    {
+                        _pin.X = x;
+                        _pin.Y = y;
+                        InvalidateVisual();
+                    }
+                    break;
+            }
+        }
+
         private void CreateFinish(double x, double y)
         {
             switch (CurrentTool)
@@ -1250,61 +1482,6 @@ namespace Logic.WPF.Page
                             Layers.Pins.InvalidateVisual();
                         }
                         ReleaseMouseCapture();
-                        InvalidateVisual();
-                    }
-                    break;
-            }
-        }
-
-        private void CreateMove(double x, double y)
-        {
-            switch (CurrentTool)
-            {
-                case Tool.Line:
-                    {
-                        _line.X2 = x;
-                        _line.Y2 = y;
-                        InvalidateVisual();
-                    }
-                    break;
-                case Tool.Ellipse:
-                    {
-                        _ellipse.RadiusX = Math.Abs(x - _startx) / 2.0;
-                        _ellipse.RadiusY = Math.Abs(y - _starty) / 2.0;
-                        _ellipse.X = Math.Min(_startx, x) + _ellipse.RadiusX;
-                        _ellipse.Y = Math.Min(_starty, y) + _ellipse.RadiusY;
-                        InvalidateVisual();
-                    }
-                    break;
-                case Tool.Rectangle:
-                    {
-                        _rectangle.X = Math.Min(_startx, x);
-                        _rectangle.Y = Math.Min(_starty, y);
-                        _rectangle.Width = Math.Abs(x - _startx);
-                        _rectangle.Height = Math.Abs(y - _starty);
-                        InvalidateVisual();
-                    }
-                    break;
-                case Tool.Text:
-                    {
-                        _text.X = Math.Min(_startx, x);
-                        _text.Y = Math.Min(_starty, y);
-                        _text.Width = Math.Abs(x - _startx);
-                        _text.Height = Math.Abs(y - _starty);
-                        InvalidateVisual();
-                    }
-                    break;
-                case Tool.Wire:
-                    {
-                        _wire.X2 = x;
-                        _wire.Y2 = y;
-                        InvalidateVisual();
-                    }
-                    break;
-                case Tool.Pin:
-                    {
-                        _pin.X = x;
-                        _pin.Y = y;
                         InvalidateVisual();
                     }
                     break;
@@ -1442,15 +1619,60 @@ namespace Logic.WPF.Page
         {
             base.OnRender(dc);
 
+            if (_mode == Mode.Selection)
+            {
+                DrawSelection(dc, _selection);
+            }
+            else
+            {
+                DrawShapes(dc, Shapes);
+            }
+        }
+
+        private void DrawShapes(object dc, IList<IShape> shapes)
+        {
             var gs = new GuidelineSet(
-                new double[] { 1.0, 1.0 }, 
+                new double[] { 1.0, 1.0 },
                 new double[] { 1.0, 1.0 });
             (dc as DrawingContext).PushGuidelineSet(gs);
 
-            foreach (var shape in Shapes)
+            foreach (var shape in shapes)
             {
                 shape.Render(dc, Renderer);
             }
+
+            (dc as DrawingContext).Pop();
+        }
+
+        private void DrawSelection(object dc, XRectangle rectangle)
+        {
+            double thickness = 1.0;
+            double half = thickness / 2.0;
+
+            var gs = new GuidelineSet(
+                new double[] 
+                    { 
+                        rectangle.X + half, 
+                        rectangle.X + rectangle.Width + half 
+                    },
+                new double[] 
+                    { 
+                        rectangle.Y + half,
+                        rectangle.Y + rectangle.Height + half
+                    });
+            (dc as DrawingContext).PushGuidelineSet(gs);
+
+            (dc as DrawingContext).DrawRectangle(
+                rectangle.IsFilled ?
+                new SolidColorBrush(Color.FromArgb(0x1F, 0x00, 0x00, 0xFF)) : null,
+                new Pen(
+                    new SolidColorBrush(Color.FromArgb(0x9F, 0x00, 0x00, 0xFF)),
+                    thickness),
+                new Rect(
+                    rectangle.X,
+                    rectangle.Y,
+                    rectangle.Width,
+                    rectangle.Height));
 
             (dc as DrawingContext).Pop();
         } 

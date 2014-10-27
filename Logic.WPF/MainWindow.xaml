@@ -43,37 +43,39 @@
                 <MenuItem x:Name="editSelectAll" Header="Select _All" InputGestureText="Ctrl+A"/>
                 <Separator/>
                 <MenuItem Header="Text A_lignment">
-                    <MenuItem x:Name="editAlignLeftBottom" Header="Left-Bottom" InputGestureText="Ctrl+1"/>
-                    <MenuItem x:Name="editAlignBottom" Header="Bottom" InputGestureText="Ctrl+2"/>
-                    <MenuItem x:Name="editAlignRightBottom" Header="Right-Bottom" InputGestureText="Ctrl+3"/>
-                    <MenuItem x:Name="editAlignLeft" Header="Left" InputGestureText="Ctrl+4"/>
-                    <MenuItem x:Name="editAlignCenterCenter" Header="Center-Center" InputGestureText="Ctrl+5"/>
-                    <MenuItem x:Name="editAlignRight" Header="Right" InputGestureText="Ctrl+6"/>
-                    <MenuItem x:Name="editAlignLeftTop" Header="Left-Top" InputGestureText="Ctrl+7"/>
-                    <MenuItem x:Name="editAlignTop" Header="Top" InputGestureText="Ctrl+8"/>
-                    <MenuItem x:Name="editAlignRightTop" Header="Right-Top" InputGestureText="Ctrl+9"/>
+                    <MenuItem x:Name="editAlignLeftBottom" Header="Le_ft-Bottom" InputGestureText="Ctrl+1"/>
+                    <MenuItem x:Name="editAlignBottom" Header="_Bottom" InputGestureText="Ctrl+2"/>
+                    <MenuItem x:Name="editAlignRightBottom" Header="Ri_ght-Bottom" InputGestureText="Ctrl+3"/>
+                    <MenuItem x:Name="editAlignLeft" Header="_Left" InputGestureText="Ctrl+4"/>
+                    <MenuItem x:Name="editAlignCenterCenter" Header="Ce_nter-Center" InputGestureText="Ctrl+5"/>
+                    <MenuItem x:Name="editAlignRight" Header="_Right" InputGestureText="Ctrl+6"/>
+                    <MenuItem x:Name="editAlignLeftTop" Header="Left-To_p" InputGestureText="Ctrl+7"/>
+                    <MenuItem x:Name="editAlignTop" Header="_Top" InputGestureText="Ctrl+8"/>
+                    <MenuItem x:Name="editAlignRightTop" Header="Rig_ht-Top" InputGestureText="Ctrl+9"/>
                 </MenuItem>
                 <Separator/>
-                <MenuItem x:Name="editIncreaseTextSize" Header="Increase Text Size" InputGestureText="Ctrl++"/>
-                <MenuItem x:Name="editDecreaseTextSize" Header="Decrease Text Size" InputGestureText="Ctrl+-"/>
+                <MenuItem x:Name="editIncreaseTextSize" Header="_Increase Text Size" InputGestureText="Ctrl++"/>
+                <MenuItem x:Name="editDecreaseTextSize" Header="_Decrease Text Size" InputGestureText="Ctrl+-"/>
                 <Separator/>
                 <MenuItem x:Name="editToggleFill" Header="Toggle _Fill" InputGestureText="F"/>
                 <Separator/>
-                <MenuItem x:Name="editToggleSnap" Header="Toggle _Snap to Grid" InputGestureText="G"/>
+                <MenuItem x:Name="editToggleSnap" Header="Toggle Snap to _Grid" InputGestureText="G"/>
                 <Separator/>
                 <MenuItem x:Name="editToggleInvertStart" Header="Toggle Invert Wire _Start" InputGestureText="["/>
                 <MenuItem x:Name="editToggleInvertEnd" Header="Toggle Invert Wire _End" InputGestureText="]"/>
             </MenuItem>
             <MenuItem Header="_Tool">
-                <MenuItem x:Name="toolNone" Header="None" InputGestureText="N"/>
+                <MenuItem x:Name="toolNone" Header="_None" InputGestureText="N"/>
                 <Separator/>
-                <MenuItem x:Name="toolWire" Header="Wire" InputGestureText="W"/>
-                <MenuItem x:Name="toolPin" Header="Pin" InputGestureText="P"/>
+                <MenuItem x:Name="toolSelection" Header="_Selection" InputGestureText="S"/>
                 <Separator/>
-                <MenuItem x:Name="toolLine" Header="Line" InputGestureText="L"/>
-                <MenuItem x:Name="toolEllipse" Header="Ellipse" InputGestureText="E"/>
-                <MenuItem x:Name="toolRectangle" Header="Rectangle" InputGestureText="R"/>
-                <MenuItem x:Name="toolText" Header="Text" InputGestureText="T"/>
+                <MenuItem x:Name="toolWire" Header="_Wire" InputGestureText="W"/>
+                <MenuItem x:Name="toolPin" Header="_Pin" InputGestureText="P"/>
+                <Separator/>
+                <MenuItem x:Name="toolLine" Header="_Line" InputGestureText="L"/>
+                <MenuItem x:Name="toolEllipse" Header="_Ellipse" InputGestureText="E"/>
+                <MenuItem x:Name="toolRectangle" Header="_Rectangle" InputGestureText="R"/>
+                <MenuItem x:Name="toolText" Header="_Text" InputGestureText="T"/>
             </MenuItem>
         </Menu>
         <ListBox x:Name="blocks" 
