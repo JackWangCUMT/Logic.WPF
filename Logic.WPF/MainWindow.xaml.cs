@@ -119,7 +119,7 @@ namespace Logic.WPF
             controller.editorLayer.History = new XHistory<XPage>();
 
             controller.editorLayer.Layers = Layers;
-            controller.editorLayer.CurrentTool = XCanvas.Tool.None;
+            controller.editorLayer.CurrentTool = XCanvas.Tool.Selection;
 
             controller.editorLayer.AllowDrop = true;
 
@@ -142,7 +142,8 @@ namespace Logic.WPF
                     {
                         controller.editorLayer.History.Snapshot(
                             controller.editorLayer.Store("Page"));
-                        Insert(block, point.X, point.Y);
+                        var copy = Insert(block, point.X, point.Y);
+                        Connect(copy);
                         e.Handled = true;
                     }
                 }
@@ -195,7 +196,7 @@ namespace Logic.WPF
                         {
                             if (control)
                             {
-                                var path = System.IO.Path.GetTempFileName() + ".cs";
+                                var path = System.IO.Path.GetTempFileName() + ".json";
                                 var page = controller.editorLayer.Store("Page");
                                 Save(path, page);
                                 System.Diagnostics.Process.Start("notepad", path);
@@ -766,19 +767,106 @@ namespace Logic.WPF
 
         private XBlock Insert(XBlock block, double x, double y)
         {
+            // clone block
             XBlock copy = Clone(block);
 
+            // move to drop position
             double dx = controller.editorLayer.EnableSnap ? 
                 controller.editorLayer.Snap(x, controller.editorLayer.SnapSize) : x;
             double dy = controller.editorLayer.EnableSnap ? 
                 controller.editorLayer.Snap(y, controller.editorLayer.SnapSize) : y;
-
             XCanvas.Move(copy, dx, dy);
 
+            // add to collection
             Layers.Blocks.Shapes.Add(copy);
             Layers.Blocks.InvalidateVisual();
 
             return copy;
+        }
+
+        private void Connect(XBlock block)
+        {
+            // check for pin to wire connections
+            int count = block.Pins.Count();
+            if (count > 0)
+            {
+                var wires = Layers.Wires.Shapes.Cast<XWire>();
+                var dict = new Dictionary<XWire, List<XPin>>();
+
+                // find connections
+                foreach (var pin in block.Pins)
+                {
+                    IShape hit = controller.editorLayer.HitTest(
+                        wires,
+                        new Point(pin.X, pin.Y));
+                    if (hit != null && hit is XWire)
+                    {
+                        var wire = hit as XWire;
+                        if (dict.ContainsKey(wire))
+                        {
+                            dict[wire].Add(pin);
+                        }
+                        else
+                        {
+                            dict.Add(wire, new List<XPin>());
+                            dict[wire].Add(pin);
+                        }
+                    }
+                }
+
+                // split wires
+                foreach (var kv in dict)
+                {
+                    List<XPin> pins = kv.Value;
+                    if (pins.Count == 2)
+                    {
+                        XWire wire = kv.Key;
+                        XPin pin0 = pins[0];
+                        XPin pin1 = pins[1];
+                        if (pin0.X != pin1.X && pin0.Y != pin1.Y)
+                        {
+                            continue;
+                        }
+
+                        // wire must be horizontal or vertical
+                        if (wire.Start.X == wire.End.X || wire.Start.Y == wire.End.Y)
+                        {
+                            XWire split;
+                            if (wire.Start.X > wire.End.X || wire.Start.Y > wire.End.Y)
+                            {
+                                split = new XWire()
+                                {
+                                    Start = pin0,
+                                    End = wire.End,
+                                    InvertStart = false,
+                                    InvertEnd = wire.InvertEnd
+                                };
+                                wire.InvertEnd = false;
+                                wire.End = pin1;
+                            }
+                            else
+                            {
+                                split = new XWire()
+                                {
+                                    Start = pin1,
+                                    End = wire.End,
+                                    InvertStart = false,
+                                    InvertEnd = wire.InvertEnd
+                                };
+                                wire.InvertEnd = false;
+                                wire.End = pin0;
+                            }
+                            Layers.Wires.Shapes.Add(split);
+                            Layers.Pins.InvalidateVisual();
+                            Layers.Wires.InvalidateVisual();
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                    }
+                }
+            }
         }
 
         #endregion
