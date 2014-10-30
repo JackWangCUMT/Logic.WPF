@@ -344,7 +344,7 @@ namespace Logic.WPF.Page
 
         #region HitTest Shapes
 
-        private Rect GetPinBounds(double x, double y)
+        public Rect GetPinBounds(double x, double y)
         {
             return new Rect(
                 x - XRenderer.PinRadius,
@@ -353,7 +353,7 @@ namespace Logic.WPF.Page
                 XRenderer.PinRadius + XRenderer.PinRadius);
         }
 
-        private IShape HitTest(IEnumerable<XPin> pins, Point p)
+        public IShape HitTest(IEnumerable<XPin> pins, Point p)
         {
             foreach (var pin in pins)
             {
@@ -367,7 +367,7 @@ namespace Logic.WPF.Page
             return null;
         }
 
-        private IShape HitTest(IEnumerable<XWire> wires, Point p)
+        public IShape HitTest(IEnumerable<XWire> wires, Point p)
         {
             foreach (var wire in wires)
             {
@@ -412,7 +412,7 @@ namespace Logic.WPF.Page
             return null;
         }
 
-        private IShape HitTest(IEnumerable<XBlock> blocks, Point p)
+        public IShape HitTest(IEnumerable<XBlock> blocks, Point p)
         {
             foreach (var block in blocks)
             {
@@ -432,7 +432,7 @@ namespace Logic.WPF.Page
             return null;
         }
 
-        private IShape HitTest(IEnumerable<IShape> shapes, Point p)
+        public IShape HitTest(IEnumerable<IShape> shapes, Point p)
         {
             foreach (var shape in shapes)
             {
@@ -507,7 +507,7 @@ namespace Logic.WPF.Page
             return null;
         }
 
-        private IShape HitTest(Point p)
+        public IShape HitTest(Point p)
         {
             var pin = HitTest(Layers.Pins.Shapes.Cast<XPin>(), p);
             if (pin != null)
