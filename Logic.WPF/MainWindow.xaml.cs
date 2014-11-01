@@ -820,53 +820,50 @@ namespace Logic.WPF
                     List<XPin> pins = kv.Value;
                     if (pins.Count == 2)
                     {
-                        XWire wire = kv.Key;
-                        XPin pin0 = pins[0];
-                        XPin pin1 = pins[1];
-                        if (pin0.X != pin1.X && pin0.Y != pin1.Y)
-                        {
-                            continue;
-                        }
-
-                        // wire must be horizontal or vertical
-                        if (wire.Start.X == wire.End.X || wire.Start.Y == wire.End.Y)
-                        {
-                            XWire split;
-                            if (wire.Start.X > wire.End.X || wire.Start.Y > wire.End.Y)
-                            {
-                                split = new XWire()
-                                {
-                                    Start = pin0,
-                                    End = wire.End,
-                                    InvertStart = false,
-                                    InvertEnd = wire.InvertEnd
-                                };
-                                wire.InvertEnd = false;
-                                wire.End = pin1;
-                            }
-                            else
-                            {
-                                split = new XWire()
-                                {
-                                    Start = pin1,
-                                    End = wire.End,
-                                    InvertStart = false,
-                                    InvertEnd = wire.InvertEnd
-                                };
-                                wire.InvertEnd = false;
-                                wire.End = pin0;
-                            }
-                            Layers.Wires.Shapes.Add(split);
-                            Layers.Pins.InvalidateVisual();
-                            Layers.Wires.InvalidateVisual();
-                        }
-                        else
-                        {
-                            continue;
-                        }
+                        Split(kv.Key, pins[0], pins[1]);
                     }
                 }
             }
+        }
+
+        private void Split(XWire wire, XPin pin0, XPin pin1)
+        {
+            // pins must be aligned horizontally or vertically
+            if (pin0.X != pin1.X && pin0.Y != pin1.Y)
+                return;
+
+            // wire must be horizontal or vertical
+            if (wire.Start.X != wire.End.X && wire.Start.Y != wire.End.Y)
+                return;
+
+            XWire split;
+            if (wire.Start.X > wire.End.X || wire.Start.Y > wire.End.Y)
+            {
+                split = new XWire()
+                {
+                    Start = pin0,
+                    End = wire.End,
+                    InvertStart = false,
+                    InvertEnd = wire.InvertEnd
+                };
+                wire.InvertEnd = false;
+                wire.End = pin1;
+            }
+            else
+            {
+                split = new XWire()
+                {
+                    Start = pin1,
+                    End = wire.End,
+                    InvertStart = false,
+                    InvertEnd = wire.InvertEnd
+                };
+                wire.InvertEnd = false;
+                wire.End = pin0;
+            }
+            Layers.Wires.Shapes.Add(split);
+            Layers.Pins.InvalidateVisual();
+            Layers.Wires.InvalidateVisual();
         }
 
         #endregion
