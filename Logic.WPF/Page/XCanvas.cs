@@ -52,6 +52,7 @@ namespace Logic.WPF.Page
         public enum Element
         {
             None,
+            Selected,
             Line,
             Ellipse,
             Rectangle,
@@ -186,7 +187,7 @@ namespace Logic.WPF.Page
                             switch (CurrentTool)
                             {
                                 case Tool.None:
-                                    ResetSelection();
+                                    SelectionReset();
                                     break; 
                                 case Tool.Selection:
                                     SelectionInit(e.GetPosition(this));
@@ -196,11 +197,11 @@ namespace Logic.WPF.Page
                                 case Tool.Rectangle:
                                 case Tool.Text:
                                 case Tool.Pin:
-                                    ResetSelection();
+                                    SelectionReset();
                                     CreateInit(e.GetPosition(this));
                                     break; 
                                 case Tool.Wire:
-                                    ResetSelection();
+                                    SelectionReset();
                                     CreateWireInit(e.GetPosition(this));
                                     break;
                             }
@@ -307,7 +308,7 @@ namespace Logic.WPF.Page
                 }
                 else
                 {
-                    ResetSelection();
+                    SelectionReset();
                 }
             };
 
@@ -827,7 +828,7 @@ namespace Logic.WPF.Page
 
         #region Selection Mode
 
-        public void ResetSelection()
+        public void SelectionReset()
         {
             if (Renderer.Selected != null)
             {
@@ -845,23 +846,27 @@ namespace Logic.WPF.Page
             }
             else
             {
-                ResetSelection();
-
-                _startx = p.X;
-                _starty = p.Y;
-                _selection = new XRectangle()
-                {
-                    X = p.X,
-                    Y = p.Y,
-                    Width = 0.0,
-                    Height = 0.0,
-                    IsFilled = true
-                };
-                Shapes.Add(_selection);
-                CaptureMouse();
-                InvalidateVisual();
-                _mode = Mode.Selection;
+                SelectionReset();
+                SelectionStart(p);
             }
+        }
+
+        private void SelectionStart(Point p)
+        {
+            _startx = p.X;
+            _starty = p.Y;
+            _selection = new XRectangle()
+            {
+                X = p.X,
+                Y = p.Y,
+                Width = 0.0,
+                Height = 0.0,
+                IsFilled = true
+            };
+            Shapes.Add(_selection);
+            CaptureMouse();
+            InvalidateVisual();
+            _mode = Mode.Selection;
         }
 
         private void SelectionMove(Point p)
@@ -915,6 +920,21 @@ namespace Logic.WPF.Page
             _startx = EnableSnap ? Snap(p.X, SnapSize) : p.X;
             _starty = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
 
+            if (Renderer.Selected != null)
+            {
+                _element = Element.Selected;
+            }
+            else
+            {
+                MoveInitElement(shape);
+            }
+
+            CaptureMouse();
+            _mode = Mode.Move;
+        }
+
+        private void MoveInitElement(IShape shape)
+        {
             if (shape is XLine)
             {
                 _element = Element.Line;
@@ -950,9 +970,6 @@ namespace Logic.WPF.Page
                 _element = Element.Block;
                 _block = shape as XBlock;
             }
-
-            CaptureMouse();
-            _mode = Mode.Move;
         }
 
         private void MoveFinish()
@@ -978,10 +995,22 @@ namespace Logic.WPF.Page
             _startx = x;
             _starty = y;
 
+            if (Renderer.Selected != null)
+            {
+                MoveSelected(dx, dy);
+            }
+            else
+            {
+                MoveElement(dx, dy);
+            }
+        }
+
+        private void MoveElement(double dx, double dy)
+        {
             switch (_element)
             {
                 case Element.Line:
-                    switch(_lineHit)
+                    switch (_lineHit)
                     {
                         case LineHit.Start:
                             _line.X1 += dx;
@@ -1031,6 +1060,60 @@ namespace Logic.WPF.Page
                     Layers.Pins.InvalidateVisual();
                     break;
             }
+        }
+
+        private void MoveSelected(double dx, double dy)
+        {
+            foreach(var shape in Renderer.Selected)
+            {
+                if (shape is XLine)
+                {
+                    var line = shape as XLine;
+                    line.X1 += dx;
+                    line.Y1 += dy;
+                    line.X2 += dx;
+                    line.Y2 += dy;
+                }
+                else if (shape is XEllipse)
+                {
+                    var ellipse = shape as XEllipse;
+                    ellipse.X += dx;
+                    ellipse.Y += dy;
+                }
+                else if (shape is XRectangle)
+                {
+                    var rectangle = shape as XRectangle;
+                    rectangle.X += dx;
+                    rectangle.Y += dy;
+                }
+                else if (shape is XText)
+                {
+                    var text = shape as XText;
+                    text.X += dx;
+                    text.Y += dy;
+                }
+                else if (shape is XWire)
+                {
+                    var wire = shape as XWire;
+                    // TODO:
+                }
+                else if (shape is XPin)
+                {
+                    var pin = shape as XPin;
+                    pin.X += dx;
+                    pin.Y += dy;
+                }
+                else if (shape is XBlock)
+                {
+                    var block = shape as XBlock;
+                    XCanvas.Move(block, dx, dy);
+                }
+            }
+
+            Layers.Template.InvalidateVisual();
+            Layers.Blocks.InvalidateVisual();
+            Layers.Wires.InvalidateVisual();
+            Layers.Pins.InvalidateVisual();
         }
 
         public static void Move(XBlock block, double dx, double dy)
