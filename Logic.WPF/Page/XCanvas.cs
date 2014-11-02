@@ -189,7 +189,6 @@ namespace Logic.WPF.Page
                                     ResetSelection();
                                     break; 
                                 case Tool.Selection:
-                                    ResetSelection();
                                     SelectionInit(e.GetPosition(this));
                                     break;
                                 case Tool.Line:
@@ -846,6 +845,8 @@ namespace Logic.WPF.Page
             }
             else
             {
+                ResetSelection();
+
                 _startx = p.X;
                 _starty = p.Y;
                 _selection = new XRectangle()
