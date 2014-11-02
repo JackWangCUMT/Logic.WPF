@@ -827,8 +827,10 @@ namespace Logic.WPF.Page
                         Y = y,
                     };
 
-                    Layers.Pins.Shapes.Add(pinHitResult);
-                    Layers.Pins.InvalidateVisual();
+                    _pin = pinHitResult as XPin;
+
+                    Shapes.Add(_pin);
+                    InvalidateVisual();
                 }
             }
 
@@ -841,7 +843,7 @@ namespace Logic.WPF.Page
                 {
                     _wire.Start = pinHitResult as XPin;
                 }
-                else if (wireHitResult != null)
+                else if (wireHitResult != null && wireHitResult is XWire)
                 {
                     // split wire
                     if (Layers.Pins != null && Layers.Wires != null)
@@ -903,7 +905,7 @@ namespace Logic.WPF.Page
             {
                 _wire.End = pinHitResult as XPin;
             }
-            else if (wireHitResult != null)
+            else if (wireHitResult != null && wireHitResult is XWire)
             {
                 // split wire
                 if (Layers.Pins != null && Layers.Wires != null)
@@ -994,6 +996,7 @@ namespace Logic.WPF.Page
                     break;
                 case Tool.Wire:
                     {
+                        _pin = null;
                         _wire = new XWire()
                         {
                             X1 = x,
@@ -1174,12 +1177,25 @@ namespace Logic.WPF.Page
                         if (Layers.Wires != null)
                         {
                             Shapes.Remove(_wire);
+
+                            if (_pin != null)
+                            {
+                                Shapes.Remove(_pin);
+                            }
+
                             if (History != null)
                             {
                                 History.Snapshot(Store("Page"));
                             }
+
                             Layers.Wires.Shapes.Add(_wire);
                             Layers.Wires.InvalidateVisual();
+
+                            if (_pin != null)
+                            {
+                                Layers.Pins.Shapes.Add(_pin);
+                                Layers.Pins.InvalidateVisual();
+                            }
                         }
                         ReleaseMouseCapture();
                         InvalidateVisual();
@@ -1244,6 +1260,10 @@ namespace Logic.WPF.Page
                     {
                         ReleaseMouseCapture();
                         Shapes.Remove(_wire);
+                        if (_pin != null)
+                        {
+                            Shapes.Remove(_pin);
+                        }
                         InvalidateVisual();
                     }
                     break;
