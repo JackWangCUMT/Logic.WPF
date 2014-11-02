@@ -612,16 +612,8 @@ namespace Logic.WPF.Page
 
         private void MoveInit(IShape shape, Point p)
         {
-            if (EnableSnap)
-            {
-                _startx = Snap(p.X, SnapSize);
-                _starty = Snap(p.Y, SnapSize);
-            }
-            else
-            {
-                _startx = p.X;
-                _starty = p.Y;
-            }
+            _startx = EnableSnap ? Snap(p.X, SnapSize) : p.X;
+            _starty = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
 
             if (shape is XLine)
             {
@@ -677,24 +669,14 @@ namespace Logic.WPF.Page
 
         private void Move(Point p)
         {
-            double dx, dy;
+            double x = EnableSnap ? Snap(p.X, SnapSize) : p.X;
+            double y = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
 
-            if (EnableSnap)
-            {
-                double x = Snap(p.X, SnapSize);
-                double y = Snap(p.Y, SnapSize);
-                dx = x - _startx;
-                dy = y - _starty;
-                _startx = x;
-                _starty = y;
-            }
-            else
-            {
-                dx = p.X - _startx;
-                dy = p.Y - _starty;
-                _startx = p.X;
-                _starty = p.Y;
-            }
+            double dx = x - _startx;
+            double dy = y - _starty;
+
+            _startx = x;
+            _starty = y;
 
             switch (_element)
             {
@@ -810,206 +792,135 @@ namespace Logic.WPF.Page
 
         private void CreateWireInit(Point p)
         {
-            IShape pin = null;
-            IShape wire = null;
-            IShape block = null;
+            IShape pinHitResult = null;
+            IShape wireHitResult = null;
+            IShape blockHitResult = null;
 
             if (Layers != null)
             {
-                pin = HitTest(Layers.Pins.Shapes.Cast<XPin>(), p);
-                if (pin == null)
+                pinHitResult = HitTest(Layers.Pins.Shapes.Cast<XPin>(), p);
+                if (pinHitResult == null)
                 {
-                    wire = HitTest(Layers.Wires.Shapes.Cast<XWire>(), p);
-                    if (wire == null)
+                    wireHitResult = HitTest(Layers.Wires.Shapes.Cast<XWire>(), p);
+                    if (wireHitResult == null)
                     {
-                        block = HitTest(Layers.Blocks.Shapes.Cast<XBlock>(), p);
+                        blockHitResult = HitTest(Layers.Blocks.Shapes.Cast<XBlock>(), p);
                     }
                 }
             }
 
             CreateInit(p);
 
-            double x, y;
-            if (EnableSnap)
-            {
-                x = Snap(p.X, SnapSize);
-                y = Snap(p.Y, SnapSize);
-            }
-            else
-            {
-                x = p.X;
-                y = p.Y;
-            }
+            double x = EnableSnap ? Snap(p.X, SnapSize) : p.X;
+            double y = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
 
-            if (pin == null
-                && wire == null
-                && (block == null || (block != null && !(block is XPin))))
+            if (pinHitResult == null
+                && wireHitResult == null
+                && (blockHitResult == null || (blockHitResult != null && !(blockHitResult is XPin))))
             {
                 if (Layers.Pins != null)
                 {
-                    pin = new XPin()
+                    // create new standalone pin
+                    pinHitResult = new XPin()
                     {
                         X = x,
                         Y = y,
                     };
 
-                    Layers.Pins.Shapes.Add(pin);
+                    Layers.Pins.Shapes.Add(pinHitResult);
                     Layers.Pins.InvalidateVisual();
                 }
             }
 
-            if (pin != null
-                || wire != null
-                || (block != null && block is XPin))
+            if (pinHitResult != null
+                || wireHitResult != null
+                || (blockHitResult != null && blockHitResult is XPin))
             {
                 // connect wire start
-                if (pin != null)
+                if (pinHitResult != null)
                 {
-                    _wire.Start = pin as XPin;
+                    _wire.Start = pinHitResult as XPin;
                 }
-                else if (wire != null)
+                else if (wireHitResult != null)
                 {
                     // split wire
                     if (Layers.Pins != null && Layers.Wires != null)
                     {
-                        pin = new XPin()
-                        {
-                            X = x,
-                            Y = y,
-                        };
-
-                        var split = new XWire()
-                        {
-                            Start = pin as XPin,
-                            End = (wire as XWire).End,
-                            InvertStart = false,
-                            InvertEnd = (wire as XWire).InvertEnd
-                        };
-
-                        (wire as XWire).InvertEnd = false;
-                        (wire as XWire).End = pin as XPin;
-
-                        _wire.Start = pin as XPin;
-
-                        Layers.Pins.Shapes.Add(pin);
-                        Layers.Wires.Shapes.Add(split);
-
-                        Layers.Pins.InvalidateVisual();
-                        Layers.Wires.InvalidateVisual();
+                        SplitStart(wireHitResult, x, y);
                     }
                 }
-                else if (block != null && block is XPin)
+                else if (blockHitResult != null && blockHitResult is XPin)
                 {
-                    _wire.Start = block as XPin;
+                    _wire.Start = blockHitResult as XPin;
                 }
             }
         }
 
         private void CreateWireFinish(Point p)
         {
-            IShape pin = null;
-            IShape wire = null;
-            IShape block = null;
+            IShape pinHitResult = null;
+            IShape wireHitResult = null;
+            IShape blockHitResult = null;
 
             if (Layers != null)
             {
-                pin = HitTest(Layers.Pins.Shapes.Cast<XPin>(), p);
-                if (pin == null)
+                pinHitResult = HitTest(Layers.Pins.Shapes.Cast<XPin>(), p);
+                if (pinHitResult == null)
                 {
-                    wire = HitTest(Layers.Wires.Shapes.Cast<XWire>(), p);
-                    if (wire == null)
+                    wireHitResult = HitTest(Layers.Wires.Shapes.Cast<XWire>(), p);
+                    if (wireHitResult == null)
                     {
-                        block = HitTest(Layers.Blocks.Shapes.Cast<XBlock>(), p);
+                        blockHitResult = HitTest(Layers.Blocks.Shapes.Cast<XBlock>(), p);
                     }
                 }
             }
 
             CreateFinish(p);
 
-            double x, y;
-            if (EnableSnap)
-            {
-                x = Snap(p.X, SnapSize);
-                y = Snap(p.Y, SnapSize);
-            }
-            else
-            {
-                x = p.X;
-                y = p.Y;
-            }
+            double x = EnableSnap ? Snap(p.X, SnapSize) : p.X;
+            double y = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
 
-            if (pin == null
-                && wire == null
-                && (block == null || (block != null && !(block is XPin))))
+            if (pinHitResult == null
+                && wireHitResult == null
+                && (blockHitResult == null || (blockHitResult != null && !(blockHitResult is XPin))))
             {
                 if (Layers.Pins != null)
                 {
-                    pin = new XPin()
+                    // create new standalone pin
+                    pinHitResult = new XPin()
                     {
                         X = x,
                         Y = y,
                     };
 
-                    Layers.Pins.Shapes.Add(pin);
+                    Layers.Pins.Shapes.Add(pinHitResult);
                     Layers.Pins.InvalidateVisual();
                 }
             }
 
             // connect wire end
-            if (pin != null)
+            if (pinHitResult != null)
             {
-                _wire.End = pin as XPin;
+                _wire.End = pinHitResult as XPin;
             }
-            else if (wire != null)
+            else if (wireHitResult != null)
             {
                 // split wire
                 if (Layers.Pins != null && Layers.Wires != null)
                 {
-                    pin = new XPin()
-                    {
-                        X = x,
-                        Y = y,
-                    };
-
-                    var split = new XWire()
-                    {
-                        Start = pin as XPin,
-                        End = (wire as XWire).End,
-                        InvertStart = false,
-                        InvertEnd = (wire as XWire).InvertEnd
-                    };
-
-                    (wire as XWire).InvertEnd = false;
-                    (wire as XWire).End = pin as XPin;
-
-                    _wire.End = pin as XPin;
-
-                    Layers.Pins.Shapes.Add(pin);
-                    Layers.Wires.Shapes.Add(split);
-
-                    Layers.Pins.InvalidateVisual();
-                    Layers.Wires.InvalidateVisual();
+                    SplitEnd(wireHitResult, x, y);
                 }
             }
-            else if (block != null && block is XPin)
+            else if (blockHitResult != null && blockHitResult is XPin)
             {
-                _wire.End = block as XPin;
+                _wire.End = blockHitResult as XPin;
             }
         }
 
         private void CreateInit(Point p)
         {
-            double x, y;
-            if (EnableSnap)
-            {
-                x = Snap(p.X, SnapSize);
-                y = Snap(p.Y, SnapSize);
-            }
-            else
-            {
-                x = p.X;
-                y = p.Y;
-            }
+            double x = EnableSnap ? Snap(p.X, SnapSize) : p.X;
+            double y = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
 
             switch (CurrentTool)
             {
@@ -1115,17 +1026,8 @@ namespace Logic.WPF.Page
 
         private void CreateMove(Point p)
         {
-            double x, y;
-            if (EnableSnap)
-            {
-                x = Snap(p.X, SnapSize);
-                y = Snap(p.Y, SnapSize);
-            }
-            else
-            {
-                x = p.X;
-                y = p.Y;
-            }
+            double x = EnableSnap ? Snap(p.X, SnapSize) : p.X;
+            double y = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
 
             switch (CurrentTool)
             {
@@ -1182,17 +1084,8 @@ namespace Logic.WPF.Page
 
         private void CreateFinish(Point p)
         {
-            double x, y;
-            if (EnableSnap)
-            {
-                x = Snap(p.X, SnapSize);
-                y = Snap(p.Y, SnapSize);
-            }
-            else
-            {
-                x = p.X;
-                y = p.Y;
-            }
+            double x = EnableSnap ? Snap(p.X, SnapSize) : p.X;
+            double y = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
 
             switch (CurrentTool)
             {
@@ -1438,6 +1331,62 @@ namespace Logic.WPF.Page
                 _text.VAlignment = valignment;
                 InvalidateVisual();
             }
+        }
+
+        #endregion
+
+        #region Wire
+
+        private void Split(XWire wire, double x, double y, out XPin pin, out XWire split)
+        {
+            pin = new XPin()
+            {
+                X = x,
+                Y = y,
+            };
+
+            split = new XWire()
+            {
+                Start = pin as XPin,
+                End = wire.End,
+                InvertStart = false,
+                InvertEnd = wire.InvertEnd
+            };
+
+            wire.InvertEnd = false;
+            wire.End = pin as XPin;
+        }
+
+        private void SplitStart(IShape wireHitResult, double x, double y)
+        {
+            XPin pin;
+            XWire split;
+
+            Split(wireHitResult as XWire, x, y, out pin, out split);
+
+            _wire.Start = pin;
+
+            Layers.Pins.Shapes.Add(pin);
+            Layers.Wires.Shapes.Add(split);
+
+            Layers.Pins.InvalidateVisual();
+            Layers.Wires.InvalidateVisual();
+        }
+
+        private void SplitEnd(IShape wireHitResult, double x, double y)
+        {
+            XPin pin;
+            XWire split;
+
+            Split(wireHitResult as XWire, x, y, out pin, out split);
+
+            _wire.End = pin;
+
+            Layers.Pins.Shapes.Add(pin);
+            Layers.Wires.Shapes.Add(split);
+
+            Layers.Pins.InvalidateVisual();
+            Layers.Wires.InvalidateVisual();
         }
 
         #endregion
