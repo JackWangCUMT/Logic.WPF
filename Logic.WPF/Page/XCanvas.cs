@@ -73,6 +73,10 @@ namespace Logic.WPF.Page
 
         #region Fields
 
+        private IStyle _shapeStyle { get; set; }
+        private IStyle _selectedShapeStyle { get; set; }
+        private IStyle _selectionStyle { get; set; }
+
         private double _startx, _starty;
         private XBlock _block = null;
         private XLine _line = null;
@@ -92,6 +96,7 @@ namespace Logic.WPF.Page
 
         public XCanvas()
         {
+            InitStyles();
             InitProperties();
             InitMouse();
         }
@@ -117,10 +122,7 @@ namespace Logic.WPF.Page
             Layers.Wires.Shapes = page.Wires;
             Layers.Pins.Shapes = page.Pins;
 
-            Layers.Template.InvalidateVisual();
-            Layers.Blocks.InvalidateVisual();
-            Layers.Wires.InvalidateVisual();
-            Layers.Pins.InvalidateVisual();
+            InvalidatePage();
         }
 
         public XPage Store(string name)
@@ -142,12 +144,32 @@ namespace Logic.WPF.Page
 
         #region Initialize
 
+        public void InitStyles()
+        {
+            _shapeStyle = new XStyle(
+                "Shape",
+                new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
+                new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
+                2.0);
+
+            _selectedShapeStyle = new XStyle(
+                "Selected",
+                new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
+                new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
+                2.0);
+
+            _selectionStyle = new XStyle(
+                "Selection",
+                new XColor() { A = 0x1F, R = 0x00, G = 0x00, B = 0xFF },
+                new XColor() { A = 0x9F, R = 0x00, G = 0x00, B = 0xFF },
+                1.0);
+        }
+
         private void InitProperties()
         {
             Shapes = new ObservableCollection<IShape>();
             EnableSnap = true;
             SnapSize = 15.0;
-            Renderer = new XRenderer();
         }
 
         private void InitMouse()
@@ -164,8 +186,10 @@ namespace Logic.WPF.Page
                             switch (CurrentTool)
                             {
                                 case Tool.None:
+                                    ResetSelection();
                                     break; 
                                 case Tool.Selection:
+                                    ResetSelection();
                                     SelectionInit(e.GetPosition(this));
                                     break;
                                 case Tool.Line:
@@ -173,9 +197,11 @@ namespace Logic.WPF.Page
                                 case Tool.Rectangle:
                                 case Tool.Text:
                                 case Tool.Pin:
+                                    ResetSelection();
                                     CreateInit(e.GetPosition(this));
                                     break; 
                                 case Tool.Wire:
+                                    ResetSelection();
                                     CreateWireInit(e.GetPosition(this));
                                     break;
                             }
@@ -280,6 +306,10 @@ namespace Logic.WPF.Page
                             break; 
                     }
                 }
+                else
+                {
+                    ResetSelection();
+                }
             };
 
             #endregion
@@ -333,9 +363,39 @@ namespace Logic.WPF.Page
                 XRenderer.PinRadius + XRenderer.PinRadius);
         }
 
+        private static Rect GetEllipseBounds(XEllipse ellipse)
+        {
+            var bounds = new Rect(
+                ellipse.X - ellipse.RadiusX,
+                ellipse.Y - ellipse.RadiusY,
+                ellipse.RadiusX + ellipse.RadiusX,
+                ellipse.RadiusY + ellipse.RadiusY);
+            return bounds;
+        }
+
+        private static Rect GetRectangleBounds(XRectangle rectangle)
+        {
+            var bounds = new Rect(
+                rectangle.X,
+                rectangle.Y,
+                rectangle.Width,
+                rectangle.Height);
+            return bounds;
+        }
+
+        private static Rect GetTextBounds(XText text)
+        {
+            var bounds = new Rect(
+                text.X,
+                text.Y,
+                text.Width,
+                text.Height);
+            return bounds;
+        }
+
         #endregion
 
-        #region HitTest
+        #region HitTest Point
 
         public bool HitTest(XLine line, Point p, double treshold)
         {
@@ -466,13 +526,7 @@ namespace Logic.WPF.Page
                 }
                 else if (shape is XEllipse)
                 {
-                    var ellipse = shape as XEllipse;
-                    var bounds = new Rect(
-                        ellipse.X - ellipse.RadiusX,
-                        ellipse.Y - ellipse.RadiusY,
-                        ellipse.RadiusX + ellipse.RadiusX,
-                        ellipse.RadiusY + ellipse.RadiusY);
-                    if (bounds.Contains(p))
+                    if (GetEllipseBounds(shape as XEllipse).Contains(p))
                     {
                         return shape;
                     }
@@ -480,13 +534,7 @@ namespace Logic.WPF.Page
                 }
                 else if (shape is XRectangle)
                 {
-                    var rectangle = shape as XRectangle;
-                    var bounds = new Rect(
-                        rectangle.X, 
-                        rectangle.Y, 
-                        rectangle.Width, 
-                        rectangle.Height);
-                    if (bounds.Contains(p))
+                    if (GetRectangleBounds(shape as XRectangle).Contains(p))
                     {
                         return shape;
                     }
@@ -494,13 +542,7 @@ namespace Logic.WPF.Page
                 }
                 else if (shape is XText)
                 {
-                    var text = shape as XText;
-                    var bounds = new Rect(
-                        text.X, 
-                        text.Y, 
-                        text.Width, 
-                        text.Height);
-                    if (bounds.Contains(p))
+                    if (GetTextBounds(shape as XText).Contains(p))
                     {
                         return shape;
                     }
@@ -549,7 +591,251 @@ namespace Logic.WPF.Page
 
         #endregion
 
+        #region HitTest Rect
+
+        public bool HitTest(IEnumerable<XPin> pins, Rect rect, ICollection<IShape> hs)
+        {
+            foreach (var pin in pins)
+            {
+                if (GetPinBounds(pin.X, pin.Y).IntersectsWith(rect))
+                {
+                    if (hs != null)
+                    {
+                        hs.Add(pin);
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public bool HitTest(IEnumerable<XWire> wires, Rect rect, ICollection<IShape> hs)
+        {
+            foreach (var wire in wires)
+            {
+                var start = wire.Start;
+                if (start != null)
+                {
+                    if (GetPinBounds(start.X, start.Y).IntersectsWith(rect))
+                    {
+                        if (hs != null)
+                        {
+                            hs.Add(wire);
+                            continue;
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
+                }
+                else
+                {
+                    if (GetPinBounds(wire.X1, wire.Y1).IntersectsWith(rect))
+                    {
+                        if (hs != null)
+                        {
+                            hs.Add(wire);
+                            continue;
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+                var end = wire.End;
+                if (end != null)
+                {
+                    if (GetPinBounds(end.X, end.Y).IntersectsWith(rect))
+                    {
+                        if (hs != null)
+                        {
+                            hs.Add(wire);
+                            continue;
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
+                }
+                else
+                {
+                    if (GetPinBounds(wire.X2, wire.Y2).IntersectsWith(rect))
+                    {
+                        if (hs != null)
+                        {
+                            hs.Add(wire);
+                            continue;
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+                // TODO:
+                //if (HitTest(wire, p, XRenderer.HitTreshold))
+                //{
+                //    if (hs != null)
+                //    {
+                //        hs.Add(wire);
+                //        continue;
+                //    }
+                //    else
+                //    {
+                //        return true;
+                //    }
+                //}
+            }
+
+            return false;
+        }
+
+        public bool HitTest(IEnumerable<XBlock> blocks, Rect rect, ICollection<IShape> hs)
+        {
+            foreach (var block in blocks)
+            {
+                bool pinHitResults = HitTest(block.Pins, rect, null);
+                if (pinHitResults == true)
+                {
+                    if (hs != null)
+                    {
+                        hs.Add(block);
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+
+                bool shapeHitResult = HitTest(block.Shapes, rect, null);
+                if (shapeHitResult == true)
+                {
+                    if (hs != null)
+                    {
+                        hs.Add(block);
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public bool HitTest(IEnumerable<IShape> shapes, Rect rect, ICollection<IShape> hs)
+        {
+            foreach (var shape in shapes)
+            {
+                if (shape is XLine)
+                {
+                    var line = shape as XLine;
+                    if (GetPinBounds(line.X1, line.Y1).IntersectsWith(rect)
+                        || GetPinBounds(line.X2, line.Y2).IntersectsWith(rect)
+                        // TODO:
+                        /* || HitTest(line, p, XRenderer.HitTreshold) */)
+                    {
+                        if (hs != null)
+                        {
+                            hs.Add(line);
+                            continue;
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
+                    continue;
+                }
+                else if (shape is XEllipse)
+                {
+                    if (GetEllipseBounds(shape as XEllipse).IntersectsWith(rect))
+                    {
+                        if (hs != null)
+                        {
+                            hs.Add(shape);
+                            continue;
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
+                    continue;
+                }
+                else if (shape is XRectangle)
+                {
+                    if (GetRectangleBounds(shape as XRectangle).IntersectsWith(rect))
+                    {
+                        if (hs != null)
+                        {
+                            hs.Add(shape);
+                            continue;
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
+                    continue;
+                }
+                else if (shape is XText)
+                {
+                    if (GetTextBounds(shape as XText).IntersectsWith(rect))
+                    {
+                        if (hs != null)
+                        {
+                            hs.Add(shape);
+                            continue;
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
+                    continue;
+                }
+            }
+
+            return false;
+        }
+
+        public ICollection<IShape> HitTest(Rect rect)
+        {
+            var hs = new HashSet<IShape>();
+
+            HitTest(Layers.Pins.Shapes.Cast<XPin>(), rect, hs);
+
+            HitTest(Layers.Wires.Shapes.Cast<XWire>(), rect, hs);
+
+            HitTest(Layers.Blocks.Shapes.Cast<XBlock>(), rect, hs);
+
+            HitTest(Layers.Template.Shapes, rect, hs);
+
+            return hs;
+        }
+
+        #endregion
+
         #region Selection Mode
+
+        public void ResetSelection()
+        {
+            if (Renderer.Selected != null)
+            {
+                Renderer.Selected = null;
+                InvalidatePage();
+            }
+        }
 
         private void SelectionInit(Point p)
         {
@@ -588,18 +874,27 @@ namespace Logic.WPF.Page
 
         private void SelectionFinish(Point p)
         {
+            ReleaseMouseCapture();
+            Shapes.Remove(_selection);
+            InvalidateVisual();
+            _mode = Mode.None;
+
             var rect = new Rect(
                 Math.Min(_startx, p.X),
                 Math.Min(_starty, p.Y),
                 Math.Abs(p.X - _startx),
                 Math.Abs(p.Y - _starty));
 
-            // TODO:
-
-            ReleaseMouseCapture();
-            Shapes.Remove(_selection);
-            InvalidateVisual();
-            _mode = Mode.None;
+            var hs = HitTest(rect);
+            if (hs != null && hs.Count > 0)
+            {
+                Renderer.Selected = hs;
+            }
+            else
+            {
+                Renderer.Selected = null;
+            }
+            InvalidatePage();
         }
 
         private void SelectionCancel()
@@ -725,14 +1020,14 @@ namespace Logic.WPF.Page
                 case Element.Pin:
                     _pin.X += dx;
                     _pin.Y += dy;
-                    Layers.Pins.InvalidateVisual();
                     Layers.Wires.InvalidateVisual();
+                    Layers.Pins.InvalidateVisual();
                     break;
                 case Element.Block:
                     XCanvas.Move(_block, dx, dy);
                     Layers.Blocks.InvalidateVisual();
-                    Layers.Pins.InvalidateVisual();
                     Layers.Wires.InvalidateVisual();
+                    Layers.Pins.InvalidateVisual();
                     break;
             }
         }
@@ -1393,8 +1688,8 @@ namespace Logic.WPF.Page
             Layers.Pins.Shapes.Add(pin);
             Layers.Wires.Shapes.Add(split);
 
-            Layers.Pins.InvalidateVisual();
             Layers.Wires.InvalidateVisual();
+            Layers.Pins.InvalidateVisual();
         }
 
         private void SplitEnd(IShape wireHitResult, double x, double y)
@@ -1409,25 +1704,39 @@ namespace Logic.WPF.Page
             Layers.Pins.Shapes.Add(pin);
             Layers.Wires.Shapes.Add(split);
 
-            Layers.Pins.InvalidateVisual();
             Layers.Wires.InvalidateVisual();
+            Layers.Pins.InvalidateVisual();
         }
 
         #endregion
 
         #region Render
 
+        public void InvalidatePage()
+        {
+            if (Layers != null)
+            {
+                Layers.Template.InvalidateVisual();
+                Layers.Blocks.InvalidateVisual();
+                Layers.Pins.InvalidateVisual();
+                Layers.Wires.InvalidateVisual(); 
+            }
+        }
+
         protected override void OnRender(DrawingContext dc)
         {
             base.OnRender(dc);
 
-            if (_mode == Mode.Selection)
+            if (Renderer != null)
             {
-                Renderer.DrawSelection(dc, _selection);
-            }
-            else
-            {
-                Renderer.DrawShapes(dc, Shapes);
+                if (_mode == Mode.Selection)
+                {
+                    Renderer.DrawSelection(dc, _selectionStyle, _selection);
+                }
+                else
+                {
+                    Renderer.DrawShapes(dc, _shapeStyle, _selectedShapeStyle, Shapes);
+                }
             }
         }
 

@@ -15,9 +15,9 @@ namespace Logic.Core
         public double RadiusY { get; set; }
         public bool IsFilled { get; set; }
 
-        public void Render(object dc, IRenderer renderer)
+        public void Render(object dc, IRenderer renderer, IStyle style)
         {
-            renderer.DrawEllipse(dc, this);
+            renderer.DrawEllipse(dc, style, this);
         }
     }
 }

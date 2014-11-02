@@ -36,7 +36,8 @@ namespace Logic.WPF
 
         #region Fields
 
-        private Point dragStartPoint;
+        private IRenderer _renderer;
+        private Point _dragStartPoint;
         private XJson _json = new XJson();
 
         #endregion
@@ -116,11 +117,16 @@ namespace Logic.WPF
             Layers.Wires = controller.wireLayer;
             Layers.Pins = controller.pinLayer;
 
-            controller.editorLayer.History = new XHistory<XPage>();
+            _renderer = new XRenderer();
+            controller.templateLayer.Renderer = _renderer;
+            controller.blockLayer.Renderer = _renderer;
+            controller.wireLayer.Renderer = _renderer;
+            controller.pinLayer.Renderer = _renderer;
+            controller.editorLayer.Renderer = _renderer;
 
+            controller.editorLayer.History = new XHistory<XPage>();
             controller.editorLayer.Layers = Layers;
             controller.editorLayer.CurrentTool = XCanvas.Tool.Selection;
-
             controller.editorLayer.AllowDrop = true;
 
             controller.editorLayer.DragEnter += (s, e) =>
@@ -154,13 +160,13 @@ namespace Logic.WPF
         {
             blocks.PreviewMouseLeftButtonDown += (s, e) =>
             {
-                dragStartPoint = e.GetPosition(null);
+                _dragStartPoint = e.GetPosition(null);
             };
 
             blocks.PreviewMouseMove += (s, e) =>
             {
                 Point point = e.GetPosition(null);
-                Vector diff = dragStartPoint - point;
+                Vector diff = _dragStartPoint - point;
                 if (e.LeftButton == MouseButtonState.Pressed &&
                     (Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance ||
                         Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance))

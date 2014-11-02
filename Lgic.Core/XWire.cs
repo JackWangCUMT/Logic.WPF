@@ -18,9 +18,9 @@ namespace Logic.Core
         public XPin Start { get; set; }
         public XPin End { get; set; }
 
-        public void Render(object dc, IRenderer renderer)
+        public void Render(object dc, IRenderer renderer, IStyle style)
         {
-            renderer.DrawWire(dc, this);
+            renderer.DrawWire(dc, style, this);
         }
     }
 }

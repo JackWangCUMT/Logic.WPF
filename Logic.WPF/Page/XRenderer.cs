@@ -11,64 +11,48 @@ namespace Logic.WPF.Page
 {
     public class XRenderer : IRenderer
     {
-        public IStyle ShapeStyle { get; set; }
-        public IStyle SelectionStyle { get; set; }
+        public ICollection<IShape> Selected { get; set; }
 
         public static double InvertSize = 6.0;
         public static double PinRadius = 4.0;
         public static double HitTreshold = 6.0;
 
-        public XRenderer()
-        {
-            ShapeStyle = new XStyle(
-                "Shape",
-                new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
-                new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
-                2.0);
-
-            SelectionStyle = new XStyle(
-                "Selection",
-                new XColor() { A = 0x1F, R = 0x00, G = 0x00, B = 0xFF },
-                new XColor() { A = 0x9F, R = 0x00, G = 0x00, B = 0xFF },
-                1.0);
-        }
-
-        public void DrawBlock(object dc, XBlock block)
+        public void DrawBlock(object dc, IStyle style, XBlock block)
         {
             foreach (var shape in block.Shapes)
             {
-                shape.Render(dc, this);
+                shape.Render(dc, this, style);
             }
 
             foreach (var pin in block.Pins)
             {
-                pin.Render(dc, this);
+                pin.Render(dc, this, style);
             }
         }
 
-        public void DrawLine(object dc, XLine line)
+        public void DrawLine(object dc, IStyle style, XLine line)
         {
             (dc as DrawingContext).DrawLine(
-                (Pen)ShapeStyle.NativeStroke(),
+                (Pen)style.NativeStroke(),
                 new Point(line.X1, line.Y1),
                 new Point(line.X2, line.Y2));
         }
 
-        public void DrawEllipse(object dc, XEllipse ellipse)
+        public void DrawEllipse(object dc, IStyle style, XEllipse ellipse)
         {
             (dc as DrawingContext).DrawEllipse(
-                ellipse.IsFilled ? (SolidColorBrush)ShapeStyle.NativeFill() : null,
-                (Pen)ShapeStyle.NativeStroke(),
+                ellipse.IsFilled ? (SolidColorBrush)style.NativeFill() : null,
+                (Pen)style.NativeStroke(),
                 new Point(ellipse.X, ellipse.Y),
                 ellipse.RadiusX,
                 ellipse.RadiusY);
         }
 
-        public void DrawRectangle(object dc, XRectangle rectangle)
+        public void DrawRectangle(object dc, IStyle style, XRectangle rectangle)
         {
             (dc as DrawingContext).DrawRectangle(
-                rectangle.IsFilled ? (SolidColorBrush)ShapeStyle.NativeFill() : null,
-                (Pen)ShapeStyle.NativeStroke(),
+                rectangle.IsFilled ? (SolidColorBrush)style.NativeFill() : null,
+                (Pen)style.NativeStroke(),
                 new Rect(
                     rectangle.X, 
                     rectangle.Y, 
@@ -76,7 +60,7 @@ namespace Logic.WPF.Page
                     rectangle.Height));
         }
 
-        public void DrawText(object dc, XText text)
+        public void DrawText(object dc, IStyle style, XText text)
         {
             var ft = new FormattedText(
                 text.Text,
@@ -84,7 +68,7 @@ namespace Logic.WPF.Page
                 FlowDirection.LeftToRight,
                 new Typeface(text.FontName),
                 text.FontSize,
-                ((Pen)ShapeStyle.NativeStroke()).Brush,
+                ((Pen)style.NativeStroke()).Brush,
                 null,
                 TextFormattingMode.Ideal);
 
@@ -120,7 +104,7 @@ namespace Logic.WPF.Page
             if (text.IsFilled)
             {
                 (dc as DrawingContext).DrawRectangle(
-                    (SolidColorBrush)ShapeStyle.NativeFill(),
+                    (SolidColorBrush)style.NativeFill(),
                     null,
                     new Rect(
                         text.X, 
@@ -134,17 +118,17 @@ namespace Logic.WPF.Page
                 new Point(x, y));
         }
 
-        public void DrawPin(object dc, XPin pin)
+        public void DrawPin(object dc, IStyle style, XPin pin)
         {
             (dc as DrawingContext).DrawEllipse(
-                (SolidColorBrush)ShapeStyle.NativeFill(),
-                (Pen)ShapeStyle.NativeStroke(),
+                (SolidColorBrush)style.NativeFill(),
+                (Pen)style.NativeStroke(),
                 new Point(pin.X, pin.Y),
                 PinRadius,
                 PinRadius);
         }
 
-        public void DrawWire(object dc, XWire wire)
+        public void DrawWire(object dc, IStyle style, XWire wire)
         {
             double x1, y1, x2, y2;
 
@@ -245,7 +229,7 @@ namespace Logic.WPF.Page
             {
                 (dc as DrawingContext).DrawEllipse(
                     null,
-                    (Pen)ShapeStyle.NativeStroke(),
+                    (Pen)style.NativeStroke(),
                     new Point(ix1, iy1),
                     InvertSize,
                     InvertSize);
@@ -255,21 +239,21 @@ namespace Logic.WPF.Page
             {
                 (dc as DrawingContext).DrawEllipse(
                     null,
-                    (Pen)ShapeStyle.NativeStroke(),
+                    (Pen)style.NativeStroke(),
                     new Point(ix2, iy2),
                     InvertSize,
                     InvertSize);
             }
 
             (dc as DrawingContext).DrawLine(
-                (Pen)ShapeStyle.NativeStroke(),
+                (Pen)style.NativeStroke(),
                 new Point(x1, y1),
                 new Point(x2, y2));
         }
 
-        public void DrawSelection(object dc, XRectangle rectangle)
+        public void DrawSelection(object dc, IStyle style, XRectangle rectangle)
         {
-            double thickness = SelectionStyle.Thickness;
+            double thickness = style.Thickness;
             double half = thickness / 2.0;
 
             var gs = new GuidelineSet(
@@ -287,8 +271,8 @@ namespace Logic.WPF.Page
 
             (dc as DrawingContext).DrawRectangle(
                 rectangle.IsFilled ?
-                (SolidColorBrush)SelectionStyle.NativeFill() : null,
-                (Pen)SelectionStyle.NativeStroke(),
+                (SolidColorBrush)style.NativeFill() : null,
+                (Pen)style.NativeStroke(),
                 new Rect(
                     rectangle.X,
                     rectangle.Y,
@@ -298,9 +282,13 @@ namespace Logic.WPF.Page
             (dc as DrawingContext).Pop();
         }
 
-        public void DrawShapes(object dc, IList<IShape> shapes)
+        public void DrawShapes(
+            object dc, 
+            IStyle normalStyle,
+            IStyle selectedStyle, 
+            IList<IShape> shapes)
         {
-            double thickness = ShapeStyle.Thickness;
+            double thickness = normalStyle.Thickness;
             double half = thickness / 2.0;
 
             var gs = new GuidelineSet(
@@ -308,9 +296,26 @@ namespace Logic.WPF.Page
                 new double[] { half, half });
             (dc as DrawingContext).PushGuidelineSet(gs);
 
-            foreach (var shape in shapes)
+            if (Selected != null)
             {
-                shape.Render(dc, this);
+                foreach (var shape in shapes)
+                {
+                    if (Selected.Contains(shape))
+                    {
+                        shape.Render(dc, this, selectedStyle);
+                    }
+                    else
+                    {
+                        shape.Render(dc, this, normalStyle);
+                    }
+                }
+            }
+            else
+            {
+                foreach (var shape in shapes)
+                {
+                    shape.Render(dc, this, normalStyle);
+                }
             }
 
             (dc as DrawingContext).Pop();

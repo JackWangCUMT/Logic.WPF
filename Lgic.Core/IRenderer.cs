@@ -8,14 +8,15 @@ namespace Logic.Core
 {
     public interface IRenderer
     {
-        void DrawBlock(object dc, XBlock block);
-        void DrawLine(object dc, XLine line);
-        void DrawEllipse(object dc, XEllipse ellipse);
-        void DrawRectangle(object dc, XRectangle rectangle);
-        void DrawText(object dc, XText text);
-        void DrawPin(object dc, XPin pin);
-        void DrawWire(object dc, XWire wire);
-        void DrawSelection(object dc, XRectangle rectangle);
-        void DrawShapes(object dc, IList<IShape> shapes);
+        ICollection<IShape> Selected { get; set; }
+        void DrawBlock(object dc, IStyle style, XBlock block);
+        void DrawLine(object dc, IStyle style, XLine line);
+        void DrawEllipse(object dc, IStyle style, XEllipse ellipse);
+        void DrawRectangle(object dc, IStyle style, XRectangle rectangle);
+        void DrawText(object dc, IStyle style, XText text);
+        void DrawPin(object dc, IStyle style, XPin pin);
+        void DrawWire(object dc, IStyle style, XWire wire);
+        void DrawSelection(object dc, IStyle style, XRectangle rectangle);
+        void DrawShapes(object dc, IStyle normal, IStyle selected, IList<IShape> shapes);
     }
 }

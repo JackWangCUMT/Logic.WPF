@@ -20,9 +20,9 @@ namespace Logic.Core
         public double FontSize { get; set; }
         public string FontName { get; set; }
 
-        public void Render(object dc, IRenderer renderer)
+        public void Render(object dc, IRenderer renderer, IStyle style)
         {
-            renderer.DrawText(dc, this);
+            renderer.DrawText(dc, style, this);
         }
     }
 }

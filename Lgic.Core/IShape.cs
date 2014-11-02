@@ -9,6 +9,6 @@ namespace Logic.Core
     public interface IShape
     {
         IStyle Style { get; set; }
-        void Render(object dc, IRenderer renderer);
+        void Render(object dc, IRenderer renderer, IStyle style);
     }
 }

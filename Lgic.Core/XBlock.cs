@@ -13,9 +13,9 @@ namespace Logic.Core
         public IList<IShape> Shapes { get; set; }
         public IList<XPin> Pins { get; set; }
 
-        public void Render(object dc, IRenderer renderer)
+        public void Render(object dc, IRenderer renderer, IStyle style)
         {
-            renderer.DrawBlock(dc, this);
+            renderer.DrawBlock(dc, style, this);
         }
     }
 }

@@ -15,9 +15,9 @@ namespace Logic.Core
         public double Height { get; set; }
         public bool IsFilled { get; set; }
 
-        public void Render(object dc, IRenderer renderer)
+        public void Render(object dc, IRenderer renderer, IStyle style)
         {
-            renderer.DrawRectangle(dc, this);
+            renderer.DrawRectangle(dc, style, this);
         }
     }
 }

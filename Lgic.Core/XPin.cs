@@ -13,9 +13,9 @@ namespace Logic.Core
         public double X { get; set; }
         public double Y { get; set; }
 
-        public void Render(object dc, IRenderer renderer)
+        public void Render(object dc, IRenderer renderer, IStyle style)
         {
-            renderer.DrawPin(dc, this);
+            renderer.DrawPin(dc, style, this);
         }
     }
 }

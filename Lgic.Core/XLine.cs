@@ -14,9 +14,9 @@ namespace Logic.Core
         public double X2 { get; set; }
         public double Y2 { get; set; }
 
-        public void Render(object dc, IRenderer renderer)
+        public void Render(object dc, IRenderer renderer, IStyle style)
         {
-            renderer.DrawLine(dc, this);
+            renderer.DrawLine(dc, style, this);
         }
     }
 }
