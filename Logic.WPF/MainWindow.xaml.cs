@@ -141,6 +141,7 @@ namespace Logic.WPF
             {
                 Point point = e.GetPosition(controller.editorLayer);
 
+                // block
                 if (e.Data.GetDataPresent("Block"))
                 {
                     var block = e.Data.GetData("Block") as XBlock;
@@ -151,6 +152,15 @@ namespace Logic.WPF
                         var copy = Insert(block, point.X, point.Y);
                         Connect(copy);
                         e.Handled = true;
+                    }
+                }
+                // files
+                else if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                {
+                    string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                    if (files != null && files.Length == 1)
+                    {
+                        OpenPage(files[0]);
                     }
                 }
             };
@@ -711,11 +721,7 @@ namespace Logic.WPF
 
             if (dlg.ShowDialog() == true)
             {
-                var path = dlg.FileName;
-                var page = Open(path);
-                controller.editorLayer.History.Snapshot(
-                    controller.editorLayer.Store("Page"));
-                controller.editorLayer.Load(page);
+                OpenPage(dlg.FileName);
             }
         }
 
@@ -729,9 +735,7 @@ namespace Logic.WPF
 
             if (dlg.ShowDialog() == true)
             {
-                var path = dlg.FileName;
-                var page = controller.editorLayer.Store("Page");
-                Save(path, page);
+                SavePage(dlg.FileName);
             }
         }
 
@@ -752,6 +756,20 @@ namespace Logic.WPF
             {
                 fs.Write(json);
             }
+        }
+
+        private void OpenPage(string path)
+        {
+            var page = Open(path);
+            controller.editorLayer.History.Snapshot(
+                controller.editorLayer.Store("Page"));
+            controller.editorLayer.Load(page);
+        }
+
+        private void SavePage(string path)
+        {
+            var page = controller.editorLayer.Store("Page");
+            Save(path, page);
         }
 
         #endregion
