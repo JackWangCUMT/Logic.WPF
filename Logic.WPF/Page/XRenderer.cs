@@ -248,5 +248,53 @@ namespace Logic.WPF.Page
                 new Point(x1, y1),
                 new Point(x2, y2));
         }
+
+        public void DrawSelection(object dc, XRectangle rectangle)
+        {
+            double thickness = 1.0;
+            double half = thickness / 2.0;
+
+            var gs = new GuidelineSet(
+                new double[] 
+                    { 
+                        rectangle.X + half, 
+                        rectangle.X + rectangle.Width + half 
+                    },
+                new double[] 
+                    { 
+                        rectangle.Y + half,
+                        rectangle.Y + rectangle.Height + half
+                    });
+            (dc as DrawingContext).PushGuidelineSet(gs);
+
+            (dc as DrawingContext).DrawRectangle(
+                rectangle.IsFilled ?
+                new SolidColorBrush(Color.FromArgb(0x1F, 0x00, 0x00, 0xFF)) : null,
+                new Pen(
+                    new SolidColorBrush(Color.FromArgb(0x9F, 0x00, 0x00, 0xFF)),
+                    thickness),
+                new Rect(
+                    rectangle.X,
+                    rectangle.Y,
+                    rectangle.Width,
+                    rectangle.Height));
+
+            (dc as DrawingContext).Pop();
+        }
+
+        public void DrawShapes(object dc, IList<IShape> shapes)
+        {
+            var gs = new GuidelineSet(
+                new double[] { 1.0, 1.0 },
+                new double[] { 1.0, 1.0 });
+            (dc as DrawingContext).PushGuidelineSet(gs);
+
+            foreach (var shape in shapes)
+            {
+                shape.Render(dc, this);
+            }
+
+            (dc as DrawingContext).Pop();
+        }
     }
 }

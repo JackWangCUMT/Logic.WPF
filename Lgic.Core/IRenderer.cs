@@ -15,5 +15,7 @@ namespace Logic.Core
         void DrawText(object dc, XText text);
         void DrawPin(object dc, XPin pin);
         void DrawWire(object dc, XWire wire);
+        void DrawSelection(object dc, XRectangle rectangle);
+        void DrawShapes(object dc, IList<IShape> shapes);
     }
 }
