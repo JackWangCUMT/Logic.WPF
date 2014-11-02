@@ -287,7 +287,7 @@ namespace Logic.WPF.Page
 
         #endregion
 
-        #region HitTest Line
+        #region Point Math
 
         public Point NearestPointOnLine(Point a, Point b, Point p)
         {
@@ -320,6 +320,23 @@ namespace Logic.WPF.Page
             point.Y = (y1 + y2) / 2.0;
         }
 
+        #endregion
+
+        #region HitTest Bounds
+
+        public Rect GetPinBounds(double x, double y)
+        {
+            return new Rect(
+                x - XRenderer.PinRadius,
+                y - XRenderer.PinRadius,
+                XRenderer.PinRadius + XRenderer.PinRadius,
+                XRenderer.PinRadius + XRenderer.PinRadius);
+        }
+
+        #endregion
+
+        #region HitTest
+
         public bool HitTest(XLine line, Point p, double treshold)
         {
             var a = new Point(line.X1, line.Y1);
@@ -338,19 +355,6 @@ namespace Logic.WPF.Page
             var nearest = NearestPointOnLine(a, b, p);
             double distance = Distance(p.X, p.Y, nearest.X, nearest.Y);
             return distance < treshold;
-        }
-
-        #endregion
-
-        #region HitTest Shapes
-
-        public Rect GetPinBounds(double x, double y)
-        {
-            return new Rect(
-                x - XRenderer.PinRadius,
-                y - XRenderer.PinRadius,
-                XRenderer.PinRadius + XRenderer.PinRadius,
-                XRenderer.PinRadius + XRenderer.PinRadius);
         }
 
         public IShape HitTest(IEnumerable<XPin> pins, Point p)
