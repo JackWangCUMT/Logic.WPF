@@ -8,6 +8,7 @@ namespace Logic.Core
 {
     public class XEllipse : IShape
     {
+        public IStyle Style { get; set; }
         public double X { get; set; }
         public double Y { get; set; }
         public double RadiusX { get; set; }

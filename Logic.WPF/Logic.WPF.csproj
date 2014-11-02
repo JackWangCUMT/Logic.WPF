@@ -81,8 +81,10 @@
     </Compile>
     <Compile Include="Page\XBorder.cs" />
     <Compile Include="Page\XCanvas.cs" />
+    <Compile Include="Page\XColor.cs" />
     <Compile Include="Page\XFrame.cs" />
     <Compile Include="Page\XGrid.cs" />
+    <Compile Include="Page\XStyle.cs" />
     <Compile Include="Page\XTable.cs" />
     <Compile Include="Util\XHistory.cs" />
     <Compile Include="Util\XJson.cs" />

@@ -40,8 +40,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HAlignment.cs" />
+    <Compile Include="IColor.cs" />
     <Compile Include="IRenderer.cs" />
     <Compile Include="IShape.cs" />
+    <Compile Include="IStyle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VAlignment.cs" />
     <Compile Include="XBlock.cs" />

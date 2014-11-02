@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace Logic.Core
 {
-    public interface IShape
+    public interface IColor
     {
-        IStyle Style { get; set; }
-        void Render(object dc, IRenderer renderer);
+        int A { get; set; }
+        int R { get; set; }
+        int G { get; set; }
+        int B { get; set; }
     }
 }

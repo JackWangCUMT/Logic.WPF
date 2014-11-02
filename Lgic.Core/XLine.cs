@@ -8,6 +8,7 @@ namespace Logic.Core
 {
     public class XLine : IShape
     {
+        public IStyle Style { get; set; }
         public double X1 { get; set; }
         public double Y1 { get; set; }
         public double X2 { get; set; }

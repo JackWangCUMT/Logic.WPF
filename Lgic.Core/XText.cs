@@ -8,6 +8,7 @@ namespace Logic.Core
 {
     public class XText : IShape
     {
+        public IStyle Style { get; set; }
         public string Text { get; set; }
         public double X { get; set; }
         public double Y { get; set; }
