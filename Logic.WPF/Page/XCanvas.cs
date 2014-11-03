@@ -326,6 +326,45 @@ namespace Logic.WPF.Page
 
         #endregion
 
+        #region Add
+
+        public void Add(IEnumerable<IShape> shapes)
+        {
+            foreach (var shape in shapes)
+            {
+                if (shape is XLine)
+                {
+                    Layers.Template.Shapes.Add(shape);
+                }
+                else if (shape is XEllipse)
+                {
+                    Layers.Template.Shapes.Add(shape);
+                }
+                else if (shape is XRectangle)
+                {
+                    Layers.Template.Shapes.Add(shape);
+                }
+                else if (shape is XText)
+                {
+                    Layers.Template.Shapes.Add(shape);
+                }
+                else if (shape is XWire)
+                {
+                    Layers.Wires.Shapes.Add(shape);
+                }
+                else if (shape is XPin)
+                {
+                    Layers.Pins.Shapes.Add(shape);
+                }
+                else if (shape is XBlock)
+                {
+                    Layers.Blocks.Shapes.Add(shape);
+                }
+            }
+        }
+
+        #endregion
+
         #region Delete
 
         public void Delete(IEnumerable<IShape> shapes)
