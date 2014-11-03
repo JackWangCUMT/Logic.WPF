@@ -330,7 +330,7 @@ namespace Logic.WPF.Page
 
         public void Delete(IEnumerable<IShape> shapes)
         {
-            foreach (var shape in Renderer.Selected)
+            foreach (var shape in shapes)
             {
                 if (shape is XLine)
                 {
