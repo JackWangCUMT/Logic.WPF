@@ -519,6 +519,23 @@ namespace Logic.WPF
 
         #endregion
 
+        #region Clipboard
+
+        private void CopyToClipboard(IList<IShape> shapes)
+        {
+            try
+            {
+                var json = _json.JsonSerialize(shapes);
+                Clipboard.SetText(json, TextDataFormat.Text);
+            }
+            catch (Exception ex)
+            {
+                Debug.Print(ex.Message);
+            }
+        }
+
+        #endregion
+
         #region Edit
 
         private void Undo()
@@ -548,16 +565,7 @@ namespace Logic.WPF
             if (_renderer.Selected != null
                 && _renderer.Selected.Count > 0)
             {
-                var shapes = _renderer.Selected.ToList();
-                var json = _json.JsonSerialize(shapes);
-                try
-                {
-                    Clipboard.SetText(json, TextDataFormat.Text);
-                }
-                catch(Exception ex)
-                {
-                    Debug.Print(ex.Message);
-                }
+                CopyToClipboard(_renderer.Selected.ToList());
                 Delete();
             }
         }
