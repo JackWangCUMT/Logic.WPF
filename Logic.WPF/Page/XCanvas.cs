@@ -365,6 +365,22 @@ namespace Logic.WPF.Page
 
         #endregion
 
+        #region Insert
+
+        public void Insert(IEnumerable<IShape> shapes)
+        {
+            if (History != null)
+            {
+                History.Snapshot(Store("Page"));
+            }
+            SelectionReset();
+            Add(shapes);
+            Renderer.Selected = new HashSet<IShape>(shapes);
+            InvalidatePage();
+        }
+
+        #endregion
+
         #region Delete
 
         public void Delete(IEnumerable<IShape> shapes)
