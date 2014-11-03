@@ -828,6 +828,25 @@ namespace Logic.WPF.Page
 
         #region Selection Mode
 
+        public ICollection<IShape> GetAllShapes()
+        {
+            var all = Layers.Pins.Shapes
+                .Concat(Layers.Wires.Shapes)
+                .Concat(Layers.Blocks.Shapes)
+                .Concat(Layers.Template.Shapes);
+            return new HashSet<IShape>(all);
+        }
+
+        public void SelectAll()
+        {
+            var hs = GetAllShapes();
+            if (hs != null && hs.Count > 0)
+            {
+                Renderer.Selected = hs;
+                InvalidatePage();
+            }
+        }
+
         public void SelectionReset()
         {
             if (Renderer.Selected != null)

@@ -562,8 +562,7 @@ namespace Logic.WPF
 
         private void SelectAll()
         {
-            // TODO:
-            throw new NotImplementedException();
+            controller.editorLayer.SelectAll();
         }
 
         private void ToggleFill()
