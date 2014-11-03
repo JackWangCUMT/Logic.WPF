@@ -526,7 +526,7 @@ namespace Logic.WPF
             try
             {
                 var json = _json.JsonSerialize(shapes);
-                Clipboard.SetText(json, TextDataFormat.Text);
+                Clipboard.SetText(json, TextDataFormat.UnicodeText);
             }
             catch (Exception ex)
             {
