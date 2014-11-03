@@ -572,8 +572,11 @@ namespace Logic.WPF
 
         private void Copy()
         {
-            // TODO: Implement Copy
-            throw new NotImplementedException();
+            if (_renderer.Selected != null
+                && _renderer.Selected.Count > 0)
+            {
+                CopyToClipboard(_renderer.Selected.ToList());
+            }
         }
 
         private void Paste()
