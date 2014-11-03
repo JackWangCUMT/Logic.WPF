@@ -39,6 +39,7 @@
                 <MenuItem x:Name="editCut" Header="Cu_t" InputGestureText="Ctrl+X"/>
                 <MenuItem x:Name="editCopy" Header="_Copy" InputGestureText="Ctrl+C"/>
                 <MenuItem x:Name="editPaste" Header="_Paste" InputGestureText="Ctrl+V"/>
+                <MenuItem x:Name="editDelete" Header="_Delete" InputGestureText="Del"/>
                 <Separator/>
                 <MenuItem x:Name="editSelectAll" Header="Select _All" InputGestureText="Ctrl+A"/>
                 <Separator/>
@@ -55,7 +56,7 @@
                 </MenuItem>
                 <Separator/>
                 <MenuItem x:Name="editIncreaseTextSize" Header="_Increase Text Size" InputGestureText="Ctrl++"/>
-                <MenuItem x:Name="editDecreaseTextSize" Header="_Decrease Text Size" InputGestureText="Ctrl+-"/>
+                <MenuItem x:Name="editDecreaseTextSize" Header="Decrease Te_xt Size" InputGestureText="Ctrl+-"/>
                 <Separator/>
                 <MenuItem x:Name="editToggleFill" Header="Toggle _Fill" InputGestureText="F"/>
                 <Separator/>

@@ -256,6 +256,12 @@ namespace Logic.WPF
                             Paste();
                         }
                         break;
+                    // delete
+                    case Key.Delete:
+                        {
+                            Delete();
+                        }
+                        break;
 
                     // select all
                     case Key.A:
@@ -538,6 +544,15 @@ namespace Logic.WPF
         private void Paste()
         {
             throw new NotImplementedException();
+        }
+
+        private void Delete()
+        {
+            if (_renderer.Selected != null
+                && _renderer.Selected.Count > 0)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         private void SelectAll()
