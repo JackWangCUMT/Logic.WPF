@@ -289,30 +289,39 @@ namespace Logic.WPF.Page
 
             PreviewMouseRightButtonDown += (s, e) =>
             {
-                if (IsMouseCaptured)
-                {
-                    switch (_mode)
-                    {
-                        case Mode.None:
-                            break;
-                        case Mode.Selection:
-                            SelectionCancel();
-                            break; 
-                        case Mode.Create:
-                            CreateCancel();
-                            break; 
-                        case Mode.Move:
-                            MoveCancel();
-                            break; 
-                    }
-                }
-                else
-                {
-                    SelectionReset();
-                }
+                Cancel();
             };
 
             #endregion
+        }
+
+        #endregion
+
+        #region Cancel
+
+        public void Cancel()
+        {
+            if (IsMouseCaptured)
+            {
+                switch (_mode)
+                {
+                    case Mode.None:
+                        break;
+                    case Mode.Selection:
+                        SelectionCancel();
+                        break;
+                    case Mode.Create:
+                        CreateCancel();
+                        break;
+                    case Mode.Move:
+                        MoveCancel();
+                        break;
+                }
+            }
+            else
+            {
+                SelectionReset();
+            }
         }
 
         #endregion

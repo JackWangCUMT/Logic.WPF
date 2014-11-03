@@ -271,6 +271,13 @@ namespace Logic.WPF
                         }
                         break;
 
+                    // cancel
+                    case Key.Escape:
+                        {
+                            Cancel();
+                        }
+                        break;
+
                     // toggle fill
                     case Key.F:
                         ToggleFill();
@@ -496,6 +503,8 @@ namespace Logic.WPF
             editToggleInvertStart.Click += (s, e) => ToggleInvertStart();
             editToggleInvertEnd.Click += (s, e) => ToggleInvertEnd();
 
+            editCancel.Click += (s, e) => Cancel();
+
             toolNone.Click += (s, e) => SetToolNone();
             toolSelection.Click += (s, e) => SetToolSelection();
             toolWire.Click += (s, e) => SetToolWire();
@@ -643,6 +652,11 @@ namespace Logic.WPF
         {
             controller.editorLayer.SetTextHAlignment(HAlignment.Right);
             controller.editorLayer.SetTextVAlignment(VAlignment.Top);
+        }
+
+        private void Cancel()
+        {
+            controller.editorLayer.Cancel();
         }
 
         #endregion

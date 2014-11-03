@@ -64,6 +64,8 @@
                 <Separator/>
                 <MenuItem x:Name="editToggleInvertStart" Header="Toggle Invert Wire _Start" InputGestureText="["/>
                 <MenuItem x:Name="editToggleInvertEnd" Header="Toggle Invert Wire _End" InputGestureText="]"/>
+                <Separator/>
+                <MenuItem x:Name="editCancel" Header="Ca_ncel" InputGestureText="Esc"/>
             </MenuItem>
             <MenuItem Header="_Tool">
                 <MenuItem x:Name="toolNone" Header="_None" InputGestureText="N"/>
