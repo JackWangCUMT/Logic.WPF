@@ -545,8 +545,21 @@ namespace Logic.WPF
 
         private void Cut()
         {
-            // TODO: Implement Cut
-            throw new NotImplementedException();
+            if (_renderer.Selected != null
+                && _renderer.Selected.Count > 0)
+            {
+                var shapes = _renderer.Selected.ToList();
+                var json = _json.JsonSerialize(shapes);
+                try
+                {
+                    Clipboard.SetText(json, TextDataFormat.Text);
+                }
+                catch(Exception ex)
+                {
+                    Debug.Print(ex.Message);
+                }
+                Delete();
+            }
         }
 
         private void Copy()
