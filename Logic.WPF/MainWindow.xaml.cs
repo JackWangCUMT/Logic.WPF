@@ -476,6 +476,7 @@ namespace Logic.WPF
             editCut.Click += (s, e) => Cut();
             editCopy.Click += (s, e) => Copy();
             editPaste.Click += (s, e) => Paste();
+            editDelete.Click += (s, e) => Delete();
             editSelectAll.Click += (s, e) => SelectAll();
 
             editAlignLeftBottom.Click += (s, e) => AlignLeftBottom();
@@ -533,16 +534,19 @@ namespace Logic.WPF
 
         private void Cut()
         {
+            // TODO:
             throw new NotImplementedException();
         }
 
         private void Copy()
         {
+            // TODO:
             throw new NotImplementedException();
         }
 
         private void Paste()
         {
+            // TODO:
             throw new NotImplementedException();
         }
 
@@ -551,12 +555,14 @@ namespace Logic.WPF
             if (_renderer.Selected != null
                 && _renderer.Selected.Count > 0)
             {
+                // TODO:
                 throw new NotImplementedException();
             }
         }
 
         private void SelectAll()
         {
+            // TODO:
             throw new NotImplementedException();
         }
 
