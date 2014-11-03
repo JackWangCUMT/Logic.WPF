@@ -728,7 +728,7 @@ namespace Logic.WPF.Page
                     }
                 }
 
-                // TODO:
+                // TODO: Implement wire HitTest
                 //if (HitTest(wire, p, XRenderer.HitTreshold))
                 //{
                 //    if (hs != null)
@@ -789,7 +789,7 @@ namespace Logic.WPF.Page
                     var line = shape as XLine;
                     if (GetPinBounds(line.X1, line.Y1).IntersectsWith(rect)
                         || GetPinBounds(line.X2, line.Y2).IntersectsWith(rect)
-                        // TODO:
+                        // TODO: Implement line HitTest
                         /* || HitTest(line, p, XRenderer.HitTreshold) */)
                     {
                         if (hs != null)
@@ -1126,7 +1126,7 @@ namespace Logic.WPF.Page
                     Layers.Template.InvalidateVisual();
                     break;
                 case Element.Wire:
-                    // TODO:
+                    // TODO: Implement wire Move
                     break;
                 case Element.Pin:
                     _pin.X += dx;
@@ -1176,7 +1176,7 @@ namespace Logic.WPF.Page
                 else if (shape is XWire)
                 {
                     var wire = shape as XWire;
-                    // TODO:
+                    // TODO: Implement wire Move
                 }
                 else if (shape is XPin)
                 {

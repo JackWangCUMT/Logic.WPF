@@ -545,19 +545,19 @@ namespace Logic.WPF
 
         private void Cut()
         {
-            // TODO:
+            // TODO: Implement Cut
             throw new NotImplementedException();
         }
 
         private void Copy()
         {
-            // TODO:
+            // TODO: Implement Copy
             throw new NotImplementedException();
         }
 
         private void Paste()
         {
-            // TODO:
+            // TODO: Implement Paste
             throw new NotImplementedException();
         }
 
