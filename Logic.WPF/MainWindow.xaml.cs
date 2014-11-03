@@ -527,6 +527,7 @@ namespace Logic.WPF
                 controller.editorLayer.Store("Page"));
             if (page != null)
             {
+                controller.editorLayer.SelectionReset();
                 controller.editorLayer.Load(page);
             }
         }
@@ -537,6 +538,7 @@ namespace Logic.WPF
                 controller.editorLayer.Store("Page"));
             if (page != null)
             {
+                controller.editorLayer.SelectionReset();
                 controller.editorLayer.Load(page);
             }
         }
@@ -561,12 +563,7 @@ namespace Logic.WPF
 
         private void Delete()
         {
-            if (_renderer.Selected != null
-                && _renderer.Selected.Count > 0)
-            {
-                // TODO:
-                throw new NotImplementedException();
-            }
+            controller.editorLayer.SelectionDelete();
         }
 
         private void SelectAll()
@@ -795,6 +792,7 @@ namespace Logic.WPF
         private void OpenPage(string path)
         {
             var page = Open(path);
+            controller.editorLayer.SelectionReset();
             controller.editorLayer.History.Snapshot(
                 controller.editorLayer.Store("Page"));
             controller.editorLayer.Load(page);

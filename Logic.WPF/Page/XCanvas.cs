@@ -326,6 +326,45 @@ namespace Logic.WPF.Page
 
         #endregion
 
+        #region Delete
+
+        public void Delete(IEnumerable<IShape> shapes)
+        {
+            foreach (var shape in Renderer.Selected)
+            {
+                if (shape is XLine)
+                {
+                    Layers.Template.Shapes.Remove(shape);
+                }
+                else if (shape is XEllipse)
+                {
+                    Layers.Template.Shapes.Remove(shape);
+                }
+                else if (shape is XRectangle)
+                {
+                    Layers.Template.Shapes.Remove(shape);
+                }
+                else if (shape is XText)
+                {
+                    Layers.Template.Shapes.Remove(shape);
+                }
+                else if (shape is XWire)
+                {
+                    Layers.Wires.Shapes.Remove(shape);
+                }
+                else if (shape is XPin)
+                {
+                    Layers.Pins.Shapes.Remove(shape);
+                }
+                else if (shape is XBlock)
+                {
+                    Layers.Blocks.Shapes.Remove(shape);
+                }
+            }
+        }
+
+        #endregion
+
         #region Point Math
 
         public Point NearestPointOnLine(Point a, Point b, Point p)
@@ -853,6 +892,20 @@ namespace Logic.WPF.Page
             {
                 Renderer.Selected = hs;
                 InvalidatePage();
+            }
+        }
+
+        public void SelectionDelete()
+        {
+            if (Renderer.Selected != null
+                && Renderer.Selected.Count > 0)
+            {
+                if (History != null)
+                {
+                    History.Snapshot(Store("Page"));
+                }
+                Delete(Renderer.Selected);
+                SelectionReset();
             }
         }
 
