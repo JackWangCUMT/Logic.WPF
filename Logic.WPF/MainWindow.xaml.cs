@@ -581,8 +581,30 @@ namespace Logic.WPF
 
         private void Paste()
         {
-            // TODO: Implement Paste
-            throw new NotImplementedException();
+            try
+            {
+                if (Clipboard.ContainsText(TextDataFormat.UnicodeText))
+                {
+                    var json = Clipboard.GetText(TextDataFormat.UnicodeText);
+                    if (!string.IsNullOrEmpty(json))
+                    {
+                        Insert(json);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.Print(ex.Message);
+            }
+        }
+
+        private void Insert(string json)
+        {
+            var shapes = _json.JsonDeserialize<IList<IShape>>(json);
+            if (shapes.Count > 0)
+            {
+                controller.editorLayer.Insert(shapes);
+            }
         }
 
         private void Delete()
