@@ -282,13 +282,9 @@ namespace Logic.WPF.Page
             (dc as DrawingContext).Pop();
         }
 
-        public void DrawShapes(
-            object dc, 
-            IStyle normalStyle,
-            IStyle selectedStyle, 
-            IList<IShape> shapes)
+        public void DrawShapes(object dc, IStyle normal, IStyle selected, IList<IShape> shapes)
         {
-            double thickness = normalStyle.Thickness;
+            double thickness = normal.Thickness;
             double half = thickness / 2.0;
 
             var gs = new GuidelineSet(
@@ -302,11 +298,11 @@ namespace Logic.WPF.Page
                 {
                     if (Selected.Contains(shape))
                     {
-                        shape.Render(dc, this, selectedStyle);
+                        shape.Render(dc, this, selected);
                     }
                     else
                     {
-                        shape.Render(dc, this, normalStyle);
+                        shape.Render(dc, this, normal);
                     }
                 }
             }
@@ -314,7 +310,7 @@ namespace Logic.WPF.Page
             {
                 foreach (var shape in shapes)
                 {
-                    shape.Render(dc, this, normalStyle);
+                    shape.Render(dc, this, normal);
                 }
             }
 
