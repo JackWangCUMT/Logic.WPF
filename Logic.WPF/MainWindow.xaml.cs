@@ -118,7 +118,12 @@ namespace Logic.WPF
             Layers.Wires = controller.wireLayer;
             Layers.Pins = controller.pinLayer;
 
-            _renderer = new XRenderer();
+            _renderer = new XRenderer()
+            {
+                InvertSize = 6.0,
+                PinRadius = 4.0,
+                HitTreshold = 6.0
+            };
             controller.templateLayer.Renderer = _renderer;
             controller.blockLayer.Renderer = _renderer;
             controller.wireLayer.Renderer = _renderer;

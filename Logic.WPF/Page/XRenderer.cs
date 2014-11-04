@@ -12,10 +12,9 @@ namespace Logic.WPF.Page
     public class XRenderer : IRenderer
     {
         public ICollection<IShape> Selected { get; set; }
-
-        public static double InvertSize = 6.0;
-        public static double PinRadius = 4.0;
-        public static double HitTreshold = 6.0;
+        public double InvertSize { get; set; }
+        public double PinRadius { get; set; }
+        public double HitTreshold { get; set; }
 
         public void DrawBlock(object dc, IStyle style, XBlock block)
         {

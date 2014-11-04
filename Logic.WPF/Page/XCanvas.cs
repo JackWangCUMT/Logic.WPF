@@ -548,7 +548,7 @@ namespace Logic.WPF.Page
                     Layers.Pins.InvalidateVisual();
                     break;
                 case Element.Block:
-                    XCanvas.Move(_block, dx, dy);
+                    Move(_block, dx, dy);
                     Layers.Blocks.InvalidateVisual();
                     Layers.Wires.InvalidateVisual();
                     Layers.Pins.InvalidateVisual();
@@ -600,7 +600,7 @@ namespace Logic.WPF.Page
                 else if (shape is XBlock)
                 {
                     var block = shape as XBlock;
-                    XCanvas.Move(block, dx, dy);
+                    Move(block, dx, dy);
                 }
             }
 
@@ -610,7 +610,7 @@ namespace Logic.WPF.Page
             Layers.Pins.InvalidateVisual();
         }
 
-        public static void Move(XBlock block, double dx, double dy)
+        public void Move(XBlock block, double dx, double dy)
         {
             foreach (var shape in block.Shapes)
             {
@@ -1373,7 +1373,7 @@ namespace Logic.WPF.Page
 
         #region HitTest
 
-        private static Point NearestPointOnLine(Point a, Point b, Point p)
+        private Point NearestPointOnLine(Point a, Point b, Point p)
         {
             double ax = p.X - a.X;
             double ay = p.Y - a.Y;
@@ -1391,29 +1391,29 @@ namespace Logic.WPF.Page
             return new Point(bx * t + a.X, by * t + a.Y);
         }
 
-        private static double Distance(double x1, double y1, double x2, double y2)
+        private double Distance(double x1, double y1, double x2, double y2)
         {
             double dx = x1 - x2;
             double dy = y1 - y2;
             return Math.Sqrt(dx * dx + dy * dy);
         }
 
-        private static void Middle(ref Point point, double x1, double y1, double x2, double y2)
+        private void Middle(ref Point point, double x1, double y1, double x2, double y2)
         {
             point.X = (x1 + x2) / 2.0;
             point.Y = (y1 + y2) / 2.0;
         }
 
-        private static Rect GetPinBounds(double x, double y)
+        private Rect GetPinBounds(double x, double y)
         {
             return new Rect(
-                x - XRenderer.PinRadius,
-                y - XRenderer.PinRadius,
-                XRenderer.PinRadius + XRenderer.PinRadius,
-                XRenderer.PinRadius + XRenderer.PinRadius);
+                x - Renderer.PinRadius,
+                y - Renderer.PinRadius,
+                Renderer.PinRadius + Renderer.PinRadius,
+                Renderer.PinRadius + Renderer.PinRadius);
         }
 
-        private static Rect GetEllipseBounds(XEllipse ellipse)
+        private Rect GetEllipseBounds(XEllipse ellipse)
         {
             var bounds = new Rect(
                 ellipse.X - ellipse.RadiusX,
@@ -1423,7 +1423,7 @@ namespace Logic.WPF.Page
             return bounds;
         }
 
-        private static Rect GetRectangleBounds(XRectangle rectangle)
+        private Rect GetRectangleBounds(XRectangle rectangle)
         {
             var bounds = new Rect(
                 rectangle.X,
@@ -1433,7 +1433,7 @@ namespace Logic.WPF.Page
             return bounds;
         }
 
-        private static Rect GetTextBounds(XText text)
+        private Rect GetTextBounds(XText text)
         {
             var bounds = new Rect(
                 text.X,
@@ -1513,7 +1513,7 @@ namespace Logic.WPF.Page
                     }
                 }
 
-                if (HitTest(wire, p, XRenderer.HitTreshold))
+                if (HitTest(wire, p, Renderer.HitTreshold))
                 {
                     return wire;
                 }
@@ -1562,7 +1562,7 @@ namespace Logic.WPF.Page
                         return line;
                     }
 
-                    if (HitTest(line, p, XRenderer.HitTreshold))
+                    if (HitTest(line, p, Renderer.HitTreshold))
                     {
                         _lineHit = LineHit.Line;
                         return line;
@@ -2033,7 +2033,7 @@ namespace Logic.WPF.Page
             // move to drop position
             double dx = EnableSnap ? Snap(x, SnapSize) : x;
             double dy = EnableSnap ? Snap(y, SnapSize) : y;
-            XCanvas.Move(copy, dx, dy);
+            Move(copy, dx, dy);
 
             // add to collection
             Layers.Blocks.Shapes.Add(copy);

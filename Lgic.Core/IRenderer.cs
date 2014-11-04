@@ -9,6 +9,9 @@ namespace Logic.Core
     public interface IRenderer
     {
         ICollection<IShape> Selected { get; set; }
+        double InvertSize { get; set; }
+        double PinRadius { get; set; }
+        double HitTreshold { get; set; }
         void DrawBlock(object dc, IStyle style, XBlock block);
         void DrawLine(object dc, IStyle style, XLine line);
         void DrawEllipse(object dc, IStyle style, XEllipse ellipse);
