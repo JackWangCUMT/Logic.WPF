@@ -109,10 +109,10 @@ namespace Logic.WPF
         private void InitPage()
         {
             var layers = new XLayers();
-            layers.Template = controller.templateLayer;
-            layers.Blocks = controller.blockLayer;
-            layers.Wires = controller.wireLayer;
-            layers.Pins = controller.pinLayer;
+            layers.Template = page.templateLayer;
+            layers.Blocks = page.blockLayer;
+            layers.Wires = page.wireLayer;
+            layers.Pins = page.pinLayer;
 
             var renderer = new XRenderer()
             {
@@ -120,18 +120,18 @@ namespace Logic.WPF
                 PinRadius = 4.0,
                 HitTreshold = 6.0
             };
-            controller.templateLayer.Renderer = renderer;
-            controller.blockLayer.Renderer = renderer;
-            controller.wireLayer.Renderer = renderer;
-            controller.pinLayer.Renderer = renderer;
-            controller.editorLayer.Renderer = renderer;
+            page.templateLayer.Renderer = renderer;
+            page.blockLayer.Renderer = renderer;
+            page.wireLayer.Renderer = renderer;
+            page.pinLayer.Renderer = renderer;
+            page.editorLayer.Renderer = renderer;
 
-            controller.editorLayer.History = new XHistory<XPage>();
-            controller.editorLayer.Layers = layers;
-            controller.editorLayer.CurrentTool = XCanvas.Tool.Selection;
-            controller.editorLayer.AllowDrop = true;
+            page.editorLayer.History = new XHistory<XPage>();
+            page.editorLayer.Layers = layers;
+            page.editorLayer.CurrentTool = XCanvas.Tool.Selection;
+            page.editorLayer.AllowDrop = true;
 
-            controller.editorLayer.DragEnter += (s, e) =>
+            page.editorLayer.DragEnter += (s, e) =>
             {
                 if (!e.Data.GetDataPresent("Block") || s == e.Source)
                 {
@@ -139,9 +139,9 @@ namespace Logic.WPF
                 }
             };
 
-            controller.editorLayer.Drop += (s, e) =>
+            page.editorLayer.Drop += (s, e) =>
             {
-                Point point = e.GetPosition(controller.editorLayer);
+                Point point = e.GetPosition(page.editorLayer);
 
                 // block
                 if (e.Data.GetDataPresent("Block"))
@@ -149,10 +149,10 @@ namespace Logic.WPF
                     var block = e.Data.GetData("Block") as XBlock;
                     if (block != null)
                     {
-                        controller.editorLayer.History.Snapshot(
-                            controller.editorLayer.Create("Page"));
-                        var copy = controller.editorLayer.Insert(block, point.X, point.Y);
-                        controller.editorLayer.Connect(copy);
+                        page.editorLayer.History.Snapshot(
+                            page.editorLayer.Create("Page"));
+                        var copy = page.editorLayer.Insert(block, point.X, point.Y);
+                        page.editorLayer.Connect(copy);
                         e.Handled = true;
                     }
                 }
@@ -162,7 +162,7 @@ namespace Logic.WPF
                     string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
                     if (files != null && files.Length == 1)
                     {
-                        controller.editorLayer.Load(files[0]);
+                        page.editorLayer.Load(files[0]);
                     }
                 }
             };
@@ -210,14 +210,6 @@ namespace Logic.WPF
 
                 switch (e.Key)
                 {
-                    // show json
-                    case Key.J:
-                        if (control)
-                        {
-                            Json();
-                        }
-                        break;
-
                     // undo
                     case Key.Z:
                         if (control)
@@ -521,122 +513,122 @@ namespace Logic.WPF
 
         private void Undo()
         {
-            controller.editorLayer.Undo();
+            page.editorLayer.Undo();
         }
 
         private void Redo()
         {
-            controller.editorLayer.Redo();
+            page.editorLayer.Redo();
         }
 
         private void Cut()
         {
-            controller.editorLayer.Cut();
+            page.editorLayer.Cut();
         }
 
         private void Copy()
         {
-            controller.editorLayer.Copy();
+            page.editorLayer.Copy();
         }
 
         private void Paste()
         {
-            controller.editorLayer.Paste();
+            page.editorLayer.Paste();
         }
 
         private void Delete()
         {
-            controller.editorLayer.SelectionDelete();
+            page.editorLayer.SelectionDelete();
         }
 
         private void SelectAll()
         {
-            controller.editorLayer.SelectAll();
+            page.editorLayer.SelectAll();
         }
 
         private void ToggleFill()
         {
-            controller.editorLayer.ToggleFill();
+            page.editorLayer.ToggleFill();
         }
 
         private void ToggleSnap()
         {
-            controller.editorLayer.EnableSnap = !controller.editorLayer.EnableSnap;
+            page.editorLayer.EnableSnap = !page.editorLayer.EnableSnap;
         }
 
         private void ToggleInvertStart()
         {
-            controller.editorLayer.ToggleInvertStart();
+            page.editorLayer.ToggleInvertStart();
         }
 
         private void ToggleInvertEnd()
         {
-            controller.editorLayer.ToggleInvertEnd();
+            page.editorLayer.ToggleInvertEnd();
         }
 
         private void IncreaseTextSize()
         {
-            controller.editorLayer.SetTextSizeDelta(+1.0);
+            page.editorLayer.SetTextSizeDelta(+1.0);
         }
 
         private void DecreaseTextSize()
         {
-            controller.editorLayer.SetTextSizeDelta(-1.0);
+            page.editorLayer.SetTextSizeDelta(-1.0);
         }
 
         private void AlignLeftBottom()
         {
-            controller.editorLayer.SetTextHAlignment(HAlignment.Left);
-            controller.editorLayer.SetTextVAlignment(VAlignment.Bottom);
+            page.editorLayer.SetTextHAlignment(HAlignment.Left);
+            page.editorLayer.SetTextVAlignment(VAlignment.Bottom);
         }
 
         private void AlignBottom()
         {
-            controller.editorLayer.SetTextVAlignment(VAlignment.Bottom);
+            page.editorLayer.SetTextVAlignment(VAlignment.Bottom);
         }
 
         private void AlignRightBottom()
         {
-            controller.editorLayer.SetTextHAlignment(HAlignment.Right);
-            controller.editorLayer.SetTextVAlignment(VAlignment.Bottom);
+            page.editorLayer.SetTextHAlignment(HAlignment.Right);
+            page.editorLayer.SetTextVAlignment(VAlignment.Bottom);
         }
 
         private void AlignLeft()
         {
-            controller.editorLayer.SetTextHAlignment(HAlignment.Left);
+            page.editorLayer.SetTextHAlignment(HAlignment.Left);
         }
 
         private void AlignCenterCenter()
         {
-            controller.editorLayer.SetTextHAlignment(HAlignment.Center);
-            controller.editorLayer.SetTextVAlignment(VAlignment.Center);
+            page.editorLayer.SetTextHAlignment(HAlignment.Center);
+            page.editorLayer.SetTextVAlignment(VAlignment.Center);
         }
 
         private void AlignRight()
         {
-            controller.editorLayer.SetTextHAlignment(HAlignment.Right);
+            page.editorLayer.SetTextHAlignment(HAlignment.Right);
         }
 
         private void AlignLeftTop()
         {
-            controller.editorLayer.SetTextHAlignment(HAlignment.Left);
-            controller.editorLayer.SetTextVAlignment(VAlignment.Top);
+            page.editorLayer.SetTextHAlignment(HAlignment.Left);
+            page.editorLayer.SetTextVAlignment(VAlignment.Top);
         }
 
         private void AlignTop()
         {
-            controller.editorLayer.SetTextVAlignment(VAlignment.Top);
+            page.editorLayer.SetTextVAlignment(VAlignment.Top);
         }
 
         private void AlignRightTop()
         {
-            controller.editorLayer.SetTextHAlignment(HAlignment.Right);
-            controller.editorLayer.SetTextVAlignment(VAlignment.Top);
+            page.editorLayer.SetTextHAlignment(HAlignment.Right);
+            page.editorLayer.SetTextVAlignment(VAlignment.Top);
         }
 
         private void Cancel()
         {
-            controller.editorLayer.Cancel();
+            page.editorLayer.Cancel();
         }
 
         #endregion
@@ -645,55 +637,55 @@ namespace Logic.WPF
 
         private void SetToolNone()
         {
-            controller.editorLayer.CurrentTool = XCanvas.Tool.None;
+            page.editorLayer.CurrentTool = XCanvas.Tool.None;
             UpdateToolMenu();
         }
 
         private void SetToolSelection()
         {
-            controller.editorLayer.CurrentTool = XCanvas.Tool.Selection;
+            page.editorLayer.CurrentTool = XCanvas.Tool.Selection;
             UpdateToolMenu();
         }
 
         private void SetToolLine()
         {
-            controller.editorLayer.CurrentTool = XCanvas.Tool.Line;
+            page.editorLayer.CurrentTool = XCanvas.Tool.Line;
             UpdateToolMenu();
         }
 
         private void SetToolEllipse()
         {
-            controller.editorLayer.CurrentTool = XCanvas.Tool.Ellipse;
+            page.editorLayer.CurrentTool = XCanvas.Tool.Ellipse;
             UpdateToolMenu();
         }
 
         private void SetToolRectangle()
         {
-            controller.editorLayer.CurrentTool = XCanvas.Tool.Rectangle;
+            page.editorLayer.CurrentTool = XCanvas.Tool.Rectangle;
             UpdateToolMenu();
         }
 
         private void SetToolText()
         {
-            controller.editorLayer.CurrentTool = XCanvas.Tool.Text;
+            page.editorLayer.CurrentTool = XCanvas.Tool.Text;
             UpdateToolMenu();
         }
 
         private void SetToolWire()
         {
-            controller.editorLayer.CurrentTool = XCanvas.Tool.Wire;
+            page.editorLayer.CurrentTool = XCanvas.Tool.Wire;
             UpdateToolMenu();
         }
 
         private void SetToolPin()
         {
-            controller.editorLayer.CurrentTool = XCanvas.Tool.Pin;
+            page.editorLayer.CurrentTool = XCanvas.Tool.Pin;
             UpdateToolMenu();
         }
 
         private void UpdateToolMenu()
         {
-            var tool = controller.editorLayer.CurrentTool;
+            var tool = page.editorLayer.CurrentTool;
             toolNone.IsChecked = (tool == XCanvas.Tool.None);
             toolSelection.IsChecked = (tool == XCanvas.Tool.Selection);
             toolWire.IsChecked = (tool == XCanvas.Tool.Wire);
@@ -710,7 +702,7 @@ namespace Logic.WPF
 
         private void New()
         {
-            controller.editorLayer.New();
+            page.editorLayer.New();
             _pageFileName = string.Empty;
         }
 
@@ -723,7 +715,7 @@ namespace Logic.WPF
 
             if (dlg.ShowDialog() == true)
             {
-                controller.editorLayer.Load(dlg.FileName);
+                page.editorLayer.Load(dlg.FileName);
                 _pageFileName = dlg.FileName;
             }
         }
@@ -732,7 +724,7 @@ namespace Logic.WPF
         {
             if (!string.IsNullOrEmpty(_pageFileName))
             {
-                controller.editorLayer.Save(_pageFileName);
+                page.editorLayer.Save(_pageFileName);
             }
             else
             {
@@ -753,21 +745,9 @@ namespace Logic.WPF
 
             if (dlg.ShowDialog() == true)
             {
-                controller.editorLayer.Save(dlg.FileName);
+                page.editorLayer.Save(dlg.FileName);
                 _pageFileName = dlg.FileName;
             }
-        }
-
-        #endregion
-
-        #region Json
-
-        private void Json()
-        {
-            var path = System.IO.Path.GetTempFileName() + ".json";
-            var page = controller.editorLayer.Create("Page");
-            controller.editorLayer.Save(path, page);
-            System.Diagnostics.Process.Start("notepad", path);
         }
 
         #endregion

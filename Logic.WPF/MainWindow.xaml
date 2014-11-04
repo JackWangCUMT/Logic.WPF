@@ -5,10 +5,8 @@
         xmlns:page="clr-namespace:Logic.WPF.Page"
         Title="Logic" Height="980" Width="1420"
         Background="WhiteSmoke"
-        WindowStartupLocation="CenterScreen"
-        WindowState="Maximized"
-        SnapsToDevicePixels="True"
-        UseLayoutRounding="False"
+        WindowStartupLocation="CenterScreen" WindowState="Maximized"
+        SnapsToDevicePixels="True" UseLayoutRounding="False"
         TextOptions.TextFormattingMode="Display" 
         TextOptions.TextHintingMode="Auto" 
         TextOptions.TextRenderingMode="Auto">
@@ -98,17 +96,17 @@
         </ListBox>
         <!--
         <page:XBorder x:Name="border"
-                       Grid.Column="1" 
-                       Grid.Row="1"
-                       ClipToBounds="True">
-            <local:PageControl x:Name="controller"/>
+                      Grid.Column="1" Grid.Row="1"
+                      ClipToBounds="True">
+            <local:PageControl x:Name="page"/>
         </page:XBorder>
         -->
-        <ScrollViewer Grid.Column="1" Grid.Row="1" 
+        <ScrollViewer x:Name="scroll"
+                      Grid.Column="1" Grid.Row="1" 
                       HorizontalScrollBarVisibility="Auto"
                       VerticalScrollBarVisibility="Auto"
                       FocusVisualStyle="{x:Null}">
-            <local:PageControl x:Name="controller" Margin="10"/>
+            <local:PageControl x:Name="page" Margin="10"/>
         </ScrollViewer>
     </Grid>
 </Window>
