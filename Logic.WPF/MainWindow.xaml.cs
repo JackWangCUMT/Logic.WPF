@@ -27,7 +27,7 @@ namespace Logic.WPF
     {
         #region Properties
 
-        public XLayers Layers { get; set; }
+        public XLayers layers { get; set; }
 
         [ImportMany(typeof(XBlock))]
         public IList<XBlock> Blocks { get; set; }
@@ -36,9 +36,7 @@ namespace Logic.WPF
 
         #region Fields
 
-        private XJson _json = new XJson();
         private string _pageFileName = string.Empty;
-        private IRenderer _renderer;
         private Point _dragStartPoint;
 
         #endregion
@@ -112,26 +110,26 @@ namespace Logic.WPF
 
         private void InitPage()
         {
-            Layers = new XLayers();
-            Layers.Template = controller.templateLayer;
-            Layers.Blocks = controller.blockLayer;
-            Layers.Wires = controller.wireLayer;
-            Layers.Pins = controller.pinLayer;
+            layers = new XLayers();
+            layers.Template = controller.templateLayer;
+            layers.Blocks = controller.blockLayer;
+            layers.Wires = controller.wireLayer;
+            layers.Pins = controller.pinLayer;
 
-            _renderer = new XRenderer()
+            var renderer = new XRenderer()
             {
                 InvertSize = 6.0,
                 PinRadius = 4.0,
                 HitTreshold = 6.0
             };
-            controller.templateLayer.Renderer = _renderer;
-            controller.blockLayer.Renderer = _renderer;
-            controller.wireLayer.Renderer = _renderer;
-            controller.pinLayer.Renderer = _renderer;
-            controller.editorLayer.Renderer = _renderer;
+            controller.templateLayer.Renderer = renderer;
+            controller.blockLayer.Renderer = renderer;
+            controller.wireLayer.Renderer = renderer;
+            controller.pinLayer.Renderer = renderer;
+            controller.editorLayer.Renderer = renderer;
 
             controller.editorLayer.History = new XHistory<XPage>();
-            controller.editorLayer.Layers = Layers;
+            controller.editorLayer.Layers = layers;
             controller.editorLayer.CurrentTool = XCanvas.Tool.Selection;
             controller.editorLayer.AllowDrop = true;
 
@@ -210,6 +208,7 @@ namespace Logic.WPF
             PreviewKeyDown += (s, e) =>
             {
                 bool control = Keyboard.Modifiers == ModifierKeys.Control;
+                bool none = Keyboard.Modifiers == ModifierKeys.None;
 
                 switch (e.Key)
                 {
@@ -217,10 +216,7 @@ namespace Logic.WPF
                     case Key.J:
                         if (control)
                         {
-                            var path = System.IO.Path.GetTempFileName() + ".json";
-                            var page = controller.editorLayer.Create("Page");
-                            controller.editorLayer.Save(path, page);
-                            System.Diagnostics.Process.Start("notepad", path);
+                            Json();
                         }
                         break;
 
@@ -262,6 +258,7 @@ namespace Logic.WPF
                         break;
                     // delete
                     case Key.Delete:
+                        if (none)
                         {
                             Delete();
                         }
@@ -277,6 +274,7 @@ namespace Logic.WPF
 
                     // cancel
                     case Key.Escape:
+                        if (none)
                         {
                             Cancel();
                         }
@@ -284,16 +282,25 @@ namespace Logic.WPF
 
                     // toggle fill
                     case Key.F:
-                        ToggleFill();
+                        if (none)
+                        {
+                            ToggleFill();
+                        }
                         break;
 
                     // '[' toggle invert start
                     case Key.OemOpenBrackets:
-                        ToggleInvertStart();
+                        if (none)
+                        {
+                            ToggleInvertStart();
+                        }
                         break;
                     // ']' toggle invert end
                     case Key.OemCloseBrackets:
-                        ToggleInvertEnd();
+                        if (none)
+                        {
+                            ToggleInvertEnd();
+                        }
                         break;
 
                     // text size
@@ -384,39 +391,60 @@ namespace Logic.WPF
                         {
                             New();
                         }
-                        else
+                        else if (none)
                         {
                             SetToolNone();
                         }
                         break;
                     // tool line
                     case Key.L:
-                        SetToolLine();
+                        if (none)
+                        {
+                            SetToolLine();
+                        }
                         break;
                     // tool ellipse
                     case Key.E:
-                        SetToolEllipse();
+                        if (none)
+                        {
+                            SetToolEllipse();
+                        }
                         break;
                     // tool rectangle
                     case Key.R:
-                        SetToolRectangle();
+                        if (none)
+                        {
+                            SetToolRectangle();
+                        }
                         break;
                     // tool text
                     case Key.T:
-                        SetToolText();
+                        if (none)
+                        {
+                            SetToolText();
+                        }
                         break;
                     // tool wire
                     case Key.W:
-                        SetToolWire();
+                        if (none)
+                        {
+                            SetToolWire();
+                        }
                         break;
                     // tool pin
                     case Key.P:
-                        SetToolPin();
+                        if (none)
+                        {
+                            SetToolPin();
+                        }
                         break;
 
                     // toggle snap
                     case Key.G:
-                        ToggleSnap();
+                        if (none)
+                        {
+                            ToggleSnap();
+                        }
                         break;
 
                     // open
@@ -433,7 +461,7 @@ namespace Logic.WPF
                         {
                             Save();
                         }
-                        else
+                        else if (none)
                         {
                             SetToolSelection();
                         }
@@ -491,92 +519,31 @@ namespace Logic.WPF
 
         #endregion
 
-        #region Clipboard
-
-        private void CopyToClipboard(IList<IShape> shapes)
-        {
-            try
-            {
-                var json = _json.JsonSerialize(shapes);
-                Clipboard.SetText(json, TextDataFormat.UnicodeText);
-            }
-            catch (Exception ex)
-            {
-                Debug.Print(ex.Message);
-            }
-        }
-
-        #endregion
-
         #region Edit
 
         private void Undo()
         {
-            var page = controller.editorLayer.History.Undo(
-                controller.editorLayer.Create("Page"));
-            if (page != null)
-            {
-                controller.editorLayer.SelectionReset();
-                controller.editorLayer.Load(page);
-            }
+            controller.editorLayer.Undo();
         }
 
         private void Redo()
         {
-            var page = controller.editorLayer.History.Redo(
-                controller.editorLayer.Create("Page"));
-            if (page != null)
-            {
-                controller.editorLayer.SelectionReset();
-                controller.editorLayer.Load(page);
-            }
+            controller.editorLayer.Redo();
         }
 
         private void Cut()
         {
-            if (_renderer.Selected != null
-                && _renderer.Selected.Count > 0)
-            {
-                CopyToClipboard(_renderer.Selected.ToList());
-                Delete();
-            }
+            controller.editorLayer.Cut();
         }
 
         private void Copy()
         {
-            if (_renderer.Selected != null
-                && _renderer.Selected.Count > 0)
-            {
-                CopyToClipboard(_renderer.Selected.ToList());
-            }
+            controller.editorLayer.Copy();
         }
 
         private void Paste()
         {
-            try
-            {
-                if (Clipboard.ContainsText(TextDataFormat.UnicodeText))
-                {
-                    var json = Clipboard.GetText(TextDataFormat.UnicodeText);
-                    if (!string.IsNullOrEmpty(json))
-                    {
-                        Insert(json);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.Print(ex.Message);
-            }
-        }
-
-        private void Insert(string json)
-        {
-            var shapes = _json.JsonDeserialize<IList<IShape>>(json);
-            if (shapes.Count > 0)
-            {
-                controller.editorLayer.Insert(shapes);
-            }
+            controller.editorLayer.Paste();
         }
 
         private void Delete()
@@ -791,6 +758,18 @@ namespace Logic.WPF
                 controller.editorLayer.Save(dlg.FileName);
                 _pageFileName = dlg.FileName;
             }
+        }
+
+        #endregion
+
+        #region Json
+
+        private void Json()
+        {
+            var path = System.IO.Path.GetTempFileName() + ".json";
+            var page = controller.editorLayer.Create("Page");
+            controller.editorLayer.Save(path, page);
+            System.Diagnostics.Process.Start("notepad", path);
         }
 
         #endregion

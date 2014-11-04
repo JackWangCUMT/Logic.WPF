@@ -2203,6 +2203,94 @@ namespace Logic.WPF.Page
 
         #endregion
 
+        #region Clipboard
+
+        private void CopyToClipboard(IList<IShape> shapes)
+        {
+            try
+            {
+                var json = _json.JsonSerialize(shapes);
+                Clipboard.SetText(json, TextDataFormat.UnicodeText);
+            }
+            catch (Exception ex)
+            {
+                Debug.Print(ex.Message);
+            }
+        }
+
+        #endregion
+
+        #region Edit
+
+        public void Undo()
+        {
+            var page = History.Undo(Create("Page"));
+            if (page != null)
+            {
+                SelectionReset();
+                Load(page);
+            }
+        }
+
+        public void Redo()
+        {
+            var page = History.Redo(Create("Page"));
+            if (page != null)
+            {
+                SelectionReset();
+                Load(page);
+            }
+        }
+
+        public void Cut()
+        {
+            if (Renderer.Selected != null
+                && Renderer.Selected.Count > 0)
+            {
+                CopyToClipboard(Renderer.Selected.ToList());
+                SelectionDelete();
+            }
+        }
+
+        public void Copy()
+        {
+            if (Renderer.Selected != null
+                && Renderer.Selected.Count > 0)
+            {
+                CopyToClipboard(Renderer.Selected.ToList());
+            }
+        }
+
+        public void Paste()
+        {
+            try
+            {
+                if (Clipboard.ContainsText(TextDataFormat.UnicodeText))
+                {
+                    var json = Clipboard.GetText(TextDataFormat.UnicodeText);
+                    if (!string.IsNullOrEmpty(json))
+                    {
+                        Insert(json);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.Print(ex.Message);
+            }
+        }
+
+        public void Insert(string json)
+        {
+            var shapes = _json.JsonDeserialize<IList<IShape>>(json);
+            if (shapes.Count > 0)
+            {
+                Insert(shapes);
+            }
+        }
+
+        #endregion
+
         #region Render
 
         public void InvalidatePage()
