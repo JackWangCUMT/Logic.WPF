@@ -27,8 +27,6 @@ namespace Logic.WPF
     {
         #region Properties
 
-        public XLayers layers { get; set; }
-
         [ImportMany(typeof(XBlock))]
         public IList<XBlock> Blocks { get; set; }
 
@@ -110,7 +108,7 @@ namespace Logic.WPF
 
         private void InitPage()
         {
-            layers = new XLayers();
+            var layers = new XLayers();
             layers.Template = controller.templateLayer;
             layers.Blocks = controller.blockLayer;
             layers.Wires = controller.wireLayer;
