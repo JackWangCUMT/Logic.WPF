@@ -46,11 +46,9 @@ namespace Logic.WPF
             InitializeComponent();
 
             InitPage();
-            InitBlocks();
             InitKeys();
             InitMenu();
-
-            Compose();
+            InitBlocks();
         }
 
         #endregion
@@ -60,47 +58,14 @@ namespace Logic.WPF
         public T FindVisualParent<T>(DependencyObject child) 
             where T : DependencyObject
         {
-            DependencyObject parentObject = VisualTreeHelper.GetParent(child);
+            var parentObject = VisualTreeHelper.GetParent(child);
             if (parentObject == null)
-            {
                 return null;
-            }
-
             T parent = parentObject as T;
             if (parent != null)
-            {
                 return parent;
-            }
-            else
-            {
-                return FindVisualParent<T>(parentObject);
-            }
+            return FindVisualParent<T>(parentObject);
         } 
-
-        #endregion
-
-        #region Composition
-
-        private void Compose()
-        {
-            Blocks = new ObservableCollection<XBlock>();
-
-            var catalog = new AggregateCatalog();
-            catalog.Catalogs.Add(new AssemblyCatalog(Assembly.GetExecutingAssembly()));
-            catalog.Catalogs.Add(new DirectoryCatalog("."));
-            var container = new CompositionContainer(catalog);
-
-            try
-            {
-                container.ComposeParts(this);
-            }
-            catch (CompositionException ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-
-            DataContext = this;
-        }
 
         #endregion
 
@@ -199,6 +164,24 @@ namespace Logic.WPF
                     }
                 }
             };
+
+            Blocks = new ObservableCollection<XBlock>();
+
+            try
+            {
+                var catalog = new AggregateCatalog();
+                catalog.Catalogs.Add(new AssemblyCatalog(Assembly.GetExecutingAssembly()));
+                catalog.Catalogs.Add(new DirectoryCatalog("."));
+
+                var container = new CompositionContainer(catalog);
+                container.ComposeParts(this);
+            }
+            catch (CompositionException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+            DataContext = this;
         }
 
         private void InitKeys()
@@ -509,6 +492,60 @@ namespace Logic.WPF
 
         #endregion
 
+        #region File
+
+        private void New()
+        {
+            page.editorLayer.New();
+            _pageFileName = string.Empty;
+        }
+
+        private void Open()
+        {
+            var dlg = new Microsoft.Win32.OpenFileDialog()
+            {
+                Filter = "Json (*.json)|*.json"
+            };
+
+            if (dlg.ShowDialog() == true)
+            {
+                page.editorLayer.Load(dlg.FileName);
+                _pageFileName = dlg.FileName;
+            }
+        }
+
+        private void Save()
+        {
+            if (!string.IsNullOrEmpty(_pageFileName))
+            {
+                page.editorLayer.Save(_pageFileName);
+            }
+            else
+            {
+                SaveAs();
+            }
+        }
+
+        private void SaveAs()
+        {
+            string fileName = string.IsNullOrEmpty(_pageFileName) ?
+                "shapes" : System.IO.Path.GetFileName(_pageFileName);
+
+            var dlg = new Microsoft.Win32.SaveFileDialog()
+            {
+                Filter = "Json (*.json)|*.json",
+                FileName = fileName
+            };
+
+            if (dlg.ShowDialog() == true)
+            {
+                page.editorLayer.Save(dlg.FileName);
+                _pageFileName = dlg.FileName;
+            }
+        }
+
+        #endregion
+
         #region Edit
 
         private void Undo()
@@ -694,60 +731,6 @@ namespace Logic.WPF
             toolEllipse.IsChecked = (tool == XCanvas.Tool.Ellipse);
             toolRectangle.IsChecked = (tool == XCanvas.Tool.Rectangle);
             toolText.IsChecked = (tool == XCanvas.Tool.Text);
-        }
-
-        #endregion
-
-        #region File
-
-        private void New()
-        {
-            page.editorLayer.New();
-            _pageFileName = string.Empty;
-        }
-
-        private void Open()
-        {
-            var dlg = new Microsoft.Win32.OpenFileDialog()
-            {
-                Filter = "Json (*.json)|*.json"
-            };
-
-            if (dlg.ShowDialog() == true)
-            {
-                page.editorLayer.Load(dlg.FileName);
-                _pageFileName = dlg.FileName;
-            }
-        }
-
-        private void Save()
-        {
-            if (!string.IsNullOrEmpty(_pageFileName))
-            {
-                page.editorLayer.Save(_pageFileName);
-            }
-            else
-            {
-                SaveAs();
-            }
-        }
-
-        private void SaveAs()
-        {
-            string fileName = string.IsNullOrEmpty(_pageFileName) ? 
-                "shapes" : System.IO.Path.GetFileName(_pageFileName);
-
-            var dlg = new Microsoft.Win32.SaveFileDialog()
-            {
-                Filter = "Json (*.json)|*.json",
-                FileName = fileName
-            };
-
-            if (dlg.ShowDialog() == true)
-            {
-                page.editorLayer.Save(dlg.FileName);
-                _pageFileName = dlg.FileName;
-            }
         }
 
         #endregion
