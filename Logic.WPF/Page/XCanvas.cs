@@ -1188,6 +1188,10 @@ namespace Logic.WPF.Page
                 _wire.InvertStart = !_wire.InvertStart;
                 InvalidateVisual();
             }
+            else
+            {
+                ToggleSelectedInvertStart();
+            }
         }
 
         public void ToggleInvertEnd()
@@ -1196,6 +1200,40 @@ namespace Logic.WPF.Page
             {
                 _wire.InvertEnd = !_wire.InvertEnd;
                 InvalidateVisual();
+            }
+            else
+            {
+                ToggleSelectedInvertEnd();
+            }
+        }
+
+        public void ToggleSelectedInvertStart()
+        {
+            if (Renderer != null
+                && Renderer.Selected != null
+                && Renderer.Selected.Count > 0)
+            {
+                var wires = Renderer.Selected.Where(x => x is XWire).Cast<XWire>();
+                foreach (var wire in wires)
+                {
+                    wire.InvertStart = !wire.InvertStart;
+                }
+                Layers.Wires.InvalidateVisual();
+            }
+        }
+
+        public void ToggleSelectedInvertEnd()
+        {
+            if (Renderer != null
+                && Renderer.Selected != null
+                && Renderer.Selected.Count > 0)
+            {
+                var wires = Renderer.Selected.Where(x => x is XWire).Cast<XWire>();
+                foreach (var wire in wires)
+                {
+                    wire.InvertEnd = !wire.InvertEnd;
+                }
+                Layers.Wires.InvalidateVisual();
             }
         }
 
