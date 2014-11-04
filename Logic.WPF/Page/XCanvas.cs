@@ -1158,7 +1158,7 @@ namespace Logic.WPF.Page
 
         #endregion
 
-        #region Create Mode Properties
+        #region Shape Properties
 
         public void ToggleFill()
         {
@@ -1167,17 +1167,19 @@ namespace Logic.WPF.Page
                 _rectangle.IsFilled = !_rectangle.IsFilled;
                 InvalidateVisual();
             }
-
-            if (IsMouseCaptured && CurrentTool == Tool.Ellipse)
+            else if (IsMouseCaptured && CurrentTool == Tool.Ellipse)
             {
                 _ellipse.IsFilled = !_ellipse.IsFilled;
                 InvalidateVisual();
             }
-
-            if (IsMouseCaptured && CurrentTool == Tool.Text)
+            else if (IsMouseCaptured && CurrentTool == Tool.Text)
             {
                 _text.IsFilled = !_text.IsFilled;
                 InvalidateVisual();
+            }
+            else
+            {
+                ToggleSelectedFill();
             }
         }
 
@@ -1204,6 +1206,77 @@ namespace Logic.WPF.Page
             else
             {
                 ToggleSelectedInvertEnd();
+            }
+        }
+
+        public void SetTextSizeDelta(double delta)
+        {
+            if (IsMouseCaptured && CurrentTool == Tool.Text)
+            {
+                double size = _text.FontSize + delta;
+                if (size > 0.0)
+                {
+                    _text.FontSize = size;
+                    InvalidateVisual();
+                }
+            }
+            else
+            {
+                SetSelectedTextSizeDelta(delta);
+            }
+        }
+
+        public void SetTextHAlignment(HAlignment halignment)
+        {
+            if (IsMouseCaptured && CurrentTool == Tool.Text)
+            {
+                _text.HAlignment = halignment;
+                InvalidateVisual();
+            }
+            else
+            {
+                SetSelectedTextHAlignment(halignment);
+            }
+        }
+
+        public void SetTextVAlignment(VAlignment valignment)
+        {
+            if (IsMouseCaptured && CurrentTool == Tool.Text)
+            {
+                _text.VAlignment = valignment;
+                InvalidateVisual();
+            }
+            else
+            {
+                SetSelectedTextVAlignment(valignment);
+            }
+        }
+
+        public void ToggleSelectedFill()
+        {
+            if (Renderer != null
+                && Renderer.Selected != null
+                && Renderer.Selected.Count > 0)
+            {
+                var rectangles = Renderer.Selected.Where(x => x is XRectangle).Cast<XRectangle>();
+                foreach (var rectangle in rectangles)
+                {
+                    rectangle.IsFilled = !rectangle.IsFilled;
+                }
+
+                var ellipses = Renderer.Selected.Where(x => x is XEllipse).Cast<XEllipse>();
+                foreach (var ellipse in ellipses)
+                {
+                    ellipse.IsFilled = !ellipse.IsFilled;
+                }
+
+                var texts = Renderer.Selected.Where(x => x is XText).Cast<XText>();
+                foreach (var text in texts)
+                {
+                    text.IsFilled = !text.IsFilled;
+                }
+
+                Layers.Template.InvalidateVisual();
             }
         }
 
@@ -1237,34 +1310,52 @@ namespace Logic.WPF.Page
             }
         }
 
-        public void SetTextSizeDelta(double delta)
+        public void SetSelectedTextSizeDelta(double delta)
         {
-            if (IsMouseCaptured && CurrentTool == Tool.Text)
+            if (Renderer != null
+                && Renderer.Selected != null
+                && Renderer.Selected.Count > 0)
             {
-                double size = _text.FontSize + delta;
-                if (size > 0.0)
+                var texts = Renderer.Selected.Where(x => x is XText).Cast<XText>();
+                foreach (var text in texts)
                 {
-                    _text.FontSize = size;
-                    InvalidateVisual();
+                    double size = text.FontSize + delta;
+                    if (size > 0.0)
+                    {
+                        text.FontSize = size;
+                    }
                 }
+                Layers.Template.InvalidateVisual();
             }
         }
 
-        public void SetTextHAlignment(HAlignment halignment)
+        public void SetSelectedTextHAlignment(HAlignment halignment)
         {
-            if (IsMouseCaptured && CurrentTool == Tool.Text)
+            if (Renderer != null
+                && Renderer.Selected != null
+                && Renderer.Selected.Count > 0)
             {
-                _text.HAlignment = halignment;
-                InvalidateVisual();
+                var texts = Renderer.Selected.Where(x => x is XText).Cast<XText>();
+                foreach (var text in texts)
+                {
+                    text.HAlignment = halignment;
+                }
+                Layers.Template.InvalidateVisual();
             }
         }
 
-        public void SetTextVAlignment(VAlignment valignment)
+        public void SetSelectedTextVAlignment(VAlignment valignment)
         {
-            if (IsMouseCaptured && CurrentTool == Tool.Text)
+            if (Renderer != null
+                && Renderer.Selected != null
+                && Renderer.Selected.Count > 0)
             {
-                _text.VAlignment = valignment;
-                InvalidateVisual();
+                var texts = Renderer.Selected.Where(x => x is XText).Cast<XText>();
+                foreach (var text in texts)
+                {
+                    text.VAlignment = valignment;
+                }
+                Layers.Template.InvalidateVisual();
             }
         }
 

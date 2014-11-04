@@ -210,14 +210,12 @@ namespace Logic.WPF
                 {
                     // show json
                     case Key.J:
+                        if (control)
                         {
-                            if (control)
-                            {
-                                var path = System.IO.Path.GetTempFileName() + ".json";
-                                var page = controller.editorLayer.Create("Page");
-                                controller.editorLayer.Save(path, page);
-                                System.Diagnostics.Process.Start("notepad", path);
-                            }
+                            var path = System.IO.Path.GetTempFileName() + ".json";
+                            var page = controller.editorLayer.Create("Page");
+                            controller.editorLayer.Save(path, page);
+                            System.Diagnostics.Process.Start("notepad", path);
                         }
                         break;
 
@@ -296,114 +294,81 @@ namespace Logic.WPF
                     // text size
                     case Key.Add:
                     case Key.OemPlus:
+                        if (control)
                         {
-                            if (control 
-                                && controller.editorLayer.CurrentTool == XCanvas.Tool.Text)
-                            {
-                                IncreaseTextSize();
-                            }
+                            IncreaseTextSize();
                         }
                         break;
                     case Key.Subtract:
                     case Key.OemMinus:
+                        if (control)
                         {
-                            if (control 
-                                && controller.editorLayer.CurrentTool == XCanvas.Tool.Text)
-                            {
-                                DecreaseTextSize();
-                            }
+                            DecreaseTextSize();
                         }
                         break;
 
                     // text alignment
                     case Key.NumPad1:
                     case Key.D1:
+                        if (control)
                         {
-                            if (control 
-                                && controller.editorLayer.CurrentTool == XCanvas.Tool.Text)
-                            {
-                                AlignLeftBottom();
-                            }
+                            AlignLeftBottom();
                         }
                         break;
                     case Key.NumPad2:
                     case Key.D2:
+                        if (control)
                         {
-                            if (control 
-                                && controller.editorLayer.CurrentTool == XCanvas.Tool.Text)
-                            {
-                                AlignBottom();
-                            }
+                            AlignBottom();
                         }
                         break;
                     case Key.NumPad3:
                     case Key.D3:
+                        if (control)
                         {
-                            if (control 
-                                && controller.editorLayer.CurrentTool == XCanvas.Tool.Text)
-                            {
-                                AlignRightBottom();
-                            }
+                            AlignRightBottom();
                         }
                         break;
                     case Key.NumPad4:
                     case Key.D4:
+                        if (control)
                         {
-                            if (control 
-                                && controller.editorLayer.CurrentTool == XCanvas.Tool.Text)
-                            {
-                                AlignLeft();
-                            }
+                            AlignLeft();
                         }
                         break;
                     case Key.NumPad5:
                     case Key.D5:
+                        if (control)
                         {
-                            if (control 
-                                && controller.editorLayer.CurrentTool == XCanvas.Tool.Text)
-                            {
-                                AlignCenterCenter();
-                            }
+                            AlignCenterCenter();
                         }
                         break;
                     case Key.NumPad6:
                     case Key.D6:
+                        if (control)
                         {
-                            if (control 
-                                && controller.editorLayer.CurrentTool == XCanvas.Tool.Text)
-                            {
-                                AlignRight();
-                            }
+                            AlignRight();
                         }
                         break;
                     case Key.NumPad7:
                     case Key.D7:
+                        if (control)
                         {
-                            if (control 
-                                && controller.editorLayer.CurrentTool == XCanvas.Tool.Text)
-                            {
-                                AlignLeftTop();
-                            }
+                            AlignLeftTop();
                         }
                         break;
                     case Key.NumPad8:
                     case Key.D8:
+                        if (control)
                         {
-                            if (control 
-                                && controller.editorLayer.CurrentTool == XCanvas.Tool.Text)
-                            {
-                                AlignTop();
-                            }
+                            AlignTop();
                         }
                         break;
                     case Key.NumPad9:
                     case Key.D9:
+                        if (control)
                         {
-                            if (control 
-                                && controller.editorLayer.CurrentTool == XCanvas.Tool.Text)
-                            {
-                                AlignRightTop();
-                            }
+                            AlignRightTop();
                         }
                         break;
 
