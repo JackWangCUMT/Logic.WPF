@@ -29,6 +29,7 @@
                 <Separator/>
                 <MenuItem x:Name="fileOpen" Header="_Open..." InputGestureText="Ctrl+O"/>
                 <MenuItem x:Name="fileSave" Header="_Save..." InputGestureText="Ctrl+S"/>
+                <MenuItem x:Name="fileSaveAs" Header="Save _As..." InputGestureText=""/>
                 <Separator/>
                 <MenuItem x:Name="fileExit" Header="E_xit" InputGestureText="Alf+F4"/>
             </MenuItem>

@@ -36,9 +36,10 @@ namespace Logic.WPF
 
         #region Fields
 
+        private XJson _json = new XJson();
+        private string _pageFileName = string.Empty;
         private IRenderer _renderer;
         private Point _dragStartPoint;
-        private XJson _json = new XJson();
 
         #endregion
 
@@ -58,7 +59,7 @@ namespace Logic.WPF
 
         #endregion
 
-        #region Helpers
+        #region Visual Parent
 
         public T FindVisualParent<T>(DependencyObject child) 
             where T : DependencyObject
@@ -148,9 +149,9 @@ namespace Logic.WPF
                     if (block != null)
                     {
                         controller.editorLayer.History.Snapshot(
-                            controller.editorLayer.Store("Page"));
-                        var copy = Insert(block, point.X, point.Y);
-                        Connect(copy);
+                            controller.editorLayer.Create("Page"));
+                        var copy = controller.editorLayer.Insert(block, point.X, point.Y);
+                        controller.editorLayer.Connect(copy);
                         e.Handled = true;
                     }
                 }
@@ -160,7 +161,7 @@ namespace Logic.WPF
                     string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
                     if (files != null && files.Length == 1)
                     {
-                        OpenPage(files[0]);
+                        controller.editorLayer.Load(files[0]);
                     }
                 }
             };
@@ -213,8 +214,8 @@ namespace Logic.WPF
                             if (control)
                             {
                                 var path = System.IO.Path.GetTempFileName() + ".json";
-                                var page = controller.editorLayer.Store("Page");
-                                Save(path, page);
+                                var page = controller.editorLayer.Create("Page");
+                                controller.editorLayer.Save(path, page);
                                 System.Diagnostics.Process.Start("notepad", path);
                             }
                         }
@@ -476,6 +477,7 @@ namespace Logic.WPF
             fileNew.Click += (s, e) => New();
             fileOpen.Click += (s, e) => Open();
             fileSave.Click += (s, e) => Save();
+            fileSaveAs.Click += (s, e) => SaveAs();
             fileExit.Click += (s, e) => Close();
 
             editUndo.Click += (s, e) => Undo();
@@ -541,7 +543,7 @@ namespace Logic.WPF
         private void Undo()
         {
             var page = controller.editorLayer.History.Undo(
-                controller.editorLayer.Store("Page"));
+                controller.editorLayer.Create("Page"));
             if (page != null)
             {
                 controller.editorLayer.SelectionReset();
@@ -552,7 +554,7 @@ namespace Logic.WPF
         private void Redo()
         {
             var page = controller.editorLayer.History.Redo(
-                controller.editorLayer.Store("Page"));
+                controller.editorLayer.Create("Page"));
             if (page != null)
             {
                 controller.editorLayer.SelectionReset();
@@ -773,22 +775,10 @@ namespace Logic.WPF
 
         private void New()
         {
-            var page = new XPage()
-            {
-                Name = "Page",
-                Template = new XTemplate() 
-                { 
-                    Shapes = new ObservableCollection<IShape>() 
-                },
-                Blocks = new ObservableCollection<IShape>(),
-                Pins = new ObservableCollection<IShape>(),
-                Wires = new ObservableCollection<IShape>()
-            };
-            controller.editorLayer.History.Snapshot(
-                controller.editorLayer.Store("Page"));
-            controller.editorLayer.Load(page);
+            controller.editorLayer.New();
+            _pageFileName = string.Empty;
         }
-        
+
         private void Open()
         {
             var dlg = new Microsoft.Win32.OpenFileDialog()
@@ -798,174 +788,39 @@ namespace Logic.WPF
 
             if (dlg.ShowDialog() == true)
             {
-                OpenPage(dlg.FileName);
+                controller.editorLayer.Load(dlg.FileName);
+                _pageFileName = dlg.FileName;
             }
         }
 
         private void Save()
         {
+            if (!string.IsNullOrEmpty(_pageFileName))
+            {
+                controller.editorLayer.Save(_pageFileName);
+            }
+            else
+            {
+                SaveAs();
+            }
+        }
+
+        private void SaveAs()
+        {
+            string fileName = string.IsNullOrEmpty(_pageFileName) ? 
+                "shapes" : System.IO.Path.GetFileName(_pageFileName);
+
             var dlg = new Microsoft.Win32.SaveFileDialog()
             {
                 Filter = "Json (*.json)|*.json",
-                FileName = "shapes"
+                FileName = fileName
             };
 
             if (dlg.ShowDialog() == true)
             {
-                SavePage(dlg.FileName);
+                controller.editorLayer.Save(dlg.FileName);
+                _pageFileName = dlg.FileName;
             }
-        }
-
-        private XPage Open(string path)
-        {
-            using (var fs = System.IO.File.OpenText(path))
-            {
-                var json = fs.ReadToEnd();
-                var page = _json.JsonDeserialize<XPage>(json);
-                return page;
-            }
-        }
-
-        private void Save(string path, XPage page)
-        {
-            var json = _json.JsonSerialize(page);
-            using (var fs = System.IO.File.CreateText(path))
-            {
-                fs.Write(json);
-            }
-        }
-
-        private void OpenPage(string path)
-        {
-            var page = Open(path);
-            controller.editorLayer.SelectionReset();
-            controller.editorLayer.History.Snapshot(
-                controller.editorLayer.Store("Page"));
-            controller.editorLayer.Load(page);
-        }
-
-        private void SavePage(string path)
-        {
-            var page = controller.editorLayer.Store("Page");
-            Save(path, page);
-        }
-
-        #endregion
-
-        #region Blocks
-
-        private XBlock Clone(XBlock source)
-        {
-            var jshapes = _json.JsonSerialize(source.Shapes);
-            var jpins = _json.JsonSerialize(source.Pins);
-            var copy = new XBlock() 
-            { 
-                Name = source.Name,
-                Shapes = _json.JsonDeserialize<IList<IShape>>(jshapes),
-                Pins = _json.JsonDeserialize<IList<XPin>>(jpins)
-            };
-            return copy;
-        }
-
-        private XBlock Insert(XBlock block, double x, double y)
-        {
-            // clone block
-            XBlock copy = Clone(block);
-
-            // move to drop position
-            double dx = controller.editorLayer.EnableSnap ? 
-                controller.editorLayer.Snap(x, controller.editorLayer.SnapSize) : x;
-            double dy = controller.editorLayer.EnableSnap ? 
-                controller.editorLayer.Snap(y, controller.editorLayer.SnapSize) : y;
-            XCanvas.Move(copy, dx, dy);
-
-            // add to collection
-            Layers.Blocks.Shapes.Add(copy);
-            Layers.Blocks.InvalidateVisual();
-
-            return copy;
-        }
-
-        private void Connect(XBlock block)
-        {
-            // check for pin to wire connections
-            int count = block.Pins.Count();
-            if (count > 0)
-            {
-                var wires = Layers.Wires.Shapes.Cast<XWire>();
-                var dict = new Dictionary<XWire, List<XPin>>();
-
-                // find connections
-                foreach (var pin in block.Pins)
-                {
-                    IShape hit = controller.editorLayer.HitTest(
-                        wires,
-                        new Point(pin.X, pin.Y));
-                    if (hit != null && hit is XWire)
-                    {
-                        var wire = hit as XWire;
-                        if (dict.ContainsKey(wire))
-                        {
-                            dict[wire].Add(pin);
-                        }
-                        else
-                        {
-                            dict.Add(wire, new List<XPin>());
-                            dict[wire].Add(pin);
-                        }
-                    }
-                }
-
-                // split wires
-                foreach (var kv in dict)
-                {
-                    List<XPin> pins = kv.Value;
-                    if (pins.Count == 2)
-                    {
-                        Split(kv.Key, pins[0], pins[1]);
-                    }
-                }
-            }
-        }
-
-        private void Split(XWire wire, XPin pin0, XPin pin1)
-        {
-            // pins must be aligned horizontally or vertically
-            if (pin0.X != pin1.X && pin0.Y != pin1.Y)
-                return;
-
-            // wire must be horizontal or vertical
-            if (wire.Start.X != wire.End.X && wire.Start.Y != wire.End.Y)
-                return;
-
-            XWire split;
-            if (wire.Start.X > wire.End.X || wire.Start.Y > wire.End.Y)
-            {
-                split = new XWire()
-                {
-                    Start = pin0,
-                    End = wire.End,
-                    InvertStart = false,
-                    InvertEnd = wire.InvertEnd
-                };
-                wire.InvertEnd = false;
-                wire.End = pin1;
-            }
-            else
-            {
-                split = new XWire()
-                {
-                    Start = pin1,
-                    End = wire.End,
-                    InvertStart = false,
-                    InvertEnd = wire.InvertEnd
-                };
-                wire.InvertEnd = false;
-                wire.End = pin0;
-            }
-            Layers.Wires.Shapes.Add(split);
-            Layers.Pins.InvalidateVisual();
-            Layers.Wires.InvalidateVisual();
         }
 
         #endregion
