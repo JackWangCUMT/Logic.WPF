@@ -1373,6 +1373,82 @@ namespace Logic.WPF.Page
 
         #region HitTest
 
+        public bool LineIntersectsWithRect(
+            double left, double right, 
+            double bottom, double top,
+            double x0, double y0, 
+            double x1, double y1)
+        {
+            // Liang-Barsky line clipping algorithm
+            double t0 = 0.0;
+            double t1 = 1.0;
+            double dx = x1 - x0;
+            double dy = y1 - y0;
+            double p = 0.0, q = 0.0, r;
+
+            for (int edge = 0; edge < 4; edge++)
+            {
+                if (edge == 0)
+                {
+                    p = -dx;
+                    q = -(left - x0);
+                }
+                if (edge == 1)
+                {
+                    p = dx;
+                    q = (right - x0);
+                }
+                if (edge == 2)
+                {
+                    p = dy;
+                    q = (bottom - y0);
+                }
+                if (edge == 3)
+                {
+                    p = -dy;
+                    q = -(top - y0);
+                }
+
+                r = q / p;
+
+                if (p == 0.0 && q < 0.0)
+                {
+                    return false;
+                }
+
+                if (p < 0.0)
+                {
+                    if (r > t1)
+                    {
+                        return false;
+                    }
+                    else if (r > t0)
+                    {
+                        t0 = r;
+                    }
+                }
+                else if (p > 0.0)
+                {
+                    if (r < t0)
+                    {
+                        return false;
+                    }
+                    else if (r < t1)
+                    {
+                        t1 = r;
+                    }
+                }
+            }
+
+            // Clipped line
+            //double x0clip = x0 + t0 * dx;
+            //double y0clip = y0 + t0 * dy;
+            //double x1clip = x0 + t1 * dx;
+            //double y1clip = y0 + t1 * dy;
+
+            return true;
+        }
+
         private Point NearestPointOnLine(Point a, Point b, Point p)
         {
             double ax = p.X - a.X;
@@ -1658,83 +1734,43 @@ namespace Logic.WPF.Page
         {
             foreach (var wire in wires)
             {
-                var start = wire.Start;
-                if (start != null)
+                double sx, sy, ex, ey;
+                if (wire.Start != null)
                 {
-                    if (GetPinBounds(start.X, start.Y).IntersectsWith(rect))
-                    {
-                        if (hs != null)
-                        {
-                            hs.Add(wire);
-                            continue;
-                        }
-                        else
-                        {
-                            return true;
-                        }
-                    }
+                    sx = wire.Start.X;
+                    sy = wire.Start.Y;
                 }
                 else
                 {
-                    if (GetPinBounds(wire.X1, wire.Y1).IntersectsWith(rect))
-                    {
-                        if (hs != null)
-                        {
-                            hs.Add(wire);
-                            continue;
-                        }
-                        else
-                        {
-                            return true;
-                        }
-                    }
+                    sx = wire.X1;
+                    sy = wire.Y1;
                 }
-
-                var end = wire.End;
-                if (end != null)
+                                
+                if (wire.End != null)
                 {
-                    if (GetPinBounds(end.X, end.Y).IntersectsWith(rect))
-                    {
-                        if (hs != null)
-                        {
-                            hs.Add(wire);
-                            continue;
-                        }
-                        else
-                        {
-                            return true;
-                        }
-                    }
+                    ex = wire.End.X;
+                    ey = wire.End.Y;
                 }
                 else
                 {
-                    if (GetPinBounds(wire.X2, wire.Y2).IntersectsWith(rect))
-                    {
-                        if (hs != null)
-                        {
-                            hs.Add(wire);
-                            continue;
-                        }
-                        else
-                        {
-                            return true;
-                        }
-                    }
+                    ex = wire.X2;
+                    ey = wire.Y2;
                 }
 
-                // TODO: Implement wire HitTest
-                //if (HitTest(wire, p, XRenderer.HitTreshold))
-                //{
-                //    if (hs != null)
-                //    {
-                //        hs.Add(wire);
-                //        continue;
-                //    }
-                //    else
-                //    {
-                //        return true;
-                //    }
-                //}
+                if (GetPinBounds(sx, sy).IntersectsWith(rect)
+                    || GetPinBounds(ex, ey).IntersectsWith(rect)
+                    || LineIntersectsWithRect(rect.Left, rect.Right, rect.Bottom, rect.Top, sx, sy, ex, ey))
+                {
+                    if (hs != null)
+                    {
+                        hs.Add(wire);
+                        continue;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
             }
 
             return false;
@@ -1783,8 +1819,7 @@ namespace Logic.WPF.Page
                     var line = shape as XLine;
                     if (GetPinBounds(line.X1, line.Y1).IntersectsWith(rect)
                         || GetPinBounds(line.X2, line.Y2).IntersectsWith(rect)
-                        // TODO: Implement line HitTest
-                        /* || HitTest(line, p, XRenderer.HitTreshold) */)
+                        || LineIntersectsWithRect(rect.Left, rect.Right, rect.Bottom, rect.Top, line.X1, line.Y1, line.X2, line.Y2))
                     {
                         if (hs != null)
                         {
