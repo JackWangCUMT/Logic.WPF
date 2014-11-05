@@ -193,6 +193,14 @@ namespace Logic.WPF
 
                 switch (e.Key)
                 {
+                    // block
+                    case Key.B:
+                        if (none)
+                        {
+                            Block();
+                        }
+                        break;
+
                     // undo
                     case Key.Z:
                         if (control)
@@ -731,6 +739,40 @@ namespace Logic.WPF
             toolEllipse.IsChecked = (tool == XCanvas.Tool.Ellipse);
             toolRectangle.IsChecked = (tool == XCanvas.Tool.Rectangle);
             toolText.IsChecked = (tool == XCanvas.Tool.Text);
+        }
+
+        #endregion
+
+        #region Block
+
+        private void Block()
+        {
+            var block = page.editorLayer.CreateBlockFromSelected("Block");
+            if (block != null)
+            {
+                var dlg = new Microsoft.Win32.SaveFileDialog()
+                {
+                    Filter = "Json (*.json)|*.json",
+                    FileName = "block"
+                };
+
+                if (dlg.ShowDialog() == true)
+                {
+                    var path = dlg.FileName;
+                    Block(block, path);
+                    System.Diagnostics.Process.Start("notepad", path);
+                }
+            }
+        }
+
+        private void Block(XBlock block, string path)
+        {
+            var serializer = new XJson();
+            var json = serializer.JsonSerialize(block);
+            using (var fs = System.IO.File.CreateText(path))
+            {
+                fs.Write(json);
+            };
         }
 
         #endregion
