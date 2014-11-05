@@ -74,7 +74,7 @@ namespace Logic.WPF.Page
 
         #region Fields
 
-        private XJson _json = new XJson();
+        private XJson _serializer = new XJson();
         private IStyle _shapeStyle = null;
         private IStyle _selectedShapeStyle = null;
         private IStyle _selectionStyle = null;
@@ -2049,13 +2049,13 @@ namespace Logic.WPF.Page
 
         private XBlock Clone(XBlock source)
         {
-            var jshapes = _json.JsonSerialize(source.Shapes);
-            var jpins = _json.JsonSerialize(source.Pins);
+            var jshapes = _serializer.JsonSerialize(source.Shapes);
+            var jpins = _serializer.JsonSerialize(source.Pins);
             var copy = new XBlock()
             {
                 Name = source.Name,
-                Shapes = _json.JsonDeserialize<IList<IShape>>(jshapes),
-                Pins = _json.JsonDeserialize<IList<XPin>>(jpins)
+                Shapes = _serializer.JsonDeserialize<IList<IShape>>(jshapes),
+                Pins = _serializer.JsonDeserialize<IList<XPin>>(jpins)
             };
             return copy;
         }
@@ -2208,14 +2208,14 @@ namespace Logic.WPF.Page
             using (var fs = System.IO.File.OpenText(path))
             {
                 var json = fs.ReadToEnd();
-                var page = _json.JsonDeserialize<XPage>(json);
+                var page = _serializer.JsonDeserialize<XPage>(json);
                 return page;
             }
         }
 
         public void Save(string path, XPage page)
         {
-            var json = _json.JsonSerialize(page);
+            var json = _serializer.JsonSerialize(page);
             using (var fs = System.IO.File.CreateText(path))
             {
                 fs.Write(json);
@@ -2244,7 +2244,7 @@ namespace Logic.WPF.Page
         {
             try
             {
-                var json = _json.JsonSerialize(shapes);
+                var json = _serializer.JsonSerialize(shapes);
                 Clipboard.SetText(json, TextDataFormat.UnicodeText);
             }
             catch (Exception ex)
@@ -2317,11 +2317,68 @@ namespace Logic.WPF.Page
 
         public void Insert(string json)
         {
-            var shapes = _json.JsonDeserialize<IList<IShape>>(json);
+            var shapes = _serializer.JsonDeserialize<IList<IShape>>(json);
             if (shapes.Count > 0)
             {
                 Insert(shapes);
             }
+        }
+
+        #endregion
+
+        #region Block
+
+        public XBlock CreateBlockFromSelected(string name)
+        {
+            if (Renderer.Selected != null
+                && Renderer.Selected.Count > 0)
+            {
+                return CreateBlock(name, Renderer.Selected);
+            }
+            return null;
+        }
+
+        public XBlock CreateBlock(string name, IEnumerable<IShape> shapes)
+        {
+            var block = new XBlock()
+            {
+                Name = name,
+                Shapes = new ObservableCollection<IShape>(),
+                Pins = new ObservableCollection<XPin>()
+            };
+
+            foreach (var shape in shapes)
+            {
+                if (shape is XLine)
+                {
+                    block.Shapes.Add(shape);
+                }
+                else if (shape is XEllipse)
+                {
+                    block.Shapes.Add(shape);
+                }
+                else if (shape is XRectangle)
+                {
+                    block.Shapes.Add(shape);
+                }
+                else if (shape is XText)
+                {
+                    block.Shapes.Add(shape);
+                }
+                else if (shape is XWire)
+                {
+                    block.Shapes.Add(shape);
+                }
+                else if (shape is XPin)
+                {
+                    block.Pins.Add(shape as XPin);
+                }
+                else if (shape is XBlock)
+                {
+                    // Not supported.
+                }
+            }
+            return block;
         }
 
         #endregion
