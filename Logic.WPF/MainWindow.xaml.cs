@@ -119,8 +119,11 @@ namespace Logic.WPF
                             page.editorLayer.History.Snapshot(
                                 page.editorLayer.Create("Page"));
                             var copy = page.editorLayer.Insert(block, point.X, point.Y);
-                            page.editorLayer.Connect(copy);
-                            e.Handled = true;
+                            if (copy != null)
+                            {
+                                page.editorLayer.Connect(copy);
+                                e.Handled = true;
+                            }
                         }
                     }
                     catch (Exception ex)
@@ -139,8 +142,11 @@ namespace Logic.WPF
                         string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
                         if (files != null && files.Length == 1)
                         {
-                            page.editorLayer.Load(files[0]);
-                            e.Handled = true;
+                            if (!string.IsNullOrEmpty(files[0]))
+                            {
+                                page.editorLayer.Load(files[0]);
+                                e.Handled = true;
+                            }
                         }
                     }
                     catch (Exception ex)
@@ -791,12 +797,22 @@ namespace Logic.WPF
 
         private void Block(XBlock block, string path)
         {
-            var serializer = new XJson();
-            var json = serializer.JsonSerialize(block);
-            using (var fs = System.IO.File.CreateText(path))
+            try
             {
-                fs.Write(json);
-            };
+                var serializer = new XJson();
+                var json = serializer.JsonSerialize(block);
+                using (var fs = System.IO.File.CreateText(path))
+                {
+                    fs.Write(json);
+                };
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
+            }
         }
 
         #endregion

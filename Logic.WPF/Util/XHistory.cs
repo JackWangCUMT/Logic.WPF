@@ -15,19 +15,26 @@ namespace Logic.WPF.Util
         public void Snapshot(T obj)
         {
             var bson = _json.BsonSerialize(obj);
-            if (_redos.Count > 0)
+            if (bson != null)
             {
-                _redos.Clear();
+                if (_redos.Count > 0)
+                {
+                    _redos.Clear();
+                }
+                _undos.Push(bson);
             }
-            _undos.Push(bson);
         }
 
         public T Undo(T current)
         {
             if (_undos.Count > 0)
             {
-                _redos.Push(_json.BsonSerialize(current));
-                return _json.BsonDeserialize<T>(_undos.Pop());
+                var bson = _json.BsonSerialize(current);
+                if (bson != null)
+                {
+                    _redos.Push(bson);
+                    return _json.BsonDeserialize<T>(_undos.Pop());
+                }
             }
             return null;
         }
@@ -36,8 +43,12 @@ namespace Logic.WPF.Util
         {
             if (_redos.Count > 0)
             {
-                _undos.Push(_json.BsonSerialize(current));
-                return _json.BsonDeserialize<T>(_redos.Pop());
+                var bson = _json.BsonSerialize(current);
+                if (bson != null)
+                {
+                    _undos.Push(bson);
+                    return _json.BsonDeserialize<T>(_redos.Pop()); 
+                }
             }
             return null;
         }

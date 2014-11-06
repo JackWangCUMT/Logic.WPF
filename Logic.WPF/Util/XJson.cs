@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Bson;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Bson;
 
 namespace Logic.WPF.Util
 {
@@ -12,67 +13,111 @@ namespace Logic.WPF.Util
     {
         #region Json
 
-        public string JsonSerialize<T>(T obj)
+        public string JsonSerialize<T>(T obj) where T : class
         {
-            var json = JsonConvert.SerializeObject(
-                obj,
-                new JsonSerializerSettings()
-                {
-                    Formatting = Formatting.Indented,
-                    TypeNameHandling = TypeNameHandling.Objects,
-                    PreserveReferencesHandling = PreserveReferencesHandling.Objects
-                });
-            return json;
+            try
+            {
+                var json = JsonConvert.SerializeObject(
+                    obj,
+                    new JsonSerializerSettings()
+                    {
+                        Formatting = Formatting.Indented,
+                        TypeNameHandling = TypeNameHandling.Objects,
+                        PreserveReferencesHandling = PreserveReferencesHandling.Objects
+                    });
+                return json;
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
+            }
+            return null;
         }
 
-        public T JsonDeserialize<T>(string json)
+        public T JsonDeserialize<T>(string json) where T : class
         {
-            var page = JsonConvert.DeserializeObject<T>(
-                json,
-                new JsonSerializerSettings()
-                {
-                    TypeNameHandling = TypeNameHandling.Objects,
-                    PreserveReferencesHandling = PreserveReferencesHandling.Objects
-                });
-            return page;
+            try
+            {
+                var page = JsonConvert.DeserializeObject<T>(
+                    json,
+                    new JsonSerializerSettings()
+                    {
+                        TypeNameHandling = TypeNameHandling.Objects,
+                        PreserveReferencesHandling = PreserveReferencesHandling.Objects
+                    });
+                return page;
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
+            }
+            return null;
         }
 
         #endregion
 
         #region Bson
 
-        public byte[] BsonSerialize<T>(T obj)
+        public byte[] BsonSerialize<T>(T obj) where T : class
         {
-            using (var ms = new System.IO.MemoryStream())
+            try
             {
-                using (var writer = new BsonWriter(ms))
+                using (var ms = new System.IO.MemoryStream())
                 {
-                    var serializer = new JsonSerializer()
+                    using (var writer = new BsonWriter(ms))
                     {
-                        TypeNameHandling = TypeNameHandling.Objects,
-                        PreserveReferencesHandling = PreserveReferencesHandling.Objects
-                    };
-                    serializer.Serialize(writer, obj);
+                        var serializer = new JsonSerializer()
+                        {
+                            TypeNameHandling = TypeNameHandling.Objects,
+                            PreserveReferencesHandling = PreserveReferencesHandling.Objects
+                        };
+                        serializer.Serialize(writer, obj);
+                    }
+                    return ms.ToArray();
                 }
-                return ms.ToArray();
             }
+            catch (Exception ex)
+            {
+                Trace.TraceError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
+            }
+            return null;
         }
 
-        public T BsonDeserialize<T>(byte[] bson)
+        public T BsonDeserialize<T>(byte[] bson) where T : class
         {
-            using (var ms = new System.IO.MemoryStream(bson))
+            try
             {
-                using (BsonReader reader = new BsonReader(ms))
+                using (var ms = new System.IO.MemoryStream(bson))
                 {
-                    var serializer = new JsonSerializer()
+                    using (BsonReader reader = new BsonReader(ms))
                     {
-                        TypeNameHandling = TypeNameHandling.Objects,
-                        PreserveReferencesHandling = PreserveReferencesHandling.Objects
-                    };
-                    var page = serializer.Deserialize<T>(reader);
-                    return page;
+                        var serializer = new JsonSerializer()
+                        {
+                            TypeNameHandling = TypeNameHandling.Objects,
+                            PreserveReferencesHandling = PreserveReferencesHandling.Objects
+                        };
+                        var page = serializer.Deserialize<T>(reader);
+                        return page;
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                Trace.TraceError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
+            }
+            return null;
         }
 
         #endregion

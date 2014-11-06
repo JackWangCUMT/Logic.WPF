@@ -2049,15 +2049,26 @@ namespace Logic.WPF.Page
 
         private XBlock Clone(XBlock source)
         {
-            var jshapes = _serializer.JsonSerialize(source.Shapes);
-            var jpins = _serializer.JsonSerialize(source.Pins);
-            var copy = new XBlock()
+            try
             {
-                Name = source.Name,
-                Shapes = _serializer.JsonDeserialize<IList<IShape>>(jshapes),
-                Pins = _serializer.JsonDeserialize<IList<XPin>>(jpins)
-            };
-            return copy;
+                var jshapes = _serializer.JsonSerialize(source.Shapes);
+                var jpins = _serializer.JsonSerialize(source.Pins);
+                var copy = new XBlock()
+                {
+                    Name = source.Name,
+                    Shapes = _serializer.JsonDeserialize<IList<IShape>>(jshapes),
+                    Pins = _serializer.JsonDeserialize<IList<XPin>>(jpins)
+                };
+                return copy;
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
+            }
+            return null;
         }
 
         public XBlock Insert(XBlock block, double x, double y)
@@ -2065,16 +2076,21 @@ namespace Logic.WPF.Page
             // clone block
             XBlock copy = Clone(block);
 
-            // move to drop position
-            double dx = EnableSnap ? Snap(x, SnapSize) : x;
-            double dy = EnableSnap ? Snap(y, SnapSize) : y;
-            Move(copy, dx, dy);
+            if (copy != null)
+            {
+                // move to drop position
+                double dx = EnableSnap ? Snap(x, SnapSize) : x;
+                double dy = EnableSnap ? Snap(y, SnapSize) : y;
+                Move(copy, dx, dy);
 
-            // add to collection
-            Layers.Blocks.Shapes.Add(copy);
-            Layers.Blocks.InvalidateVisual();
+                // add to collection
+                Layers.Blocks.Shapes.Add(copy);
+                Layers.Blocks.InvalidateVisual();
 
-            return copy;
+                return copy;
+            }
+
+            return null;
         }
 
         private void Split(XWire wire, XPin pin0, XPin pin1)
@@ -2205,29 +2221,53 @@ namespace Logic.WPF.Page
 
         public XPage Open(string path)
         {
-            using (var fs = System.IO.File.OpenText(path))
+            try
             {
-                var json = fs.ReadToEnd();
-                var page = _serializer.JsonDeserialize<XPage>(json);
-                return page;
+                using (var fs = System.IO.File.OpenText(path))
+                {
+                    var json = fs.ReadToEnd();
+                    var page = _serializer.JsonDeserialize<XPage>(json);
+                    return page;
+                }
             }
+            catch (Exception ex)
+            {
+                Trace.TraceError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
+            }
+            return null;
         }
 
         public void Save(string path, XPage page)
         {
-            var json = _serializer.JsonSerialize(page);
-            using (var fs = System.IO.File.CreateText(path))
+            try
             {
-                fs.Write(json);
+                var json = _serializer.JsonSerialize(page);
+                using (var fs = System.IO.File.CreateText(path))
+                {
+                    fs.Write(json);
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
             }
         }
 
         public void Load(string path)
         {
             var page = Open(path);
-            SelectionReset();
-            History.Snapshot(Create("Page"));
-            Load(page);
+            if (page != null)
+            {
+                SelectionReset();
+                History.Snapshot(Create("Page"));
+                Load(page);
+            }
         }
 
         public void Save(string path)
@@ -2245,7 +2285,10 @@ namespace Logic.WPF.Page
             try
             {
                 var json = _serializer.JsonSerialize(shapes);
-                Clipboard.SetText(json, TextDataFormat.UnicodeText);
+                if (!string.IsNullOrEmpty(json))
+                {
+                    Clipboard.SetText(json, TextDataFormat.UnicodeText);
+                }
             }
             catch (Exception ex)
             {
@@ -2323,10 +2366,20 @@ namespace Logic.WPF.Page
 
         public void Insert(string json)
         {
-            var shapes = _serializer.JsonDeserialize<IList<IShape>>(json);
-            if (shapes.Count > 0)
+            try
             {
-                Insert(shapes);
+                var shapes = _serializer.JsonDeserialize<IList<IShape>>(json);
+                if (shapes != null && shapes.Count > 0)
+                {
+                    Insert(shapes);
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
             }
         }
 
