@@ -111,23 +111,38 @@ namespace Logic.WPF
                 // block
                 if (e.Data.GetDataPresent("Block"))
                 {
-                    var block = e.Data.GetData("Block") as XBlock;
-                    if (block != null)
+                    try
                     {
-                        page.editorLayer.History.Snapshot(
-                            page.editorLayer.Create("Page"));
-                        var copy = page.editorLayer.Insert(block, point.X, point.Y);
-                        page.editorLayer.Connect(copy);
-                        e.Handled = true;
+                        var block = e.Data.GetData("Block") as XBlock;
+                        if (block != null)
+                        {
+                            page.editorLayer.History.Snapshot(
+                                page.editorLayer.Create("Page"));
+                            var copy = page.editorLayer.Insert(block, point.X, point.Y);
+                            page.editorLayer.Connect(copy);
+                            e.Handled = true;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.Print(ex.Message);
                     }
                 }
                 // files
                 else if (e.Data.GetDataPresent(DataFormats.FileDrop))
                 {
-                    string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-                    if (files != null && files.Length == 1)
+                    try
                     {
-                        page.editorLayer.Load(files[0]);
+                        string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                        if (files != null && files.Length == 1)
+                        {
+                            page.editorLayer.Load(files[0]);
+                            e.Handled = true;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.Print(ex.Message);
                     }
                 }
             };
