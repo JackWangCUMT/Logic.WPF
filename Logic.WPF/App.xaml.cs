@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Logic.WPF.Util;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -14,16 +15,13 @@ namespace Logic.WPF
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            Trace.Listeners.Add(
-                new TextWriterTraceListener(
-                    "Logic.WPF.log", 
-                    "listener"));
+            Log.Initialize();
         }
 
         protected override void OnExit(ExitEventArgs e)
         {
             base.OnExit(e);
-            Trace.Flush();
+            Log.Close();
         }
     }
 }

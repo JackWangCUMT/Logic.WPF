@@ -29,7 +29,7 @@ namespace Logic.WPF.Util
             }
             catch (Exception ex)
             {
-                Trace.TraceError("{0}{1}{2}",
+                Log.LogError("{0}{1}{2}",
                     ex.Message,
                     Environment.NewLine,
                     ex.StackTrace);
@@ -52,7 +52,7 @@ namespace Logic.WPF.Util
             }
             catch (Exception ex)
             {
-                Trace.TraceError("{0}{1}{2}",
+                Log.LogError("{0}{1}{2}",
                     ex.Message,
                     Environment.NewLine,
                     ex.StackTrace);
@@ -84,7 +84,7 @@ namespace Logic.WPF.Util
             }
             catch (Exception ex)
             {
-                Trace.TraceError("{0}{1}{2}",
+                Log.LogError("{0}{1}{2}",
                     ex.Message,
                     Environment.NewLine,
                     ex.StackTrace);
@@ -112,7 +112,7 @@ namespace Logic.WPF.Util
             }
             catch (Exception ex)
             {
-                Trace.TraceError("{0}{1}{2}",
+                Log.LogError("{0}{1}{2}",
                     ex.Message,
                     Environment.NewLine,
                     ex.StackTrace);
