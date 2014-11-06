@@ -2249,7 +2249,10 @@ namespace Logic.WPF.Page
             }
             catch (Exception ex)
             {
-                Debug.Print(ex.Message);
+                Trace.TraceError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
             }
         }
 
@@ -2311,7 +2314,10 @@ namespace Logic.WPF.Page
             }
             catch (Exception ex)
             {
-                Debug.Print(ex.Message);
+                Trace.TraceError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
             }
         }
 
