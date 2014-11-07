@@ -69,6 +69,23 @@ namespace Logic.WPF
 
         #endregion
 
+        #region MEF
+
+        private void Compose(object part, string path)
+        {
+            var catalog = new AggregateCatalog();
+            catalog.Catalogs.Add(
+                new AssemblyCatalog(
+                    Assembly.GetExecutingAssembly()));
+            catalog.Catalogs.Add(
+                new DirectoryCatalog(path));
+
+            var container = new CompositionContainer(catalog);
+            container.ComposeParts(part);
+        }
+
+        #endregion
+
         #region Initialize
 
         private void InitPage()
@@ -196,12 +213,7 @@ namespace Logic.WPF
 
             try
             {
-                var catalog = new AggregateCatalog();
-                catalog.Catalogs.Add(new AssemblyCatalog(Assembly.GetExecutingAssembly()));
-                catalog.Catalogs.Add(new DirectoryCatalog("."));
-
-                var container = new CompositionContainer(catalog);
-                container.ComposeParts(this);
+                Compose(this, ".");
             }
             catch (CompositionException ex)
             {
