@@ -235,9 +235,14 @@ namespace Logic.WPF
 
                 switch (e.Key)
                 {
+                    // code
                     // block
                     case Key.B:
-                        if (none)
+                        if (control)
+                        {
+                            Code();
+                        }
+                        else if (none)
                         {
                             Block();
                         }
@@ -825,6 +830,171 @@ namespace Logic.WPF
                     Environment.NewLine,
                     ex.StackTrace);
             }
+        }
+
+        #endregion
+
+        #region Code
+
+        private void Code()
+        {
+            var block = page.editorLayer.CreateBlockFromSelected("Block");
+            if (block != null)
+            {
+                string code = GenerateCodeFromBlock(
+                    block,
+                    "Blocks." + "Test",
+                    "Test",
+                    "TEST");
+
+                var dlg = new Microsoft.Win32.SaveFileDialog()
+                {
+                    Filter = "C# (*.cs)|*.cs",
+                    FileName = "Test"
+                };
+
+                if (dlg.ShowDialog() == true)
+                {
+                    var path = dlg.FileName;
+                    try
+                    {
+                        var serializer = new XJson();
+                        using (var fs = System.IO.File.CreateText(path))
+                        {
+                            fs.Write(code);
+                        };
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.LogError("{0}{1}{2}",
+                            ex.Message,
+                            Environment.NewLine,
+                            ex.StackTrace);
+                    }
+
+                    System.Diagnostics.Process.Start("notepad", path);
+                }
+            }
+        }
+
+        private string GenerateCodeFromBlock(
+            XBlock block,
+            string namespaceName,
+            string className,
+            string blockName)
+        {
+            var sb = new StringBuilder();
+
+            sb.AppendLine("using Logic.Core;");
+            sb.AppendLine("using System;");
+            sb.AppendLine("using System.Collections.Generic;");
+            sb.AppendLine("using System.Collections.ObjectModel;");
+            sb.AppendLine("using System.ComponentModel.Composition;");
+            sb.AppendLine("using System.Linq;");
+            sb.AppendLine("using System.Text;");
+            sb.AppendLine("using System.Threading.Tasks;");
+            sb.AppendLine("");
+            sb.AppendLine("namespace " + namespaceName);
+            sb.AppendLine("{");
+            sb.AppendLine("    [Export(typeof(XBlock))]");
+            sb.AppendLine("    public class " + className + " : XBlock");
+            sb.AppendLine("    {");
+            sb.AppendLine("        public " + className + "()");
+            sb.AppendLine("        {");
+            sb.AppendLine("            base.Shapes = new ObservableCollection<IShape>();");
+            sb.AppendLine("            base.Pins = new ObservableCollection<XPin>();");
+            sb.AppendLine("");
+            sb.AppendLine("            base.Name = \"" + blockName + "\";");
+            sb.AppendLine("");
+
+            string indent = "            ";
+            foreach (var shape in block.Shapes)
+            {
+                if (shape is XLine)
+                {
+                    var line = shape as XLine;
+                    var value = string.Format(
+                        "{0}base.Shapes.Add(new XLine() {{ X1 = {1}, Y1 = {2}, X2 = {3}, Y2 = {4} }});",
+                        indent,
+                        line.X1,
+                        line.Y1,
+                        line.X2,
+                        line.Y2);
+                    sb.AppendLine(value);
+                }
+                else if (shape is XEllipse)
+                {
+                    var ellipse = shape as XEllipse;
+                    var value = string.Format(
+                        "{0}base.Shapes.Add(new XEllipse() {{ X = {1}, Y = {2}, RadiusX = {3}, RadiusY = {4}, IsFilled = {5} }});",
+                        indent,
+                        ellipse.X,
+                        ellipse.Y,
+                        ellipse.RadiusX,
+                        ellipse.RadiusY,
+                        ellipse.IsFilled);
+                    sb.AppendLine(value);
+                }
+                else if (shape is XRectangle)
+                {
+                    var rectangle = shape as XRectangle;
+                    var value = string.Format(
+                        "{0}base.Shapes.Add(new XRectangle() {{ X = {1}, Y = {2}, Width = {3}, Height = {4}, IsFilled = {5} }});",
+                        indent,
+                        rectangle.X,
+                        rectangle.Y,
+                        rectangle.Width,
+                        rectangle.Height,
+                        rectangle.IsFilled);
+                    sb.AppendLine(value);
+                }
+                else if (shape is XText)
+                {
+                    var text = shape as XText;
+                    sb.AppendLine(indent + "base.Shapes.Add(");
+                    sb.AppendLine(indent + "    new XText()");
+                    sb.AppendLine(indent + "    {");
+                    sb.AppendLine(indent + "        X = " + text.X + ",");
+                    sb.AppendLine(indent + "        Y = " + text.Y + ",");
+                    sb.AppendLine(indent + "        Width = " + text.Width + ",");
+                    sb.AppendLine(indent + "        Height = " + text.Height + ",");
+                    sb.AppendLine(indent + "        HAlignment = HAlignment." + text.HAlignment + ",");
+                    sb.AppendLine(indent + "        VAlignment = VAlignment." + text.VAlignment + ",");
+                    sb.AppendLine(indent + "        FontName = \"" + text.FontName + "\",");
+                    sb.AppendLine(indent + "        FontSize = " + text.FontSize + ",");
+                    sb.AppendLine(indent + "        Text = \"" + text.Text + "\"");
+                    sb.AppendLine(indent + "    });");
+                }
+                else if (shape is XWire)
+                {
+                    // Not supported.
+                }
+                else if (shape is XPin)
+                {
+                    // Not supported.
+                }
+                else if (shape is XBlock)
+                {
+                    // Not supported.
+                }
+            }
+
+            foreach (var pin in block.Pins)
+            {
+                var value = string.Format(
+                    "{0}base.Pins.Add(new XPin() {{ Name = \"{1}\", X = {2}, Y = {3} }});",
+                    indent,
+                    pin.Name,
+                    pin.X,
+                    pin.Y);
+                sb.AppendLine(value);
+            }
+
+            sb.AppendLine("        }");
+            sb.AppendLine("    }");
+            sb.AppendLine("}");
+
+            return sb.ToString();
         }
 
         #endregion
