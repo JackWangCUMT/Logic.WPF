@@ -985,13 +985,9 @@ namespace Logic.WPF
             sb.AppendLine("  </ItemGroup>");
             sb.AppendLine("  <Import Project=\"$(MSBuildToolsPath)\\Microsoft.CSharp.targets\" />");
             sb.AppendLine("  <PropertyGroup>");
-            sb.AppendLine("    <PostBuildEvent>if not exist \"$(SolutionDir)Logic.WPF\\$(OutDir)Blocks\" mkdir \"$(SolutionDir)Logic.WPF\\$(OutDir)Blocks\\\"");
+            sb.AppendLine("    <PostBuildEvent>if not exist \"$(SolutionDir)Logic.WPF\\$(OutDir)Blocks\\\" mkdir \"$(SolutionDir)Logic.WPF\\$(OutDir)Blocks\\\"");
             sb.AppendLine("copy \"$(TargetPath)\" \"$(SolutionDir)Logic.WPF\\$(OutDir)Blocks\\$(TargetFileName)\"");
             sb.AppendLine("copy \"$(TargetDir)\\$(TargetName).pdb\" \"$(SolutionDir)Logic.WPF\\$(OutDir)Blocks\\\"</PostBuildEvent>");
-            sb.AppendLine("  </PropertyGroup>");
-            sb.AppendLine("  <PropertyGroup>");
-            sb.AppendLine("    <PostBuildEvent>copy \"$(TargetPath)\" \"$(SolutionDir)Logic.WPF\\$(OutDir)\\$(TargetFileName)\"");
-            sb.AppendLine("copy \"$(TargetDir)\\$(TargetName).pdb\" \"$(SolutionDir)Logic.WPF\\$(OutDir)\"</PostBuildEvent>");
             sb.AppendLine("  </PropertyGroup>");
             sb.AppendLine("  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. ");
             sb.AppendLine("       Other similar extension points exist, see Microsoft.Common.targets.");
