@@ -147,7 +147,7 @@ namespace Logic.WPF
                     }
                     catch (Exception ex)
                     {
-                        Log.LogError("{0}{1}{2}", 
+                        XLog.LogError("{0}{1}{2}", 
                             ex.Message, 
                             Environment.NewLine,
                             ex.StackTrace);
@@ -170,7 +170,7 @@ namespace Logic.WPF
                     }
                     catch (Exception ex)
                     {
-                        Log.LogError("{0}{1}{2}",
+                        XLog.LogError("{0}{1}{2}",
                             ex.Message,
                             Environment.NewLine,
                             ex.StackTrace);
@@ -219,7 +219,7 @@ namespace Logic.WPF
             }
             catch (CompositionException ex)
             {
-                Log.LogError("{0}{1}{2}",
+                XLog.LogError("{0}{1}{2}",
                     ex.Message,
                     Environment.NewLine,
                     ex.StackTrace);
@@ -830,7 +830,7 @@ namespace Logic.WPF
             }
             catch (Exception ex)
             {
-                Log.LogError("{0}{1}{2}",
+                XLog.LogError("{0}{1}{2}",
                     ex.Message,
                     Environment.NewLine,
                     ex.StackTrace);
@@ -911,7 +911,7 @@ namespace Logic.WPF
                 }
                 catch (Exception ex)
                 {
-                    Log.LogError("{0}{1}{2}",
+                    XLog.LogError("{0}{1}{2}",
                         ex.Message,
                         Environment.NewLine,
                         ex.StackTrace);

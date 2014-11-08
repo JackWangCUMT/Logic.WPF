@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Logic.WPF.Util
 {
-    public static class Log
+    public static class XLog
     {
         public static void Initialize()
         {

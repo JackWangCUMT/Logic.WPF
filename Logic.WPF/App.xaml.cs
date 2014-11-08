@@ -15,13 +15,13 @@ namespace Logic.WPF
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            Log.Initialize();
+            XLog.Initialize();
         }
 
         protected override void OnExit(ExitEventArgs e)
         {
             base.OnExit(e);
-            Log.Close();
+            XLog.Close();
         }
     }
 }

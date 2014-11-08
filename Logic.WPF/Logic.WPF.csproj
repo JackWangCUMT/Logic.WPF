@@ -75,7 +75,7 @@
       <DependentUpon>CodeWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Util\XCommand.cs" />
-    <Compile Include="Util\Log.cs" />
+    <Compile Include="Util\XLog.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
