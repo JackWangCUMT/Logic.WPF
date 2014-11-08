@@ -213,7 +213,7 @@ namespace Logic.WPF.Page
                         case Mode.Create:
                             break;
                         case Mode.Move:
-                            MoveFinish();
+                            MoveFinish(e.GetPosition(this));
                             break;
                     }
                 }
@@ -409,10 +409,18 @@ namespace Logic.WPF.Page
 
         #region Move Mode
 
+        private double _hx;
+        private double _hy;
+
         private void MoveInit(IShape shape, Point p)
         {
+            History.Hold(Create("Page"));
+
             _startx = EnableSnap ? Snap(p.X, SnapSize) : p.X;
             _starty = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
+
+            _hx = _startx;
+            _hy = _starty;
 
             if (Renderer.Selected != null)
             {
@@ -466,14 +474,27 @@ namespace Logic.WPF.Page
             }
         }
 
-        private void MoveFinish()
+        private void MoveFinish(Point p)
         {
+            double x = EnableSnap ? Snap(p.X, SnapSize) : p.X;
+            double y = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
+            if (_hx != x || _hy != y)
+            {
+                History.Commit();
+            }
+            else
+            {
+                History.Release();
+            }
+
             ReleaseMouseCapture();
             _mode = Mode.None;
         }
 
         private void MoveCancel()
         {
+            History.Release();
+
             ReleaseMouseCapture();
             _mode = Mode.None;
         }

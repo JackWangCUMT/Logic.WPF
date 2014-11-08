@@ -12,9 +12,30 @@ namespace Logic.WPF.Util
         private Stack<byte[]> _undos = new Stack<byte[]>();
         private Stack<byte[]> _redos = new Stack<byte[]>();
 
+        private byte[] _hold = null;
+
+        public void Hold(T obj)
+        {
+            _hold = _json.BsonSerialize(obj);
+        }
+
+        public void Commit()
+        {
+            Snapshot(_hold);
+        }
+
+        public void Release()
+        {
+            _hold = null;
+        }
+
         public void Snapshot(T obj)
         {
-            var bson = _json.BsonSerialize(obj);
+            Snapshot(_json.BsonSerialize(obj));
+        }
+
+        private void Snapshot(byte[] bson)
+        {
             if (bson != null)
             {
                 if (_redos.Count > 0)
