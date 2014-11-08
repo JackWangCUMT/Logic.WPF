@@ -1,9 +1,11 @@
 ﻿using Logic.Core;
 using Logic.WPF.Page;
 using Logic.WPF.Util;
+using Logic.WPF.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
@@ -213,7 +215,7 @@ namespace Logic.WPF
 
             try
             {
-                Compose(this, ".");
+                Compose(this, "./Blocks");
             }
             catch (CompositionException ex)
             {
@@ -542,6 +544,9 @@ namespace Logic.WPF
             toolRectangle.Click += (s, e) => SetToolRectangle();
             toolText.Click += (s, e) => SetToolText();
 
+            blockExportBlock.Click += (s, e) => Block();
+            blockCreateCode.Click += (s, e) => Code();
+
             UpdateToolMenu();
         } 
 
@@ -790,7 +795,7 @@ namespace Logic.WPF
 
         #endregion
 
-        #region Block
+        #region Export Block
 
         private void Block()
         {
@@ -834,50 +839,214 @@ namespace Logic.WPF
 
         #endregion
 
-        #region Code
+        #region Generate Code
 
         private void Code()
         {
             var block = page.editorLayer.CreateBlockFromSelected("Block");
-            if (block != null)
-            {
-                string code = GenerateCodeFromBlock(
-                    block,
-                    "Blocks." + "Test",
-                    "Test",
-                    "TEST");
+            if (block == null)
+                return;
 
+            var window = new CodeWindow();
+            window.Owner = this;
+            window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+
+            var vm = new CodeViewModel()
+            {
+                NamespaceName = "Blocks.Name",
+                ClassName = "Name",
+                BlockName = "NAME",
+                ProjectPath = "Blocks.Name.csproj"
+            };
+
+            vm.BrowseCommand = new XCommand(() => 
+            { 
                 var dlg = new Microsoft.Win32.SaveFileDialog()
                 {
-                    Filter = "C# (*.cs)|*.cs",
-                    FileName = "Test"
+                    Filter = "C# Project (*.csproj)|*.csproj",
+                    FileName = vm.ProjectPath
                 };
 
-                if (dlg.ShowDialog() == true)
+                if (dlg.ShowDialog(window) == true)
                 {
-                    var path = dlg.FileName;
-                    try
-                    {
-                        var serializer = new XJson();
-                        using (var fs = System.IO.File.CreateText(path))
-                        {
-                            fs.Write(code);
-                        };
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.LogError("{0}{1}{2}",
-                            ex.Message,
-                            Environment.NewLine,
-                            ex.StackTrace);
-                    }
-
-                    System.Diagnostics.Process.Start("notepad", path);
+                    vm.ProjectPath = dlg.FileName;
                 }
-            }
+            });
+
+            vm.CreateCommand = new XCommand(() => 
+            {
+                try
+                {
+                    string dir = System.IO.Path.GetDirectoryName(vm.ProjectPath);
+                    string projectPath = vm.ProjectPath;
+                    string propertiesDir = System.IO.Path.Combine(dir, "Properties");
+                    string propertiesPath = System.IO.Path.Combine(dir, "Properties", "AssemblyInfo.cs");
+                    string codePath = System.IO.Path.Combine(dir, vm.ClassName + ".cs");
+
+                    // C# project
+                    string project = GenerateCSharpProject(vm.NamespaceName, vm.ClassName);
+                    using (var fs = System.IO.File.CreateText(projectPath))
+                    {
+                        fs.Write(project);
+                    };
+
+                    // C# properties
+                    string properties = GenerateAssemblyInfo(vm.NamespaceName, vm.BlockName);
+                    System.IO.Directory.CreateDirectory(propertiesDir);
+                    using (var fs = System.IO.File.CreateText(propertiesPath))
+                    {
+                        fs.Write(properties);
+                    };
+
+                    // C# code
+                    string code = GenerateClassFromBlock(
+                        block,
+                        vm.NamespaceName,
+                        vm.ClassName,
+                        vm.BlockName);
+                    using (var fs = System.IO.File.CreateText(codePath))
+                    {
+                        fs.Write(code);
+                    };
+                }
+                catch (Exception ex)
+                {
+                    Log.LogError("{0}{1}{2}",
+                        ex.Message,
+                        Environment.NewLine,
+                        ex.StackTrace);
+                }
+
+                window.Close();
+            });
+
+            vm.CancelCommand = new XCommand(() =>
+            {
+                window.Close();
+            });
+
+            window.DataContext = vm;
+            window.ShowDialog();
         }
 
-        private string GenerateCodeFromBlock(
+        private string GenerateCSharpProject(string namespaceName, string className)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+            sb.AppendLine("<Project ToolsVersion=\"12.0\" DefaultTargets=\"Build\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">");
+            sb.AppendLine("  <Import Project=\"$(MSBuildExtensionsPath)\\$(MSBuildToolsVersion)\\Microsoft.Common.props\" Condition=\"Exists('$(MSBuildExtensionsPath)\\$(MSBuildToolsVersion)\\Microsoft.Common.props')\" />");
+            sb.AppendLine("  <PropertyGroup>");
+            sb.AppendLine("    <Configuration Condition=\" '$(Configuration)' == '' \">Debug</Configuration>");
+            sb.AppendLine("    <Platform Condition=\" '$(Platform)' == '' \">AnyCPU</Platform>");
+            sb.AppendLine("    <ProjectGuid>{" + Guid.NewGuid().ToString().ToUpper() + "}</ProjectGuid>");
+            sb.AppendLine("    <OutputType>Library</OutputType>");
+            sb.AppendLine("    <AppDesignerFolder>Properties</AppDesignerFolder>");
+            sb.AppendLine("    <RootNamespace>" + namespaceName + "</RootNamespace>");
+            sb.AppendLine("    <AssemblyName>" + namespaceName + "</AssemblyName>");
+            sb.AppendLine("    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>");
+            sb.AppendLine("    <FileAlignment>512</FileAlignment>");
+            sb.AppendLine("  </PropertyGroup>");
+            sb.AppendLine("  <PropertyGroup Condition=\" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' \">");
+            sb.AppendLine("    <DebugSymbols>true</DebugSymbols>");
+            sb.AppendLine("    <DebugType>full</DebugType>");
+            sb.AppendLine("    <Optimize>false</Optimize>");
+            sb.AppendLine("    <OutputPath>bin\\Debug\\</OutputPath>");
+            sb.AppendLine("    <DefineConstants>DEBUG;TRACE</DefineConstants>");
+            sb.AppendLine("    <ErrorReport>prompt</ErrorReport>");
+            sb.AppendLine("    <WarningLevel>4</WarningLevel>");
+            sb.AppendLine("  </PropertyGroup>");
+            sb.AppendLine("  <PropertyGroup Condition=\" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' \">");
+            sb.AppendLine("    <DebugType>pdbonly</DebugType>");
+            sb.AppendLine("    <Optimize>true</Optimize>");
+            sb.AppendLine("    <OutputPath>bin\\Release\\</OutputPath>");
+            sb.AppendLine("    <DefineConstants>TRACE</DefineConstants>");
+            sb.AppendLine("    <ErrorReport>prompt</ErrorReport>");
+            sb.AppendLine("    <WarningLevel>4</WarningLevel>");
+            sb.AppendLine("  </PropertyGroup>");
+            sb.AppendLine("  <ItemGroup>");
+            sb.AppendLine("    <Reference Include=\"System\" />");
+            sb.AppendLine("    <Reference Include=\"System.ComponentModel.Composition\" />");
+            sb.AppendLine("    <Reference Include=\"System.Core\" />");
+            sb.AppendLine("    <Reference Include=\"System.Xml.Linq\" />");
+            sb.AppendLine("    <Reference Include=\"System.Data.DataSetExtensions\" />");
+            sb.AppendLine("    <Reference Include=\"Microsoft.CSharp\" />");
+            sb.AppendLine("    <Reference Include=\"System.Data\" />");
+            sb.AppendLine("    <Reference Include=\"System.Xml\" />");
+            sb.AppendLine("  </ItemGroup>");
+            sb.AppendLine("  <ItemGroup>");
+            sb.AppendLine("    <Compile Include=\"" + className + ".cs\" />");
+            sb.AppendLine("    <Compile Include=\"Properties\\AssemblyInfo.cs\" />");
+            sb.AppendLine("  </ItemGroup>");
+            sb.AppendLine("  <ItemGroup>");
+            sb.AppendLine("    <ProjectReference Include=\"..\\..\\Logic.Core\\Logic.Core.csproj\">");
+            sb.AppendLine("      <Project>{2ff9557a-d431-4b28-b226-49b91c9dec20}</Project>");
+            sb.AppendLine("      <Name>Logic.Core</Name>");
+            sb.AppendLine("    </ProjectReference>");
+            sb.AppendLine("  </ItemGroup>");
+            sb.AppendLine("  <Import Project=\"$(MSBuildToolsPath)\\Microsoft.CSharp.targets\" />");
+            sb.AppendLine("  <PropertyGroup>");
+            sb.AppendLine("    <PostBuildEvent>if not exist \"$(SolutionDir)Logic.WPF\\$(OutDir)Blocks\" mkdir \"$(SolutionDir)Logic.WPF\\$(OutDir)Blocks\\\"");
+            sb.AppendLine("copy \"$(TargetPath)\" \"$(SolutionDir)Logic.WPF\\$(OutDir)Blocks\\$(TargetFileName)\"");
+            sb.AppendLine("copy \"$(TargetDir)\\$(TargetName).pdb\" \"$(SolutionDir)Logic.WPF\\$(OutDir)Blocks\\\"</PostBuildEvent>");
+            sb.AppendLine("  </PropertyGroup>");
+            sb.AppendLine("  <PropertyGroup>");
+            sb.AppendLine("    <PostBuildEvent>copy \"$(TargetPath)\" \"$(SolutionDir)Logic.WPF\\$(OutDir)\\$(TargetFileName)\"");
+            sb.AppendLine("copy \"$(TargetDir)\\$(TargetName).pdb\" \"$(SolutionDir)Logic.WPF\\$(OutDir)\"</PostBuildEvent>");
+            sb.AppendLine("  </PropertyGroup>");
+            sb.AppendLine("  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. ");
+            sb.AppendLine("       Other similar extension points exist, see Microsoft.Common.targets.");
+            sb.AppendLine("  <Target Name=\"BeforeBuild\">");
+            sb.AppendLine("  </Target>");
+            sb.AppendLine("  <Target Name=\"AfterBuild\">");
+            sb.AppendLine("  </Target>");
+            sb.AppendLine("  -->");
+            sb.AppendLine("</Project>");
+            return sb.ToString();
+        }
+
+        private string GenerateAssemblyInfo(string namespaceName, string blockName)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("using System.Reflection;");
+            sb.AppendLine("using System.Runtime.CompilerServices;");
+            sb.AppendLine("using System.Runtime.InteropServices;");
+            sb.AppendLine("");
+            sb.AppendLine("// General Information about an assembly is controlled through the following ");
+            sb.AppendLine("// set of attributes. Change these attribute values to modify the information");
+            sb.AppendLine("// associated with an assembly.");
+            sb.AppendLine("[assembly: AssemblyTitle(\"" + namespaceName + "\")]");
+            sb.AppendLine("[assembly: AssemblyDescription(\"Logic Diagram Editor " + blockName + " Block\")]");
+            sb.AppendLine("[assembly: AssemblyConfiguration(\"\")]");
+            sb.AppendLine("[assembly: AssemblyCompany(\"Wiesław Šoltés\")]");
+            sb.AppendLine("[assembly: AssemblyProduct(\"" + namespaceName + "\")]");
+            sb.AppendLine("[assembly: AssemblyCopyright(\"Copyright © Wiesław Šoltés 2014\")]");
+            sb.AppendLine("[assembly: AssemblyTrademark(\"\")]");
+            sb.AppendLine("[assembly: AssemblyCulture(\"\")]");
+            sb.AppendLine("");
+            sb.AppendLine("// Setting ComVisible to false makes the types in this assembly not visible ");
+            sb.AppendLine("// to COM components.  If you need to access a type in this assembly from ");
+            sb.AppendLine("// COM, set the ComVisible attribute to true on that type.");
+            sb.AppendLine("[assembly: ComVisible(false)]");
+            sb.AppendLine("");
+            sb.AppendLine("// The following GUID is for the ID of the typelib if this project is exposed to COM");
+            sb.AppendLine("[assembly: Guid(\"6415d586-ed9f-4899-9128-7ec5c157f050\")]");
+            sb.AppendLine("");
+            sb.AppendLine("// Version information for an assembly consists of the following four values:");
+            sb.AppendLine("//");
+            sb.AppendLine("//      Major Version");
+            sb.AppendLine("//      Minor Version ");
+            sb.AppendLine("//      Build Number");
+            sb.AppendLine("//      Revision");
+            sb.AppendLine("//");
+            sb.AppendLine("// You can specify all the values or you can default the Build and Revision Numbers ");
+            sb.AppendLine("// by using the '*' as shown below:");
+            sb.AppendLine("// [assembly: AssemblyVersion(\"1.0.*\")]");
+            sb.AppendLine("[assembly: AssemblyVersion(\"1.0.0.0\")]");
+            sb.AppendLine("[assembly: AssemblyFileVersion(\"1.0.0.0\")]");
+            return sb.ToString();
+        }
+
+        private string GenerateClassFromBlock(
             XBlock block,
             string namespaceName,
             string className,
@@ -932,7 +1101,7 @@ namespace Logic.WPF
                         ellipse.Y,
                         ellipse.RadiusX,
                         ellipse.RadiusY,
-                        ellipse.IsFilled);
+                        ellipse.IsFilled.ToString().ToLower());
                     sb.AppendLine(value);
                 }
                 else if (shape is XRectangle)
@@ -945,7 +1114,7 @@ namespace Logic.WPF
                         rectangle.Y,
                         rectangle.Width,
                         rectangle.Height,
-                        rectangle.IsFilled);
+                        rectangle.IsFilled.ToString().ToLower());
                     sb.AppendLine(value);
                 }
                 else if (shape is XText)

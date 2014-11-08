@@ -44,15 +44,16 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Lgic.Core\Logic.Core.csproj">
+    <ProjectReference Include="..\..\Logic.Core\Logic.Core.csproj">
       <Project>{2ff9557a-d431-4b28-b226-49b91c9dec20}</Project>
       <Name>Logic.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetPath)" "$(SolutionDir)Logic.WPF\$(OutDir)\$(TargetFileName)"
-copy "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)Logic.WPF\$(OutDir)"</PostBuildEvent>
+    <PostBuildEvent>if not exist "$(SolutionDir)Logic.WPF\$(OutDir)Blocks\" mkdir "$(SolutionDir)Logic.WPF\$(OutDir)Blocks\"
+copy "$(TargetPath)" "$(SolutionDir)Logic.WPF\$(OutDir)Blocks\$(TargetFileName)"
+copy "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)Logic.WPF\$(OutDir)Blocks\"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

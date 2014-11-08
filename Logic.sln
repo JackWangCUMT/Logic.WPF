@@ -3,35 +3,35 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Express 2013 for Windows Desktop
 VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logic.Core", "Lgic.Core\Logic.Core.csproj", "{2FF9557A-D431-4B28-B226-49B91C9DEC20}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logic.Core", "Logic.Core\Logic.Core.csproj", "{2FF9557A-D431-4B28-B226-49B91C9DEC20}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logic.WPF", "Logic.WPF\Logic.WPF.csproj", "{CED022CA-6785-4FC6-AB1E-0A4F8E29D500}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Blocks", "Blocks", "{65B89479-F5CE-4861-94FB-98A0B9F49FDF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.Signal", "Blocks.Signal\Blocks.Signal.csproj", "{89A890C3-4D53-4880-992E-0FE37B0E6BB9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.Signal", "Blocks\Blocks.Signal\Blocks.Signal.csproj", "{89A890C3-4D53-4880-992E-0FE37B0E6BB9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.And", "Blocks.And\Blocks.And.csproj", "{C77B16C3-AA32-4D4E-9074-626FF52F3CB2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.And", "Blocks\Blocks.And\Blocks.And.csproj", "{C77B16C3-AA32-4D4E-9074-626FF52F3CB2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.Or", "Blocks.Or\Blocks.Or.csproj", "{CF93AE34-133C-444D-975A-9A6DC0A82314}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.Or", "Blocks\Blocks.Or\Blocks.Or.csproj", "{CF93AE34-133C-444D-975A-9A6DC0A82314}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.Inverter", "Blocks.Inverter\Blocks.Inverter.csproj", "{52023160-3D2A-41BE-AEBB-439F265489E8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.Inverter", "Blocks\Blocks.Inverter\Blocks.Inverter.csproj", "{52023160-3D2A-41BE-AEBB-439F265489E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.MemoryReset", "Blocks.MemoryReset\Blocks.MemoryReset.csproj", "{2B5608D7-B7A2-45D1-86AC-66652479CC68}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.MemoryReset", "Blocks\Blocks.MemoryReset\Blocks.MemoryReset.csproj", "{2B5608D7-B7A2-45D1-86AC-66652479CC68}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.MemoryResetVertical", "Blocks.MemoryResetVertical\Blocks.MemoryResetVertical.csproj", "{496F1F6A-3525-4D7B-B3BD-343706149597}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.MemoryResetVertical", "Blocks\Blocks.MemoryResetVertical\Blocks.MemoryResetVertical.csproj", "{496F1F6A-3525-4D7B-B3BD-343706149597}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.MemorySet", "Blocks.MemorySet\Blocks.MemorySet.csproj", "{1AB13C01-D921-470E-A54F-C0A3B047AE60}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.MemorySet", "Blocks\Blocks.MemorySet\Blocks.MemorySet.csproj", "{1AB13C01-D921-470E-A54F-C0A3B047AE60}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.MemorySetVertical", "Blocks.MemorySetVertical\Blocks.MemorySetVertical.csproj", "{987CD9C0-4E29-4889-91F2-2A53DB1BE3B9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.MemorySetVertical", "Blocks\Blocks.MemorySetVertical\Blocks.MemorySetVertical.csproj", "{987CD9C0-4E29-4889-91F2-2A53DB1BE3B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.Shortcut", "Blocks.Shortcut\Blocks.Shortcut.csproj", "{508D5E52-3EBA-4CBE-B8BB-8E1D3CCC370D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.Shortcut", "Blocks\Blocks.Shortcut\Blocks.Shortcut.csproj", "{508D5E52-3EBA-4CBE-B8BB-8E1D3CCC370D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.TimerOff", "Blocks.TimerOff\Blocks.TimerOff.csproj", "{BD1434DC-B377-4ECA-9E83-175FC7DFD6D2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.TimerOff", "Blocks\Blocks.TimerOff\Blocks.TimerOff.csproj", "{BD1434DC-B377-4ECA-9E83-175FC7DFD6D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.TimerOn", "Blocks.TimerOn\Blocks.TimerOn.csproj", "{F5BC4517-1CBC-40EE-AB6E-8398041D8D35}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.TimerOn", "Blocks\Blocks.TimerOn\Blocks.TimerOn.csproj", "{F5BC4517-1CBC-40EE-AB6E-8398041D8D35}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.TimerPulse", "Blocks.TimerPulse\Blocks.TimerPulse.csproj", "{B7D89DFD-426A-4AE1-8985-1BA8653215C4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.TimerPulse", "Blocks\Blocks.TimerPulse\Blocks.TimerPulse.csproj", "{B7D89DFD-426A-4AE1-8985-1BA8653215C4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

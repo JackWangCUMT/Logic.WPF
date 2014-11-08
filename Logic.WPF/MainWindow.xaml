@@ -79,6 +79,11 @@
                 <MenuItem x:Name="toolRectangle" Header="_Rectangle" InputGestureText="R"/>
                 <MenuItem x:Name="toolText" Header="_Text" InputGestureText="T"/>
             </MenuItem>
+            <MenuItem Header="_Block">
+                <MenuItem x:Name="blockExportBlock" Header="_Export Block..." InputGestureText="B"/>
+                <Separator/>
+                <MenuItem x:Name="blockCreateCode" Header="Create _Project..." InputGestureText="Ctr+B"/>
+            </MenuItem>
         </Menu>
         <ListBox x:Name="blocks" 
                  ItemsSource="{Binding Blocks}"
