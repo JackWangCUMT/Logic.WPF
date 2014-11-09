@@ -10,6 +10,7 @@ namespace Logic.Core
     {
         public string Name { get; set; }
         public XTemplate Template { get; set; }
+        public IList<IShape> Shapes { get; set; }
         public IList<IShape> Blocks { get; set; }
         public IList<IShape> Pins { get; set; }
         public IList<IShape> Wires { get; set; }

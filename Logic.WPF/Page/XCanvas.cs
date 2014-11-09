@@ -2200,7 +2200,7 @@ namespace Logic.WPF.Page
 
         public void Load(XPage page)
         {
-            Layers.Template.Shapes = page.Template.Shapes;
+            Layers.Template.Shapes = page.Shapes;
             Layers.Blocks.Shapes = page.Blocks;
             Layers.Wires.Shapes = page.Wires;
             Layers.Pins.Shapes = page.Pins;
@@ -2213,13 +2213,11 @@ namespace Logic.WPF.Page
             return new XPage()
             {
                 Name = name,
+                Shapes = Layers.Template.Shapes,
                 Blocks = Layers.Blocks.Shapes,
                 Pins = Layers.Pins.Shapes,
                 Wires = Layers.Wires.Shapes,
                 Template = new XTemplate()
-                {
-                    Shapes = Layers.Template.Shapes
-                }
             };
         }
 
@@ -2228,13 +2226,11 @@ namespace Logic.WPF.Page
             var page = new XPage()
             {
                 Name = "Page",
-                Template = new XTemplate()
-                {
-                    Shapes = new ObservableCollection<IShape>()
-                },
+                Shapes = new ObservableCollection<IShape>(),
                 Blocks = new ObservableCollection<IShape>(),
                 Pins = new ObservableCollection<IShape>(),
-                Wires = new ObservableCollection<IShape>()
+                Wires = new ObservableCollection<IShape>(),
+                Template = new XTemplate()
             };
             History.Snapshot(Create("Page"));
             Load(page);
