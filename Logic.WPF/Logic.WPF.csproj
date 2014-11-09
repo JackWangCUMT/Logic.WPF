@@ -58,6 +58,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Templates\XLogicPageTemplate.cs" />
     <Compile Include="Util\CSharpProjectCreator.cs" />
     <Compile Include="ViewModels\CodeViewModel.cs" />
     <Page Include="CodeWindow.xaml">
@@ -93,10 +94,8 @@
     <Compile Include="Page\XBorder.cs" />
     <Compile Include="Page\XCanvas.cs" />
     <Compile Include="Page\XColor.cs" />
-    <Compile Include="Page\XFrame.cs" />
-    <Compile Include="Page\XGrid.cs" />
+    <Compile Include="Page\XView.cs" />
     <Compile Include="Page\XStyle.cs" />
-    <Compile Include="Page\XTable.cs" />
     <Compile Include="Util\XHistory.cs" />
     <Compile Include="Util\XJson.cs" />
     <Compile Include="Page\XLayers.cs" />

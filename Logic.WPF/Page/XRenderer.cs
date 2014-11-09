@@ -31,10 +31,19 @@ namespace Logic.WPF.Page
 
         public void DrawLine(object dc, IStyle style, XLine line)
         {
+            double thickness = style.Thickness;
+            double half = thickness / 2.0;
+            var gs = new GuidelineSet(
+                new double[] { half, half },
+                new double[] { half, half });
+            (dc as DrawingContext).PushGuidelineSet(gs);
+
             (dc as DrawingContext).DrawLine(
                 (Pen)style.NativeStroke(),
                 new Point(line.X1, line.Y1),
                 new Point(line.X2, line.Y2));
+
+            (dc as DrawingContext).Pop();
         }
 
         public void DrawEllipse(object dc, IStyle style, XEllipse ellipse)
@@ -279,6 +288,14 @@ namespace Logic.WPF.Page
                     rectangle.Height));
 
             (dc as DrawingContext).Pop();
+        }
+
+        public void DrawShapes(object dc, IList<IShape> shapes)
+        {
+            foreach (var shape in shapes)
+            {
+                shape.Render(dc, this, shape.Style);
+            }
         }
 
         public void DrawShapes(object dc, IStyle normal, IStyle selected, IList<IShape> shapes)

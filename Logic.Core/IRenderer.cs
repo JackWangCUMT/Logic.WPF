@@ -20,6 +20,7 @@ namespace Logic.Core
         void DrawPin(object dc, IStyle style, XPin pin);
         void DrawWire(object dc, IStyle style, XWire wire);
         void DrawSelection(object dc, IStyle style, XRectangle rectangle);
+        void DrawShapes(object dc, IList<IShape> shapes);
         void DrawShapes(object dc, IStyle normal, IStyle selected, IList<IShape> shapes);
     }
 }

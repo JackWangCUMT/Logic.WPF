@@ -13,17 +13,17 @@
              TextOptions.TextHintingMode="Auto" 
              TextOptions.TextRenderingMode="Auto">
     <Grid x:Name="layout" Width="1260" Height="891">
-        <page:XGrid x:Name="grid" 
+        <page:XView x:Name="gridView" 
                     Background="Transparent" 
                     FocusVisualStyle="{x:Null}"
                     VerticalAlignment="Center" HorizontalAlignment="Center"
                     Width="1260" Height="891"/>
-        <page:XTable x:Name="table" 
+        <page:XView x:Name="tableView" 
                      Background="Transparent" 
                      FocusVisualStyle="{x:Null}"
                      VerticalAlignment="Center" HorizontalAlignment="Center"
                      Width="1260" Height="891"/>
-        <page:XFrame x:Name="frame" 
+        <page:XView x:Name="frameView" 
                      Background="Transparent" 
                      FocusVisualStyle="{x:Null}"
                      VerticalAlignment="Center" HorizontalAlignment="Center"

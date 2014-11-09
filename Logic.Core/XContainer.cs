@@ -8,6 +8,7 @@ namespace Logic.Core
 {
     public class XContainer
     {
+        public IList<IStyle> Styles { get; set; }
         public IList<IShape> Shapes { get; set; }
     }
 }

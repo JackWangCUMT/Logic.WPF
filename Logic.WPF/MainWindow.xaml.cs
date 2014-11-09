@@ -1,5 +1,6 @@
 ﻿using Logic.Core;
 using Logic.WPF.Page;
+using Logic.WPF.Templates;
 using Logic.WPF.Util;
 using Logic.WPF.ViewModels;
 using System;
@@ -92,27 +93,46 @@ namespace Logic.WPF
 
         private void InitPage()
         {
+            // template
+            var template = new XLogicPageTemplate();
+            page.gridView.Container = template.Grid;
+            page.tableView.Container = template.Table;
+            page.frameView.Container = template.Frame;
+
+            // layers
             var layers = new XLayers();
             layers.Template = page.templateLayer;
             layers.Blocks = page.blockLayer;
             layers.Wires = page.wireLayer;
             layers.Pins = page.pinLayer;
 
+            page.editorLayer.Layers = layers;
+
+            // renderer
             var renderer = new XRenderer()
             {
                 InvertSize = 6.0,
                 PinRadius = 4.0,
                 HitTreshold = 6.0
             };
+
             page.templateLayer.Renderer = renderer;
             page.blockLayer.Renderer = renderer;
             page.wireLayer.Renderer = renderer;
             page.pinLayer.Renderer = renderer;
             page.editorLayer.Renderer = renderer;
 
+            page.gridView.Renderer = renderer;
+            page.tableView.Renderer = renderer;
+            page.frameView.Renderer = renderer;
+
+            // history
             page.editorLayer.History = new XHistory<XPage>();
-            page.editorLayer.Layers = layers;
+
+            // tool
             page.editorLayer.CurrentTool = XCanvas.Tool.Selection;
+
+            // drag & drop
             page.editorLayer.AllowDrop = true;
 
             page.editorLayer.DragEnter += (s, e) =>
