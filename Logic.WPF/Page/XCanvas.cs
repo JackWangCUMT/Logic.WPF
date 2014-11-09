@@ -294,7 +294,7 @@ namespace Logic.WPF.Page
             var all = Layers.Pins.Shapes
                 .Concat(Layers.Wires.Shapes)
                 .Concat(Layers.Blocks.Shapes)
-                .Concat(Layers.Template.Shapes);
+                .Concat(Layers.Shapes.Shapes);
             return new HashSet<IShape>(all);
         }
 
@@ -542,22 +542,22 @@ namespace Logic.WPF.Page
                             _line.Y2 += dy;
                             break;
                     }
-                    Layers.Template.InvalidateVisual();
+                    Layers.Shapes.InvalidateVisual();
                     break;
                 case Element.Ellipse:
                     _ellipse.X += dx;
                     _ellipse.Y += dy;
-                    Layers.Template.InvalidateVisual();
+                    Layers.Shapes.InvalidateVisual();
                     break;
                 case Element.Rectangle:
                     _rectangle.X += dx;
                     _rectangle.Y += dy;
-                    Layers.Template.InvalidateVisual();
+                    Layers.Shapes.InvalidateVisual();
                     break;
                 case Element.Text:
                     _text.X += dx;
                     _text.Y += dy;
-                    Layers.Template.InvalidateVisual();
+                    Layers.Shapes.InvalidateVisual();
                     break;
                 case Element.Wire:
                     // TODO: Implement wire Move
@@ -625,7 +625,7 @@ namespace Logic.WPF.Page
                 }
             }
 
-            Layers.Template.InvalidateVisual();
+            Layers.Shapes.InvalidateVisual();
             Layers.Blocks.InvalidateVisual();
             Layers.Wires.InvalidateVisual();
             Layers.Pins.InvalidateVisual();
@@ -994,15 +994,15 @@ namespace Logic.WPF.Page
                     {
                         _line.X2 = x;
                         _line.Y2 = y;
-                        if (Layers.Template != null)
+                        if (Layers.Shapes != null)
                         {
                             Shapes.Remove(_line);
                             if (History != null)
                             {
                                 History.Snapshot(Create("Page"));
                             }
-                            Layers.Template.Shapes.Add(_line);
-                            Layers.Template.InvalidateVisual();
+                            Layers.Shapes.Shapes.Add(_line);
+                            Layers.Shapes.InvalidateVisual();
                         }
                         ReleaseMouseCapture();
                         InvalidateVisual();
@@ -1014,15 +1014,15 @@ namespace Logic.WPF.Page
                         _ellipse.RadiusY = Math.Abs(y - _starty) / 2.0;
                         _ellipse.X = Math.Min(_startx, x) + _ellipse.RadiusX;
                         _ellipse.Y = Math.Min(_starty, y) + _ellipse.RadiusY;
-                        if (Layers.Template != null)
+                        if (Layers.Shapes != null)
                         {
                             Shapes.Remove(_ellipse);
                             if (History != null)
                             {
                                 History.Snapshot(Create("Page"));
                             }
-                            Layers.Template.Shapes.Add(_ellipse);
-                            Layers.Template.InvalidateVisual();
+                            Layers.Shapes.Shapes.Add(_ellipse);
+                            Layers.Shapes.InvalidateVisual();
                         }
                         ReleaseMouseCapture();
                         InvalidateVisual();
@@ -1034,15 +1034,15 @@ namespace Logic.WPF.Page
                         _rectangle.Y = Math.Min(_starty, y);
                         _rectangle.Width = Math.Abs(x - _startx);
                         _rectangle.Height = Math.Abs(y - _starty);
-                        if (Layers.Template != null)
+                        if (Layers.Shapes != null)
                         {
                             Shapes.Remove(_rectangle);
                             if (History != null)
                             {
                                 History.Snapshot(Create("Page"));
                             }
-                            Layers.Template.Shapes.Add(_rectangle);
-                            Layers.Template.InvalidateVisual();
+                            Layers.Shapes.Shapes.Add(_rectangle);
+                            Layers.Shapes.InvalidateVisual();
                         }
                         ReleaseMouseCapture();
                         InvalidateVisual();
@@ -1054,15 +1054,15 @@ namespace Logic.WPF.Page
                         _text.Y = Math.Min(_starty, y);
                         _text.Width = Math.Abs(x - _startx);
                         _text.Height = Math.Abs(y - _starty);
-                        if (Layers.Template != null)
+                        if (Layers.Shapes != null)
                         {
                             Shapes.Remove(_text);
                             if (History != null)
                             {
                                 History.Snapshot(Create("Page"));
                             }
-                            Layers.Template.Shapes.Add(_text);
-                            Layers.Template.InvalidateVisual();
+                            Layers.Shapes.Shapes.Add(_text);
+                            Layers.Shapes.InvalidateVisual();
                         }
                         ReleaseMouseCapture();
                         InvalidateVisual();
@@ -1297,7 +1297,7 @@ namespace Logic.WPF.Page
                     text.IsFilled = !text.IsFilled;
                 }
 
-                Layers.Template.InvalidateVisual();
+                Layers.Shapes.InvalidateVisual();
             }
         }
 
@@ -1346,7 +1346,7 @@ namespace Logic.WPF.Page
                         text.FontSize = size;
                     }
                 }
-                Layers.Template.InvalidateVisual();
+                Layers.Shapes.InvalidateVisual();
             }
         }
 
@@ -1361,7 +1361,7 @@ namespace Logic.WPF.Page
                 {
                     text.HAlignment = halignment;
                 }
-                Layers.Template.InvalidateVisual();
+                Layers.Shapes.InvalidateVisual();
             }
         }
 
@@ -1376,7 +1376,7 @@ namespace Logic.WPF.Page
                 {
                     text.VAlignment = valignment;
                 }
-                Layers.Template.InvalidateVisual();
+                Layers.Shapes.InvalidateVisual();
             }
         }
 
@@ -1723,7 +1723,7 @@ namespace Logic.WPF.Page
                 }
             }
 
-            var template = HitTest(Layers.Template.Shapes, p);
+            var template = HitTest(Layers.Shapes.Shapes, p);
             if (template != null)
             {
                 return template;
@@ -1917,7 +1917,7 @@ namespace Logic.WPF.Page
 
             HitTest(Layers.Blocks.Shapes.Cast<XBlock>(), rect, hs);
 
-            HitTest(Layers.Template.Shapes, rect, hs);
+            HitTest(Layers.Shapes.Shapes, rect, hs);
 
             return hs;
         }
@@ -1932,19 +1932,19 @@ namespace Logic.WPF.Page
             {
                 if (shape is XLine)
                 {
-                    Layers.Template.Shapes.Add(shape);
+                    Layers.Shapes.Shapes.Add(shape);
                 }
                 else if (shape is XEllipse)
                 {
-                    Layers.Template.Shapes.Add(shape);
+                    Layers.Shapes.Shapes.Add(shape);
                 }
                 else if (shape is XRectangle)
                 {
-                    Layers.Template.Shapes.Add(shape);
+                    Layers.Shapes.Shapes.Add(shape);
                 }
                 else if (shape is XText)
                 {
-                    Layers.Template.Shapes.Add(shape);
+                    Layers.Shapes.Shapes.Add(shape);
                 }
                 else if (shape is XWire)
                 {
@@ -1979,19 +1979,19 @@ namespace Logic.WPF.Page
             {
                 if (shape is XLine)
                 {
-                    Layers.Template.Shapes.Remove(shape);
+                    Layers.Shapes.Shapes.Remove(shape);
                 }
                 else if (shape is XEllipse)
                 {
-                    Layers.Template.Shapes.Remove(shape);
+                    Layers.Shapes.Shapes.Remove(shape);
                 }
                 else if (shape is XRectangle)
                 {
-                    Layers.Template.Shapes.Remove(shape);
+                    Layers.Shapes.Shapes.Remove(shape);
                 }
                 else if (shape is XText)
                 {
-                    Layers.Template.Shapes.Remove(shape);
+                    Layers.Shapes.Shapes.Remove(shape);
                 }
                 else if (shape is XWire)
                 {
@@ -2200,7 +2200,7 @@ namespace Logic.WPF.Page
 
         public void Load(XPage page)
         {
-            Layers.Template.Shapes = page.Shapes;
+            Layers.Shapes.Shapes = page.Shapes;
             Layers.Blocks.Shapes = page.Blocks;
             Layers.Wires.Shapes = page.Wires;
             Layers.Pins.Shapes = page.Pins;
@@ -2213,7 +2213,7 @@ namespace Logic.WPF.Page
             return new XPage()
             {
                 Name = name,
-                Shapes = Layers.Template.Shapes,
+                Shapes = Layers.Shapes.Shapes,
                 Blocks = Layers.Blocks.Shapes,
                 Pins = Layers.Pins.Shapes,
                 Wires = Layers.Wires.Shapes,
@@ -2465,7 +2465,7 @@ namespace Logic.WPF.Page
         {
             if (Layers != null)
             {
-                Layers.Template.InvalidateVisual();
+                Layers.Shapes.InvalidateVisual();
                 Layers.Blocks.InvalidateVisual();
                 Layers.Pins.InvalidateVisual();
                 Layers.Wires.InvalidateVisual(); 

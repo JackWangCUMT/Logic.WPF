@@ -101,7 +101,7 @@ namespace Logic.WPF
 
             // layers
             var layers = new XLayers();
-            layers.Template = page.templateLayer;
+            layers.Shapes = page.shapeLayer;
             layers.Blocks = page.blockLayer;
             layers.Wires = page.wireLayer;
             layers.Pins = page.pinLayer;
@@ -116,7 +116,7 @@ namespace Logic.WPF
                 HitTreshold = 6.0
             };
 
-            page.templateLayer.Renderer = renderer;
+            page.shapeLayer.Renderer = renderer;
             page.blockLayer.Renderer = renderer;
             page.wireLayer.Renderer = renderer;
             page.pinLayer.Renderer = renderer;

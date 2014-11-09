@@ -28,7 +28,7 @@
                      FocusVisualStyle="{x:Null}"
                      VerticalAlignment="Center" HorizontalAlignment="Center"
                      Width="1260" Height="891"/>
-        <page:XCanvas x:Name="templateLayer" 
+        <page:XCanvas x:Name="shapeLayer" 
                       Background="Transparent" 
                       FocusVisualStyle="{x:Null}"
                       VerticalAlignment="Center" HorizontalAlignment="Center"

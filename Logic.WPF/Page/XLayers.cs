@@ -8,7 +8,7 @@ namespace Logic.WPF.Page
 {
     public class XLayers
     {
-        public XCanvas Template { get; set; }
+        public XCanvas Shapes { get; set; }
         public XCanvas Blocks { get; set; }
         public XCanvas Wires { get; set; }
         public XCanvas Pins { get; set; }
