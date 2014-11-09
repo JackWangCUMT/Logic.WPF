@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Logic.Core;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,39 +13,58 @@ namespace Logic.WPF.Page
 {
     public class XFrame : Canvas
     {
+        private IRenderer _renderer;
+        private IStyle _style = null;
+        private IList<IShape> _shapes;
+
+        public XFrame()
+        {
+            _renderer = new XRenderer()
+            {
+                InvertSize = 6.0,
+                PinRadius = 4.0,
+                HitTreshold = 6.0
+            };
+
+            _style = new XStyle(
+                "Shape",
+                new XColor() { A = 0x00, R = 0x00, G = 0x00, B = 0x00 },
+                new XColor() { A = 0xFF, R = 0xA9, G = 0xA9, B = 0xA9 },
+                1.0);
+
+            _shapes = new ObservableCollection<IShape>();
+
+            _shapes.Add(new XLine() { X1 = 0.0, Y1 = 0.0, X2 = 1260.0, Y2 = 0.0 });
+            _shapes.Add(new XLine() { X1 = 0.0, Y1 = 30.0, X2 = 1260.0, Y2 = 30.0 });
+            _shapes.Add(new XLine() { X1 = 0.0, Y1 = 780.0, X2 = 1260.0, Y2 = 780.0 });
+            _shapes.Add(new XLine() { X1 = 0.0, Y1 = 811.0, X2 = 1260.0, Y2 = 811.0 });
+            _shapes.Add(new XLine() { X1 = 0.0, Y1 = 891.0, X2 = 1260.0, Y2 = 891.0 });
+
+            _shapes.Add(new XLine() { X1 = 0.0, Y1 = 0.0, X2 = 0.0, Y2 = 891.0 });
+            _shapes.Add(new XLine() { X1 = 30.0, Y1 = 30.0, X2 = 30.0, Y2 = 780.0 });
+            _shapes.Add(new XLine() { X1 = 240.0, Y1 = 30.0, X2 = 240.0, Y2 = 780.0 });
+            _shapes.Add(new XLine() { X1 = 330.0, Y1 = 0.0, X2 = 330.0, Y2 = 780.0 });
+
+            _shapes.Add(new XLine() { X1 = 930.0, Y1 = 0.0, X2 = 930.0, Y2 = 780.0 });
+            _shapes.Add(new XLine() { X1 = 1140.0, Y1 = 30.0, X2 = 1140.0, Y2 = 780.0 });
+            _shapes.Add(new XLine() { X1 = 1230.0, Y1 = 30.0, X2 = 1230.0, Y2 = 780.0 });
+            _shapes.Add(new XLine() { X1 = 1260.0, Y1 = 0.0, X2 = 1260.0, Y2 = 891.0 });
+
+            for (double y = 60.0; y < 60.0 + 25.0 * 30.0; y += 30.0)
+            {
+                _shapes.Add(new XLine() { X1 = 0.0, Y1 = y, X2 = 330.0, Y2 = y });
+                _shapes.Add(new XLine() { X1 = 930.0, Y1 = y, X2 = 1260.0, Y2 = y });
+            }
+        }
+
         protected override void OnRender(DrawingContext dc)
         {
             base.OnRender(dc);
 
-            var pen = new Pen(Brushes.DarkGray, 1.0);
-            var gs = new GuidelineSet(
-                new double[] { 0.5, 0.5 }, 
-                new double[] { 0.5, 0.5 });
-            dc.PushGuidelineSet(gs);
-
-            dc.DrawLine(pen, new Point(0.0, 0.0), new Point(1260.0, 0.0));
-            dc.DrawLine(pen, new Point(0.0, 30.0), new Point(1260.0, 30.0));
-            dc.DrawLine(pen, new Point(0.0, 780.0), new Point(1260.0, 780.0));
-            dc.DrawLine(pen, new Point(0.0, 811.0), new Point(1260.0, 811.0));
-            dc.DrawLine(pen, new Point(0.0, 891.0), new Point(1260.0, 891.0));
-
-            dc.DrawLine(pen, new Point(0.0, 0.0), new Point(0.0, 891.0));
-            dc.DrawLine(pen, new Point(30.0, 30.0), new Point(30.0, 780.0));
-            dc.DrawLine(pen, new Point(240.0, 30.0), new Point(240.0, 780.0));
-            dc.DrawLine(pen, new Point(330.0, 0.0), new Point(330.0, 780.0));
-
-            dc.DrawLine(pen, new Point(930.0, 0.0), new Point(930.0, 780.0));
-            dc.DrawLine(pen, new Point(1140.0, 30.0), new Point(1140.0, 780.0));
-            dc.DrawLine(pen, new Point(1230.0, 30.0), new Point(1230.0, 780.0));
-            dc.DrawLine(pen, new Point(1260.0, 0.0), new Point(1260.0, 891.0));
-
-            for (double y = 60.0; y < 60.0 + 25.0 * 30.0; y += 30.0)
+            if (_renderer != null)
             {
-                dc.DrawLine(pen, new Point(0.0, y), new Point(330.0, y));
-                dc.DrawLine(pen, new Point(930.0, y), new Point(1260.0, y));
+                _renderer.DrawShapes(dc, _style, null, _shapes);
             }
-
-            dc.Pop();
         }
     }
 }
