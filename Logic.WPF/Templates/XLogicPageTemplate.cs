@@ -9,29 +9,34 @@ using System.Threading.Tasks;
 
 namespace Logic.WPF.Templates
 {
-    public class XLogicPageTemplate : XTemplate
+    public class XLogicPageTemplate : ITemplate
     {
+        public string Name { get; set; }
+        public XContainer Grid { get; set; }
+        public XContainer Table { get; set; }
+        public XContainer Frame { get; set; }
+
         public XLogicPageTemplate()
         {
-            base.Grid = new XContainer() 
+            this.Grid = new XContainer() 
             { 
                 Styles = new ObservableCollection<IStyle>(),
                 Shapes = new ObservableCollection<IShape>() 
             };
 
-            base.Table = new XContainer()
+            this.Table = new XContainer()
             {
                 Styles = new ObservableCollection<IStyle>(),
                 Shapes = new ObservableCollection<IShape>()
             };
 
-            base.Frame = new XContainer()
+            this.Frame = new XContainer()
             {
                 Styles = new ObservableCollection<IStyle>(),
                 Shapes = new ObservableCollection<IShape>()
             };
 
-            base.Name = "Logic Page";
+            this.Name = "Logic Page";
 
             // styles
             var gridStyle = new XStyle(
@@ -39,26 +44,26 @@ namespace Logic.WPF.Templates
                 new XColor() { A = 0x00, R = 0x00, G = 0x00, B = 0x00 },
                 new XColor() { A = 0xFF, R = 0xD3, G = 0xD3, B = 0xD3 },
                 1.0);
-            base.Grid.Styles.Add(gridStyle);
+            this.Grid.Styles.Add(gridStyle);
 
             var tableStyle = new XStyle(
                 "Table",
                 new XColor() { A = 0x00, R = 0x00, G = 0x00, B = 0x00 },
                 new XColor() { A = 0xFF, R = 0xD3, G = 0xD3, B = 0xD3 },
                 1.0);
-            base.Table.Styles.Add(tableStyle);
+            this.Table.Styles.Add(tableStyle);
 
             var frameStyle = new XStyle(
                 "Frame",
                 new XColor() { A = 0x00, R = 0x00, G = 0x00, B = 0x00 },
                 new XColor() { A = 0xFF, R = 0xA9, G = 0xA9, B = 0xA9 },
                 1.0);
-            base.Frame.Styles.Add(frameStyle);
+            this.Frame.Styles.Add(frameStyle);
 
             // containers
-            CreateGrid(base.Grid.Shapes, gridStyle);
-            CreateTable(base.Table.Shapes, tableStyle);
-            CreateFrame(base.Frame.Shapes, frameStyle);
+            CreateGrid(this.Grid.Shapes, gridStyle);
+            CreateTable(this.Table.Shapes, tableStyle);
+            CreateFrame(this.Frame.Shapes, frameStyle);
         }
 
         private void CreateGrid(IList<IShape> shapes, IStyle style)

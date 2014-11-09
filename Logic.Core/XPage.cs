@@ -9,7 +9,7 @@ namespace Logic.Core
     public class XPage
     {
         public string Name { get; set; }
-        public XTemplate Template { get; set; }
+        public ITemplate Template { get; set; }
         public IList<IShape> Shapes { get; set; }
         public IList<IShape> Blocks { get; set; }
         public IList<IShape> Pins { get; set; }

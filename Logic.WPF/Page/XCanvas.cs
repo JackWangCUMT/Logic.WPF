@@ -2217,7 +2217,7 @@ namespace Logic.WPF.Page
                 Blocks = Layers.Blocks.Shapes,
                 Pins = Layers.Pins.Shapes,
                 Wires = Layers.Wires.Shapes,
-                Template = new XTemplate()
+                Template = null
             };
         }
 
@@ -2230,7 +2230,7 @@ namespace Logic.WPF.Page
                 Blocks = new ObservableCollection<IShape>(),
                 Pins = new ObservableCollection<IShape>(),
                 Wires = new ObservableCollection<IShape>(),
-                Template = new XTemplate()
+                Template = null
             };
             History.Snapshot(Create("Page"));
             Load(page);

@@ -84,6 +84,11 @@
                 <Separator/>
                 <MenuItem x:Name="blockCreateCode" Header="Create _Project..." InputGestureText="Ctr+B"/>
             </MenuItem>
+            <MenuItem Header="Te_mplate">
+                <MenuItem x:Name="templateImport" Header="_Import..." InputGestureText=""/>
+                <Separator/>
+                <MenuItem x:Name="templateExport" Header="_Export..." InputGestureText=""/>
+            </MenuItem>
         </Menu>
         <ListBox x:Name="blocks" 
                  ItemsSource="{Binding Blocks}"

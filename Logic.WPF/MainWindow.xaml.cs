@@ -37,6 +37,9 @@ namespace Logic.WPF
 
         #region Fields
 
+        private XJson _serializer = new XJson();
+        private IRenderer _renderer;
+        private ITemplate _template;
         private string _pageFileName = string.Empty;
         private Point _dragStartPoint;
 
@@ -93,12 +96,6 @@ namespace Logic.WPF
 
         private void InitPage()
         {
-            // template
-            var template = new XLogicPageTemplate();
-            page.gridView.Container = template.Grid;
-            page.tableView.Container = template.Table;
-            page.frameView.Container = template.Frame;
-
             // layers
             var layers = new XLayers();
             layers.Shapes = page.shapeLayer;
@@ -109,22 +106,22 @@ namespace Logic.WPF
             page.editorLayer.Layers = layers;
 
             // renderer
-            var renderer = new XRenderer()
+            _renderer = new XRenderer()
             {
                 InvertSize = 6.0,
                 PinRadius = 4.0,
                 HitTreshold = 6.0
             };
 
-            page.shapeLayer.Renderer = renderer;
-            page.blockLayer.Renderer = renderer;
-            page.wireLayer.Renderer = renderer;
-            page.pinLayer.Renderer = renderer;
-            page.editorLayer.Renderer = renderer;
+            page.shapeLayer.Renderer = _renderer;
+            page.blockLayer.Renderer = _renderer;
+            page.wireLayer.Renderer = _renderer;
+            page.pinLayer.Renderer = _renderer;
+            page.editorLayer.Renderer = _renderer;
 
-            page.gridView.Renderer = renderer;
-            page.tableView.Renderer = renderer;
-            page.frameView.Renderer = renderer;
+            // template
+            _template = new XLogicPageTemplate();
+            ApplyPageTemplate(_template, _renderer);
 
             // history
             page.editorLayer.History = new XHistory<XPage>();
@@ -567,6 +564,9 @@ namespace Logic.WPF
             blockExportBlock.Click += (s, e) => Block();
             blockCreateCode.Click += (s, e) => Code();
 
+            templateImport.Click += (s, e) => ImportTemplate();
+            templateExport.Click += (s, e) => ExportTemplate();
+
             UpdateToolMenu();
         } 
 
@@ -815,7 +815,7 @@ namespace Logic.WPF
 
         #endregion
 
-        #region Export Block
+        #region Block
 
         private void Block()
         {
@@ -841,8 +841,7 @@ namespace Logic.WPF
         {
             try
             {
-                var serializer = new XJson();
-                var json = serializer.JsonSerialize(block);
+                var json = _serializer.JsonSerialize(block);
                 using (var fs = System.IO.File.CreateText(path))
                 {
                     fs.Write(json);
@@ -856,10 +855,6 @@ namespace Logic.WPF
                     ex.StackTrace);
             }
         }
-
-        #endregion
-
-        #region Generate Code
 
         private void Code()
         {
@@ -917,6 +912,118 @@ namespace Logic.WPF
 
             window.DataContext = vm;
             window.ShowDialog();
+        }
+
+        #endregion
+
+        #region Template
+
+        private void ImportTemplate()
+        {
+            var dlg = new Microsoft.Win32.OpenFileDialog()
+            {
+                Filter = "Json (*.json)|*.json"
+            };
+
+            if (dlg.ShowDialog() == true)
+            {
+                var template = OpenTemplate(dlg.FileName);
+                ApplyPageTemplate(template, _renderer);
+                _template = template;
+                InvalidatePageTemplate();
+            }
+        }
+
+        private void ExportTemplate()
+        {
+            var dlg = new Microsoft.Win32.SaveFileDialog()
+            {
+                Filter = "Json (*.json)|*.json",
+                FileName = _template.Name
+            };
+
+            if (dlg.ShowDialog() == true)
+            {
+                var template = new XTemplate()
+                {
+                    Name = _template.Name,
+                    Grid = new XContainer()
+                    {
+                        Styles = new ObservableCollection<IStyle>(_template.Grid.Styles),
+                        Shapes = new ObservableCollection<IShape>(_template.Grid.Shapes)
+                    },
+                    Table = new XContainer()
+                    {
+                        Styles = new ObservableCollection<IStyle>(_template.Table.Styles),
+                        Shapes = new ObservableCollection<IShape>(_template.Table.Shapes)
+                    },
+                    Frame = new XContainer()
+                    {
+                        Styles = new ObservableCollection<IStyle>(_template.Frame.Styles),
+                        Shapes = new ObservableCollection<IShape>(_template.Frame.Shapes)
+                    }
+                };
+
+                SaveTemplate(dlg.FileName, template);
+            }
+        }
+
+        private ITemplate OpenTemplate(string path)
+        {
+            try
+            {
+                using (var fs = System.IO.File.OpenText(path))
+                {
+                    var json = fs.ReadToEnd();
+                    var template = _serializer.JsonDeserialize<XTemplate>(json);
+                    return template;
+                }
+            }
+            catch (Exception ex)
+            {
+                XLog.LogError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
+            }
+            return null;
+        }
+
+        private void SaveTemplate(string path, ITemplate template)
+        {
+            try
+            {
+                var json = _serializer.JsonSerialize(template);
+                using (var fs = System.IO.File.CreateText(path))
+                {
+                    fs.Write(json);
+                }
+            }
+            catch (Exception ex)
+            {
+                XLog.LogError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
+            }
+        }
+
+        private void ApplyPageTemplate(ITemplate template, IRenderer renderer)
+        {
+            page.gridView.Container = template.Grid;
+            page.tableView.Container = template.Table;
+            page.frameView.Container = template.Frame;
+
+            page.gridView.Renderer = renderer;
+            page.tableView.Renderer = renderer;
+            page.frameView.Renderer = renderer;
+        }
+
+        private void InvalidatePageTemplate()
+        {
+            page.gridView.InvalidateVisual();
+            page.tableView.InvalidateVisual();
+            page.frameView.InvalidateVisual();
         }
 
         #endregion

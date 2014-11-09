@@ -55,6 +55,7 @@
     <Compile Include="XPin.cs" />
     <Compile Include="XProject.cs" />
     <Compile Include="XRectangle.cs" />
+    <Compile Include="ITemplate.cs" />
     <Compile Include="XTemplate.cs" />
     <Compile Include="XText.cs" />
     <Compile Include="XWire.cs" />

@@ -10,7 +10,7 @@ namespace Logic.Core
     {
         public string Name { get; set; }
         public IList<IStyle> Styles { get; set; }
-        public IList<XTemplate> Templates { get; set; }
+        public IList<ITemplate> Templates { get; set; }
         public IList<XDocument> Documents { get; set; }
     }
 }

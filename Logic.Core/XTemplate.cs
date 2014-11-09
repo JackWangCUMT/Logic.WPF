@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Logic.Core
 {
-    public class XTemplate
+    public class XTemplate : ITemplate
     {
         public string Name { get; set; }
         public XContainer Grid { get; set; }
