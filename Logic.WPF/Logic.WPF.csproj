@@ -58,6 +58,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Util\CSharpProjectCreator.cs" />
     <Compile Include="ViewModels\CodeViewModel.cs" />
     <Page Include="CodeWindow.xaml">
       <SubType>Designer</SubType>
