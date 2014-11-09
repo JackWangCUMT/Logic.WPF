@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Logic.Core;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,46 +13,65 @@ namespace Logic.WPF.Page
 {
     public class XTable : Canvas
     {
-        protected override void OnRender(DrawingContext dc)
-        {
-            base.OnRender(dc);
+        private IRenderer _renderer;
+        private IStyle _style = null;
+        private IList<IShape> _shapes;
 
-            var pen = new Pen(Brushes.LightGray, 1.0);
-            var gs = new GuidelineSet(
-                new double[] { 0.5, 0.5 }, 
-                new double[] { 0.5, 0.5 });
-            dc.PushGuidelineSet(gs);
+        public XTable()
+        {
+            _renderer = new XRenderer()
+            {
+                InvertSize = 6.0,
+                PinRadius = 4.0,
+                HitTreshold = 6.0
+            };
+
+            _style = new XStyle(
+                "Shape",
+                new XColor() { A = 0x00, R = 0x00, G = 0x00, B = 0x00 },
+                new XColor() { A = 0xFF, R = 0xD3, G = 0xD3, B = 0xD3 },
+                1.0);
+
+            _shapes = new ObservableCollection<IShape>();
 
             double sx = 0.0;
             double sy = 811.0;
 
-            dc.DrawLine(pen, new Point(sx + 30, sy + 0.0), new Point(sx + 30, sy + 80.0));
-            dc.DrawLine(pen, new Point(sx + 75, sy + 0.0), new Point(sx + 75, sy + 80.0));
-            dc.DrawLine(pen, new Point(sx + 0, sy + 20.0), new Point(sx + 175, sy + 20.0));
-            dc.DrawLine(pen, new Point(sx + 0, sy + 40.0), new Point(sx + 175, sy + 40.0));
-            dc.DrawLine(pen, new Point(sx + 0, sy + 60.0), new Point(sx + 175, sy + 60.0));
+            _shapes.Add(new XLine() { X1 = sx + 30, Y1 = sy + 0.0, X2 = sx + 30, Y2 = sy + 80.0 });
+            _shapes.Add(new XLine() { X1 = sx + 75, Y1 = sy + 0.0, X2 = sx + 75, Y2 = sy + 80.0 });
+            _shapes.Add(new XLine() { X1 = sx + 0, Y1 = sy + 20.0, X2 = sx + 175, Y2 = sy + 20.0 });
+            _shapes.Add(new XLine() { X1 = sx + 0, Y1 = sy + 40.0, X2 = sx + 175, Y2 = sy + 40.0 });
+            _shapes.Add(new XLine() { X1 = sx + 0, Y1 = sy + 60.0, X2 = sx + 175, Y2 = sy + 60.0 });
 
-            dc.DrawLine(pen, new Point(sx + 175, sy + 0.0), new Point(sx + 175, sy + 80.0));
-            dc.DrawLine(pen, new Point(sx + 290, sy + 0.0), new Point(sx + 290, sy + 80.0));
-            dc.DrawLine(pen, new Point(sx + 405, sy + 0.0), new Point(sx + 405, sy + 80.0));
+            _shapes.Add(new XLine() { X1 = sx + 175, Y1 = sy + 0.0, X2 = sx + 175, Y2 = sy + 80.0 });
+            _shapes.Add(new XLine() { X1 = sx + 290, Y1 = sy + 0.0, X2 = sx + 290, Y2 = sy + 80.0 });
+            _shapes.Add(new XLine() { X1 = sx + 405, Y1 = sy + 0.0, X2 = sx + 405, Y2 = sy + 80.0 });
 
-            dc.DrawLine(pen, new Point(sx + 405, sy + 20.0), new Point(sx + 1260, sy + 20.0));
-            dc.DrawLine(pen, new Point(sx + 405, sy + 40.0), new Point(sx + 695, sy + 40.0));
-            dc.DrawLine(pen, new Point(sx + 965, sy + 40.0), new Point(sx + 1260, sy + 40.0));
-            dc.DrawLine(pen, new Point(sx + 405, sy + 60.0), new Point(sx + 695, sy + 60.0));
-            dc.DrawLine(pen, new Point(sx + 965, sy + 60.0), new Point(sx + 1260, sy + 60.0));
+            _shapes.Add(new XLine() { X1 = sx + 405, Y1 = sy + 20.0, X2 = sx + 1260, Y2 = sy + 20.0 });
+            _shapes.Add(new XLine() { X1 = sx + 405, Y1 = sy + 40.0, X2 = sx + 695, Y2 = sy + 40.0 });
+            _shapes.Add(new XLine() { X1 = sx + 965, Y1 = sy + 40.0, X2 = sx + 1260, Y2 = sy + 40.0 });
+            _shapes.Add(new XLine() { X1 = sx + 405, Y1 = sy + 60.0, X2 = sx + 695, Y2 = sy + 60.0 });
+            _shapes.Add(new XLine() { X1 = sx + 965, Y1 = sy + 60.0, X2 = sx + 1260, Y2 = sy + 60.0 });
 
-            dc.DrawLine(pen, new Point(sx + 465, sy + 0.0), new Point(sx + 465, sy + 80.0));
-            dc.DrawLine(pen, new Point(sx + 595, sy + 0.0), new Point(sx + 595, sy + 80.0));
-            dc.DrawLine(pen, new Point(sx + 640, sy + 0.0), new Point(sx + 640, sy + 80.0));
-            dc.DrawLine(pen, new Point(sx + 695, sy + 0.0), new Point(sx + 695, sy + 80.0));
-            dc.DrawLine(pen, new Point(sx + 965, sy + 0.0), new Point(sx + 965, sy + 80.0));
+            _shapes.Add(new XLine() { X1 = sx + 465, Y1 = sy + 0.0, X2 = sx + 465, Y2 = sy + 80.0 });
+            _shapes.Add(new XLine() { X1 = sx + 595, Y1 = sy + 0.0, X2 = sx + 595, Y2 = sy + 80.0 });
+            _shapes.Add(new XLine() { X1 = sx + 640, Y1 = sy + 0.0, X2 = sx + 640, Y2 = sy + 80.0 });
+            _shapes.Add(new XLine() { X1 = sx + 695, Y1 = sy + 0.0, X2 = sx + 695, Y2 = sy + 80.0 });
+            _shapes.Add(new XLine() { X1 = sx + 965, Y1 = sy + 0.0, X2 = sx + 965, Y2 = sy + 80.0 });
 
-            dc.DrawLine(pen, new Point(sx + 1005, sy + 0.0), new Point(sx + 1005, sy + 80.0));
-            dc.DrawLine(pen, new Point(sx + 1045, sy + 0.0), new Point(sx + 1045, sy + 80.0));
-            dc.DrawLine(pen, new Point(sx + 1100, sy + 0.0), new Point(sx + 1100, sy + 80.0));
+            _shapes.Add(new XLine() { X1 = sx + 1005, Y1 = sy + 0.0, X2 = sx + 1005, Y2 = sy + 80.0 });
+            _shapes.Add(new XLine() { X1 = sx + 1045, Y1 = sy + 0.0, X2 = sx + 1045, Y2 = sy + 80.0 });
+            _shapes.Add(new XLine() { X1 = sx + 1100, Y1 = sy + 0.0, X2 = sx + 1100, Y2 = sy + 80.0 });
+        }
 
-            dc.Pop();
+        protected override void OnRender(DrawingContext dc)
+        {
+            base.OnRender(dc);
+
+            if (_renderer != null)
+            {
+                _renderer.DrawShapes(dc, _style, null, _shapes);
+            }
         }
     }
 }
