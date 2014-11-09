@@ -18,7 +18,7 @@
                     FocusVisualStyle="{x:Null}"
                     VerticalAlignment="Center" HorizontalAlignment="Center"
                     Width="1260" Height="891"/>
-        <page:XTable x:Name="tabe" 
+        <page:XTable x:Name="tabel" 
                      Background="Transparent" 
                      FocusVisualStyle="{x:Null}"
                      VerticalAlignment="Center" HorizontalAlignment="Center"
