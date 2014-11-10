@@ -132,6 +132,10 @@
       <Project>{2ff9557a-d431-4b28-b226-49b91c9dec20}</Project>
       <Name>Logic.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Logic.Graph\Logic.Graph.csproj">
+      <Project>{ab533e59-05cb-4017-8112-6f4cad4cafb3}</Project>
+      <Name>Logic.Graph</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

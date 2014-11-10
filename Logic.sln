@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.TimerOn", "Blocks\Bl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.TimerPulse", "Blocks\Blocks.TimerPulse\Blocks.TimerPulse.csproj", "{B7D89DFD-426A-4AE1-8985-1BA8653215C4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logic.Graph", "Logic.Graph\Logic.Graph.csproj", "{AB533E59-05CB-4017-8112-6F4CAD4CAFB3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -95,6 +97,10 @@ Global
 		{B7D89DFD-426A-4AE1-8985-1BA8653215C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7D89DFD-426A-4AE1-8985-1BA8653215C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B7D89DFD-426A-4AE1-8985-1BA8653215C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB533E59-05CB-4017-8112-6F4CAD4CAFB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB533E59-05CB-4017-8112-6F4CAD4CAFB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB533E59-05CB-4017-8112-6F4CAD4CAFB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB533E59-05CB-4017-8112-6F4CAD4CAFB3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
