@@ -1,4 +1,5 @@
 ﻿using Logic.Core;
+using Logic.Graph;
 using Logic.WPF.Page;
 using Logic.WPF.Templates;
 using Logic.WPF.Util;
@@ -1024,6 +1025,37 @@ namespace Logic.WPF
             page.gridView.InvalidateVisual();
             page.tableView.InvalidateVisual();
             page.frameView.InvalidateVisual();
+        }
+
+        #endregion
+
+        #region Graph
+
+        private void Graph()
+        {
+            try
+            {
+                var temp = page.editorLayer.Create("Page");
+                if (temp != null)
+                {
+                    var graph = new PageGraph();
+                    graph.Create(temp);
+
+                    #if DEBUG
+                    graph.DisplayConnections();
+                    graph.DisplayDependencies();
+                    graph.DisplayPinTypes();
+                    graph.DisplayOrderedBlocks();
+                    #endif
+                }
+            }
+            catch (Exception ex)
+            {
+                XLog.LogError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
+            }
         }
 
         #endregion

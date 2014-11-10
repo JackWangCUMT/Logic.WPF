@@ -259,7 +259,7 @@ namespace Logic.WPF.Util
             foreach (var pin in block.Pins)
             {
                 var value = string.Format(
-                    "{0}base.Pins.Add(new XPin() {{ Name = \"{1}\", X = {2}, Y = {3} }});",
+                    "{0}base.Pins.Add(new XPin() {{ Name = \"{1}\", X = {2}, Y = {3}, PinType = PinType.Standalone }});",
                     indent,
                     pin.Name,
                     pin.X,

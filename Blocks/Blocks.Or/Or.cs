@@ -33,10 +33,10 @@ namespace Blocks.Or
                     Text = "≥1"
                 });
             base.Shapes.Add(new XRectangle() { X = 0.0, Y = 0.0, Width = 30.0, Height = 30.0, IsFilled = false });
-            base.Pins.Add(new XPin() { Name = "L", X = 0.0, Y = 15.0 });
-            base.Pins.Add(new XPin() { Name = "R", X = 30.0, Y = 15.0 });
-            base.Pins.Add(new XPin() { Name = "T", X = 15.0, Y = 0.0 });
-            base.Pins.Add(new XPin() { Name = "B", X = 15.0, Y = 30.0 });
+            base.Pins.Add(new XPin() { Name = "L", X = 0.0, Y = 15.0, PinType = PinType.None, Owner = null });
+            base.Pins.Add(new XPin() { Name = "R", X = 30.0, Y = 15.0, PinType = PinType.None, Owner = null });
+            base.Pins.Add(new XPin() { Name = "T", X = 15.0, Y = 0.0, PinType = PinType.None, Owner = null });
+            base.Pins.Add(new XPin() { Name = "B", X = 15.0, Y = 30.0, PinType = PinType.None, Owner = null });
         }
     }
 }

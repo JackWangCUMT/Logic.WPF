@@ -73,8 +73,8 @@ namespace Blocks.Signal
                 });
             base.Shapes.Add(new XRectangle() { X = 0.0, Y = 0.0, Width = 300.0, Height = 30.0, IsFilled = false });
             base.Shapes.Add(new XLine() { X1 = 210.0, Y1 = 0.0, X2 = 210.0, Y2 = 30.0 });
-            base.Pins.Add(new XPin() { Name = "I", X = 0.0, Y = 15.0 });
-            base.Pins.Add(new XPin() { Name = "O", X = 300.0, Y = 15.0 });
+            base.Pins.Add(new XPin() { Name = "I", X = 0.0, Y = 15.0, PinType = PinType.Input, Owner = null });
+            base.Pins.Add(new XPin() { Name = "O", X = 300.0, Y = 15.0, PinType = PinType.Output, Owner = null });
         }
     }
 }

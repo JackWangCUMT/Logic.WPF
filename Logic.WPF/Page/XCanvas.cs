@@ -723,6 +723,7 @@ namespace Logic.WPF.Page
                     {
                         X = x,
                         Y = y,
+                        PinType = PinType.Standalone
                     };
 
                     _pin = pinHitResult as XPin;
@@ -791,6 +792,7 @@ namespace Logic.WPF.Page
                     {
                         X = x,
                         Y = y,
+                        PinType = PinType.Standalone
                     };
 
                     Layers.Pins.Shapes.Add(pinHitResult);
@@ -915,6 +917,7 @@ namespace Logic.WPF.Page
                         {
                             X = x,
                             Y = y,
+                            PinType = PinType.Standalone
                         };
                         Shapes.Add(_pin);
                         CaptureMouse();
@@ -2018,6 +2021,7 @@ namespace Logic.WPF.Page
             {
                 X = x,
                 Y = y,
+                PinType = PinType.Standalone
             };
 
             split = new XWire()
@@ -2080,6 +2084,10 @@ namespace Logic.WPF.Page
                     Shapes = _serializer.JsonDeserialize<IList<IShape>>(jshapes),
                     Pins = _serializer.JsonDeserialize<IList<XPin>>(jpins)
                 };
+                foreach (var pin in copy.Pins)
+                {
+                    pin.Owner = copy;
+                }
                 return copy;
             }
             catch (Exception ex)

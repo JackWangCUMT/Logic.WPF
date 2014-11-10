@@ -62,10 +62,10 @@ namespace Blocks.TimerOff
             base.Shapes.Add(new XLine() { X1 = 7.0, Y1 = 18.0, X2 = 7.0, Y2 = 22.0 });
             base.Shapes.Add(new XLine() { X1 = 23.0, Y1 = 18.0, X2 = 23.0, Y2 = 22.0 });
             base.Shapes.Add(new XLine() { X1 = 23.0, Y1 = 20.0, X2 = 7.0, Y2 = 20.0 });
-            base.Pins.Add(new XPin() { Name = "L", X = 0.0, Y = 15.0 });
-            base.Pins.Add(new XPin() { Name = "R", X = 30.0, Y = 15.0 });
-            base.Pins.Add(new XPin() { Name = "T", X = 15.0, Y = 0.0 });
-            base.Pins.Add(new XPin() { Name = "B", X = 15.0, Y = 30.0 });
+            base.Pins.Add(new XPin() { Name = "L", X = 0.0, Y = 15.0, PinType = PinType.None, Owner = null });
+            base.Pins.Add(new XPin() { Name = "R", X = 30.0, Y = 15.0, PinType = PinType.None, Owner = null });
+            base.Pins.Add(new XPin() { Name = "T", X = 15.0, Y = 0.0, PinType = PinType.None, Owner = null });
+            base.Pins.Add(new XPin() { Name = "B", X = 15.0, Y = 30.0, PinType = PinType.None, Owner = null });
         }
     }
 }

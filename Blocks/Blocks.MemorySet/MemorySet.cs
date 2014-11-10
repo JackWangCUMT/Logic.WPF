@@ -48,10 +48,10 @@ namespace Blocks.MemorySet
             base.Shapes.Add(new XRectangle() { X = 0.0, Y = 0.0, Width = 60.0, Height = 30.0, IsFilled = false });
             base.Shapes.Add(new XLine() { X1 = 30.0, Y1 = 0.0, X2 = 30.0, Y2 = 30.0 });
             base.Shapes.Add(new XRectangle() { X = 0.0, Y = 20.0, Width = 30.0, Height = 10.0, IsFilled = true });
-            base.Pins.Add(new XPin() { Name = "S", X = 15.0, Y = 0.0 });
-            base.Pins.Add(new XPin() { Name = "R", X = 45.0, Y = 0.0 });
-            base.Pins.Add(new XPin() { Name = "NQ", X = 15.0, Y = 30.0 });
-            base.Pins.Add(new XPin() { Name = "Q", X = 45.0, Y = 30.0 });
+            base.Pins.Add(new XPin() { Name = "S", X = 15.0, Y = 0.0, PinType = PinType.Input, Owner = null });
+            base.Pins.Add(new XPin() { Name = "R", X = 45.0, Y = 0.0, PinType = PinType.Input, Owner = null });
+            base.Pins.Add(new XPin() { Name = "NQ", X = 15.0, Y = 30.0, PinType = PinType.Output, Owner = null });
+            base.Pins.Add(new XPin() { Name = "Q", X = 45.0, Y = 30.0, PinType = PinType.Output, Owner = null });
         }
     }
 }

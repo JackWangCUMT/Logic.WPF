@@ -23,7 +23,8 @@ namespace Logic.WPF.Util
                     {
                         Formatting = Formatting.Indented,
                         TypeNameHandling = TypeNameHandling.Objects,
-                        PreserveReferencesHandling = PreserveReferencesHandling.Objects
+                        PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                        ReferenceLoopHandling = ReferenceLoopHandling.Serialize
                     });
                 return json;
             }
@@ -46,7 +47,8 @@ namespace Logic.WPF.Util
                     new JsonSerializerSettings()
                     {
                         TypeNameHandling = TypeNameHandling.Objects,
-                        PreserveReferencesHandling = PreserveReferencesHandling.Objects
+                        PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                        ReferenceLoopHandling = ReferenceLoopHandling.Serialize
                     });
                 return page;
             }
@@ -75,7 +77,8 @@ namespace Logic.WPF.Util
                         var serializer = new JsonSerializer()
                         {
                             TypeNameHandling = TypeNameHandling.Objects,
-                            PreserveReferencesHandling = PreserveReferencesHandling.Objects
+                            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                            ReferenceLoopHandling = ReferenceLoopHandling.Serialize
                         };
                         serializer.Serialize(writer, obj);
                     }
@@ -103,7 +106,8 @@ namespace Logic.WPF.Util
                         var serializer = new JsonSerializer()
                         {
                             TypeNameHandling = TypeNameHandling.Objects,
-                            PreserveReferencesHandling = PreserveReferencesHandling.Objects
+                            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                            ReferenceLoopHandling = ReferenceLoopHandling.Serialize
                         };
                         var page = serializer.Deserialize<T>(reader);
                         return page;

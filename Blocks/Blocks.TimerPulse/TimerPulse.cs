@@ -38,10 +38,10 @@ namespace Blocks.TimerPulse
             base.Shapes.Add(new XLine() { X1 = 11.0, Y1 = 11.0, X2 = 19.0, Y2 = 11.0 });
             base.Shapes.Add(new XLine() { X1 = 11.0, Y1 = 11.0, X2 = 11.0, Y2 = 19.0 });
             base.Shapes.Add(new XLine() { X1 = 19.0, Y1 = 11.0, X2 = 19.0, Y2 = 19.0 });
-            base.Pins.Add(new XPin() { Name = "L", X = 0.0, Y = 15.0 });
-            base.Pins.Add(new XPin() { Name = "R", X = 30.0, Y = 15.0 });
-            base.Pins.Add(new XPin() { Name = "T", X = 15.0, Y = 0.0 });
-            base.Pins.Add(new XPin() { Name = "B", X = 15.0, Y = 30.0 });
+            base.Pins.Add(new XPin() { Name = "L", X = 0.0, Y = 15.0, PinType = PinType.None, Owner = null });
+            base.Pins.Add(new XPin() { Name = "R", X = 30.0, Y = 15.0, PinType = PinType.None, Owner = null });
+            base.Pins.Add(new XPin() { Name = "T", X = 15.0, Y = 0.0, PinType = PinType.None, Owner = null });
+            base.Pins.Add(new XPin() { Name = "B", X = 15.0, Y = 30.0, PinType = PinType.None, Owner = null });
         }
     }
 }
