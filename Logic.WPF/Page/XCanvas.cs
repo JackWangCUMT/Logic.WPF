@@ -721,9 +721,11 @@ namespace Logic.WPF.Page
                     // create new standalone pin
                     pinHitResult = new XPin()
                     {
+                        Name = "P",
+                        PinType = PinType.Standalone,
+                        Owner = null,
                         X = x,
-                        Y = y,
-                        PinType = PinType.Standalone
+                        Y = y
                     };
 
                     _pin = pinHitResult as XPin;
@@ -790,9 +792,11 @@ namespace Logic.WPF.Page
                     // create new standalone pin
                     pinHitResult = new XPin()
                     {
+                        Name = "P",
+                        PinType = PinType.Standalone,
+                        Owner = null,
                         X = x,
-                        Y = y,
-                        PinType = PinType.Standalone
+                        Y = y
                     };
 
                     Layers.Pins.Shapes.Add(pinHitResult);
@@ -913,11 +917,14 @@ namespace Logic.WPF.Page
                     break;
                 case Tool.Pin:
                     {
+                        // create new standalone pin
                         _pin = new XPin()
                         {
+                            Name = "P",
+                            PinType = PinType.Standalone,
+                            Owner = null,
                             X = x,
-                            Y = y,
-                            PinType = PinType.Standalone
+                            Y = y
                         };
                         Shapes.Add(_pin);
                         CaptureMouse();
@@ -2017,11 +2024,14 @@ namespace Logic.WPF.Page
 
         private void Split(XWire wire, double x, double y, out XPin pin, out XWire split)
         {
+            // create new standalone pin
             pin = new XPin()
             {
+                Name = "P",
+                PinType = PinType.Standalone,
+                Owner = null,
                 X = x,
-                Y = y,
-                PinType = PinType.Standalone
+                Y = y
             };
 
             split = new XWire()
