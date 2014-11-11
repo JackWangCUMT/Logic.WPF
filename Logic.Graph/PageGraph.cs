@@ -143,13 +143,13 @@ namespace Logic.Graph
                         var outputCount = pinDependencies.Count(p => p.PinType == PinType.Output);
                         var standaloneCount = pinDependencies.Count(p => p.PinType == PinType.Standalone);
                         // set as Input
-                        if (inputCount == 0 && outputCount > 0)
+                        if (inputCount == 0 && outputCount > 0 && noneCount == 0)
                         {
                             pinTypes.Add(pin, PinType.Input);
                             hasInput = true;
                         }
                         // set as Output
-                        else if (inputCount > 0 && outputCount == 0)
+                        else if (inputCount > 0 && outputCount == 0 && noneCount == 0)
                         {
                             pinTypes.Add(pin, PinType.Output);
                             hasOutput = true;
