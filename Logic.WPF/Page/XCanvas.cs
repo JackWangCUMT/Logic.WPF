@@ -226,6 +226,8 @@ namespace Logic.WPF.Page
 
             PreviewMouseMove += (s, e) =>
             {
+                MoveOverlay(e.GetPosition(this));
+
                 if (IsMouseCaptured)
                 {
                     switch (_mode)
@@ -679,6 +681,96 @@ namespace Logic.WPF.Page
             {
                 pin.X += dx;
                 pin.Y += dy;
+            }
+        }
+
+        #endregion
+
+        #region Overlay
+
+        private void MoveOverlay(Point p)
+        {
+            if (Layers == null)
+                return;
+
+            IShape shapeHitResult = null;
+            IShape pinHitResult = null;
+            IShape wireHitResult = null;
+            IShape blockHitResult = null;
+
+            shapeHitResult = HitTest(p);
+            pinHitResult = HitTest(Layers.Pins.Shapes.Cast<XPin>(), p);
+            if (pinHitResult == null)
+            {
+                wireHitResult = HitTest(Layers.Wires.Shapes.Cast<XWire>(), p);
+                if (wireHitResult == null)
+                {
+                    blockHitResult = HitTest(Layers.Blocks.Shapes.Cast<XBlock>(), p);
+                }
+            }
+
+            if (shapeHitResult != null
+                && pinHitResult == null
+                && wireHitResult == null
+                && blockHitResult == null)
+            {
+                if (shapeHitResult is XBlock)
+                {
+                    XBlock block = shapeHitResult as XBlock;
+                    Debug.Print("Block: " + block.Name);
+                }
+                else if (shapeHitResult is XPin)
+                {
+                    XPin pin = shapeHitResult as XPin;
+                    Debug.Print(
+                        "Pin: " + pin.PinType.ToString() +
+                        ", Name: " + pin.Name +
+                        ", Owner:" + pin.Owner == null ? "<>" : pin.Owner.Name);
+                }
+                else
+                {
+                    Debug.Print(shapeHitResult.GetType().ToString());
+                }
+            }
+
+            if (pinHitResult != null)
+            {
+                XPin pin = pinHitResult as XPin;
+                Debug.Print(
+                    "Pin: " + pin.PinType.ToString() +
+                    ", Name: " + pin.Name +
+                    ", Owner: " + (pin.Owner == null ? "<>" : pin.Owner.Name));
+            }
+            else if (wireHitResult != null)
+            {
+                if (wireHitResult is XWire)
+                {
+                    Debug.Print(wireHitResult.GetType().ToString());
+                }
+                else if (wireHitResult is XPin)
+                {
+                    XPin pin = wireHitResult as XPin;
+                    Debug.Print(
+                        "Pin: " + pin.PinType.ToString() +
+                        ", Name: " + pin.Name +
+                        ", Owner: " + (pin.Owner == null ? "<>" : pin.Owner.Name));
+                }
+            }
+            else if (blockHitResult != null)
+            {
+                if (blockHitResult is XBlock)
+                {
+                    XBlock block = shapeHitResult as XBlock;
+                    Debug.Print("Block: " + block.Name);
+                }
+                else if (blockHitResult is XPin)
+                {
+                    XPin pin = blockHitResult as XPin;
+                    Debug.Print(
+                        "Pin: " + pin.PinType.ToString() +
+                        ", Name: " + pin.Name +
+                        ", Owner: " + (pin.Owner == null ? "<>" : pin.Owner.Name));
+                }
             }
         }
 
