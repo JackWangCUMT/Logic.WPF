@@ -40,6 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PageGraph.cs" />
+    <Compile Include="PageGraphContext.cs" />
+    <Compile Include="PageGraphDebug.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TopologicalSort.cs" />
   </ItemGroup>

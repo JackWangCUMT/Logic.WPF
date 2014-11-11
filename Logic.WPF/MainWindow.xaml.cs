@@ -1038,15 +1038,14 @@ namespace Logic.WPF
                 var temp = page.editorLayer.Create("Page");
                 if (temp != null)
                 {
-                    var graph = new PageGraph();
-                    graph.Create(temp);
+                    var context = PageGraph.Create(temp);
 
-                    #if DEBUG
-                    graph.DisplayConnections();
-                    graph.DisplayDependencies();
-                    graph.DisplayPinTypes();
-                    graph.DisplayOrderedBlocks();
-                    #endif
+                    var writer = new System.IO.StringWriter();
+                    PageGraphDebug.WriteConnections(context, writer);
+                    PageGraphDebug.WriteDependencies(context, writer);
+                    PageGraphDebug.WritePinTypes(context, writer);
+                    PageGraphDebug.WriteOrderedBlocks(context, writer);
+                    Debug.Print(writer.ToString());
                 }
             }
             catch (Exception ex)
