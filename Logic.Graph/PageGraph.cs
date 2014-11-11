@@ -130,6 +130,9 @@ namespace Logic.Graph
             // using pin dependencies set pins with None type to Input or Output type
             foreach (var block in blocks)
             {
+                bool hasInput = false;
+                bool hasOutput = false;
+
                 foreach (var pin in block.Pins)
                 {
                     if (pin.PinType == PinType.None)
@@ -143,17 +146,48 @@ namespace Logic.Graph
                         if (inputCount == 0 && outputCount > 0)
                         {
                             pinTypes.Add(pin, PinType.Input);
+                            hasInput = true;
                         }
                         // set as Output
                         else if (inputCount > 0 && outputCount == 0)
                         {
                             pinTypes.Add(pin, PinType.Output);
+                            hasOutput = true;
                         }
+                        // invalid pin connection
                         else if (inputCount > 0 && outputCount > 0)
                         {
                             throw new Exception("Conneting Inputs and Outputs to same Pin is not allowed.");
                         }
+                        // if no Input or Output is connected
+                        else
+                        {
+                            // already have one Input, set pin as Output
+                            if (hasInput && !hasOutput)
+                            {
+                                pinTypes.Add(pin, PinType.Output);
+                                hasOutput = true;
+                            }
+                            // already have one Output, set pin as Input
+                            else if (!hasInput && hasOutput)
+                            {
+                                pinTypes.Add(pin, PinType.Input);
+                                hasInput = true;
+                            }
+                            // assume that pin is Input in onlyne None pins are connected
+                            else if (noneCount > 0)
+                            {
+                                pinTypes.Add(pin, PinType.Input);
+                                hasInput = true;
+                            }
+                            // nothing is connected
+                            else
+                            {
+                                pinTypes.Add(pin, PinType.None);
+                            }
+                        }
                     }
+                    // use pin original type
                     else
                     {
                         pinTypes.Add(pin, pin.PinType);
@@ -188,8 +222,9 @@ namespace Logic.Graph
                 }
             }
 
-            var ts = new TopologicalSort<XBlock>();
-            var sorted = ts.Sort(blocks, block => dict[block], true);
+            var tsort = new TopologicalSort<XBlock>();
+            var sorted = tsort.Sort(blocks, block => dict[block], true);
+
             return sorted.Reverse().ToList();
         }
     }
