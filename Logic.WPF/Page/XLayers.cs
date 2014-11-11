@@ -12,5 +12,6 @@ namespace Logic.WPF.Page
         public XCanvas Blocks { get; set; }
         public XCanvas Wires { get; set; }
         public XCanvas Pins { get; set; }
+        public XCanvas Overlay { get; set; }
     }
 }

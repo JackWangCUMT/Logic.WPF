@@ -1,4 +1,5 @@
 ﻿<UserControl x:Class="Logic.WPF.PageControl"
+             x:Name="pageControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -7,52 +8,69 @@
              mc:Ignorable="d" 
              d:DesignHeight="891" d:DesignWidth="1260"
              Height="891" Width="1260"
+             Background="{x:Null}"
              SnapsToDevicePixels="True"
              UseLayoutRounding="False"
              TextOptions.TextFormattingMode="Display" 
              TextOptions.TextHintingMode="Auto" 
              TextOptions.TextRenderingMode="Auto">
-    <Grid x:Name="layout" Width="1260" Height="891">
+    <Grid x:Name="layout"
+          Width="{Binding ElementName=pageControl, Path=Width}" 
+          Height="{Binding ElementName=pageControl, Path=Height}">
         <page:XView x:Name="gridView" 
                     Background="Transparent" 
                     FocusVisualStyle="{x:Null}"
                     VerticalAlignment="Center" HorizontalAlignment="Center"
-                    Width="1260" Height="891"/>
+                    Width="{Binding ElementName=pageControl, Path=Width}" 
+                    Height="{Binding ElementName=pageControl, Path=Height}"/>
         <page:XView x:Name="tableView" 
-                     Background="Transparent" 
-                     FocusVisualStyle="{x:Null}"
-                     VerticalAlignment="Center" HorizontalAlignment="Center"
-                     Width="1260" Height="891"/>
+                    Background="Transparent" 
+                    FocusVisualStyle="{x:Null}"
+                    VerticalAlignment="Center" HorizontalAlignment="Center"
+                    Width="{Binding ElementName=pageControl, Path=Width}" 
+                    Height="{Binding ElementName=pageControl, Path=Height}"/>
         <page:XView x:Name="frameView" 
-                     Background="Transparent" 
-                     FocusVisualStyle="{x:Null}"
-                     VerticalAlignment="Center" HorizontalAlignment="Center"
-                     Width="1260" Height="891"/>
+                    Background="Transparent" 
+                    FocusVisualStyle="{x:Null}"
+                    VerticalAlignment="Center" HorizontalAlignment="Center"
+                    Width="{Binding ElementName=pageControl, Path=Width}" 
+                    Height="{Binding ElementName=pageControl, Path=Height}"/>
         <page:XCanvas x:Name="shapeLayer" 
                       Background="Transparent" 
                       FocusVisualStyle="{x:Null}"
                       VerticalAlignment="Center" HorizontalAlignment="Center"
-                      Width="1260" Height="891"/>
+                      Width="{Binding ElementName=pageControl, Path=Width}" 
+                      Height="{Binding ElementName=pageControl, Path=Height}"/>
         <page:XCanvas x:Name="blockLayer" 
                       Background="Transparent" 
                       FocusVisualStyle="{x:Null}"
                       VerticalAlignment="Center" HorizontalAlignment="Center"
-                      Width="1260" Height="891"/>
+                      Width="{Binding ElementName=pageControl, Path=Width}" 
+                      Height="{Binding ElementName=pageControl, Path=Height}"/>
         <page:XCanvas x:Name="wireLayer" 
                       Background="Transparent" 
                       FocusVisualStyle="{x:Null}"
                       VerticalAlignment="Center" HorizontalAlignment="Center"
-                      Width="1260" Height="891"/>
+                      Width="{Binding ElementName=pageControl, Path=Width}" 
+                      Height="{Binding ElementName=pageControl, Path=Height}"/>
         <page:XCanvas x:Name="pinLayer" 
                       Background="Transparent" 
                       FocusVisualStyle="{x:Null}"
                       VerticalAlignment="Center" HorizontalAlignment="Center"
-                      Width="1260" Height="891"/>
+                      Width="{Binding ElementName=pageControl, Path=Width}" 
+                      Height="{Binding ElementName=pageControl, Path=Height}"/>
         <page:XCanvas x:Name="editorLayer" 
                       Background="Transparent" 
                       FocusVisualStyle="{x:Null}"
+                      Focusable="True"
                       VerticalAlignment="Center" HorizontalAlignment="Center"
-                      Width="1260" Height="891"
-                      Focusable="True"/>
+                      Width="{Binding ElementName=pageControl, Path=Width}" 
+                      Height="{Binding ElementName=pageControl, Path=Height}"/>
+        <page:XCanvas x:Name="overlayLayer" 
+                      Background="{x:Null}" 
+                      FocusVisualStyle="{x:Null}"
+                      VerticalAlignment="Center" HorizontalAlignment="Center"
+                      Width="{Binding ElementName=pageControl, Path=Width}" 
+                      Height="{Binding ElementName=pageControl, Path=Height}"/>
     </Grid>
 </UserControl>

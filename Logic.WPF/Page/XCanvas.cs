@@ -79,6 +79,7 @@ namespace Logic.WPF.Page
         private IStyle _selectedShapeStyle = null;
         private IStyle _selectionStyle = null;
         private double _startx, _starty;
+        private double _hx, _hy;
         private XBlock _block = null;
         private XLine _line = null;
         private XEllipse _ellipse = null;
@@ -408,9 +409,6 @@ namespace Logic.WPF.Page
         #endregion
 
         #region Move Mode
-
-        private double _hx;
-        private double _hy;
 
         private void MoveInit(IShape shape, Point p)
         {
@@ -2486,7 +2484,8 @@ namespace Logic.WPF.Page
                 Layers.Shapes.InvalidateVisual();
                 Layers.Blocks.InvalidateVisual();
                 Layers.Pins.InvalidateVisual();
-                Layers.Wires.InvalidateVisual(); 
+                Layers.Wires.InvalidateVisual();
+                Layers.Overlay.InvalidateVisual();
             }
         }
 

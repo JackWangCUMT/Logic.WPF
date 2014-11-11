@@ -103,6 +103,7 @@ namespace Logic.WPF
             layers.Blocks = page.blockLayer;
             layers.Wires = page.wireLayer;
             layers.Pins = page.pinLayer;
+            layers.Overlay = page.overlayLayer;
 
             page.editorLayer.Layers = layers;
 
@@ -119,6 +120,7 @@ namespace Logic.WPF
             page.wireLayer.Renderer = _renderer;
             page.pinLayer.Renderer = _renderer;
             page.editorLayer.Renderer = _renderer;
+            page.overlayLayer.Renderer = _renderer;
 
             // template
             _template = new XLogicPageTemplate();
