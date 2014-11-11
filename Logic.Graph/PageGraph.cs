@@ -208,22 +208,30 @@ namespace Logic.Graph
             IDictionary<XPin, ICollection<XPin>> dependencies,
             IDictionary<XPin, PinType> pinTypes)
         {
-            // sort blocks using Pins dependencies
             var dict = new Dictionary<XBlock, IList<XBlock>>();
 
             foreach (var block in blocks)
             {
                 dict.Add(block, new List<XBlock>());
+
                 foreach (var pin in block.Pins)
                 {
-                    var pinDependencies = dependencies[pin].Where(p => pinTypes[p] == PinType.Input);
+                    var pinDependencies = dependencies[pin]
+                        .Where(p => pinTypes[p] == PinType.Input);
+
                     foreach (var dependency in pinDependencies)
+                    {
                         dict[block].Add(dependency.Owner);
+                    }
                 }
             }
 
+            // sort blocks using Pins dependencies
             var tsort = new TopologicalSort<XBlock>();
-            var sorted = tsort.Sort(blocks, block => dict[block], true);
+            var sorted = tsort.Sort(
+                blocks, 
+                block => dict[block], 
+                false);
 
             return sorted.Reverse().ToList();
         }
