@@ -223,7 +223,7 @@ namespace Logic.Graph
             }
 
             var tsort = new TopologicalSort<XBlock>();
-            var sorted = tsort.Sort(blocks, block => dict[block], true);
+            var sorted = tsort.Sort(blocks, block => dict[block], false);
 
             return sorted.Reverse().ToList();
         }
