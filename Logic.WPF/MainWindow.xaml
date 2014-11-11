@@ -89,6 +89,16 @@
                 <Separator/>
                 <MenuItem x:Name="templateExport" Header="_Export..." InputGestureText=""/>
             </MenuItem>
+            <MenuItem Header="_Simulation">
+                <MenuItem x:Name="simulationStart" Header="_Start" InputGestureText="F5"/>
+                <MenuItem x:Name="simulationRestart" Header="_Restart" InputGestureText="F6"/>
+                <Separator/>
+                <MenuItem x:Name="simulationStop" Header="S_top" InputGestureText="F7"/>
+                <Separator/>
+                <MenuItem x:Name="simulationCreateGraph" Header="Create _Graph..." InputGestureText="F8"/>
+                <Separator/>
+                <MenuItem x:Name="simulationOptions" Header="_Options..." InputGestureText="F9"/>
+            </MenuItem>
         </Menu>
         <ListBox x:Name="blocks" 
                  ItemsSource="{Binding Blocks}"

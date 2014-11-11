@@ -514,6 +514,27 @@ namespace Logic.WPF
                             SetToolSelection();
                         }
                         break;
+
+                    // start simulation
+                    case Key.F5:
+                        Start();
+                        break;
+                    // restart simulation
+                    case Key.F6:
+                        Restart();
+                        break;
+                    // stop simulation
+                    case Key.F7:
+                        Stop();
+                        break;
+                    // create graph
+                    case Key.F8:
+                        Graph();
+                        break;
+                    // simulation options
+                    case Key.F9:
+                        Options();
+                        break;
                 }
             };
         }
@@ -567,6 +588,12 @@ namespace Logic.WPF
 
             templateImport.Click += (s, e) => ImportTemplate();
             templateExport.Click += (s, e) => ExportTemplate();
+
+            simulationStart.Click += (s, e) => Start();
+            simulationRestart.Click += (s, e) => Restart();
+            simulationStop.Click += (s, e) => Stop();
+            simulationCreateGraph.Click += (s, e) => Graph();
+            simulationOptions.Click += (s, e) => Options();
 
             UpdateToolMenu();
         } 
@@ -1029,7 +1056,22 @@ namespace Logic.WPF
 
         #endregion
 
-        #region Graph
+        #region Simulation
+
+        private void Start()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void Restart()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void Stop()
+        {
+            throw new NotImplementedException();
+        }
 
         private void Graph()
         {
@@ -1039,13 +1081,10 @@ namespace Logic.WPF
                 if (temp != null)
                 {
                     var context = PageGraph.Create(temp);
-
-                    var writer = new System.IO.StringWriter();
-                    PageGraphDebug.WriteConnections(context, writer);
-                    PageGraphDebug.WriteDependencies(context, writer);
-                    PageGraphDebug.WritePinTypes(context, writer);
-                    PageGraphDebug.WriteOrderedBlocks(context, writer);
-                    Debug.Print(writer.ToString());
+                    if (context != null)
+                    {
+                        SaveGraph(context);
+                    }
                 }
             }
             catch (Exception ex)
@@ -1055,6 +1094,44 @@ namespace Logic.WPF
                     Environment.NewLine,
                     ex.StackTrace);
             }
+        }
+
+        private void SaveGraph(PageGraphContext context)
+        {
+            var dlg = new Microsoft.Win32.SaveFileDialog()
+            {
+                Filter = "Graph (*.txt)|*.txt",
+                FileName = "graph"
+            };
+
+            if (dlg.ShowDialog() == true)
+            {
+                var path = dlg.FileName;
+                SaveGraph(path, context);
+                System.Diagnostics.Process.Start("notepad", path);
+            }
+        }
+
+        private void SaveGraph(string path, PageGraphContext context)
+        {
+            using (var writer = new System.IO.StringWriter())
+            {
+                PageGraphDebug.WriteConnections(context, writer);
+                PageGraphDebug.WriteDependencies(context, writer);
+                PageGraphDebug.WritePinTypes(context, writer);
+                PageGraphDebug.WriteOrderedBlocks(context, writer);
+
+                string text = writer.ToString();
+                using (var fs = System.IO.File.CreateText(path))
+                {
+                    fs.Write(text);
+                };
+            }
+        }
+
+        private void Options()
+        {
+            throw new NotImplementedException();
         }
 
         #endregion
