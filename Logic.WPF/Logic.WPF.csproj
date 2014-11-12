@@ -129,7 +129,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Logic.Core\Logic.Core.csproj">
-      <Project>{2ff9557a-d431-4b28-b226-49b91c9dec20}</Project>
+      <Project>{d7169bea-6ba7-4e6e-8487-b922dc1a8822}</Project>
       <Name>Logic.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Logic.Graph\Logic.Graph.csproj">

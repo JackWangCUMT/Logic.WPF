@@ -1,10 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2013 for Windows Desktop
-VisualStudioVersion = 12.0.30723.0
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logic.Core", "Logic.Core\Logic.Core.csproj", "{2FF9557A-D431-4B28-B226-49B91C9DEC20}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logic.WPF", "Logic.WPF\Logic.WPF.csproj", "{CED022CA-6785-4FC6-AB1E-0A4F8E29D500}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Blocks", "Blocks", "{65B89479-F5CE-4861-94FB-98A0B9F49FDF}"
@@ -35,16 +33,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocks.TimerPulse", "Blocks
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logic.Graph", "Logic.Graph\Logic.Graph.csproj", "{AB533E59-05CB-4017-8112-6F4CAD4CAFB3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logic.Core", "Logic.Core\Logic.Core.csproj", "{D7169BEA-6BA7-4E6E-8487-B922DC1A8822}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2FF9557A-D431-4B28-B226-49B91C9DEC20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2FF9557A-D431-4B28-B226-49B91C9DEC20}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2FF9557A-D431-4B28-B226-49B91C9DEC20}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2FF9557A-D431-4B28-B226-49B91C9DEC20}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CED022CA-6785-4FC6-AB1E-0A4F8E29D500}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CED022CA-6785-4FC6-AB1E-0A4F8E29D500}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CED022CA-6785-4FC6-AB1E-0A4F8E29D500}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -101,6 +97,10 @@ Global
 		{AB533E59-05CB-4017-8112-6F4CAD4CAFB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB533E59-05CB-4017-8112-6F4CAD4CAFB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB533E59-05CB-4017-8112-6F4CAD4CAFB3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7169BEA-6BA7-4E6E-8487-B922DC1A8822}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7169BEA-6BA7-4E6E-8487-B922DC1A8822}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7169BEA-6BA7-4E6E-8487-B922DC1A8822}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7169BEA-6BA7-4E6E-8487-B922DC1A8822}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
