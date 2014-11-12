@@ -105,6 +105,7 @@ namespace Logic.WPF
             layers.Pins = page.pinLayer;
             layers.Overlay = page.overlayLayer;
 
+            // editor
             page.editorLayer.Layers = layers;
 
             // overlay
