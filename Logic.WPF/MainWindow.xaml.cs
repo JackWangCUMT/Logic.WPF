@@ -107,6 +107,9 @@ namespace Logic.WPF
 
             page.editorLayer.Layers = layers;
 
+            // overlay
+            page.overlayLayer.IsOverlay = true;
+
             // renderer
             _renderer = new XRenderer()
             {

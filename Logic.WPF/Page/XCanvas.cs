@@ -24,6 +24,7 @@ namespace Logic.WPF.Page
         public double SnapSize { get; set; }
         public IRenderer Renderer { get; set; } 
         public XHistory<XPage> History { get; set; }
+        public bool IsOverlay { get; set; }
 
         #endregion
 
@@ -78,6 +79,7 @@ namespace Logic.WPF.Page
         private IStyle _shapeStyle = null;
         private IStyle _selectedShapeStyle = null;
         private IStyle _selectionStyle = null;
+        private IStyle _hoverStyle = null;
         private double _startx, _starty;
         private double _hx, _hy;
         private XBlock _block = null;
@@ -107,7 +109,7 @@ namespace Logic.WPF.Page
 
         #region Initialize
 
-        public void InitStyles()
+        private void InitStyles()
         {
             _shapeStyle = new XStyle(
                 "Shape",
@@ -126,6 +128,12 @@ namespace Logic.WPF.Page
                 new XColor() { A = 0x1F, R = 0x00, G = 0x00, B = 0xFF },
                 new XColor() { A = 0x9F, R = 0x00, G = 0x00, B = 0xFF },
                 1.0);
+
+            _hoverStyle = new XStyle(
+                "Hover",
+                new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
+                new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
+                4.0);
         }
 
         private void InitProperties()
@@ -226,7 +234,19 @@ namespace Logic.WPF.Page
 
             PreviewMouseMove += (s, e) =>
             {
-                MoveOverlay(e.GetPosition(this));
+                if (Layers != null)
+                {
+                    if (Layers.Overlay.Shapes.Count > 0)
+                    {
+                        Layers.Overlay.Shapes.Clear();
+                        Layers.Overlay.InvalidateVisual();
+                    }
+                }
+
+                if (_mode != Mode.Move && _mode != Mode.Selection)
+                {
+                    MoveOverlay(e.GetPosition(this));
+                }
 
                 if (IsMouseCaptured)
                 {
@@ -718,6 +738,9 @@ namespace Logic.WPF.Page
                 {
                     XBlock block = shapeHitResult as XBlock;
                     Debug.Print("Block: " + block.Name);
+
+                    //Layers.Overlay.Shapes.Add(block);
+                    //Layers.Overlay.InvalidateVisual();
                 }
                 else if (shapeHitResult is XPin)
                 {
@@ -726,10 +749,19 @@ namespace Logic.WPF.Page
                         "Pin: " + pin.PinType.ToString() +
                         ", Name: " + pin.Name +
                         ", Owner:" + pin.Owner == null ? "<>" : pin.Owner.Name);
+
+                    if (CurrentTool == Tool.Wire)
+                    {
+                        Layers.Overlay.Shapes.Add(pin);
+                        Layers.Overlay.InvalidateVisual();
+                    }
                 }
                 else
                 {
                     Debug.Print(shapeHitResult.GetType().ToString());
+
+                    //Layers.Overlay.Shapes.Add(shapeHitResult);
+                    //Layers.Overlay.InvalidateVisual();
                 }
             }
 
@@ -740,12 +772,24 @@ namespace Logic.WPF.Page
                     "Pin: " + pin.PinType.ToString() +
                     ", Name: " + pin.Name +
                     ", Owner: " + (pin.Owner == null ? "<>" : pin.Owner.Name));
+
+                if (CurrentTool == Tool.Wire)
+                {
+                    Layers.Overlay.Shapes.Add(pin);
+                    Layers.Overlay.InvalidateVisual();
+                }
             }
             else if (wireHitResult != null)
             {
                 if (wireHitResult is XWire)
                 {
                     Debug.Print(wireHitResult.GetType().ToString());
+
+                    if (CurrentTool == Tool.Wire || CurrentTool == Tool.Pin)
+                    {
+                        Layers.Overlay.Shapes.Add(wireHitResult);
+                        Layers.Overlay.InvalidateVisual();
+                    }
                 }
                 else if (wireHitResult is XPin)
                 {
@@ -754,6 +798,12 @@ namespace Logic.WPF.Page
                         "Pin: " + pin.PinType.ToString() +
                         ", Name: " + pin.Name +
                         ", Owner: " + (pin.Owner == null ? "<>" : pin.Owner.Name));
+
+                    if (CurrentTool == Tool.Wire)
+                    {
+                        Layers.Overlay.Shapes.Add(pin);
+                        Layers.Overlay.InvalidateVisual();
+                    }
                 }
             }
             else if (blockHitResult != null)
@@ -762,6 +812,9 @@ namespace Logic.WPF.Page
                 {
                     XBlock block = shapeHitResult as XBlock;
                     Debug.Print("Block: " + block.Name);
+
+                    //Layers.Overlay.Shapes.Add(block);
+                    //Layers.Overlay.InvalidateVisual();
                 }
                 else if (blockHitResult is XPin)
                 {
@@ -770,6 +823,12 @@ namespace Logic.WPF.Page
                         "Pin: " + pin.PinType.ToString() +
                         ", Name: " + pin.Name +
                         ", Owner: " + (pin.Owner == null ? "<>" : pin.Owner.Name));
+
+                    if (CurrentTool == Tool.Wire)
+                    {
+                        Layers.Overlay.Shapes.Add(pin);
+                        Layers.Overlay.InvalidateVisual();
+                    }
                 }
             }
         }
@@ -2585,13 +2644,20 @@ namespace Logic.WPF.Page
         {
             if (Renderer != null)
             {
-                if (_mode == Mode.Selection)
+                if (IsOverlay)
                 {
-                    Renderer.DrawSelection(dc, _selectionStyle, _selection);
+                    Renderer.DrawShapes(dc, _hoverStyle, _hoverStyle, Shapes);
                 }
                 else
                 {
-                    Renderer.DrawShapes(dc, _shapeStyle, _selectedShapeStyle, Shapes);
+                    if (_mode == Mode.Selection)
+                    {
+                        Renderer.DrawSelection(dc, _selectionStyle, _selection);
+                    }
+                    else
+                    {
+                        Renderer.DrawShapes(dc, _shapeStyle, _selectedShapeStyle, Shapes);
+                    }
                 }
             }
         }
