@@ -5,11 +5,11 @@
     <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{AA8C3513-6FC1-46A4-9DB7-16D4563DA912}</ProjectGuid>
+    <ProjectGuid>{3D8A8F10-B463-4410-AE7E-51D62FDB90D0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Logic.Graph</RootNamespace>
-    <AssemblyName>Logic.Graph</AssemblyName>
+    <RootNamespace>Memory.SR.ResetVertical</RootNamespace>
+    <AssemblyName>Memory.SR.ResetVertical</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -35,19 +35,21 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
-    <ProjectReference Include="..\Logic.Core\Logic.Core.csproj">
+    <ProjectReference Include="..\..\Logic.Core\Logic.Core.csproj">
       <Project>{d7169bea-6ba7-4e6e-8487-b922dc1a8822}</Project>
       <Name>Logic.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PageGraph.cs" />
-    <Compile Include="PageGraphContext.cs" />
-    <Compile Include="PageGraphDebug.cs" />
+    <Compile Include="MemoryResetVertical.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TopologicalSort.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>if not exist "$(SolutionDir)Logic.WPF\$(OutDir)Blocks\" mkdir "$(SolutionDir)Logic.WPF\$(OutDir)Blocks\"
+copy "$(TargetPath)" "$(SolutionDir)Logic.WPF\$(OutDir)Blocks\$(TargetFileName)"
+copy "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)Logic.WPF\$(OutDir)Blocks\"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

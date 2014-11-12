@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Logic.Graph")]
-[assembly: AssemblyDescription("Logic Diagram Editor Graph")]
+[assembly: AssemblyTitle("Timers.On")]
+[assembly: AssemblyDescription("Logic Diagram Editor TIMER-ON Block")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Wiesław Šoltés")]
-[assembly: AssemblyProduct("Logic.Graph")]
+[assembly: AssemblyProduct("Timers.On")]
 [assembly: AssemblyCopyright("Copyright © Wiesław Šoltés 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
