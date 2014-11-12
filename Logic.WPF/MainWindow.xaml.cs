@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.ComponentModel.Composition.Registration;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -80,12 +81,15 @@ namespace Logic.WPF
 
         private void Compose(object part, string path)
         {
+            var builder = new RegistrationBuilder();
+            builder.ForTypesDerivedFrom<XBlock>().Export<XBlock>();
+
             var catalog = new AggregateCatalog();
             catalog.Catalogs.Add(
                 new AssemblyCatalog(
-                    Assembly.GetExecutingAssembly()));
+                    Assembly.GetExecutingAssembly(), builder));
             catalog.Catalogs.Add(
-                new DirectoryCatalog(path));
+                new DirectoryCatalog(path, builder));
 
             var container = new CompositionContainer(catalog);
             container.ComposeParts(part);
