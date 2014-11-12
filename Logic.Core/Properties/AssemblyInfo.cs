@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Logic.Core")]
-[assembly: AssemblyDescription("Logic Diagram Editor Core Model")]
+[assembly: AssemblyDescription("Logic Diagram Editor Core")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Wiesław Šoltés")]
 [assembly: AssemblyProduct("Logic.Core")]
