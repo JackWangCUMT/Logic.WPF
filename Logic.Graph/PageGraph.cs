@@ -26,56 +26,58 @@ namespace Logic.Graph
             return context;
         }
 
-        public static IDictionary<XPin, ICollection<XPin>> FindConnections(
+        public static IDictionary<XPin, ICollection<Tuple<XPin, bool>>> FindConnections(
             IEnumerable<XBlock> blocks,
             IEnumerable<XPin> pins,
             IEnumerable<XWire> wires)
         {
-            var connections = new Dictionary<XPin, ICollection<XPin>>();
+            var connections = new Dictionary<XPin, ICollection<Tuple<XPin, bool>>>();
 
             foreach (var block in blocks)
             {
                 foreach (var pin in block.Pins.Cast<XPin>())
                 {
-                    connections.Add(pin, new HashSet<XPin>());
+                    connections.Add(pin, new HashSet<Tuple<XPin, bool>>());
                 }
             }
 
             foreach (var pin in pins)
             {
-                connections.Add(pin, new HashSet<XPin>());
+                connections.Add(pin, new HashSet<Tuple<XPin, bool>>());
             }
 
             foreach (var wire in wires)
             {
                 var startConnections = connections[wire.Start];
                 var endConnections = connections[wire.End];
+                bool isPinInverted = wire.InvertStart | wire.InvertEnd;
 
-                if (!startConnections.Contains(wire.End))
+                var et = Tuple.Create(wire.End, isPinInverted);
+                if (!startConnections.Contains(et))
                 {
-                    startConnections.Add(wire.End);
+                    startConnections.Add(et);
                 }
-
-                if (!endConnections.Contains(wire.Start))
+                var st = Tuple.Create(wire.Start, isPinInverted);
+                if (!endConnections.Contains(st))
                 {
-                    endConnections.Add(wire.Start);
+                    endConnections.Add(st);
                 }
             }
 
             return connections;
         }
 
-        public static IDictionary<XPin, ICollection<XPin>> FindDependencies(
+        public static IDictionary<XPin, ICollection<Tuple<XPin, bool>>> FindDependencies(
             IEnumerable<XBlock> blocks,
-            IDictionary<XPin, ICollection<XPin>> connections)
+            IDictionary<XPin, ICollection<Tuple<XPin, bool>>> connections)
         {
-            var dependencies = new Dictionary<XPin, ICollection<XPin>>();
+            var dependencies = new Dictionary<XPin, ICollection<Tuple<XPin, bool>>>();
 
             foreach (var block in blocks)
             {
                 foreach (var pin in block.Pins)
                 {
-                    dependencies.Add(pin, new HashSet<XPin>());
+                    dependencies.Add(pin, new HashSet<Tuple<XPin, bool>>());
                     FindDependencies(pin, pin, connections, dependencies);
                 }
             }
@@ -86,13 +88,13 @@ namespace Logic.Graph
         public static void FindDependencies(
             XPin next,
             XPin start,
-            IDictionary<XPin, ICollection<XPin>> connections,
-            IDictionary<XPin, ICollection<XPin>> dependencies)
+            IDictionary<XPin, ICollection<Tuple<XPin, bool>>> connections,
+            IDictionary<XPin, ICollection<Tuple<XPin, bool>>> dependencies)
         {
             var pinConnections = connections[next];
             foreach (var connection in pinConnections)
             {
-                if (connection == start)
+                if (connection.Item1 == start)
                 {
                     continue;
                 }
@@ -100,7 +102,7 @@ namespace Logic.Graph
                 var pinDependencies = dependencies[start];
                 if (!pinDependencies.Contains(connection))
                 {
-                    switch (connection.PinType)
+                    switch (connection.Item1.PinType)
                     {
                         case PinType.None:
                             pinDependencies.Add(connection);
@@ -113,7 +115,7 @@ namespace Logic.Graph
                             break;
                         case PinType.Standalone:
                             pinDependencies.Add(connection);
-                            FindDependencies(connection, start, connections, dependencies);
+                            FindDependencies(connection.Item1, start, connections, dependencies);
                             break;
                     }
                 }
@@ -123,7 +125,7 @@ namespace Logic.Graph
         public static IDictionary<XPin, PinType> FindPinTypes(
             IEnumerable<XBlock> blocks,
             IEnumerable<XPin> pins,
-            IDictionary<XPin, ICollection<XPin>> dependencies)
+            IDictionary<XPin, ICollection<Tuple<XPin, bool>>> dependencies)
         {
             var pinTypes = new Dictionary<XPin, PinType>();
 
@@ -138,10 +140,10 @@ namespace Logic.Graph
                     if (pin.PinType == PinType.None)
                     {
                         var pinDependencies = dependencies[pin];
-                        var noneCount = pinDependencies.Count(p => p.PinType == PinType.None);
-                        var inputCount = pinDependencies.Count(p => p.PinType == PinType.Input);
-                        var outputCount = pinDependencies.Count(p => p.PinType == PinType.Output);
-                        var standaloneCount = pinDependencies.Count(p => p.PinType == PinType.Standalone);
+                        var noneCount = pinDependencies.Count(p => p.Item1.PinType == PinType.None);
+                        var inputCount = pinDependencies.Count(p => p.Item1.PinType == PinType.Input);
+                        var outputCount = pinDependencies.Count(p => p.Item1.PinType == PinType.Output);
+                        var standaloneCount = pinDependencies.Count(p => p.Item1.PinType == PinType.Standalone);
                         // set as Input
                         if (inputCount == 0 && outputCount > 0 && noneCount == 0)
                         {
@@ -205,7 +207,7 @@ namespace Logic.Graph
 
         public static IList<XBlock> SortDependencies(
             IEnumerable<XBlock> blocks,
-            IDictionary<XPin, ICollection<XPin>> dependencies,
+            IDictionary<XPin, ICollection<Tuple<XPin, bool>>> dependencies,
             IDictionary<XPin, PinType> pinTypes)
         {
             var dict = new Dictionary<XBlock, IList<XBlock>>();
@@ -217,11 +219,11 @@ namespace Logic.Graph
                 foreach (var pin in block.Pins)
                 {
                     var pinDependencies = dependencies[pin]
-                        .Where(p => pinTypes[p] == PinType.Input);
+                        .Where(p => pinTypes[p.Item1] == PinType.Input);
 
                     foreach (var dependency in pinDependencies)
                     {
-                        dict[block].Add(dependency.Owner);
+                        dict[block].Add(dependency.Item1.Owner);
                     }
                 }
             }

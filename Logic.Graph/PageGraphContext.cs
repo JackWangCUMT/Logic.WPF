@@ -9,8 +9,8 @@ namespace Logic.Graph
 {
     public class PageGraphContext
     {
-        public IDictionary<XPin, ICollection<XPin>> Connections { get; set; }
-        public IDictionary<XPin, ICollection<XPin>> Dependencies { get; set; }
+        public IDictionary<XPin, ICollection<Tuple<XPin, bool>>> Connections { get; set; }
+        public IDictionary<XPin, ICollection<Tuple<XPin, bool>>> Dependencies { get; set; }
         public IDictionary<XPin, PinType> PinTypes { get; set; }
         public IList<XBlock> OrderedBlocks { get; set; }
     }

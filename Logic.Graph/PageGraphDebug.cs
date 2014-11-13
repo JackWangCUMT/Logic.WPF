@@ -26,9 +26,10 @@ namespace Logic.Graph
                     foreach (var connection in connections)
                     {
                         writer.WriteLine(
-                            "\t{0}:{1}",
-                            connection.Owner == null ? "<>" : connection.Owner.Name,
-                            connection.Name);
+                            "\t{0}:{1}, inverted: {2}",
+                            connection.Item1.Owner == null ? "<>" : connection.Item1.Owner.Name,
+                            connection.Item1.Name,
+                            connection.Item2);
                     }
                 }
                 else
@@ -54,10 +55,11 @@ namespace Logic.Graph
                     foreach (var dependency in dependencies)
                     {
                         writer.WriteLine(
-                            "\t[{0}] {1}:{2}",
-                            dependency.PinType,
-                            dependency.Owner == null ? "<>" : dependency.Owner.Name,
-                            dependency.Name);
+                            "\t[{0}] {1}:{2}, inverted: {3}",
+                            dependency.Item1.PinType,
+                            dependency.Item1.Owner == null ? "<>" : dependency.Item1.Owner.Name,
+                            dependency.Item1.Name,
+                            dependency.Item2);
                     }
                 }
                 else
