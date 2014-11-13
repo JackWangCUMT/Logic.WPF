@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Timers.Off", "Blocks\Timers
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Timers.Pulse", "Blocks\Timers.Pulse\Timers.Pulse.csproj", "{99C61D20-165D-45F8-9BA6-E50AA0803558}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logic.Simulation", "Logic.Simulation\Logic.Simulation.csproj", "{65628359-E4D7-4031-95C8-760AE5CEED5F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -101,6 +103,10 @@ Global
 		{99C61D20-165D-45F8-9BA6-E50AA0803558}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99C61D20-165D-45F8-9BA6-E50AA0803558}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{99C61D20-165D-45F8-9BA6-E50AA0803558}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65628359-E4D7-4031-95C8-760AE5CEED5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65628359-E4D7-4031-95C8-760AE5CEED5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65628359-E4D7-4031-95C8-760AE5CEED5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65628359-E4D7-4031-95C8-760AE5CEED5F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1078,28 +1078,11 @@ namespace Logic.WPF
                     var context = PageGraph.Create(temp);
                     if (context != null)
                     {
-                        // find ordered block Inputs
-                        foreach (var block in context.OrderedBlocks)
+                        var simulations = BoolSimulationFactory.Create(context);
+                        if (simulations != null)
                         {
-                            Debug.Print(block.Name);
-
-                            var inputs = block.Pins
-                                .Where(pin => context.PinTypes[pin] == PinType.Input)
-                                .SelectMany(pin => 
-                                {
-                                    return context.Dependencies[pin]
-                                        .Where(dep => context.PinTypes[dep.Item1] == PinType.Output);
-                                })
-                                .Select(pin => pin);
-
-                            Debug.Print("\tInputs:");
-                            foreach (var input in inputs)
-                            {
-                                Debug.Print("\t" + input.Item1.Owner.Name + ", inverted: " + input.Item2.ToString());
-                            }
+                            BoolSimulationFactory.Run(simulations);
                         }
-
-                        // TODO: Run OrderedBlocks simulation.
                     }
                 }
             }

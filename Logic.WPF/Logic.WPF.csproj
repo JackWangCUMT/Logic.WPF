@@ -60,6 +60,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BoolSimulationFactory.cs" />
     <Compile Include="Templates\XLogicPageTemplate.cs" />
     <Compile Include="Util\CSharpProjectCreator.cs" />
     <Compile Include="ViewModels\CodeViewModel.cs" />
@@ -137,6 +138,10 @@
     <ProjectReference Include="..\Logic.Graph\Logic.Graph.csproj">
       <Project>{aa8c3513-6fc1-46a4-9db7-16d4563da912}</Project>
       <Name>Logic.Graph</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Logic.Simulation\Logic.Simulation.csproj">
+      <Project>{65628359-e4d7-4031-95c8-760ae5ceed5f}</Project>
+      <Name>Logic.Simulation</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
