@@ -243,7 +243,9 @@ namespace Logic.WPF.Page
                     }
                 }
 
-                if (_mode != Mode.Move && _mode != Mode.Selection)
+                if (_mode != Mode.Move 
+                    && _mode != Mode.Selection
+                    && CurrentTool != Tool.None)
                 {
                     MoveOverlay(e.GetPosition(this));
                 }
