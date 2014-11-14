@@ -22,8 +22,7 @@ namespace Logic.WPF
                 {
                     var simulation = new SignalSimulation();
                     simulations.Add(block, simulation);
-
-                    // TODO: Set initial state, only used for testing.
+                    // set initial state
                     simulation.State = false;
                 }
                 else if (block.Name == "AND")
@@ -83,7 +82,7 @@ namespace Logic.WPF
             // display results of simulation
             foreach (var simulation in simulations)
             {
-                Debug.Print(simulation.Key.Name + ", State: " + simulation.Value.State.ToString());
+                Debug.Print(simulation.Key.Name + ", state: " + simulation.Value.State.ToString());
             }
         }
     }
