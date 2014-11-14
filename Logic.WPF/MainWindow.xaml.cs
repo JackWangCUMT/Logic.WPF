@@ -1,5 +1,6 @@
 ﻿using Logic.Core;
 using Logic.Graph;
+using Logic.Simulation;
 using Logic.WPF.Page;
 using Logic.WPF.Templates;
 using Logic.WPF.Util;
@@ -1068,10 +1069,43 @@ namespace Logic.WPF
 
         #region Simulation
 
+        private System.Threading.Timer _timer = null;
+
+        private void Start(IDictionary<XBlock, BoolSimulation> simulations)
+        {
+            DateTime previous = DateTime.UtcNow;
+            UInt64 cycle = 0;
+
+            _timer = new System.Threading.Timer((state) =>
+            {
+                var diff = (DateTime.UtcNow - previous);
+                previous = DateTime.UtcNow;
+
+                BoolSimulationFactory.Run(simulations);
+                cycle++;
+
+                Dispatcher.Invoke(() =>
+                {
+                    Debug.Print(diff.TotalMilliseconds.ToString());
+
+                    // display results of simulation
+                    foreach (var simulation in simulations)
+                    {
+                        Debug.Print(simulation.Key.Name + ", state: " + simulation.Value.State.ToString());
+                    }
+                });
+            }, null, 0, 100);
+        }
+
         private void Start()
         {
             try
             {
+                if (_timer != null)
+                {
+                    return;
+                }
+
                 var temp = page.editorLayer.Create("Page");
                 if (temp != null)
                 {
@@ -1081,13 +1115,7 @@ namespace Logic.WPF
                         var simulations = BoolSimulationFactory.Create(context);
                         if (simulations != null)
                         {
-                            BoolSimulationFactory.Run(simulations);
-
-                            // display results of simulation
-                            foreach (var simulation in simulations)
-                            {
-                                Debug.Print(simulation.Key.Name + ", state: " + simulation.Value.State.ToString());
-                            }
+                            Start(simulations);
                         }
                     }
                 }
@@ -1103,12 +1131,27 @@ namespace Logic.WPF
 
         private void Restart()
         {
-            throw new NotImplementedException();
+            Stop();
+            Start();
         }
 
         private void Stop()
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (_timer != null)
+                {
+                    _timer.Dispose();
+                    _timer = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                XLog.LogError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
+            }
         }
 
         private void Graph()
