@@ -530,13 +530,13 @@ namespace Logic.WPF
                     case Key.F5:
                         Start();
                         break;
-                    // restart simulation
-                    case Key.F6:
-                        Restart();
-                        break;
                     // stop simulation
-                    case Key.F7:
+                    case Key.F6:
                         Stop();
+                        break;
+                    // restart simulation
+                    case Key.F7:
+                        Restart();
                         break;
                     // create graph
                     case Key.F8:
@@ -1070,11 +1070,13 @@ namespace Logic.WPF
         #region Simulation
 
         private System.Threading.Timer _timer = null;
+        Int64 cycle;
+        int period = 100;
 
         private void Start(IDictionary<XBlock, BoolSimulation> simulations)
         {
             DateTime previous = DateTime.UtcNow;
-            UInt64 cycle = 0;
+            cycle = 0;
 
             _timer = new System.Threading.Timer((state) =>
             {
@@ -1086,15 +1088,14 @@ namespace Logic.WPF
 
                 Dispatcher.Invoke(() =>
                 {
-                    Debug.Print(diff.TotalMilliseconds.ToString());
-
-                    // display results of simulation
-                    foreach (var simulation in simulations)
-                    {
-                        Debug.Print(simulation.Key.Name + ", state: " + simulation.Value.State.ToString());
-                    }
+                    //Debug.Print("diff: " + diff.TotalMilliseconds.ToString() + "ms");
+                    Debug.Print("time: " + TimeSpan.FromMilliseconds((double)(cycle * period)).ToString());
+                    //foreach (var simulation in simulations)
+                    //{
+                    //    Debug.Print(simulation.Key.Name + ", state: " + simulation.Value.State.ToString());
+                    //}
                 });
-            }, null, 0, 100);
+            }, null, 0, period);
         }
 
         private void Start()
