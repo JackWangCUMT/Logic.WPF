@@ -15,6 +15,7 @@ namespace Logic.WPF
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+            XLog.IsEnabled = true;
             XLog.Initialize();
         }
 

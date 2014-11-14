@@ -9,47 +9,73 @@ namespace Logic.WPF.Util
 {
     public static class XLog
     {
+        public static bool IsEnabled { get; set; }
+
         public static void Initialize()
         {
-            Trace.Listeners.Add(
-                new TextWriterTraceListener(
-                    "Logic.WPF.log",
-                    "listener"));
+            if (IsEnabled)
+            {
+                Trace.Listeners.Add(
+                    new TextWriterTraceListener(
+                        "Logic.WPF.log",
+                        "listener"));
+            }
         }
 
         public static void Close()
         {
-            Trace.Flush();
+            if (IsEnabled)
+            {
+                Trace.Flush();
+            }
         }
 
         public static void LogInformation(string message)
         {
-            Trace.TraceInformation(message);
+            if (IsEnabled)
+            {
+                Trace.TraceInformation(message); 
+            }
         }
 
         public static void LogInformation(string format, params object[] args)
         {
-            Trace.TraceInformation(format, args);
+            if (IsEnabled)
+            {
+                Trace.TraceInformation(format, args); 
+            }
         }
 
         public static void LogWarning(string message)
         {
-            Trace.TraceWarning(message);
+            if (IsEnabled)
+            {
+                Trace.TraceWarning(message); 
+            }
         }
 
         public static void LogWarning(string format, params object[] args)
         {
-            Trace.TraceWarning(format, args);
+            if (IsEnabled)
+            {
+                Trace.TraceWarning(format, args); 
+            }
         }
 
         public static void LogError(string message)
         {
-            Trace.TraceError(message);
+            if (IsEnabled)
+            {
+                Trace.TraceError(message); 
+            }
         }
 
         public static void LogError(string format, params object[] args)
         {
-            Trace.TraceError(format, args);
+            if (IsEnabled)
+            {
+                Trace.TraceError(format, args); 
+            }
         }
     }
 }
