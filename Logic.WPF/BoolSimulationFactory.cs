@@ -78,12 +78,6 @@ namespace Logic.WPF
             {
                 simulation.Value.Run();
             }
-
-            // display results of simulation
-            foreach (var simulation in simulations)
-            {
-                Debug.Print(simulation.Key.Name + ", state: " + simulation.Value.State.ToString());
-            }
         }
     }
 }
