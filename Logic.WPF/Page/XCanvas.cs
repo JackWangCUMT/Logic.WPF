@@ -2712,7 +2712,7 @@ namespace Logic.WPF.Page
 
         #region Render
 
-        public void InvalidatePage()
+        private void InvalidatePage()
         {
             if (Layers != null)
             {
@@ -2724,8 +2724,94 @@ namespace Logic.WPF.Page
             }
         }
 
+        private void RenderNormalMode(DrawingContext dc, IStyle style)
+        {
+            foreach (var shape in Shapes)
+            {
+                shape.Render(dc, Renderer, style);
+                if (shape is XBlock)
+                {
+                    var block = shape as XBlock;
+                    foreach (var pin in block.Pins)
+                    {
+                        pin.Render(dc, Renderer, style);
+                    }
+                }
+            }
+        }
+        
+        private void RenderSelectedMode(DrawingContext dc, IStyle normal, IStyle selected)
+        {
+            foreach (var shape in Shapes)
+            {
+                IStyle style = Renderer.Selected.Contains(shape) ? selected : normal;
+                shape.Render(dc, Renderer, style);
+                if (shape is XBlock)
+                {
+                    var block = shape as XBlock;
+                    foreach (var pin in block.Pins)
+                    {
+                        pin.Render(dc, Renderer, style);
+                    }
+                }
+            }
+        }
+
+        private void RenderHiddenMode(DrawingContext dc, IStyle style)
+        {
+            foreach (var shape in Shapes)
+            {
+                if (!Hidden.Contains(shape))
+                {
+                    shape.Render(dc, Renderer, style);
+                    if (shape is XBlock)
+                    {
+                        var block = shape as XBlock;
+                        foreach (var pin in block.Pins)
+                        {
+                            if (!Hidden.Contains(pin))
+                            {
+                                pin.Render(dc, Renderer, style);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         private void RenderPage(DrawingContext dc)
         {
+            IStyle normal;
+            IStyle selected;
+            if (IsOverlay)
+            {
+                normal = _hoverStyle;
+                selected = _hoverStyle;
+            }
+            else
+            {
+                normal = _shapeStyle;
+                selected = _selectedShapeStyle;
+            }
+
+            if (Renderer.Selected != null)
+            {
+                RenderSelectedMode(dc, normal, selected);
+            }
+            else if (Renderer.Selected == null && Hidden != null && Hidden.Count > 0)
+            {
+                RenderHiddenMode(dc, normal);
+            }
+            else
+            {
+                RenderNormalMode(dc, normal);
+            }
+        }
+
+        protected override void OnRender(DrawingContext dc)
+        {
+            base.OnRender(dc);
+
             if (Renderer != null)
             {
                 if (_mode == Mode.Selection)
@@ -2734,94 +2820,9 @@ namespace Logic.WPF.Page
                 }
                 else
                 {
-                    IStyle normal;
-                    IStyle selected;
-                    if (IsOverlay)
-                    {
-                        normal = _hoverStyle;
-                        selected = _hoverStyle;
-                    }
-                    else
-                    {
-                        normal = _shapeStyle;
-                        selected = _selectedShapeStyle;
-                    }
-
-                    if (Renderer.Selected != null)
-                    {
-                        foreach (var shape in Shapes)
-                        {
-                            if (Renderer.Selected.Contains(shape))
-                            {
-                                shape.Render(dc, Renderer, selected);
-                                if (shape is XBlock)
-                                {
-                                    var block = shape as XBlock;
-                                    foreach (var pin in block.Pins)
-                                    {
-                                        pin.Render(dc, Renderer, selected);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                shape.Render(dc, Renderer, normal);
-                                if (shape is XBlock)
-                                {
-                                    var block = shape as XBlock;
-                                    foreach (var pin in block.Pins)
-                                    {
-                                        pin.Render(dc, Renderer, normal);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else if (Renderer.Selected == null && Hidden != null && Hidden.Count > 0)
-                    {
-                        foreach (var shape in Shapes)
-                        {
-                            if (!Hidden.Contains(shape))
-                            {
-                                shape.Render(dc, Renderer, normal);
-                                if (shape is XBlock)
-                                {
-                                    var block = shape as XBlock;
-                                    foreach (var pin in block.Pins)
-                                    {
-                                        if (!Hidden.Contains(pin))
-                                        {
-                                            pin.Render(dc, Renderer, normal);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        foreach (var shape in Shapes)
-                        {
-                            shape.Render(dc, Renderer, normal);
-                            if (shape is XBlock)
-                            {
-                                var block = shape as XBlock;
-                                foreach (var pin in block.Pins)
-                                {
-                                    pin.Render(dc, Renderer, normal);
-                                }
-                            }
-                        }
-                    }
+                    RenderPage(dc);
                 }
             }
-        }
-
-        protected override void OnRender(DrawingContext dc)
-        {
-            base.OnRender(dc);
-
-            RenderPage(dc);
         }
 
         #endregion
