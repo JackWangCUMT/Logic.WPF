@@ -2731,8 +2731,7 @@ namespace Logic.WPF.Page
                 shape.Render(dc, Renderer, style);
                 if (shape is XBlock)
                 {
-                    var block = shape as XBlock;
-                    foreach (var pin in block.Pins)
+                    foreach (var pin in (shape as XBlock).Pins)
                     {
                         pin.Render(dc, Renderer, style);
                     }
@@ -2748,8 +2747,7 @@ namespace Logic.WPF.Page
                 shape.Render(dc, Renderer, style);
                 if (shape is XBlock)
                 {
-                    var block = shape as XBlock;
-                    foreach (var pin in block.Pins)
+                    foreach (var pin in (shape as XBlock).Pins)
                     {
                         pin.Render(dc, Renderer, style);
                     }
@@ -2766,8 +2764,7 @@ namespace Logic.WPF.Page
                     shape.Render(dc, Renderer, style);
                     if (shape is XBlock)
                     {
-                        var block = shape as XBlock;
-                        foreach (var pin in block.Pins)
+                        foreach (var pin in (shape as XBlock).Pins)
                         {
                             if (!Hidden.Contains(pin))
                             {
