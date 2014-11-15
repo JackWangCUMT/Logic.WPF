@@ -1070,8 +1070,8 @@ namespace Logic.WPF
         #region Simulation
 
         private System.Threading.Timer _timer = null;
-        Int64 cycle;
-        int period = 100;
+        private Int64 cycle;
+        private int period = 100;
 
         private void Start(IDictionary<XBlock, BoolSimulation> simulations)
         {
@@ -1116,6 +1116,8 @@ namespace Logic.WPF
                         var simulations = BoolSimulationFactory.Create(context);
                         if (simulations != null)
                         {
+                            page.editorLayer.SelectionReset();
+
                             Start(simulations);
                         }
                     }
