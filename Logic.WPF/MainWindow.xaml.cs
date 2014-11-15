@@ -1067,95 +1067,39 @@ namespace Logic.WPF
 
         #endregion
 
-        #region Simulation
+        #region Simulation Overlay
 
-        private System.Threading.Timer _timer = null;
-        private Int64 cycle;
-        private int period = 100;
-
-        private void Start(IDictionary<XBlock, BoolSimulation> simulations)
+        private void InitSimulationOverlay(IDictionary<XBlock, BoolSimulation> simulations)
         {
-            DateTime previous = DateTime.UtcNow;
-            cycle = 0;
+            page.editorLayer.SelectionReset();
 
-            _timer = new System.Threading.Timer((state) =>
+            foreach (var simulation in simulations)
             {
-                var diff = (DateTime.UtcNow - previous);
-                previous = DateTime.UtcNow;
+                page.blockLayer.Hidden.Add(simulation.Key);
+                page.overlayLayer.Shapes.Add(simulation.Key);
+            }
 
-                BoolSimulationFactory.Run(simulations);
-                cycle++;
+            page.editorLayer.Simulations = simulations;
+            page.overlayLayer.Simulations = simulations;
 
-                Dispatcher.Invoke(() =>
-                {
-                    //Debug.Print("diff: " + diff.TotalMilliseconds.ToString() + "ms");
-                    Debug.Print("time: " + TimeSpan.FromMilliseconds((double)(cycle * period)).ToString());
-                    //foreach (var simulation in simulations)
-                    //{
-                    //    Debug.Print(simulation.Key.Name + ", state: " + simulation.Value.State.ToString());
-                    //}
-                });
-            }, null, 0, period);
+            page.blockLayer.InvalidateVisual();
+            page.overlayLayer.InvalidateVisual();
         }
 
-        private void Start()
+        private void ResetSimulationOverlay()
         {
-            try
-            {
-                if (_timer != null)
-                {
-                    return;
-                }
+            page.editorLayer.Simulations = null;
+            page.overlayLayer.Simulations = null;
 
-                var temp = page.editorLayer.Create("Page");
-                if (temp != null)
-                {
-                    var context = PageGraph.Create(temp);
-                    if (context != null)
-                    {
-                        var simulations = BoolSimulationFactory.Create(context);
-                        if (simulations != null)
-                        {
-                            page.editorLayer.SelectionReset();
-
-                            Start(simulations);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                XLog.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
-            }
+            page.blockLayer.Hidden.Clear();
+            page.overlayLayer.Shapes.Clear();
+            page.blockLayer.InvalidateVisual();
+            page.overlayLayer.InvalidateVisual();
         }
 
-        private void Restart()
-        {
-            Stop();
-            Start();
-        }
+        #endregion
 
-        private void Stop()
-        {
-            try
-            {
-                if (_timer != null)
-                {
-                    _timer.Dispose();
-                    _timer = null;
-                }
-            }
-            catch (Exception ex)
-            {
-                XLog.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
-            }
-        }
+        #region Simulation Graph
 
         private void Graph()
         {
@@ -1210,6 +1154,104 @@ namespace Logic.WPF
                 {
                     fs.Write(text);
                 };
+            }
+        }
+
+        #endregion
+
+        #region Simulation Mode
+
+        private System.Threading.Timer _timer = null;
+        private Int64 cycle;
+        private int period = 100;
+
+        private void Start(IDictionary<XBlock, BoolSimulation> simulations)
+        {
+            //DateTime previous = DateTime.UtcNow;
+            cycle = 0;
+
+            _timer = new System.Threading.Timer((state) =>
+            {
+                //var diff = (DateTime.UtcNow - previous);
+                //previous = DateTime.UtcNow;
+
+                BoolSimulationFactory.Run(simulations);
+                cycle++;
+
+                Dispatcher.Invoke(() =>
+                {
+                    // update overlay
+                    page.overlayLayer.InvalidateVisual();
+
+                    //Debug.Print("diff: " + diff.TotalMilliseconds.ToString() + "ms");
+                    //Debug.Print("time: " + TimeSpan.FromMilliseconds((double)(cycle * period)).ToString());
+                    //foreach (var simulation in simulations)
+                    //{
+                    //    Debug.Print(simulation.Key.Name + ", state: " + simulation.Value.State.ToString());
+                    //}
+                });
+            }, null, 0, period);
+        }
+
+        private void Start()
+        {
+            try
+            {
+                // check is simulation running
+                if (_timer != null)
+                {
+                    return;
+                }
+
+                // initialize simulation
+                var temp = page.editorLayer.Create("Page");
+                if (temp != null)
+                {
+                    var context = PageGraph.Create(temp);
+                    if (context != null)
+                    {
+                        var simulations = BoolSimulationFactory.Create(context);
+                        if (simulations != null)
+                        {
+                            InitSimulationOverlay(simulations);
+                            Start(simulations);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                XLog.LogError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
+            }
+        }
+
+        private void Restart()
+        {
+            Stop();
+            Start();
+        }
+
+        private void Stop()
+        {
+            try
+            {
+                ResetSimulationOverlay();
+
+                if (_timer != null)
+                {
+                    _timer.Dispose();
+                    _timer = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                XLog.LogError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
             }
         }
 
