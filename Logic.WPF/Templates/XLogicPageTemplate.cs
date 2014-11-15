@@ -40,24 +40,24 @@ namespace Logic.WPF.Templates
 
             // styles
             var gridStyle = new XStyle(
-                "Grid",
-                new XColor() { A = 0x00, R = 0x00, G = 0x00, B = 0x00 },
-                new XColor() { A = 0xFF, R = 0xD3, G = 0xD3, B = 0xD3 },
-                1.0);
+                name: "Grid",
+                fill: new XColor() { A = 0x00, R = 0x00, G = 0x00, B = 0x00 },
+                stroke: new XColor() { A = 0xFF, R = 0xD3, G = 0xD3, B = 0xD3 },
+                thickness: 1.0);
             this.Grid.Styles.Add(gridStyle);
 
             var tableStyle = new XStyle(
-                "Table",
-                new XColor() { A = 0x00, R = 0x00, G = 0x00, B = 0x00 },
-                new XColor() { A = 0xFF, R = 0xD3, G = 0xD3, B = 0xD3 },
-                1.0);
+                name: "Table",
+                fill: new XColor() { A = 0x00, R = 0x00, G = 0x00, B = 0x00 },
+                stroke: new XColor() { A = 0xFF, R = 0xD3, G = 0xD3, B = 0xD3 },
+                thickness: 1.0);
             this.Table.Styles.Add(tableStyle);
 
             var frameStyle = new XStyle(
-                "Frame",
-                new XColor() { A = 0x00, R = 0x00, G = 0x00, B = 0x00 },
-                new XColor() { A = 0xFF, R = 0xA9, G = 0xA9, B = 0xA9 },
-                1.0);
+                name: "Frame",
+                fill: new XColor() { A = 0x00, R = 0x00, G = 0x00, B = 0x00 },
+                stroke: new XColor() { A = 0xFF, R = 0xA9, G = 0xA9, B = 0xA9 },
+                thickness: 1.0);
             this.Frame.Styles.Add(frameStyle);
 
             // containers
