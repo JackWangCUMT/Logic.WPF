@@ -19,6 +19,7 @@ namespace Logic.WPF.Page
 
         public XLayers Layers { get; set; }
         public IList<IShape> Shapes { get; set; }
+        public ICollection<IShape> Hidden { get; set; }
         public Tool CurrentTool { get; set; }
         public bool EnableSnap { get; set; }
         public double SnapSize { get; set; }
@@ -112,33 +113,34 @@ namespace Logic.WPF.Page
         private void InitStyles()
         {
             _shapeStyle = new XStyle(
-                "Shape",
-                new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
-                new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
-                2.0);
+                name: "Shape",
+                fill: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
+                stroke: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
+                thickness: 2.0);
 
             _selectedShapeStyle = new XStyle(
-                "Selected",
-                new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
-                new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
-                2.0);
+                name: "Selected",
+                fill: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
+                stroke: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
+                thickness: 2.0);
 
             _selectionStyle = new XStyle(
-                "Selection",
-                new XColor() { A = 0x1F, R = 0x00, G = 0x00, B = 0xFF },
-                new XColor() { A = 0x9F, R = 0x00, G = 0x00, B = 0xFF },
-                1.0);
+                name: "Selection",
+                fill: new XColor() { A = 0x1F, R = 0x00, G = 0x00, B = 0xFF },
+                stroke: new XColor() { A = 0x9F, R = 0x00, G = 0x00, B = 0xFF },
+                thickness: 1.0);
 
             _hoverStyle = new XStyle(
-                "Hover",
-                new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
-                new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
-                4.0);
+                name: "Overlay",
+                fill: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
+                stroke: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
+                thickness: 2.0);
         }
 
         private void InitProperties()
         {
             Shapes = new ObservableCollection<IShape>();
+            Hidden = new HashSet<IShape>();
             EnableSnap = true;
             SnapSize = 15.0;
         }
@@ -236,16 +238,13 @@ namespace Logic.WPF.Page
             {
                 if (Layers != null)
                 {
-                    if (Layers.Overlay.Shapes.Count > 0)
-                    {
-                        Layers.Overlay.Shapes.Clear();
-                        Layers.Overlay.InvalidateVisual();
-                    }
+                    ResetOverlay();
                 }
 
                 if (_mode != Mode.Move 
                     && _mode != Mode.Selection
-                    && CurrentTool != Tool.None)
+                    && CurrentTool != Tool.None
+                    && Renderer.Selected == null)
                 {
                     MoveOverlay(e.GetPosition(this));
                 }
@@ -741,29 +740,53 @@ namespace Logic.WPF.Page
                     XBlock block = shapeHitResult as XBlock;
                     Debug.Print("Block: " + block.Name);
 
-                    //Layers.Overlay.Shapes.Add(block);
-                    //Layers.Overlay.InvalidateVisual();
+                    Layers.Blocks.Hidden.Add(shapeHitResult);
+                    Layers.Blocks.InvalidateVisual();
+
+                    Layers.Overlay.Shapes.Add(block);
+                    Layers.Overlay.InvalidateVisual();
                 }
                 else if (shapeHitResult is XPin)
                 {
                     XPin pin = shapeHitResult as XPin;
                     Debug.Print(
-                        "Pin: " + pin.PinType.ToString() +
+                        "Shape Pin: " + pin.PinType.ToString() +
                         ", Name: " + pin.Name +
                         ", Owner:" + pin.Owner == null ? "<>" : pin.Owner.Name);
 
-                    if (CurrentTool == Tool.Wire)
-                    {
+                    //if (CurrentTool == Tool.Wire)
+                    //{
+                        Layers.Blocks.Hidden.Add(pin);
+                        Layers.Pins.Hidden.Add(pin);
+                        Layers.Blocks.InvalidateVisual();
+                        Layers.Pins.InvalidateVisual();
+
                         Layers.Overlay.Shapes.Add(pin);
                         Layers.Overlay.InvalidateVisual();
-                    }
+                    //}
+                }
+                else if (shapeHitResult is XWire)
+                {
+                    Debug.Print(shapeHitResult.GetType().ToString());
+
+                    //if (CurrentTool == Tool.Wire || CurrentTool == Tool.Pin)
+                    //{
+                        Layers.Wires.Hidden.Add(wireHitResult);
+                        Layers.Wires.InvalidateVisual();
+
+                        Layers.Overlay.Shapes.Add(wireHitResult);
+                        Layers.Overlay.InvalidateVisual();
+                    //}
                 }
                 else
                 {
                     Debug.Print(shapeHitResult.GetType().ToString());
 
-                    //Layers.Overlay.Shapes.Add(shapeHitResult);
-                    //Layers.Overlay.InvalidateVisual();
+                    Layers.Shapes.Hidden.Add(shapeHitResult);
+                    Layers.Shapes.InvalidateVisual();
+
+                    Layers.Overlay.Shapes.Add(shapeHitResult);
+                    Layers.Overlay.InvalidateVisual();
                 }
             }
 
@@ -775,11 +798,16 @@ namespace Logic.WPF.Page
                     ", Name: " + pin.Name +
                     ", Owner: " + (pin.Owner == null ? "<>" : pin.Owner.Name));
 
-                if (CurrentTool == Tool.Wire)
-                {
+                //if (CurrentTool == Tool.Wire)
+                //{
+                    Layers.Pins.Hidden.Add(pin);
+                    Layers.Blocks.Hidden.Add(pin);
+                    Layers.Pins.InvalidateVisual();
+                    Layers.Blocks.InvalidateVisual();
+
                     Layers.Overlay.Shapes.Add(pin);
                     Layers.Overlay.InvalidateVisual();
-                }
+                //}
             }
             else if (wireHitResult != null)
             {
@@ -787,25 +815,39 @@ namespace Logic.WPF.Page
                 {
                     Debug.Print(wireHitResult.GetType().ToString());
 
-                    if (CurrentTool == Tool.Wire || CurrentTool == Tool.Pin)
-                    {
+                    //if (CurrentTool == Tool.Wire || CurrentTool == Tool.Pin)
+                    //{
+                        Layers.Wires.Hidden.Add(wireHitResult);
+                        Layers.Wires.InvalidateVisual();
+
                         Layers.Overlay.Shapes.Add(wireHitResult);
                         Layers.Overlay.InvalidateVisual();
-                    }
+                    //}
                 }
                 else if (wireHitResult is XPin)
                 {
                     XPin pin = wireHitResult as XPin;
                     Debug.Print(
-                        "Pin: " + pin.PinType.ToString() +
+                        "Wire Pin: " + pin.PinType.ToString() +
                         ", Name: " + pin.Name +
                         ", Owner: " + (pin.Owner == null ? "<>" : pin.Owner.Name));
 
-                    if (CurrentTool == Tool.Wire)
-                    {
+                    //if (CurrentTool == Tool.Wire)
+                    //{
+                        if (pin.Owner == null)
+                        {
+                            Layers.Pins.Hidden.Add(pin);
+                            Layers.Pins.InvalidateVisual();
+                        }
+                        else
+                        {
+                            Layers.Blocks.Hidden.Add(pin);
+                            Layers.Blocks.InvalidateVisual();
+                        }
+
                         Layers.Overlay.Shapes.Add(pin);
                         Layers.Overlay.InvalidateVisual();
-                    }
+                    //}
                 }
             }
             else if (blockHitResult != null)
@@ -815,23 +857,63 @@ namespace Logic.WPF.Page
                     XBlock block = shapeHitResult as XBlock;
                     Debug.Print("Block: " + block.Name);
 
-                    //Layers.Overlay.Shapes.Add(block);
-                    //Layers.Overlay.InvalidateVisual();
+                    Layers.Blocks.Hidden.Add(block);
+                    Layers.Blocks.InvalidateVisual();
+
+                    Layers.Overlay.Shapes.Add(block);
+                    Layers.Overlay.InvalidateVisual();
                 }
                 else if (blockHitResult is XPin)
                 {
                     XPin pin = blockHitResult as XPin;
                     Debug.Print(
-                        "Pin: " + pin.PinType.ToString() +
+                        "Block Pin: " + pin.PinType.ToString() +
                         ", Name: " + pin.Name +
                         ", Owner: " + (pin.Owner == null ? "<>" : pin.Owner.Name));
 
-                    if (CurrentTool == Tool.Wire)
-                    {
+                    //if (CurrentTool == Tool.Wire)
+                    //{
+                        Layers.Blocks.Hidden.Add(pin);
+                        Layers.Blocks.InvalidateVisual();
+
                         Layers.Overlay.Shapes.Add(pin);
                         Layers.Overlay.InvalidateVisual();
-                    }
+                    //}
                 }
+            }
+        }
+
+        private void ResetOverlay()
+        {
+            if (Layers.Overlay.Shapes.Count > 0)
+            {
+                if (Layers.Shapes.Hidden != null && Layers.Shapes.Hidden.Count > 0)
+                {
+                    Layers.Shapes.Hidden.Clear();
+                    Layers.Shapes.InvalidateVisual();
+                }
+
+                if (Layers.Blocks.Hidden != null && Layers.Blocks.Hidden.Count > 0)
+                {
+                    Layers.Blocks.Hidden.Clear();
+                    Layers.Blocks.InvalidateVisual();
+                }
+
+                if (Layers.Wires.Hidden != null && Layers.Wires.Hidden.Count > 0)
+                {
+                    Layers.Wires.Hidden.Clear();
+                    Layers.Wires.InvalidateVisual();
+                }
+
+                if (Layers.Pins.Hidden != null && Layers.Pins.Hidden.Count > 0)
+                {
+                    Layers.Pins.Hidden.Clear();
+                    Layers.Pins.InvalidateVisual();
+                }
+
+                Layers.Pins.Hidden.Clear();
+                Layers.Overlay.Shapes.Clear();
+                Layers.Overlay.InvalidateVisual();
             }
         }
 
@@ -2646,19 +2728,90 @@ namespace Logic.WPF.Page
         {
             if (Renderer != null)
             {
-                if (IsOverlay)
+                if (_mode == Mode.Selection)
                 {
-                    Renderer.DrawShapes(dc, _hoverStyle, _hoverStyle, Shapes);
+                    _selection.Render(dc, Renderer, _selectionStyle);
                 }
                 else
                 {
-                    if (_mode == Mode.Selection)
+                    IStyle normal;
+                    IStyle selected;
+                    if (IsOverlay)
                     {
-                        Renderer.DrawSelection(dc, _selectionStyle, _selection);
+                        normal = _hoverStyle;
+                        selected = _hoverStyle;
                     }
                     else
                     {
-                        Renderer.DrawShapes(dc, _shapeStyle, _selectedShapeStyle, Shapes);
+                        normal = _shapeStyle;
+                        selected = _selectedShapeStyle;
+                    }
+
+                    if (Renderer.Selected != null)
+                    {
+                        foreach (var shape in Shapes)
+                        {
+                            if (Renderer.Selected.Contains(shape))
+                            {
+                                shape.Render(dc, Renderer, selected);
+                                if (shape is XBlock)
+                                {
+                                    var block = shape as XBlock;
+                                    foreach (var pin in block.Pins)
+                                    {
+                                        pin.Render(dc, Renderer, selected);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                shape.Render(dc, Renderer, normal);
+                                if (shape is XBlock)
+                                {
+                                    var block = shape as XBlock;
+                                    foreach (var pin in block.Pins)
+                                    {
+                                        pin.Render(dc, Renderer, normal);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if (Renderer.Selected == null && Hidden != null && Hidden.Count > 0)
+                    {
+                        foreach (var shape in Shapes)
+                        {
+                            if (!Hidden.Contains(shape))
+                            {
+                                shape.Render(dc, Renderer, normal);
+                                if (shape is XBlock)
+                                {
+                                    var block = shape as XBlock;
+                                    foreach (var pin in block.Pins)
+                                    {
+                                        if (!Hidden.Contains(pin))
+                                        {
+                                            pin.Render(dc, Renderer, normal);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (var shape in Shapes)
+                        {
+                            shape.Render(dc, Renderer, normal);
+                            if (shape is XBlock)
+                            {
+                                var block = shape as XBlock;
+                                foreach (var pin in block.Pins)
+                                {
+                                    pin.Render(dc, Renderer, normal);
+                                }
+                            }
+                        }
                     }
                 }
             }

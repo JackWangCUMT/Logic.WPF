@@ -15,7 +15,10 @@ namespace Logic.Core
 
         public void Render(object dc, IRenderer renderer, IStyle style)
         {
-            renderer.DrawBlock(dc, style, this);
+            foreach (var shape in Shapes)
+            {
+                shape.Render(dc, renderer, style);
+            }
         }
     }
 }

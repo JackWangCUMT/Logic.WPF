@@ -16,19 +16,6 @@ namespace Logic.WPF.Page
         public double PinRadius { get; set; }
         public double HitTreshold { get; set; }
 
-        public void DrawBlock(object dc, IStyle style, XBlock block)
-        {
-            foreach (var shape in block.Shapes)
-            {
-                shape.Render(dc, this, style);
-            }
-
-            foreach (var pin in block.Pins)
-            {
-                pin.Render(dc, this, style);
-            }
-        }
-
         public void DrawLine(object dc, IStyle style, XLine line)
         {
             double thickness = style.Thickness;
@@ -58,6 +45,21 @@ namespace Logic.WPF.Page
 
         public void DrawRectangle(object dc, IStyle style, XRectangle rectangle)
         {
+            double thickness = style.Thickness;
+            double half = thickness / 2.0;
+            var gs = new GuidelineSet(
+                new double[] 
+                    { 
+                        rectangle.X + half, 
+                        rectangle.X + rectangle.Width + half 
+                    },
+                new double[] 
+                    { 
+                        rectangle.Y + half,
+                        rectangle.Y + rectangle.Height + half
+                    });
+            (dc as DrawingContext).PushGuidelineSet(gs);
+
             (dc as DrawingContext).DrawRectangle(
                 rectangle.IsFilled ? (SolidColorBrush)style.NativeFill() : null,
                 (Pen)style.NativeStroke(),
@@ -66,6 +68,8 @@ namespace Logic.WPF.Page
                     rectangle.Y, 
                     rectangle.Width, 
                     rectangle.Height));
+
+            (dc as DrawingContext).Pop();
         }
 
         public void DrawText(object dc, IStyle style, XText text)
@@ -253,82 +257,17 @@ namespace Logic.WPF.Page
                     InvertSize);
             }
 
-            (dc as DrawingContext).DrawLine(
-                (Pen)style.NativeStroke(),
-                new Point(x1, y1),
-                new Point(x2, y2));
-        }
-
-        public void DrawSelection(object dc, IStyle style, XRectangle rectangle)
-        {
             double thickness = style.Thickness;
             double half = thickness / 2.0;
-
-            var gs = new GuidelineSet(
-                new double[] 
-                    { 
-                        rectangle.X + half, 
-                        rectangle.X + rectangle.Width + half 
-                    },
-                new double[] 
-                    { 
-                        rectangle.Y + half,
-                        rectangle.Y + rectangle.Height + half
-                    });
-            (dc as DrawingContext).PushGuidelineSet(gs);
-
-            (dc as DrawingContext).DrawRectangle(
-                rectangle.IsFilled ?
-                (SolidColorBrush)style.NativeFill() : null,
-                (Pen)style.NativeStroke(),
-                new Rect(
-                    rectangle.X,
-                    rectangle.Y,
-                    rectangle.Width,
-                    rectangle.Height));
-
-            (dc as DrawingContext).Pop();
-        }
-
-        public void DrawShapes(object dc, IList<IShape> shapes)
-        {
-            foreach (var shape in shapes)
-            {
-                shape.Render(dc, this, shape.Style);
-            }
-        }
-
-        public void DrawShapes(object dc, IStyle normal, IStyle selected, IList<IShape> shapes)
-        {
-            double thickness = normal.Thickness;
-            double half = thickness / 2.0;
-
             var gs = new GuidelineSet(
                 new double[] { half, half },
                 new double[] { half, half });
             (dc as DrawingContext).PushGuidelineSet(gs);
 
-            if (Selected != null)
-            {
-                foreach (var shape in shapes)
-                {
-                    if (Selected.Contains(shape))
-                    {
-                        shape.Render(dc, this, selected);
-                    }
-                    else
-                    {
-                        shape.Render(dc, this, normal);
-                    }
-                }
-            }
-            else
-            {
-                foreach (var shape in shapes)
-                {
-                    shape.Render(dc, this, normal);
-                }
-            }
+            (dc as DrawingContext).DrawLine(
+                (Pen)style.NativeStroke(),
+                new Point(x1, y1),
+                new Point(x2, y2));
 
             (dc as DrawingContext).Pop();
         }

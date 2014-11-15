@@ -24,7 +24,10 @@ namespace Logic.WPF.Page
                 && Container != null 
                 && Container.Shapes != null)
             {
-                Renderer.DrawShapes(dc, Container.Shapes);
+                foreach (var shape in Container.Shapes)
+                {
+                    shape.Render(dc, Renderer, shape.Style);
+                }
             }
         }
     }
