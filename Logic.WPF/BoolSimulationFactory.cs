@@ -40,8 +40,6 @@ namespace Logic.WPF
             // find ordered block Inputs
             foreach (var block in context.OrderedBlocks)
             {
-                //Debug.Print(block.Name);
-
                 var inputs = block.Pins
                     .Where(pin => context.PinTypes[pin] == PinType.Input)
                     .SelectMany(pin =>
@@ -50,12 +48,6 @@ namespace Logic.WPF
                             .Where(dep => context.PinTypes[dep.Item1] == PinType.Output);
                     })
                     .Select(pin => pin);
-
-                //Debug.Print("\tInputs:");
-                //foreach (var input in inputs)
-                //{
-                //    Debug.Print("\t" + input.Item1.Owner.Name + ", inverted: " + input.Item2.ToString());
-                //}
 
                 // convert inputs to BoolInput
                 var simulation = simulations[block];
@@ -73,7 +65,6 @@ namespace Logic.WPF
 
         public static void Run(IDictionary<XBlock, BoolSimulation> simulations)
         {
-            // run one cycle of OrderedBlocks simulation
             foreach (var simulation in simulations)
             {
                 simulation.Value.Run();
