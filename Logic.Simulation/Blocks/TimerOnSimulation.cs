@@ -14,9 +14,10 @@ namespace Logic.Simulation.Blocks
         {
         }
 
-        public TimerOnSimulation(double delay)
+        public TimerOnSimulation(bool? state, double delay)
             : base()
         {
+            base.State = state;
             this.Delay = delay;
         }
 

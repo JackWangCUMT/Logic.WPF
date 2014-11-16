@@ -14,9 +14,10 @@ namespace Logic.Simulation.Blocks
         {
         }
 
-        public TimerPulseSimulation(double delay)
+        public TimerPulseSimulation(bool? state, double delay)
             : base()
         {
+            base.State = state;
             this.Delay = delay;
         }
 

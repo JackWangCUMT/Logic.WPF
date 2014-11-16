@@ -17,9 +17,9 @@ namespace Logic.WPF
             = new Dictionary<string, Func<BoolSimulation>>()
         {
             // Gates
-            { "AND", () => { return new AndSimulation(); } },
-            { "INVERTER", () => { return new InverterSimulation(); } },
-            { "OR", () => { return new OrSimulation(); } },
+            { "AND", () => { return new AndSimulation(null); } },
+            { "INVERTER", () => { return new InverterSimulation(null); } },
+            { "OR", () => { return new OrSimulation(null); } },
             // Memory
             { "SR-RESET", () => { return new MemorySetResetSimulation(MemoryPriority.Reset); } },
             { "SR-RESET-V", () => { return new MemorySetResetSimulation(MemoryPriority.Reset); } },
@@ -30,9 +30,9 @@ namespace Logic.WPF
             // Signal
             { "SIGNAL", () => { return new SignalSimulation(false); } },
             // Timers
-            { "TIMER-OFF", () => { return new TimerOffSimulation(1.0); } },
-            { "TIMER-ON", () => { return new TimerOnSimulation(1.0); } },
-            { "TIMER-PULSE", () => { return new TimerPulseSimulation(1.0); } }
+            { "TIMER-OFF", () => { return new TimerOffSimulation(false, 1.0); } },
+            { "TIMER-ON", () => { return new TimerOnSimulation(false, 1.0); } },
+            { "TIMER-PULSE", () => { return new TimerPulseSimulation(false, 1.0); } }
         };
 
         public static IDictionary<XBlock, BoolSimulation> Create(PageGraphContext context)
