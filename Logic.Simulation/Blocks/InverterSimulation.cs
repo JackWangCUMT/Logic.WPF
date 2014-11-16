@@ -7,7 +7,7 @@ namespace Logic.Simulation.Blocks
 {
     public class InverterSimulation : BoolSimulation
     {
-        public override void Run()
+        public override void Run(IClock clock)
         {
             // TODO: Implement simulation.
         }

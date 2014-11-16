@@ -76,11 +76,11 @@ namespace Logic.WPF
             return simulations;
         }
 
-        public static void Run(IDictionary<XBlock, BoolSimulation> simulations)
+        public static void Run(IDictionary<XBlock, BoolSimulation> simulations, IClock clock)
         {
             foreach (var simulation in simulations)
             {
-                simulation.Value.Run();
+                simulation.Value.Run(clock);
             }
         }
     }

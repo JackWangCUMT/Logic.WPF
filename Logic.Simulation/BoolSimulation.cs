@@ -9,6 +9,6 @@ namespace Logic.Simulation
     {
         public BoolInput[] Inputs { get; set; }
         public bool? State { get; set; }
-        public abstract void Run();
+        public abstract void Run(IClock clock);
     }
 }

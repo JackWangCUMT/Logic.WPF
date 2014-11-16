@@ -18,7 +18,7 @@ namespace Logic.Simulation.Blocks
             base.State = state;
         }
 
-        public override void Run()
+        public override void Run(IClock clock)
         {
             int length = Inputs.Length;
             if (length == 1)

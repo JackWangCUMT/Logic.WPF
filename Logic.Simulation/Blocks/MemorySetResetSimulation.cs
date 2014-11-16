@@ -17,7 +17,7 @@ namespace Logic.Simulation.Blocks
             this.Priority = priority;
         }
 
-        public override void Run()
+        public override void Run(IClock clock)
         {
             // TODO: Implement simulation.
         }

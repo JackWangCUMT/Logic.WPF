@@ -1453,8 +1453,7 @@ namespace Logic.WPF
         #region Simulation Mode
 
         private System.Threading.Timer _timer = null;
-        private Int64 cycle;
-        private int period = 100;
+        private Clock _clock = null;
 
         private bool IsSimulationRunning()
         {
@@ -1463,14 +1462,15 @@ namespace Logic.WPF
 
         private void Start(IDictionary<XBlock, BoolSimulation> simulations)
         {
-            cycle = 0;
+            _clock = new Clock(cycle: 0L, resolution: 100);
+
             _timer = new System.Threading.Timer(
                 (state) =>
                 {
                     try
                     {
-                        BoolSimulationFactory.Run(simulations);
-                        cycle++;
+                        BoolSimulationFactory.Run(simulations, _clock);
+                        _clock.Tick();
                         Dispatcher.Invoke(() => page.overlayLayer.InvalidateVisual());
                     }
                     catch (Exception ex)
@@ -1481,7 +1481,7 @@ namespace Logic.WPF
                             ex.StackTrace);
                     }
                 }, 
-                null, 0, period);
+                null, 0, _clock.Resolution);
         }
 
         private void Start()

@@ -45,6 +45,8 @@
     <Compile Include="Blocks\TimerPulseSimulation.cs" />
     <Compile Include="BoolInput.cs" />
     <Compile Include="BoolSimulation.cs" />
+    <Compile Include="Clock.cs" />
+    <Compile Include="IClock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

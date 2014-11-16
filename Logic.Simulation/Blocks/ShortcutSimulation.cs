@@ -7,7 +7,7 @@ namespace Logic.Simulation.Blocks
 {
     public class ShortcutSimulation : BoolSimulation
     {
-        public override void Run()
+        public override void Run(IClock clock)
         {
             // TODO: Implement simulation.
         }

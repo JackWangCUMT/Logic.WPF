@@ -20,7 +20,7 @@ namespace Logic.Simulation.Blocks
             this.Delay = delay;
         }
 
-        public override void Run()
+        public override void Run(IClock clock)
         {
             // TODO: Implement simulation.
         }
