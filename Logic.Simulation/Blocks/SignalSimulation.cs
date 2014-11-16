@@ -7,6 +7,17 @@ namespace Logic.Simulation.Blocks
 {
     public class SignalSimulation : BoolSimulation
     {
+        public SignalSimulation() 
+            : base()
+        {
+        }
+
+        public SignalSimulation(bool? state)
+            : base()
+        {
+            base.State = state;
+        }
+
         public override void Run()
         {
             int length = Inputs.Length;
@@ -17,7 +28,7 @@ namespace Logic.Simulation.Blocks
             else if (length == 1)
             {
                 var input = Inputs[0];
-                State = input.IsInverted ? !(input.Simulation.State) : input.Simulation.State;
+                base.State = input.IsInverted ? !(input.Simulation.State) : input.Simulation.State;
             }
             else
             {

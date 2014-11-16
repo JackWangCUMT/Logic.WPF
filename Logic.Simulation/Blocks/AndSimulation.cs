@@ -7,12 +7,23 @@ namespace Logic.Simulation.Blocks
 {
     public class AndSimulation : BoolSimulation
     {
+        public AndSimulation()
+            : base()
+        {
+        }
+
+        public AndSimulation(bool? state)
+            : base()
+        {
+            base.State = state;
+        }
+
         public override void Run()
         {
             int length = Inputs.Length;
             if (length == 1)
             {
-                State = null;
+                base.State = null;
                 return;
             }
 
@@ -29,7 +40,7 @@ namespace Logic.Simulation.Blocks
                     result &= input.IsInverted ? !(input.Simulation.State) : input.Simulation.State;
                 }
             }
-            State = result;
+            base.State = result;
         }
     }
 }
