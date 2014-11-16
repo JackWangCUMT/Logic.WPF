@@ -1479,6 +1479,14 @@ namespace Logic.WPF
                             ex.Message,
                             Environment.NewLine,
                             ex.StackTrace);
+
+                        Dispatcher.Invoke(() =>
+                        {
+                            if (IsSimulationRunning())
+                            {
+                                Stop();
+                            }
+                        });
                     }
                 }, 
                 null, 0, _clock.Resolution);
