@@ -772,7 +772,6 @@ namespace Logic.WPF.Page
                 if (shapeHitResult is XBlock)
                 {
                     XBlock block = shapeHitResult as XBlock;
-                    //Debug.Print("Block: " + block.Name);
 
                     Layers.Blocks.Hidden.Add(shapeHitResult);
                     Layers.Blocks.InvalidateVisual();
@@ -783,13 +782,8 @@ namespace Logic.WPF.Page
                 else if (shapeHitResult is XPin)
                 {
                     XPin pin = shapeHitResult as XPin;
-                    //Debug.Print(
-                    //    "Shape Pin: " + pin.PinType.ToString() +
-                    //    ", Name: " + pin.Name +
-                    //    ", Owner:" + pin.Owner == null ? "<>" : pin.Owner.Name);
-
-                    //if (CurrentTool == Tool.Wire)
-                    //{
+                    if (CurrentTool == Tool.Wire)
+                    {
                         Layers.Blocks.Hidden.Add(pin);
                         Layers.Pins.Hidden.Add(pin);
                         Layers.Blocks.InvalidateVisual();
@@ -797,43 +791,37 @@ namespace Logic.WPF.Page
 
                         Layers.Overlay.Shapes.Add(pin);
                         Layers.Overlay.InvalidateVisual();
-                    //}
+                    }
                 }
                 else if (shapeHitResult is XWire)
                 {
-                    //Debug.Print(shapeHitResult.GetType().ToString());
-
-                    //if (CurrentTool == Tool.Wire || CurrentTool == Tool.Pin)
-                    //{
+                    if (CurrentTool == Tool.Wire || CurrentTool == Tool.Pin)
+                    {
                         Layers.Wires.Hidden.Add(wireHitResult);
                         Layers.Wires.InvalidateVisual();
 
                         Layers.Overlay.Shapes.Add(wireHitResult);
                         Layers.Overlay.InvalidateVisual();
-                    //}
+                    }
                 }
                 else
                 {
-                    //Debug.Print(shapeHitResult.GetType().ToString());
+                    if (CurrentTool == Tool.Wire)
+                    {
+                        Layers.Shapes.Hidden.Add(shapeHitResult);
+                        Layers.Shapes.InvalidateVisual();
 
-                    Layers.Shapes.Hidden.Add(shapeHitResult);
-                    Layers.Shapes.InvalidateVisual();
-
-                    Layers.Overlay.Shapes.Add(shapeHitResult);
-                    Layers.Overlay.InvalidateVisual();
+                        Layers.Overlay.Shapes.Add(shapeHitResult);
+                        Layers.Overlay.InvalidateVisual();
+                    }
                 }
             }
 
             if (pinHitResult != null)
             {
                 XPin pin = pinHitResult as XPin;
-                //Debug.Print(
-                //    "Pin: " + pin.PinType.ToString() +
-                //    ", Name: " + pin.Name +
-                //    ", Owner: " + (pin.Owner == null ? "<>" : pin.Owner.Name));
-
-                //if (CurrentTool == Tool.Wire)
-                //{
+                if (CurrentTool == Tool.Wire)
+                {
                     Layers.Pins.Hidden.Add(pin);
                     Layers.Blocks.Hidden.Add(pin);
                     Layers.Pins.InvalidateVisual();
@@ -841,33 +829,26 @@ namespace Logic.WPF.Page
 
                     Layers.Overlay.Shapes.Add(pin);
                     Layers.Overlay.InvalidateVisual();
-                //}
+                }
             }
             else if (wireHitResult != null)
             {
                 if (wireHitResult is XWire)
                 {
-                    //Debug.Print(wireHitResult.GetType().ToString());
-
-                    //if (CurrentTool == Tool.Wire || CurrentTool == Tool.Pin)
-                    //{
+                    if (CurrentTool == Tool.Wire || CurrentTool == Tool.Pin)
+                    {
                         Layers.Wires.Hidden.Add(wireHitResult);
                         Layers.Wires.InvalidateVisual();
 
                         Layers.Overlay.Shapes.Add(wireHitResult);
                         Layers.Overlay.InvalidateVisual();
-                    //}
+                    }
                 }
                 else if (wireHitResult is XPin)
                 {
                     XPin pin = wireHitResult as XPin;
-                    //Debug.Print(
-                    //    "Wire Pin: " + pin.PinType.ToString() +
-                    //    ", Name: " + pin.Name +
-                    //    ", Owner: " + (pin.Owner == null ? "<>" : pin.Owner.Name));
-
-                    //if (CurrentTool == Tool.Wire)
-                    //{
+                    if (CurrentTool == Tool.Wire)
+                    {
                         if (pin.Owner == null)
                         {
                             Layers.Pins.Hidden.Add(pin);
@@ -881,7 +862,7 @@ namespace Logic.WPF.Page
 
                         Layers.Overlay.Shapes.Add(pin);
                         Layers.Overlay.InvalidateVisual();
-                    //}
+                    }
                 }
             }
             else if (blockHitResult != null)
@@ -889,30 +870,26 @@ namespace Logic.WPF.Page
                 if (blockHitResult is XBlock)
                 {
                     XBlock block = shapeHitResult as XBlock;
-                    //Debug.Print("Block: " + block.Name);
+                    if (CurrentTool == Tool.Wire)
+                    {
+                        Layers.Blocks.Hidden.Add(block);
+                        Layers.Blocks.InvalidateVisual();
 
-                    Layers.Blocks.Hidden.Add(block);
-                    Layers.Blocks.InvalidateVisual();
-
-                    Layers.Overlay.Shapes.Add(block);
-                    Layers.Overlay.InvalidateVisual();
+                        Layers.Overlay.Shapes.Add(block);
+                        Layers.Overlay.InvalidateVisual();
+                    }
                 }
                 else if (blockHitResult is XPin)
                 {
                     XPin pin = blockHitResult as XPin;
-                    //Debug.Print(
-                    //    "Block Pin: " + pin.PinType.ToString() +
-                    //    ", Name: " + pin.Name +
-                    //    ", Owner: " + (pin.Owner == null ? "<>" : pin.Owner.Name));
-
-                    //if (CurrentTool == Tool.Wire)
-                    //{
+                    if (CurrentTool == Tool.Wire)
+                    {
                         Layers.Blocks.Hidden.Add(pin);
                         Layers.Blocks.InvalidateVisual();
 
                         Layers.Overlay.Shapes.Add(pin);
                         Layers.Overlay.InvalidateVisual();
-                    //}
+                    }
                 }
             }
         }
