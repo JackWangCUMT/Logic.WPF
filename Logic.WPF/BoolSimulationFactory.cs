@@ -13,27 +13,40 @@ namespace Logic.WPF
 {
     public static class BoolSimulationFactory
     {
+        public static IDictionary<string, Func<BoolSimulation>> SimulationsDict
+            = new Dictionary<string, Func<BoolSimulation>>()
+        {
+            // Gates
+            { "AND", () => { return new AndSimulation(); } },
+            { "INVERTER", () => { return new InverterSimulation(); } },
+            { "OR", () => { return new OrSimulation(); } },
+            // Memory
+            { "SR-RESET", () => { return new MemorySetResetSimulation(MemoryPriority.Reset); } },
+            { "SR-RESET-V", () => { return new MemorySetResetSimulation(MemoryPriority.Reset); } },
+            { "SR-SET", () => { return new MemorySetResetSimulation(MemoryPriority.Set); } },
+            { "SR-SET-V", () => { return new MemorySetResetSimulation(MemoryPriority.Set); } },
+             // Shortcut
+            { "SHORTCUT", () => { return new ShortcutSimulation(); } },
+            // Signal
+            { "SIGNAL", () => { return new SignalSimulation(false); } },
+            // Timers
+            { "TIMER-OFF", () => { return new TimerOffSimulation(1.0); } },
+            { "TIMER-ON", () => { return new TimerOnSimulation(1.0); } },
+            { "TIMER-PULSE", () => { return new TimerPulseSimulation(1.0); } }
+        };
+
         public static IDictionary<XBlock, BoolSimulation> Create(PageGraphContext context)
         {
             var simulations = new Dictionary<XBlock, BoolSimulation>();
             foreach (var block in context.OrderedBlocks)
             {
-                if (block.Name == "SIGNAL")
+                if (SimulationsDict.ContainsKey(block.Name))
                 {
-                    var simulation = new SignalSimulation();
-                    simulations.Add(block, simulation);
-                    // set initial state
-                    simulation.State = false;
+                    simulations.Add(block, SimulationsDict[block.Name]());
                 }
-                else if (block.Name == "AND")
+                else
                 {
-                    var simulation = new AndSimulation();
-                    simulations.Add(block, simulation);
-                }
-                else if (block.Name == "OR")
-                {
-                    var simulation = new OrSimulation();
-                    simulations.Add(block, simulation);
+                    throw new Exception("Not supported block simulation.");
                 }
             }
 
