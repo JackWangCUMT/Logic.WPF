@@ -2842,6 +2842,8 @@ namespace Logic.WPF.Page
 
             if (Renderer != null)
             {
+                var sw = Stopwatch.StartNew();
+
                 if (_mode == Mode.Selection)
                 {
                     _selection.Render(dc, Renderer, _selectionStyle);
@@ -2877,6 +2879,12 @@ namespace Logic.WPF.Page
                     {
                         RenderNormalMode(dc, normal);
                     }
+                }
+
+                sw.Stop();
+                if (sw.Elapsed.TotalMilliseconds > (1000.0 / 60.0))
+                {
+                    Trace.TraceWarning("OnRender: " + sw.Elapsed.TotalMilliseconds + "ms");
                 }
             }
         }
