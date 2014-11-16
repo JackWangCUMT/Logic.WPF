@@ -20,7 +20,20 @@ namespace Logic.Simulation.Blocks
 
         public override void Run(IClock clock)
         {
-            // TODO: Implement simulation.
+            int length = Inputs.Length;
+            if (length == 0)
+            {
+                // Do nothing.
+            }
+            else if (length == 1)
+            {
+                var input = Inputs[0];
+                base.State = input.IsInverted ? input.Simulation.State : !(input.Simulation.State);
+            }
+            else
+            {
+                throw new Exception("Inverter simulation can only have one input State.");
+            }
         }
     }
 }
