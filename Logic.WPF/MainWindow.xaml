@@ -101,7 +101,7 @@
             </MenuItem>
         </Menu>
         <ListBox x:Name="blocks" 
-                 ItemsSource="{Binding Blocks}"
+                 ItemsSource="{Binding}"
                  FocusVisualStyle="{x:Null}"
                  Background="Transparent"
                  BorderBrush="{x:Null}"

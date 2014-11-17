@@ -79,7 +79,7 @@
     <Compile Include="CodeWindow.xaml.cs">
       <DependentUpon>CodeWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Util\XCommand.cs" />
+    <Compile Include="Util\Command.cs" />
     <Compile Include="Util\XLog.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

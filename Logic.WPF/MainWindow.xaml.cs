@@ -45,6 +45,8 @@ namespace Logic.WPF
         private ITemplate _template;
         private string _pageFileName = string.Empty;
         private Point _dragStartPoint;
+        private System.Threading.Timer _timer = null;
+        private Clock _clock = null;
 
         #endregion
 
@@ -164,19 +166,18 @@ namespace Logic.WPF
                     return;
                 }
 
-                Point point = e.GetPosition(page.editorLayer);
-
                 // block
                 if (e.Data.GetDataPresent("Block"))
                 {
                     try
                     {
-                        var block = e.Data.GetData("Block") as XBlock;
+                        XBlock block = e.Data.GetData("Block") as XBlock;
                         if (block != null)
                         {
                             page.editorLayer.History.Snapshot(
                                 page.editorLayer.Create("Page"));
-                            var copy = page.editorLayer.Insert(block, point.X, point.Y);
+                            Point point = e.GetPosition(page.editorLayer);
+                            XBlock copy = page.editorLayer.Insert(block, point.X, point.Y);
                             if (copy != null)
                             {
                                 page.editorLayer.Connect(copy);
@@ -274,7 +275,7 @@ namespace Logic.WPF
                     ex.StackTrace);
             }
 
-            DataContext = this;
+            blocks.DataContext = Blocks;
         }
 
         private void InitKeys()
@@ -1125,7 +1126,7 @@ namespace Logic.WPF
                 ProjectPath = "Blocks.Name.csproj"
             };
 
-            vm.BrowseCommand = new XCommand(() => 
+            vm.BrowseCommand = new Command(() => 
             { 
                 var dlg = new Microsoft.Win32.SaveFileDialog()
                 {
@@ -1137,9 +1138,10 @@ namespace Logic.WPF
                 {
                     vm.ProjectPath = dlg.FileName;
                 }
-            });
+            },
+            (parameter) => true);
 
-            vm.CreateCommand = new XCommand(() => 
+            vm.CreateCommand = new Command(() => 
             {
                 try
                 {
@@ -1154,12 +1156,14 @@ namespace Logic.WPF
                 }
 
                 window.Close();
-            });
+            },
+            (parameter) => true);
 
-            vm.CancelCommand = new XCommand(() =>
+            vm.CancelCommand = new Command(() =>
             {
                 window.Close();
-            });
+            },
+            (parameter) => true);
 
             window.DataContext = vm;
             window.ShowDialog();
@@ -1451,9 +1455,6 @@ namespace Logic.WPF
         #endregion
 
         #region Simulation Mode
-
-        private System.Threading.Timer _timer = null;
-        private Clock _clock = null;
 
         private bool IsSimulationRunning()
         {
