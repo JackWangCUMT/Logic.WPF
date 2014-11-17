@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Logic.WPF.Util;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -8,13 +9,9 @@ using System.Windows.Input;
 
 namespace Logic.WPF.ViewModels
 {
-    public class CodeViewModel : INotifyPropertyChanged
+    public class CodeViewModel : ViewModel
     {
         private string _namespaceName;
-        private string _className;
-        private string _blockName;
-        private string _projectPath;
-
         public string NamespaceName
         {
             get { return _namespaceName; }
@@ -28,6 +25,7 @@ namespace Logic.WPF.ViewModels
             }
         }
 
+        private string _className;
         public string ClassName
         {
             get { return _className; }
@@ -41,6 +39,7 @@ namespace Logic.WPF.ViewModels
             }
         }
 
+        private string _blockName;
         public string BlockName
         {
             get { return _blockName; }
@@ -54,6 +53,7 @@ namespace Logic.WPF.ViewModels
             }
         }
 
+        private string _projectPath;
         public string ProjectPath
         {
             get { return _projectPath; }
@@ -70,16 +70,5 @@ namespace Logic.WPF.ViewModels
         public ICommand BrowseCommand { get; set; }
         public ICommand CreateCommand { get; set; }
         public ICommand CancelCommand { get; set; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void Notify(string propertyName)
-        {
-            var handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
     }
 }

@@ -33,8 +33,7 @@ namespace Logic.WPF
     {
         #region Properties
 
-        [ImportMany(typeof(XBlock))]
-        public IList<XBlock> Blocks { get; set; }
+        public MainViewModel Model { get; set; }
 
         #endregion
 
@@ -43,7 +42,6 @@ namespace Logic.WPF
         private XJson _serializer = new XJson();
         private IRenderer _renderer;
         private ITemplate _template;
-        private string _pageFileName = string.Empty;
         private Point _dragStartPoint;
         private System.Threading.Timer _timer = null;
         private Clock _clock = null;
@@ -56,8 +54,8 @@ namespace Logic.WPF
         {
             InitializeComponent();
 
+            InitializeModel();
             InitPage();
-            InitKeys();
             InitMenu();
             InitBlocks();
         }
@@ -80,27 +78,204 @@ namespace Logic.WPF
 
         #endregion
 
-        #region MEF
-
-        private void Compose(object part, string path)
-        {
-            var builder = new RegistrationBuilder();
-            builder.ForTypesDerivedFrom<XBlock>().Export<XBlock>();
-
-            var catalog = new AggregateCatalog();
-            catalog.Catalogs.Add(
-                new AssemblyCatalog(
-                    Assembly.GetExecutingAssembly(), builder));
-            catalog.Catalogs.Add(
-                new DirectoryCatalog(path, builder));
-
-            var container = new CompositionContainer(catalog);
-            container.ComposeParts(part);
-        }
-
-        #endregion
-
         #region Initialize
+
+        private void InitializeModel()
+        {
+            Model = new MainViewModel();
+
+            Model.Blocks = new ObservableCollection<XBlock>();
+
+            Model.FileName = null;
+            Model.FilePath = null;
+
+            Model.FileNewCommand = new Command(
+                () => this.New(),
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.FileOpenCommand = new Command
+                (() => this.Open(),
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.FileSaveCommand = new Command(
+                () => this.Save(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.FileSaveAsCommand = new Command(
+                () => this.SaveAs(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.FileExitCommand = new Command(
+                () => 
+                {
+                    if (IsSimulationRunning())
+                    {
+                        this.Stop();
+                    }
+                    this.Close();
+                }, 
+                (parameter) => true);
+
+            Model.EditUndoCommand = new Command(
+                () => this.Undo(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.EditRedoCommand = new Command
+                (() => this.Redo(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.EditCutCommand = new Command(
+                () => this.Cut(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.EditCopyCommand = new Command(
+                () => this.Copy(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.EditPasteCommand = new Command(
+                () => this.Paste(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.EditDeleteCommand = new Command(
+                () => this.Delete(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.EditSelectAllCommand = new Command(
+                () => this.SelectAll(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.EditAlignLeftBottomCommand = new Command(
+                () => this.AlignLeftBottom(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.EditAlignBottomCommand = new Command(
+                () => this.AlignBottom(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.EditAlignRightBottomCommand = new Command(
+                () => this.AlignRightBottom(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.EditAlignLeftCommand = new Command(
+                () => this.AlignLeft(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.EditAlignCenterCenterCommand = new Command(
+                () => this.AlignCenterCenter(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.EditAlignRightCommand = new Command(
+                () => this.AlignRight(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.EditAlignLeftTopCommand = new Command(
+                () => this.AlignLeftTop(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.EditAlignTopCommand = new Command(
+                () => this.AlignTop(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+           
+            Model.EditAlignRightTopCommand = new Command
+                (() => this.AlignRightTop(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.EditIncreaseTextSizeCommand = new Command(
+                () => this.IncreaseTextSize(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.EditDecreaseTextSizeCommand = new Command(
+                () => this.DecreaseTextSize(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.EditToggleFillCommand = new Command(
+                () => this.ToggleFill(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.EditToggleSnapCommand = new Command(
+                () => this.ToggleSnap(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.EditToggleInvertStartCommand = new Command(
+                () => this.ToggleInvertStart(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.EditToggleInvertEndCommand = new Command(
+                () => this.ToggleInvertEnd(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.EditCancelCommand = new Command(
+                () => this.Cancel(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.ToolNoneCommand = new Command(
+                () => this.SetToolNone(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.ToolSelectionCommand = new Command(
+                () => this.SetToolSelection(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.ToolWireCommand = new Command(
+                () => this.SetToolWire(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.ToolPinCommand = new Command(
+                () => this.SetToolPin(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.ToolLineCommand = new Command(
+                () => this.SetToolLine(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.ToolEllipseCommand = new Command(
+                () => this.SetToolEllipse(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.ToolRectangleCommand = new Command(
+                () => this.SetToolRectangle(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.ToolTextCommand = new Command(
+                () => this.SetToolText(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.BlockExportBlockCommand = new Command(
+                () => this.Block(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.BlockCreateCodeCommand = new Command(
+                () => this.Code(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.TemplateImportCommand = new Command(
+                () => this.ImportTemplate(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.TemplateExportCommand = new Command(
+                () => this.ExportTemplate(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.SimulationStartCommand = new Command(
+                () => this.Start(),
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.SimulationStopCommand = new Command(
+                () => this.Stop(), 
+                (parameter) => IsSimulationRunning() ? true : false);
+
+            Model.SimulationRestartCommand = new Command(
+                () => this.Restart(), 
+                (parameter) => IsSimulationRunning() ? true : false);
+
+            Model.SimulationCreateGraphCommand = new Command(
+                () => this.Graph(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.SimulationOptionsCommand = new Command(
+                () => this.Options(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+        }
 
         private void InitPage()
         {
@@ -261,11 +436,20 @@ namespace Logic.WPF
                 }
             };
 
-            Blocks = new ObservableCollection<XBlock>();
-
             try
             {
-                Compose(this, "./Blocks");
+                var builder = new RegistrationBuilder();
+                builder.ForTypesDerivedFrom<XBlock>().Export<XBlock>();
+
+                var catalog = new AggregateCatalog();
+                catalog.Catalogs.Add(
+                    new AssemblyCatalog(
+                        Assembly.GetExecutingAssembly(), builder));
+                catalog.Catalogs.Add(
+                    new DirectoryCatalog("./Blocks", builder));
+
+                var container = new CompositionContainer(catalog);
+                container.ComposeParts(Model);
             }
             catch (CompositionException ex)
             {
@@ -275,366 +459,12 @@ namespace Logic.WPF
                     ex.StackTrace);
             }
 
-            blocks.DataContext = Blocks;
-        }
-
-        private void InitKeys()
-        {
-            PreviewKeyDown += (s, e) =>
-            {
-                bool control = Keyboard.Modifiers == ModifierKeys.Control;
-                bool none = Keyboard.Modifiers == ModifierKeys.None;
-
-                switch (e.Key)
-                {
-                    // code
-                    // block
-                    case Key.B:
-                        if (control)
-                        {
-                            Code();
-                        }
-                        else if (none)
-                        {
-                            Block();
-                        }
-                        break;
-
-                    // undo
-                    case Key.Z:
-                        if (control)
-                        {
-                            Undo();
-                        }
-                        break;
-                    // redo
-                    case Key.Y:
-                        if (control)
-                        {
-                            Redo();
-                        }
-                        break;
-
-                    // cut
-                    case Key.X:
-                        if (control)
-                        {
-                            Cut();
-                        }
-                        break;
-                    // copy
-                    case Key.C:
-                        if (control)
-                        {
-                            Copy();
-                        }
-                        break;
-                    // paste
-                    case Key.V:
-                        if (control)
-                        {
-                            Paste();
-                        }
-                        break;
-                    // delete
-                    case Key.Delete:
-                        if (none)
-                        {
-                            Delete();
-                        }
-                        break;
-
-                    // select all
-                    case Key.A:
-                        if (control)
-                        {
-                            SelectAll();
-                        }
-                        break;
-
-                    // cancel
-                    case Key.Escape:
-                        if (none)
-                        {
-                            Cancel();
-                        }
-                        break;
-
-                    // toggle fill
-                    case Key.F:
-                        if (none)
-                        {
-                            ToggleFill();
-                        }
-                        break;
-
-                    // '[' toggle invert start
-                    case Key.OemOpenBrackets:
-                        if (none)
-                        {
-                            ToggleInvertStart();
-                        }
-                        break;
-                    // ']' toggle invert end
-                    case Key.OemCloseBrackets:
-                        if (none)
-                        {
-                            ToggleInvertEnd();
-                        }
-                        break;
-
-                    // text size
-                    case Key.Add:
-                    case Key.OemPlus:
-                        if (control)
-                        {
-                            IncreaseTextSize();
-                        }
-                        break;
-                    case Key.Subtract:
-                    case Key.OemMinus:
-                        if (control)
-                        {
-                            DecreaseTextSize();
-                        }
-                        break;
-
-                    // text alignment
-                    case Key.NumPad1:
-                    case Key.D1:
-                        if (control)
-                        {
-                            AlignLeftBottom();
-                        }
-                        break;
-                    case Key.NumPad2:
-                    case Key.D2:
-                        if (control)
-                        {
-                            AlignBottom();
-                        }
-                        break;
-                    case Key.NumPad3:
-                    case Key.D3:
-                        if (control)
-                        {
-                            AlignRightBottom();
-                        }
-                        break;
-                    case Key.NumPad4:
-                    case Key.D4:
-                        if (control)
-                        {
-                            AlignLeft();
-                        }
-                        break;
-                    case Key.NumPad5:
-                    case Key.D5:
-                        if (control)
-                        {
-                            AlignCenterCenter();
-                        }
-                        break;
-                    case Key.NumPad6:
-                    case Key.D6:
-                        if (control)
-                        {
-                            AlignRight();
-                        }
-                        break;
-                    case Key.NumPad7:
-                    case Key.D7:
-                        if (control)
-                        {
-                            AlignLeftTop();
-                        }
-                        break;
-                    case Key.NumPad8:
-                    case Key.D8:
-                        if (control)
-                        {
-                            AlignTop();
-                        }
-                        break;
-                    case Key.NumPad9:
-                    case Key.D9:
-                        if (control)
-                        {
-                            AlignRightTop();
-                        }
-                        break;
-
-                    // new
-                    // tool none
-                    case Key.N:
-                        if (control)
-                        {
-                            New();
-                        }
-                        else if (none)
-                        {
-                            SetToolNone();
-                        }
-                        break;
-                    // tool line
-                    case Key.L:
-                        if (none)
-                        {
-                            SetToolLine();
-                        }
-                        break;
-                    // tool ellipse
-                    case Key.E:
-                        if (none)
-                        {
-                            SetToolEllipse();
-                        }
-                        break;
-                    // tool rectangle
-                    case Key.R:
-                        if (none)
-                        {
-                            SetToolRectangle();
-                        }
-                        break;
-                    // tool text
-                    case Key.T:
-                        if (none)
-                        {
-                            SetToolText();
-                        }
-                        break;
-                    // tool wire
-                    case Key.W:
-                        if (none)
-                        {
-                            SetToolWire();
-                        }
-                        break;
-                    // tool pin
-                    case Key.P:
-                        if (none)
-                        {
-                            SetToolPin();
-                        }
-                        break;
-
-                    // toggle snap
-                    case Key.G:
-                        if (none)
-                        {
-                            ToggleSnap();
-                        }
-                        break;
-
-                    // open
-                    case Key.O:
-                        if (control)
-                        {
-                            Open();
-                        }
-                        break;
-                    // save
-                    // tool selection
-                    case Key.S:
-                        if (control)
-                        {
-                            Save();
-                        }
-                        else if (none)
-                        {
-                            SetToolSelection();
-                        }
-                        break;
-
-                    // start simulation
-                    case Key.F5:
-                        Start();
-                        break;
-                    // stop simulation
-                    case Key.F6:
-                        Stop();
-                        break;
-                    // restart simulation
-                    case Key.F7:
-                        Restart();
-                        break;
-                    // create graph
-                    case Key.F8:
-                        Graph();
-                        break;
-                    // simulation options
-                    case Key.F9:
-                        Options();
-                        break;
-                }
-            };
+            this.DataContext = Model;
         }
 
         private void InitMenu()
         {
-            fileNew.Click += (s, e) => New();
-            fileOpen.Click += (s, e) => Open();
-            fileSave.Click += (s, e) => Save();
-            fileSaveAs.Click += (s, e) => SaveAs();
-            fileExit.Click += (s, e) => Close();
-
-            editUndo.Click += (s, e) => Undo();
-            editRedo.Click += (s, e) => Redo();
-            editCut.Click += (s, e) => Cut();
-            editCopy.Click += (s, e) => Copy();
-            editPaste.Click += (s, e) => Paste();
-            editDelete.Click += (s, e) => Delete();
-            editSelectAll.Click += (s, e) => SelectAll();
-
-            editAlignLeftBottom.Click += (s, e) => AlignLeftBottom();
-            editAlignBottom.Click += (s, e) => AlignBottom();
-            editAlignRightBottom.Click += (s, e) => AlignRightBottom();
-            editAlignLeft.Click += (s, e) => AlignLeft();
-            editAlignCenterCenter.Click += (s, e) => AlignCenterCenter();
-            editAlignRight.Click += (s, e) => AlignRight();
-            editAlignLeftTop.Click += (s, e) => AlignLeftTop();
-            editAlignTop.Click += (s, e) => AlignTop();
-            editAlignRightTop.Click += (s, e) => AlignRightTop();
-
-            editIncreaseTextSize.Click += (s, e) => IncreaseTextSize();
-            editDecreaseTextSize.Click += (s, e) => DecreaseTextSize();
-
-            editToggleFill.Click += (s, e) => ToggleFill();
-            editToggleSnap.Click += (s, e) => ToggleSnap();
-            editToggleInvertStart.Click += (s, e) => ToggleInvertStart();
-            editToggleInvertEnd.Click += (s, e) => ToggleInvertEnd();
-
-            editCancel.Click += (s, e) => Cancel();
-
-            toolNone.Click += (s, e) => SetToolNone();
-            toolSelection.Click += (s, e) => SetToolSelection();
-            toolWire.Click += (s, e) => SetToolWire();
-            toolPin.Click += (s, e) => SetToolPin();
-            toolLine.Click += (s, e) => SetToolLine();
-            toolEllipse.Click += (s, e) => SetToolEllipse();
-            toolRectangle.Click += (s, e) => SetToolRectangle();
-            toolText.Click += (s, e) => SetToolText();
-
             UpdateToolMenu();
-
-            blockExportBlock.Click += (s, e) => Block();
-            blockCreateCode.Click += (s, e) => Code();
-
-            templateImport.Click += (s, e) => ImportTemplate();
-            templateExport.Click += (s, e) => ExportTemplate();
-
-            simulationStart.Click += (s, e) => Start();
-            simulationRestart.Click += (s, e) => Restart();
-            simulationStop.Click += (s, e) => Stop();
-            simulationCreateGraph.Click += (s, e) => Graph();
-            simulationOptions.Click += (s, e) => Options();
-
-            simulationStart.IsEnabled = true;
-            simulationRestart.IsEnabled = false;
-            simulationStop.IsEnabled = false;
-            simulationCreateGraph.IsEnabled = true;
-            simulationOptions.IsEnabled = true;
         } 
 
         #endregion
@@ -643,13 +473,9 @@ namespace Logic.WPF
 
         private void New()
         {
-            if (IsSimulationRunning())
-            {
-                Stop();
-            }
-
             page.editorLayer.New();
-            _pageFileName = string.Empty;
+            Model.FileName = null;
+            Model.FilePath = null;
         }
 
         private void Open()
@@ -659,28 +485,19 @@ namespace Logic.WPF
                 Filter = "Json (*.json)|*.json"
             };
 
-            if (dlg.ShowDialog() == true)
+            if (dlg.ShowDialog(this) == true)
             {
-                if (IsSimulationRunning())
-                {
-                    Stop();
-                }
-
                 page.editorLayer.Load(dlg.FileName);
-                _pageFileName = dlg.FileName;
+                Model.FileName = System.IO.Path.GetFileNameWithoutExtension(dlg.FileName);
+                Model.FilePath = dlg.FileName;
             }
         }
 
         private void Save()
         {
-            if (IsSimulationRunning())
+            if (!string.IsNullOrEmpty(Model.FilePath))
             {
-                return;
-            }
-
-            if (!string.IsNullOrEmpty(_pageFileName))
-            {
-                page.editorLayer.Save(_pageFileName);
+                page.editorLayer.Save(Model.FilePath);
             }
             else
             {
@@ -690,13 +507,8 @@ namespace Logic.WPF
 
         private void SaveAs()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
-            string fileName = string.IsNullOrEmpty(_pageFileName) ?
-                "shapes" : System.IO.Path.GetFileName(_pageFileName);
+            string fileName = string.IsNullOrEmpty(Model.FilePath) ?
+                "shapes" : System.IO.Path.GetFileName(Model.FilePath);
 
             var dlg = new Microsoft.Win32.SaveFileDialog()
             {
@@ -704,10 +516,11 @@ namespace Logic.WPF
                 FileName = fileName
             };
 
-            if (dlg.ShowDialog() == true)
+            if (dlg.ShowDialog(this) == true)
             {
                 page.editorLayer.Save(dlg.FileName);
-                _pageFileName = dlg.FileName;
+                Model.FileName = System.IO.Path.GetFileNameWithoutExtension(dlg.FileName);
+                Model.FilePath = dlg.FileName;
             }
         }
 
@@ -717,236 +530,121 @@ namespace Logic.WPF
 
         private void Undo()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.Undo();
         }
 
         private void Redo()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.Redo();
         }
 
         private void Cut()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.Cut();
         }
 
         private void Copy()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.Copy();
         }
 
         private void Paste()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.Paste();
         }
 
         private void Delete()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.SelectionDelete();
         }
 
         private void SelectAll()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.SelectAll();
         }
 
         private void ToggleFill()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.ToggleFill();
         }
 
         private void ToggleSnap()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.EnableSnap = !page.editorLayer.EnableSnap;
         }
 
         private void ToggleInvertStart()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.ToggleInvertStart();
         }
 
         private void ToggleInvertEnd()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.ToggleInvertEnd();
         }
 
         private void IncreaseTextSize()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.SetTextSizeDelta(+1.0);
         }
 
         private void DecreaseTextSize()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.SetTextSizeDelta(-1.0);
         }
 
         private void AlignLeftBottom()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.SetTextHAlignment(HAlignment.Left);
             page.editorLayer.SetTextVAlignment(VAlignment.Bottom);
         }
 
         private void AlignBottom()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.SetTextVAlignment(VAlignment.Bottom);
         }
 
         private void AlignRightBottom()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.SetTextHAlignment(HAlignment.Right);
             page.editorLayer.SetTextVAlignment(VAlignment.Bottom);
         }
 
         private void AlignLeft()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.SetTextHAlignment(HAlignment.Left);
         }
 
         private void AlignCenterCenter()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.SetTextHAlignment(HAlignment.Center);
             page.editorLayer.SetTextVAlignment(VAlignment.Center);
         }
 
         private void AlignRight()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.SetTextHAlignment(HAlignment.Right);
         }
 
         private void AlignLeftTop()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.SetTextHAlignment(HAlignment.Left);
             page.editorLayer.SetTextVAlignment(VAlignment.Top);
         }
 
         private void AlignTop()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.SetTextVAlignment(VAlignment.Top);
         }
 
         private void AlignRightTop()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.SetTextHAlignment(HAlignment.Right);
             page.editorLayer.SetTextVAlignment(VAlignment.Top);
         }
 
         private void Cancel()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.Cancel();
         }
 
@@ -956,88 +654,48 @@ namespace Logic.WPF
 
         private void SetToolNone()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.CurrentTool = XCanvas.Tool.None;
             UpdateToolMenu();
         }
 
         private void SetToolSelection()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.CurrentTool = XCanvas.Tool.Selection;
             UpdateToolMenu();
         }
 
         private void SetToolLine()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.CurrentTool = XCanvas.Tool.Line;
             UpdateToolMenu();
         }
 
         private void SetToolEllipse()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.CurrentTool = XCanvas.Tool.Ellipse;
             UpdateToolMenu();
         }
 
         private void SetToolRectangle()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.CurrentTool = XCanvas.Tool.Rectangle;
             UpdateToolMenu();
         }
 
         private void SetToolText()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.CurrentTool = XCanvas.Tool.Text;
             UpdateToolMenu();
         }
 
         private void SetToolWire()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.CurrentTool = XCanvas.Tool.Wire;
             UpdateToolMenu();
         }
 
         private void SetToolPin()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             page.editorLayer.CurrentTool = XCanvas.Tool.Pin;
             UpdateToolMenu();
         }
@@ -1061,11 +719,6 @@ namespace Logic.WPF
 
         private void Block()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             var block = page.editorLayer.CreateBlockFromSelected("Block");
             if (block != null)
             {
@@ -1075,7 +728,7 @@ namespace Logic.WPF
                     FileName = "block"
                 };
 
-                if (dlg.ShowDialog() == true)
+                if (dlg.ShowDialog(this) == true)
                 {
                     var path = dlg.FileName;
                     Block(block, path);
@@ -1105,11 +758,6 @@ namespace Logic.WPF
 
         private void Code()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             var block = page.editorLayer.CreateBlockFromSelected("Block");
             if (block == null)
                 return;
@@ -1175,17 +823,12 @@ namespace Logic.WPF
 
         private void ImportTemplate()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             var dlg = new Microsoft.Win32.OpenFileDialog()
             {
                 Filter = "Json (*.json)|*.json"
             };
 
-            if (dlg.ShowDialog() == true)
+            if (dlg.ShowDialog(this) == true)
             {
                 var template = OpenTemplate(dlg.FileName);
                 ApplyPageTemplate(template, _renderer);
@@ -1196,18 +839,13 @@ namespace Logic.WPF
 
         private void ExportTemplate()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             var dlg = new Microsoft.Win32.SaveFileDialog()
             {
                 Filter = "Json (*.json)|*.json",
                 FileName = _template.Name
             };
 
-            if (dlg.ShowDialog() == true)
+            if (dlg.ShowDialog(this) == true)
             {
                 var template = new XTemplate()
                 {
@@ -1293,70 +931,6 @@ namespace Logic.WPF
 
         #endregion
 
-        #region Simulation Menu
-
-        private void UpdateSimulationMenu()
-        {
-            bool isSimulationRunning = IsSimulationRunning();
-
-            fileNew.IsEnabled = isSimulationRunning ? true : true;
-            fileOpen.IsEnabled = isSimulationRunning ? true : true;
-            fileSave.IsEnabled = isSimulationRunning ? false : true;
-            fileSaveAs.IsEnabled = isSimulationRunning ? false : true;
-            fileExit.IsEnabled = isSimulationRunning ? true : true;
-
-            editUndo.IsEnabled = isSimulationRunning ? false : true;
-            editRedo.IsEnabled = isSimulationRunning ? false : true;
-            editCut.IsEnabled = isSimulationRunning ? false : true;
-            editCopy.IsEnabled = isSimulationRunning ? false : true;
-            editPaste.IsEnabled = isSimulationRunning ? false : true;
-            editDelete.IsEnabled = isSimulationRunning ? false : true;
-            editSelectAll.IsEnabled = isSimulationRunning ? false : true;
-
-            editAlignLeftBottom.IsEnabled = isSimulationRunning ? false : true;
-            editAlignBottom.IsEnabled = isSimulationRunning ? false : true;
-            editAlignRightBottom.IsEnabled = isSimulationRunning ? false : true;
-            editAlignLeft.IsEnabled = isSimulationRunning ? false : true;
-            editAlignCenterCenter.IsEnabled = isSimulationRunning ? false : true;
-            editAlignRight.IsEnabled = isSimulationRunning ? false : true;
-            editAlignLeftTop.IsEnabled = isSimulationRunning ? false : true;
-            editAlignTop.IsEnabled = isSimulationRunning ? false : true;
-            editAlignRightTop.IsEnabled = isSimulationRunning ? false : true;
-
-            editIncreaseTextSize.IsEnabled = isSimulationRunning ? false : true;
-            editDecreaseTextSize.IsEnabled = isSimulationRunning ? false : true;
-
-            editToggleFill.IsEnabled = isSimulationRunning ? false : true;
-            editToggleSnap.IsEnabled = isSimulationRunning ? false : true;
-            editToggleInvertStart.IsEnabled = isSimulationRunning ? false : true;
-            editToggleInvertEnd.IsEnabled = isSimulationRunning ? false : true;
-
-            editCancel.IsEnabled = isSimulationRunning ? false : true;
-
-            toolNone.IsEnabled = isSimulationRunning ? false : true;
-            toolSelection.IsEnabled = isSimulationRunning ? false : true;
-            toolWire.IsEnabled = isSimulationRunning ? false : true;
-            toolPin.IsEnabled = isSimulationRunning ? false : true;
-            toolLine.IsEnabled = isSimulationRunning ? false : true;
-            toolEllipse.IsEnabled = isSimulationRunning ? false : true;
-            toolRectangle.IsEnabled = isSimulationRunning ? false : true;
-            toolText.IsEnabled = isSimulationRunning ? false : true;
-
-            blockExportBlock.IsEnabled = isSimulationRunning ? false : true;
-            blockCreateCode.IsEnabled = isSimulationRunning ? false : true;
-
-            templateImport.IsEnabled = isSimulationRunning ? false : true;
-            templateExport.IsEnabled = isSimulationRunning ? false : true;
-
-            simulationStart.IsEnabled = isSimulationRunning ? false : true;
-            simulationRestart.IsEnabled = isSimulationRunning ? true : false;
-            simulationStop.IsEnabled = isSimulationRunning ? true : false;
-            simulationCreateGraph.IsEnabled = isSimulationRunning ? false : true;
-            simulationOptions.IsEnabled = isSimulationRunning ? false : true;
-        }
-
-        #endregion
-
         #region Simulation Overlay
 
         private void InitSimulationOverlay(IDictionary<XBlock, BoolSimulation> simulations)
@@ -1393,11 +967,6 @@ namespace Logic.WPF
 
         private void Graph()
         {
-            if (IsSimulationRunning())
-            {
-                return;
-            }
-
             try
             {
                 var temp = page.editorLayer.Create("Page");
@@ -1427,7 +996,7 @@ namespace Logic.WPF
                 FileName = "graph"
             };
 
-            if (dlg.ShowDialog() == true)
+            if (dlg.ShowDialog(this) == true)
             {
                 var path = dlg.FileName;
                 SaveGraph(path, context);
@@ -1514,7 +1083,6 @@ namespace Logic.WPF
                             SetToolSelection();
                             InitSimulationOverlay(simulations);
                             Start(simulations);
-                            UpdateSimulationMenu();
                         }
                     }
                 }
@@ -1545,8 +1113,6 @@ namespace Logic.WPF
                     _timer.Dispose();
                     _timer = null;
                 }
-
-                UpdateSimulationMenu();
             }
             catch (Exception ex)
             {

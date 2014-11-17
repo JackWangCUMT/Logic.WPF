@@ -63,7 +63,9 @@
     <Compile Include="BoolSimulationFactory.cs" />
     <Compile Include="Templates\XLogicPageTemplate.cs" />
     <Compile Include="Util\CSharpProjectCreator.cs" />
+    <Compile Include="Util\ViewModel.cs" />
     <Compile Include="ViewModels\CodeViewModel.cs" />
+    <Compile Include="ViewModels\MainViewModel.cs" />
     <Page Include="CodeWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
