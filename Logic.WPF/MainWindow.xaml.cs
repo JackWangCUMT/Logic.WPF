@@ -376,9 +376,12 @@ namespace Logic.WPF
                         string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
                         if (files != null && files.Length == 1)
                         {
-                            if (!string.IsNullOrEmpty(files[0]))
+                            string path = files[0];
+                            if (!string.IsNullOrEmpty(path))
                             {
-                                page.editorLayer.Load(files[0]);
+                                page.editorLayer.Load(path);
+                                Model.FileName = System.IO.Path.GetFileNameWithoutExtension(path);
+                                Model.FilePath = path;
                                 e.Handled = true;
                             }
                         }
