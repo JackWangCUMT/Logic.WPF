@@ -1,7 +1,6 @@
 ﻿using Logic.Core;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -134,7 +133,8 @@ namespace Logic.Graph
             {
                 foreach (var pin in block.Pins)
                 {
-                    if (pin.PinType == PinType.None)
+                    bool haveKey = pinTypes.ContainsKey(pin);
+                    if (!haveKey && pin.PinType == PinType.None)
                     {
                         if (dependencies[pin].Count <= 0)
                         {
@@ -156,6 +156,23 @@ namespace Logic.Graph
                             {
                                 // set as Output
                                 pinTypes.Add(pin, PinType.Output);
+
+                                foreach (var p in pin.Owner.Pins.Where(p => p != pin && dependencies[p].Count > 0))
+                                {
+                                    if (pinTypes.ContainsKey(p))
+                                    {
+                                        if (pinTypes[p] == PinType.None)
+                                        {
+                                            // set as Input
+                                            pinTypes[p] = PinType.Input;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        // set as Input
+                                        pinTypes.Add(p, PinType.Input);
+                                    }
+                                }
                             } 
                             else if (inputDepCount > 0 && outputDepCount > 0)
                             {
@@ -170,10 +187,13 @@ namespace Logic.Graph
                             }
                         }
                     }
-                    // use pin original type
                     else
                     {
-                        pinTypes.Add(pin, pin.PinType);
+                        if (!haveKey)
+                        {
+                            // use pin original type
+                            pinTypes.Add(pin, pin.PinType);
+                        }
                     }
                 }
             }
@@ -203,38 +223,59 @@ namespace Logic.Graph
             foreach (var pin in pins)
             {
                 XBlock owner = pin.Owner;
+
+                int noneCount = owner.Pins.Count(p => pinTypes[p] == PinType.None && dependencies[p].Count > 0);
                 int inputCount = owner.Pins.Count(p => pinTypes[p] == PinType.Input);
                 int outputCount = owner.Pins.Count(p => pinTypes[p] == PinType.Output);
-                if (inputCount > 0 && outputCount == 0)
-                {
-                    // set as Output
-                    pinTypes[pin] = PinType.Output;
-                }
-                else if (inputCount == 0 && outputCount > 0)
+
+                var pinDependencies = dependencies[pin];
+                int noneDepCount = pinDependencies.Count(
+                    p => pinTypes.ContainsKey(p.Item1) && pinTypes[p.Item1] == PinType.None);
+                int inputDepCount = pinDependencies.Count(
+                    p => pinTypes.ContainsKey(p.Item1) && pinTypes[p.Item1] == PinType.Input);
+                int outputDepCount = pinDependencies.Count(
+                    p => pinTypes.ContainsKey(p.Item1) && pinTypes[p.Item1] == PinType.Output);
+
+                if (inputDepCount == 0 && outputDepCount > 0 && noneDepCount == 0)
                 {
                     // set as Input
                     pinTypes[pin] = PinType.Input;
                 }
+                else if (inputDepCount > 0 && outputDepCount == 0 && noneDepCount == 0)
+                {
+                    // set as Output
+                    pinTypes[pin] = PinType.Output;
+
+                    foreach (var p in pin.Owner.Pins.Where(p => p != pin && dependencies[p].Count > 0))
+                    {
+                        if (pinTypes.ContainsKey(p))
+                        {
+                            if (pinTypes[p] == PinType.None)
+                            {
+                                // set as Input
+                                pinTypes[p] = PinType.Input;
+                            }
+                        }
+                        else
+                        {
+                            // set as Input
+                            pinTypes.Add(p, PinType.Input);
+                        }
+                    }
+                }
                 else
                 {
-                    var pinDependencies = dependencies[pin];
-                    int inputDepCount = pinDependencies.Count(
-                        p => pinTypes.ContainsKey(p.Item1) && pinTypes[p.Item1] == PinType.Input);
-                    int outputDepCount = pinDependencies.Count(
-                        p => pinTypes.ContainsKey(p.Item1) && pinTypes[p.Item1] == PinType.Output);
-                    if (inputDepCount == 0 && outputDepCount > 0)
+                    if (pinTypes[pin] == PinType.None)
                     {
-                        // set as Input
-                        pinTypes[pin] = PinType.Input;
-                    }
-                    else if (inputDepCount > 0 && outputDepCount == 0)
-                    {
-                        // set as Output
-                        pinTypes[pin] = PinType.Output;
-                    }
-                    else
-                    {
-                        pinsWithoutType.Add(pin);
+                        if (noneCount == 1 && inputCount == 1 && outputCount == 0)
+                        {
+                            // set as Output
+                            pinTypes[pin] = PinType.Output;
+                        }
+                        else
+                        {
+                            pinsWithoutType.Add(pin);
+                        }
                     }
                 }
             }
