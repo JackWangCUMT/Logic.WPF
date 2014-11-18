@@ -17,7 +17,6 @@ namespace Logic.Graph
             var wires = page.Wires.Cast<XWire>();
 
             var context = new PageGraphContext();
-
             context.Connections = FindConnections(blocks, pins, wires);
             context.Dependencies = FindDependencies(blocks, context.Connections);
             context.PinTypes = FindPinTypes(blocks, pins, context.Dependencies);
@@ -128,63 +127,45 @@ namespace Logic.Graph
             IDictionary<XPin, ICollection<Tuple<XPin, bool>>> dependencies)
         {
             var pinTypes = new Dictionary<XPin, PinType>();
+            var pinsWithoutType = new List<XPin>();
 
-            // using pin dependencies set pins with None type to Input or Output type
+            // use pin dependencies to set pin type to Input or Output
             foreach (var block in blocks)
             {
-                bool hasInput = false;
-                bool hasOutput = false;
-
                 foreach (var pin in block.Pins)
                 {
                     if (pin.PinType == PinType.None)
                     {
-                        var pinDependencies = dependencies[pin];
-                        var noneCount = pinDependencies.Count(p => p.Item1.PinType == PinType.None);
-                        var inputCount = pinDependencies.Count(p => p.Item1.PinType == PinType.Input);
-                        var outputCount = pinDependencies.Count(p => p.Item1.PinType == PinType.Output);
-                        var standaloneCount = pinDependencies.Count(p => p.Item1.PinType == PinType.Standalone);
-                        // set as Input
-                        if (inputCount == 0 && outputCount > 0 && noneCount == 0)
+                        if (dependencies[pin].Count <= 0)
                         {
-                            pinTypes.Add(pin, PinType.Input);
-                            hasInput = true;
+                            // nothing is connected
+                            pinTypes.Add(pin, PinType.None);
                         }
-                        // set as Output
-                        else if (inputCount > 0 && outputCount == 0 && noneCount == 0)
-                        {
-                            pinTypes.Add(pin, PinType.Output);
-                            hasOutput = true;
-                        }
-                        // invalid pin connection
-                        else if (inputCount > 0 && outputCount > 0)
-                        {
-                            throw new Exception("Conneting Inputs and Outputs to same Pin is not allowed.");
-                        }
-                        // if no Input or Output is connected
                         else
                         {
-                            // already have one Input, set pin as Output
-                            if (hasInput && !hasOutput)
+                            var pinDependencies = dependencies[pin];
+                            int noneDepCount = pinDependencies.Count(p => p.Item1.PinType == PinType.None);
+                            int inputDepCount = pinDependencies.Count(p => p.Item1.PinType == PinType.Input);
+                            int outputDepCount = pinDependencies.Count(p => p.Item1.PinType == PinType.Output);
+                            if (inputDepCount == 0 && outputDepCount > 0 && noneDepCount == 0)
                             {
+                                // set as Input
+                                pinTypes.Add(pin, PinType.Input);
+                            }
+                            else if (inputDepCount > 0 && outputDepCount == 0 && noneDepCount == 0)
+                            {
+                                // set as Output
                                 pinTypes.Add(pin, PinType.Output);
-                                hasOutput = true;
-                            }
-                            // already have one Output, set pin as Input
-                            else if (!hasInput && hasOutput)
+                            } 
+                            else if (inputDepCount > 0 && outputDepCount > 0)
                             {
-                                pinTypes.Add(pin, PinType.Input);
-                                hasInput = true;
+                                // invalid pin connection
+                                throw new Exception("Conneting Inputs and Outputs to same Pin is not allowed.");
                             }
-                            // assume that pin is Input in onlyne None pins are connected
-                            else if (noneCount > 0)
-                            {
-                                pinTypes.Add(pin, PinType.Input);
-                                hasInput = true;
-                            }
-                            // nothing is connected
                             else
                             {
+                                // if no Input or Output is connected
+                                pinsWithoutType.Add(pin);
                                 pinTypes.Add(pin, PinType.None);
                             }
                         }
@@ -197,12 +178,76 @@ namespace Logic.Graph
                 }
             }
 
+            if (pinsWithoutType.Count > 0)
+            {
+                FindPinTypes(dependencies, pinTypes, pinsWithoutType);
+            }
+
+            // standalone pins
             foreach (var pin in pins)
             {
                 pinTypes.Add(pin, pin.PinType);
             }
 
             return pinTypes;
+        }
+
+        private static void FindPinTypes(
+            IDictionary<XPin, ICollection<Tuple<XPin, bool>>> dependencies, 
+            Dictionary<XPin, PinType> pinTypes, 
+            List<XPin> pins)
+        {
+            var pinsWithoutType = new List<XPin>();
+
+            // pins with onnections but do not have Input or Output type set
+            foreach (var pin in pins)
+            {
+                XBlock owner = pin.Owner;
+                int inputCount = owner.Pins.Count(p => pinTypes[p] == PinType.Input);
+                int outputCount = owner.Pins.Count(p => pinTypes[p] == PinType.Output);
+                if (inputCount > 0 && outputCount == 0)
+                {
+                    // set as Output
+                    pinTypes[pin] = PinType.Output;
+                }
+                else if (inputCount == 0 && outputCount > 0)
+                {
+                    // set as Input
+                    pinTypes[pin] = PinType.Input;
+                }
+                else
+                {
+                    var pinDependencies = dependencies[pin];
+                    int inputDepCount = pinDependencies.Count(
+                        p => pinTypes.ContainsKey(p.Item1) && pinTypes[p.Item1] == PinType.Input);
+                    int outputDepCount = pinDependencies.Count(
+                        p => pinTypes.ContainsKey(p.Item1) && pinTypes[p.Item1] == PinType.Output);
+                    if (inputDepCount == 0 && outputDepCount > 0)
+                    {
+                        // set as Input
+                        pinTypes[pin] = PinType.Input;
+                    }
+                    else if (inputDepCount > 0 && outputDepCount == 0)
+                    {
+                        // set as Output
+                        pinTypes[pin] = PinType.Output;
+                    }
+                    else
+                    {
+                        pinsWithoutType.Add(pin);
+                    }
+                }
+            }
+
+            if (pinsWithoutType.Count > 0 && pins.Count == pinsWithoutType.Count)
+            {
+                throw new Exception("Can not find pin types.");
+            }
+
+            if (pinsWithoutType.Count > 0)
+            {
+                FindPinTypes(dependencies, pinTypes, pinsWithoutType);
+            }
         }
 
         public static IList<XBlock> SortDependencies(
