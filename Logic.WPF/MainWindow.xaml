@@ -133,10 +133,6 @@
                 <MenuItem x:Name="blockCreateCode" Header="Create _Project..." InputGestureText="Ctrl+B" Command="{Binding BlockCreateCodeCommand}"/>
             </MenuItem>
             <MenuItem Header="Te_mplate">
-                <MenuItem x:Name="templateImport" Header="_Import..." InputGestureText="Ctrl+Shift+I" Command="{Binding TemplateImportCommand}"/>
-                <Separator/>
-                <MenuItem x:Name="templateExport" Header="_Export..." InputGestureText="Ctrl+Shift+E" Command="{Binding TemplateExportCommand}"/>
-                <Separator/>
                 <MenuItem Header="_Page" ItemsSource="{Binding Templates}">
                     <MenuItem.ItemContainerStyle>
                         <Style TargetType="MenuItem">
@@ -146,6 +142,10 @@
                         </Style>
                     </MenuItem.ItemContainerStyle>
                 </MenuItem>
+                <Separator/>
+                <MenuItem x:Name="templateImport" Header="_Import..." InputGestureText="Ctrl+Shift+I" Command="{Binding TemplateImportCommand}"/>
+                <Separator/>
+                <MenuItem x:Name="templateExport" Header="_Export..." InputGestureText="Ctrl+Shift+E" Command="{Binding TemplateExportCommand}"/>
             </MenuItem>
             <MenuItem Header="_Simulation">
                 <MenuItem x:Name="simulationStart" Header="_Start" InputGestureText="F5" Command="{Binding SimulationStartCommand}"/>
