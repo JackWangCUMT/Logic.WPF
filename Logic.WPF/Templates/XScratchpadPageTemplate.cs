@@ -21,8 +21,8 @@ namespace Logic.WPF.Templates
         {
             this.Name = "Scratchpad";
 
-            this.Width = 840;
-            this.Height = 750;
+            this.Width = 750;
+            this.Height = 600;
 
             // containers
             this.Grid = new XContainer() 
@@ -54,10 +54,10 @@ namespace Logic.WPF.Templates
             // grid
             var options = new GridFactory.Options()
             {
-                StartX = 30.0,
-                StartY = 30.0,
-                Width = 840.0,
-                Height = 750.0,
+                StartX = 0.0,
+                StartY = 0.0,
+                Width = this.Width,
+                Height = this.Height,
                 SizeX = 30.0,
                 SizeY = 30.0
             };
