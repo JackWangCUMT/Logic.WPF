@@ -2737,19 +2737,126 @@ namespace Logic.WPF.Page
 
         #endregion
 
-        #region Render
+        #region Render Simulation
 
-        private void InvalidatePage()
+        public bool EnableSimulationCache { get; set; }
+
+        private DrawingVisual[][] _dwCache = null;
+        private BoolSimulation[] _cache = null;
+
+        private bool _haveSimulationCache = false;
+        public bool HaveSimulationCache 
         {
-            if (Layers != null)
+            get { return _haveSimulationCache;  } 
+            set
             {
-                Layers.Shapes.InvalidateVisual();
-                Layers.Blocks.InvalidateVisual();
-                Layers.Pins.InvalidateVisual();
-                Layers.Wires.InvalidateVisual();
-                Layers.Overlay.InvalidateVisual();
+                if (value != _haveSimulationCache)
+                {
+                    if (value == false)
+                    {
+                        _dwCache = null;
+                        _cache = null;
+                    }
+                    _haveSimulationCache = value;
+                }
             }
         }
+
+        private void RenderSimulationBlock(DrawingContext dc, XBlock block, IStyle style)
+        {
+            block.Render(dc, Renderer, style);
+            foreach (var pin in block.Pins)
+            {
+                pin.Render(dc, Renderer, style);
+            }
+        }
+
+        private DrawingVisual RenderToDrawingVisual(XBlock block, IStyle style)
+        {
+            var dw = new DrawingVisual();
+
+            using (var dcv = dw.RenderOpen())
+            {
+                RenderSimulationBlock(dcv, block, style);
+            }
+
+            dw.Drawing.Freeze();
+            return dw;
+        }
+
+        private void CreateSimulationModeCache()
+        {
+            XBlock[] blocks = Shapes
+                .Where(s => s is XBlock)
+                .Cast<XBlock>()
+                .ToArray();
+
+            _dwCache = new DrawingVisual[blocks.Length][];
+            _cache = new BoolSimulation[blocks.Length];
+
+            for (int i = 0; i < blocks.Length; i++)
+            {
+                XBlock block = blocks[i];
+
+                _cache[i] = Simulations[block];
+
+                _dwCache[i] = new DrawingVisual[3];
+                _dwCache[i][0] = RenderToDrawingVisual(block, _trueStateStyle);
+                _dwCache[i][1] = RenderToDrawingVisual(block, _falseStateStyle);
+                _dwCache[i][2] = RenderToDrawingVisual(block, _nullStateStyle);
+            }
+        }
+
+        private void RenderSimulationModeCached(DrawingContext dc)
+        {
+            for (int i = 0; i < _dwCache.Length; i++)
+            {
+                switch (_cache[i].State)
+                {
+                    case true:
+                        dc.DrawDrawing(_dwCache[i][0].Drawing);
+                        break;
+                    case false:
+                        dc.DrawDrawing(_dwCache[i][1].Drawing);
+                        break;
+                    case null:
+                    default:
+                        dc.DrawDrawing(_dwCache[i][2].Drawing);
+                        break;
+                }
+            }
+        }
+
+        private void RenderSimulationMode(DrawingContext dc)
+        {
+            foreach (var shape in Shapes)
+            {
+                if (shape is XBlock)
+                {
+                    var block = shape as XBlock;
+                    bool? state = Simulations[block].State;
+                    IStyle style;
+                    switch (state)
+                    {
+                        case true:
+                            style = _trueStateStyle;
+                            break;
+                        case false:
+                            style = _falseStateStyle;
+                            break;
+                        case null:
+                        default:
+                            style = _nullStateStyle;
+                            break;
+                    }
+                    RenderSimulationBlock(dc, block, style);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Render Normal
 
         private void RenderNormalMode(DrawingContext dc, IStyle style)
         {
@@ -2766,6 +2873,11 @@ namespace Logic.WPF.Page
             }
         }
         
+
+        #endregion
+
+        #region Render Selected
+
         private void RenderSelectedMode(DrawingContext dc, IStyle normal, IStyle selected)
         {
             foreach (var shape in Shapes)
@@ -2781,6 +2893,10 @@ namespace Logic.WPF.Page
                 }
             }
         }
+
+        #endregion
+
+        #region Render Hidden
 
         private void RenderHiddenMode(DrawingContext dc, IStyle style)
         {
@@ -2803,36 +2919,19 @@ namespace Logic.WPF.Page
             }
         }
 
-        private void RenderSimulationMode(DrawingContext dc)
+        #endregion
+
+        #region Render
+
+        private void InvalidatePage()
         {
-            foreach (var shape in Shapes)
+            if (Layers != null)
             {
-                if (shape is XBlock)
-                {
-                    var block = shape as XBlock;
-                    bool? state = Simulations[block].State;
-
-                    IStyle style;
-                    switch (state)
-                    {
-                        case true:
-                            style = _trueStateStyle;
-                            break;
-                        case false:
-                            style = _falseStateStyle;
-                            break;
-                        case null:
-                        default:
-                            style = _nullStateStyle;
-                            break;
-                    }
-
-                    block.Render(dc, Renderer, style);
-                    foreach (var pin in block.Pins)
-                    {
-                        pin.Render(dc, Renderer, style);
-                    }
-                }
+                Layers.Shapes.InvalidateVisual();
+                Layers.Blocks.InvalidateVisual();
+                Layers.Pins.InvalidateVisual();
+                Layers.Wires.InvalidateVisual();
+                Layers.Overlay.InvalidateVisual();
             }
         }
 
@@ -2850,7 +2949,19 @@ namespace Logic.WPF.Page
                 }
                 else if (IsOverlay && Simulations != null)
                 {
-                    RenderSimulationMode(dc);
+                    if (EnableSimulationCache)
+                    {
+                        if (!HaveSimulationCache)
+                        {
+                            CreateSimulationModeCache();
+                            HaveSimulationCache = true;
+                        } 
+                        RenderSimulationModeCached(dc);
+                    }
+                    else
+                    {
+                        RenderSimulationMode(dc);
+                    }
                 }
                 else
                 {

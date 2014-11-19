@@ -940,6 +940,9 @@ namespace Logic.WPF
         {
             page.editorLayer.SelectionReset();
 
+            page.overlayLayer.EnableSimulationCache = true;
+            page.overlayLayer.HaveSimulationCache = false;
+
             foreach (var simulation in simulations)
             {
                 page.blockLayer.Hidden.Add(simulation.Key);
@@ -957,6 +960,8 @@ namespace Logic.WPF
         {
             page.editorLayer.Simulations = null;
             page.overlayLayer.Simulations = null;
+
+            page.overlayLayer.HaveSimulationCache = false;
 
             page.blockLayer.Hidden.Clear();
             page.overlayLayer.Shapes.Clear();
