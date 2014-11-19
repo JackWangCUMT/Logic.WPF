@@ -52,6 +52,7 @@ namespace Logic.WPF.Util
             sb.AppendLine("<Project ToolsVersion=\"12.0\" DefaultTargets=\"Build\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">");
             sb.AppendLine("  <Import Project=\"$(MSBuildExtensionsPath)\\$(MSBuildToolsVersion)\\Microsoft.Common.props\" Condition=\"Exists('$(MSBuildExtensionsPath)\\$(MSBuildToolsVersion)\\Microsoft.Common.props')\" />");
             sb.AppendLine("  <PropertyGroup>");
+            sb.AppendLine("  <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>");
             sb.AppendLine("    <Configuration Condition=\" '$(Configuration)' == '' \">Debug</Configuration>");
             sb.AppendLine("    <Platform Condition=\" '$(Platform)' == '' \">AnyCPU</Platform>");
             sb.AppendLine("    <ProjectGuid>{" + Guid.NewGuid().ToString().ToUpper() + "}</ProjectGuid>");
@@ -59,8 +60,11 @@ namespace Logic.WPF.Util
             sb.AppendLine("    <AppDesignerFolder>Properties</AppDesignerFolder>");
             sb.AppendLine("    <RootNamespace>" + namespaceName + "</RootNamespace>");
             sb.AppendLine("    <AssemblyName>" + namespaceName + "</AssemblyName>");
-            sb.AppendLine("    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>");
+            sb.AppendLine("    <DefaultLanguage>en-US</DefaultLanguage>");
             sb.AppendLine("    <FileAlignment>512</FileAlignment>");
+            sb.AppendLine("    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>");
+            sb.AppendLine("    <TargetFrameworkProfile>Profile344</TargetFrameworkProfile>");
+            sb.AppendLine("    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>");
             sb.AppendLine("  </PropertyGroup>");
             sb.AppendLine("  <PropertyGroup Condition=\" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' \">");
             sb.AppendLine("    <DebugSymbols>true</DebugSymbols>");
@@ -80,26 +84,17 @@ namespace Logic.WPF.Util
             sb.AppendLine("    <WarningLevel>4</WarningLevel>");
             sb.AppendLine("  </PropertyGroup>");
             sb.AppendLine("  <ItemGroup>");
-            sb.AppendLine("    <Reference Include=\"System\" />");
-            sb.AppendLine("    <Reference Include=\"System.ComponentModel.Composition\" />");
-            sb.AppendLine("    <Reference Include=\"System.Core\" />");
-            sb.AppendLine("    <Reference Include=\"System.Xml.Linq\" />");
-            sb.AppendLine("    <Reference Include=\"System.Data.DataSetExtensions\" />");
-            sb.AppendLine("    <Reference Include=\"Microsoft.CSharp\" />");
-            sb.AppendLine("    <Reference Include=\"System.Data\" />");
-            sb.AppendLine("    <Reference Include=\"System.Xml\" />");
+            sb.AppendLine("    <!-- A reference to the entire .NET Framework is automatically included -->");
+            sb.AppendLine("    <ProjectReference Include=\"..\\..\\Logic.Core\\Logic.Core.csproj\">");
+            sb.AppendLine("      <Project>{d7169bea-6ba7-4e6e-8487-b922dc1a8822}</Project>");
+            sb.AppendLine("      <Name>Logic.Core</Name>");
+            sb.AppendLine("    </ProjectReference>");
             sb.AppendLine("  </ItemGroup>");
             sb.AppendLine("  <ItemGroup>");
             sb.AppendLine("    <Compile Include=\"" + className + ".cs\" />");
             sb.AppendLine("    <Compile Include=\"Properties\\AssemblyInfo.cs\" />");
             sb.AppendLine("  </ItemGroup>");
-            sb.AppendLine("  <ItemGroup>");
-            sb.AppendLine("    <ProjectReference Include=\"..\\..\\Logic.Core\\Logic.Core.csproj\">");
-            sb.AppendLine("      <Project>{2ff9557a-d431-4b28-b226-49b91c9dec20}</Project>");
-            sb.AppendLine("      <Name>Logic.Core</Name>");
-            sb.AppendLine("    </ProjectReference>");
-            sb.AppendLine("  </ItemGroup>");
-            sb.AppendLine("  <Import Project=\"$(MSBuildToolsPath)\\Microsoft.CSharp.targets\" />");
+            sb.AppendLine("  <Import Project=\"$(MSBuildExtensionsPath32)\\Microsoft\\Portable\\$(TargetFrameworkVersion)\\Microsoft.Portable.CSharp.targets\" />");
             sb.AppendLine("  <PropertyGroup>");
             sb.AppendLine("    <PostBuildEvent>if not exist \"$(SolutionDir)Logic.WPF\\$(OutDir)Blocks\\\" mkdir \"$(SolutionDir)Logic.WPF\\$(OutDir)Blocks\\\"");
             sb.AppendLine("copy \"$(TargetPath)\" \"$(SolutionDir)Logic.WPF\\$(OutDir)Blocks\\$(TargetFileName)\"");
@@ -119,6 +114,7 @@ namespace Logic.WPF.Util
         private string GenerateAssemblyInfo(string namespaceName, string blockName)
         {
             var sb = new StringBuilder();
+            sb.AppendLine("using System.Resources;");
             sb.AppendLine("using System.Reflection;");
             sb.AppendLine("using System.Runtime.CompilerServices;");
             sb.AppendLine("using System.Runtime.InteropServices;");
@@ -134,14 +130,7 @@ namespace Logic.WPF.Util
             sb.AppendLine("[assembly: AssemblyCopyright(\"Copyright © Wiesław Šoltés 2014\")]");
             sb.AppendLine("[assembly: AssemblyTrademark(\"\")]");
             sb.AppendLine("[assembly: AssemblyCulture(\"\")]");
-            sb.AppendLine("");
-            sb.AppendLine("// Setting ComVisible to false makes the types in this assembly not visible ");
-            sb.AppendLine("// to COM components.  If you need to access a type in this assembly from ");
-            sb.AppendLine("// COM, set the ComVisible attribute to true on that type.");
-            sb.AppendLine("[assembly: ComVisible(false)]");
-            sb.AppendLine("");
-            sb.AppendLine("// The following GUID is for the ID of the typelib if this project is exposed to COM");
-            sb.AppendLine("[assembly: Guid(\"6415d586-ed9f-4899-9128-7ec5c157f050\")]");
+            sb.AppendLine("[assembly: NeutralResourcesLanguage(\"en\")]");
             sb.AppendLine("");
             sb.AppendLine("// Version information for an assembly consists of the following four values:");
             sb.AppendLine("//");
@@ -165,21 +154,17 @@ namespace Logic.WPF.Util
             sb.AppendLine("using Logic.Core;");
             sb.AppendLine("using System;");
             sb.AppendLine("using System.Collections.Generic;");
-            sb.AppendLine("using System.Collections.ObjectModel;");
-            sb.AppendLine("using System.ComponentModel.Composition;");
             sb.AppendLine("using System.Linq;");
             sb.AppendLine("using System.Text;");
-            sb.AppendLine("using System.Threading.Tasks;");
             sb.AppendLine("");
             sb.AppendLine("namespace " + namespaceName);
             sb.AppendLine("{");
-            sb.AppendLine("    [Export(typeof(XBlock))]");
             sb.AppendLine("    public class " + className + " : XBlock");
             sb.AppendLine("    {");
             sb.AppendLine("        public " + className + "()");
             sb.AppendLine("        {");
-            sb.AppendLine("            base.Shapes = new ObservableCollection<IShape>();");
-            sb.AppendLine("            base.Pins = new ObservableCollection<XPin>();");
+            sb.AppendLine("            base.Shapes = new List<IShape>();");
+            sb.AppendLine("            base.Pins = new List<XPin>();");
             sb.AppendLine("");
             sb.AppendLine("            base.Name = \"" + blockName + "\";");
             sb.AppendLine("");
@@ -259,7 +244,7 @@ namespace Logic.WPF.Util
             foreach (var pin in block.Pins)
             {
                 var value = string.Format(
-                    "{0}base.Pins.Add(new XPin() {{ Name = \"{1}\", X = {2}, Y = {3}, PinType = PinType.{4} }});",
+                    "{0}base.Pins.Add(new XPin() {{ Name = \"{1}\", X = {2}, Y = {3}, PinType = PinType.{4}, Owner = null }});",
                     indent,
                     pin.Name,
                     pin.X,
