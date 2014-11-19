@@ -35,9 +35,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Blocks\AndSimulation.cs" />
+    <Compile Include="Blocks\InputSimulation.cs" />
     <Compile Include="Blocks\InverterSimulation.cs" />
     <Compile Include="Blocks\MemorySetResetSimulation.cs" />
     <Compile Include="Blocks\OrSimulation.cs" />
+    <Compile Include="Blocks\OutputSimulation.cs" />
     <Compile Include="Blocks\ShortcutSimulation.cs" />
     <Compile Include="Blocks\SignalSimulation.cs" />
     <Compile Include="Blocks\TimerOffSimulation.cs" />

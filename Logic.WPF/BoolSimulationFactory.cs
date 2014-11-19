@@ -29,6 +29,8 @@ namespace Logic.WPF
             { "SHORTCUT", () => { return new ShortcutSimulation(); } },
             // Signal
             { "SIGNAL", () => { return new SignalSimulation(false); } },
+            { "INPUT", () => { return new InputSimulation(false); } },
+            { "OUTPUT", () => { return new OutputSimulation(false); } },
             // Timers
             { "TIMER-OFF", () => { return new TimerOffSimulation(false, 1.0); } },
             { "TIMER-ON", () => { return new TimerOnSimulation(false, 1.0); } },
