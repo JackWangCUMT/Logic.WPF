@@ -28,6 +28,22 @@ namespace Logic.WPF.ViewModels
             }
         }
 
+        private IList<ITemplate> _templates;
+
+        [ImportMany(typeof(ITemplate))]
+        public IList<ITemplate> Templates
+        {
+            get { return _templates; }
+            set
+            {
+                if (value != _templates)
+                {
+                    _templates = value;
+                    Notify("Templates");
+                }
+            }
+        }
+
         private string _fileName;
         public string FileName
         {
@@ -96,6 +112,7 @@ namespace Logic.WPF.ViewModels
         public ICommand BlockCreateCodeCommand { get; set; }
         public ICommand TemplateImportCommand { get; set; }
         public ICommand TemplateExportCommand { get; set; }
+        public ICommand ApplyTemplateCommand { get; set; }
         public ICommand SimulationStartCommand { get; set; }
         public ICommand SimulationStopCommand { get; set; }
         public ICommand SimulationRestartCommand { get; set; }

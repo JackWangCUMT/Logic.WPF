@@ -9,10 +9,10 @@ namespace Logic.WPF.Util
 {
     public class Command : ICommand
     {
-        private Action _execute;
+        private Action<object> _execute;
         private Func<object, bool> _canExecute;
 
-        public Command(Action execute, Func<object, bool> canExecute)
+        public Command(Action<object> execute, Func<object, bool> canExecute)
         {
             this._execute = execute;
             this._canExecute = canExecute;
@@ -37,7 +37,7 @@ namespace Logic.WPF.Util
         {
             if (_execute != null)
             {
-                _execute();
+                _execute(parameter);
             }
         }
     }

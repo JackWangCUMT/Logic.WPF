@@ -58,6 +58,7 @@ namespace Logic.WPF
             InitPage();
             InitMenu();
             InitBlocks();
+            InitMEF();
         }
 
         #endregion
@@ -85,28 +86,29 @@ namespace Logic.WPF
             Model = new MainViewModel();
 
             Model.Blocks = new ObservableCollection<XBlock>();
+            Model.Templates = new ObservableCollection<ITemplate>();
 
             Model.FileName = null;
             Model.FilePath = null;
 
             Model.FileNewCommand = new Command(
-                () => this.New(),
+                (parameter) => this.New(),
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.FileOpenCommand = new Command
-                (() => this.Open(),
+                ((parameter) => this.Open(),
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.FileSaveCommand = new Command(
-                () => this.Save(), 
+                (parameter) => this.Save(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.FileSaveAsCommand = new Command(
-                () => this.SaveAs(), 
+                (parameter) => this.SaveAs(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.FileExitCommand = new Command(
-                () => 
+                (parameter) => 
                 {
                     if (IsSimulationRunning())
                     {
@@ -117,163 +119,176 @@ namespace Logic.WPF
                 (parameter) => true);
 
             Model.EditUndoCommand = new Command(
-                () => this.Undo(), 
+                (parameter) => this.Undo(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditRedoCommand = new Command
-                (() => this.Redo(), 
+                ((parameter) => this.Redo(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditCutCommand = new Command(
-                () => this.Cut(), 
+                (parameter) => this.Cut(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditCopyCommand = new Command(
-                () => this.Copy(), 
+                (parameter) => this.Copy(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditPasteCommand = new Command(
-                () => this.Paste(), 
+                (parameter) => this.Paste(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditDeleteCommand = new Command(
-                () => this.Delete(), 
+                (parameter) => this.Delete(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditSelectAllCommand = new Command(
-                () => this.SelectAll(), 
+                (parameter) => this.SelectAll(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignLeftBottomCommand = new Command(
-                () => this.AlignLeftBottom(), 
+                (parameter) => this.AlignLeftBottom(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignBottomCommand = new Command(
-                () => this.AlignBottom(), 
+                (parameter) => this.AlignBottom(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignRightBottomCommand = new Command(
-                () => this.AlignRightBottom(), 
+                (parameter) => this.AlignRightBottom(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignLeftCommand = new Command(
-                () => this.AlignLeft(), 
+                (parameter) => this.AlignLeft(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignCenterCenterCommand = new Command(
-                () => this.AlignCenterCenter(), 
+                (parameter) => this.AlignCenterCenter(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignRightCommand = new Command(
-                () => this.AlignRight(), 
+                (parameter) => this.AlignRight(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignLeftTopCommand = new Command(
-                () => this.AlignLeftTop(), 
+                (parameter) => this.AlignLeftTop(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignTopCommand = new Command(
-                () => this.AlignTop(), 
+                (parameter) => this.AlignTop(), 
                 (parameter) => IsSimulationRunning() ? false : true);
            
             Model.EditAlignRightTopCommand = new Command
-                (() => this.AlignRightTop(), 
+                ((parameter) => this.AlignRightTop(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditIncreaseTextSizeCommand = new Command(
-                () => this.IncreaseTextSize(), 
+                (parameter) => this.IncreaseTextSize(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditDecreaseTextSizeCommand = new Command(
-                () => this.DecreaseTextSize(), 
+                (parameter) => this.DecreaseTextSize(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditToggleFillCommand = new Command(
-                () => this.ToggleFill(), 
+                (parameter) => this.ToggleFill(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditToggleSnapCommand = new Command(
-                () => this.ToggleSnap(), 
+                (parameter) => this.ToggleSnap(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditToggleInvertStartCommand = new Command(
-                () => this.ToggleInvertStart(), 
+                (parameter) => this.ToggleInvertStart(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditToggleInvertEndCommand = new Command(
-                () => this.ToggleInvertEnd(), 
+                (parameter) => this.ToggleInvertEnd(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditCancelCommand = new Command(
-                () => this.Cancel(), 
+                (parameter) => this.Cancel(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.ToolNoneCommand = new Command(
-                () => this.SetToolNone(), 
+                (parameter) => this.SetToolNone(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.ToolSelectionCommand = new Command(
-                () => this.SetToolSelection(), 
+                (parameter) => this.SetToolSelection(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.ToolWireCommand = new Command(
-                () => this.SetToolWire(), 
+                (parameter) => this.SetToolWire(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.ToolPinCommand = new Command(
-                () => this.SetToolPin(), 
+                (parameter) => this.SetToolPin(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.ToolLineCommand = new Command(
-                () => this.SetToolLine(), 
+                (parameter) => this.SetToolLine(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.ToolEllipseCommand = new Command(
-                () => this.SetToolEllipse(), 
+                (parameter) => this.SetToolEllipse(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.ToolRectangleCommand = new Command(
-                () => this.SetToolRectangle(), 
+                (parameter) => this.SetToolRectangle(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.ToolTextCommand = new Command(
-                () => this.SetToolText(), 
+                (parameter) => this.SetToolText(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.BlockExportBlockCommand = new Command(
-                () => this.Block(), 
+                (parameter) => this.Block(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.BlockCreateCodeCommand = new Command(
-                () => this.Code(), 
+                (parameter) => this.Code(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.TemplateImportCommand = new Command(
-                () => this.ImportTemplate(), 
+                (parameter) => this.ImportTemplate(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.TemplateExportCommand = new Command(
-                () => this.ExportTemplate(), 
+                (parameter) => this.ExportTemplate(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.ApplyTemplateCommand = new Command(
+                (parameter) =>
+                {
+                    ITemplate template = parameter as ITemplate;
+                    if (template != null)
+                    {
+                        ApplyPageTemplate(template, _renderer);
+                        _template = template;
+                        InvalidatePageTemplate();
+                    }
+                },
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.SimulationStartCommand = new Command(
-                () => this.Start(),
+                (parameter) => this.Start(),
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.SimulationStopCommand = new Command(
-                () => this.Stop(), 
+                (parameter) => this.Stop(), 
                 (parameter) => IsSimulationRunning() ? true : false);
 
             Model.SimulationRestartCommand = new Command(
-                () => this.Restart(), 
+                (parameter) => this.Restart(), 
                 (parameter) => IsSimulationRunning() ? true : false);
 
             Model.SimulationCreateGraphCommand = new Command(
-                () => this.Graph(), 
+                (parameter) => this.Graph(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.SimulationOptionsCommand = new Command(
-                () => this.Options(), 
+                (parameter) => this.Options(), 
                 (parameter) => IsSimulationRunning() ? false : true);
         }
 
@@ -438,18 +453,33 @@ namespace Logic.WPF
                     }
                 }
             };
+        }
 
+        private void InitMEF()
+        {
             try
             {
                 var builder = new RegistrationBuilder();
                 builder.ForTypesDerivedFrom<XBlock>().Export<XBlock>();
+                builder.ForTypesDerivedFrom<ITemplate>().Export<ITemplate>();
 
                 var catalog = new AggregateCatalog();
+
                 catalog.Catalogs.Add(
                     new AssemblyCatalog(
                         Assembly.GetExecutingAssembly(), builder));
-                catalog.Catalogs.Add(
-                    new DirectoryCatalog("./Blocks", builder));
+
+                if (System.IO.Directory.Exists("./Blocks"))
+                {
+                    catalog.Catalogs.Add(
+                        new DirectoryCatalog("./Blocks", builder));
+                }
+
+                if (System.IO.Directory.Exists("./Templates"))
+                {
+                    catalog.Catalogs.Add(
+                        new DirectoryCatalog("./Templates", builder));
+                }
 
                 var container = new CompositionContainer(catalog);
                 container.ComposeParts(Model);
@@ -777,7 +807,7 @@ namespace Logic.WPF
                 ProjectPath = "Blocks.Name.csproj"
             };
 
-            vm.BrowseCommand = new Command(() => 
+            vm.BrowseCommand = new Command((parameter) => 
             { 
                 var dlg = new Microsoft.Win32.SaveFileDialog()
                 {
@@ -792,7 +822,7 @@ namespace Logic.WPF
             },
             (parameter) => true);
 
-            vm.CreateCommand = new Command(() => 
+            vm.CreateCommand = new Command((parameter) => 
             {
                 try
                 {
@@ -810,7 +840,7 @@ namespace Logic.WPF
             },
             (parameter) => true);
 
-            vm.CancelCommand = new Command(() =>
+            vm.CancelCommand = new Command((parameter) =>
             {
                 window.Close();
             },
@@ -852,6 +882,8 @@ namespace Logic.WPF
             {
                 var template = new XTemplate()
                 {
+                    Width = _template.Width,
+                    Height = _template.Height,
                     Name = _template.Name,
                     Grid = new XContainer()
                     {
@@ -916,6 +948,9 @@ namespace Logic.WPF
 
         private void ApplyPageTemplate(ITemplate template, IRenderer renderer)
         {
+            page.Width = template.Width;
+            page.Height = template.Height;
+
             page.gridView.Container = template.Grid;
             page.tableView.Container = template.Table;
             page.frameView.Container = template.Frame;

@@ -12,31 +12,37 @@ namespace Logic.WPF.Templates
     public class XLogicPageTemplate : ITemplate
     {
         public string Name { get; set; }
+        public double Width { get; set; }
+        public double Height { get; set; }
         public XContainer Grid { get; set; }
         public XContainer Table { get; set; }
         public XContainer Frame { get; set; }
 
         public XLogicPageTemplate()
         {
+            this.Name = "Logic Page";
+
+            this.Width = 1260.0;
+            this.Height = 891.0;
+
+            // containers
             this.Grid = new XContainer() 
             { 
-                Styles = new ObservableCollection<IStyle>(),
-                Shapes = new ObservableCollection<IShape>() 
+                Styles = new List<IStyle>(),
+                Shapes = new List<IShape>() 
             };
 
             this.Table = new XContainer()
             {
-                Styles = new ObservableCollection<IStyle>(),
-                Shapes = new ObservableCollection<IShape>()
+                Styles = new List<IStyle>(),
+                Shapes = new List<IShape>()
             };
 
             this.Frame = new XContainer()
             {
-                Styles = new ObservableCollection<IStyle>(),
-                Shapes = new ObservableCollection<IShape>()
+                Styles = new List<IStyle>(),
+                Shapes = new List<IShape>()
             };
-
-            this.Name = "Logic Page";
 
             // styles
             var gridStyle = new XStyle(
@@ -60,31 +66,25 @@ namespace Logic.WPF.Templates
                 thickness: 1.0);
             this.Frame.Styles.Add(frameStyle);
 
-            // containers
-            CreateGrid(this.Grid.Shapes, gridStyle);
+            // grid
+            var options = new GridFactory.Options()
+            {
+                StartX = 330.0,
+                StartY = 30.0,
+                Width = 600.0,
+                Height = 750.0,
+                SizeX = 30.0,
+                SizeY = 30.0
+            };
+            GridFactory.Create(this.Grid.Shapes, gridStyle, options);
+
+            // table
             CreateTable(this.Table.Shapes, tableStyle);
+
+            // frame
             CreateFrame(this.Frame.Shapes, frameStyle);
         }
-
-        private void CreateGrid(IList<IShape> shapes, IStyle style)
-        {
-            double sx = 330.0;
-            double sy = 30.0;
-            double width = 600.0;
-            double height = 750.0;
-            double size = 30.0;
-
-            for (double x = sx + size; x < sx + width; x += size)
-            {
-                shapes.Add(new XLine() { X1 = x, Y1 = sy, X2 = x, Y2 = sy + height, Style = style });
-            }
-
-            for (double y = sy + size; y < sy + height; y += size)
-            {
-                shapes.Add(new XLine() { X1 = sx, Y1 = y, X2 = sx + width, Y2 = y, Style = style });
-            }
-        }
-
+        
         private void CreateTable(IList<IShape> shapes, IStyle style)
         {
             double sx = 0.0;

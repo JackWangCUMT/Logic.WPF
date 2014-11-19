@@ -61,7 +61,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="BoolSimulationFactory.cs" />
+    <Compile Include="Templates\GridFactory.cs" />
     <Compile Include="Templates\XLogicPageTemplate.cs" />
+    <Compile Include="Templates\XScratchpadPageTemplate.cs" />
     <Compile Include="Util\CSharpProjectCreator.cs" />
     <Compile Include="Util\ViewModel.cs" />
     <Compile Include="ViewModels\CodeViewModel.cs" />

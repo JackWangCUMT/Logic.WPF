@@ -136,6 +136,16 @@
                 <MenuItem x:Name="templateImport" Header="_Import..." InputGestureText="Ctrl+Shift+I" Command="{Binding TemplateImportCommand}"/>
                 <Separator/>
                 <MenuItem x:Name="templateExport" Header="_Export..." InputGestureText="Ctrl+Shift+E" Command="{Binding TemplateExportCommand}"/>
+                <Separator/>
+                <MenuItem Header="_Page" ItemsSource="{Binding Templates}">
+                    <MenuItem.ItemContainerStyle>
+                        <Style TargetType="MenuItem">
+                            <Setter Property="Header" Value="{Binding Name}"/>
+                            <Setter Property="Command" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=DataContext.ApplyTemplateCommand}"/>
+                            <Setter Property="CommandParameter" Value="{Binding}"/>
+                        </Style>
+                    </MenuItem.ItemContainerStyle>
+                </MenuItem>
             </MenuItem>
             <MenuItem Header="_Simulation">
                 <MenuItem x:Name="simulationStart" Header="_Start" InputGestureText="F5" Command="{Binding SimulationStartCommand}"/>
