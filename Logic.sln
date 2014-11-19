@@ -39,6 +39,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logic.Simulation", "Logic.S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Signal.Input", "Blocks\Signal.Input\Signal.Input.csproj", "{5ECA5F44-FA39-4797-AFA8-113A9514B200}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Signal.Output", "Blocks\Signal.Output\Signal.Output.csproj", "{E53926C5-6650-4060-8404-1FC72DAB6546}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -113,6 +115,10 @@ Global
 		{5ECA5F44-FA39-4797-AFA8-113A9514B200}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5ECA5F44-FA39-4797-AFA8-113A9514B200}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5ECA5F44-FA39-4797-AFA8-113A9514B200}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E53926C5-6650-4060-8404-1FC72DAB6546}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E53926C5-6650-4060-8404-1FC72DAB6546}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E53926C5-6650-4060-8404-1FC72DAB6546}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E53926C5-6650-4060-8404-1FC72DAB6546}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -131,5 +137,6 @@ Global
 		{E5ED7BFB-911D-4F2E-BF45-D9B200802578} = {65B89479-F5CE-4861-94FB-98A0B9F49FDF}
 		{99C61D20-165D-45F8-9BA6-E50AA0803558} = {65B89479-F5CE-4861-94FB-98A0B9F49FDF}
 		{5ECA5F44-FA39-4797-AFA8-113A9514B200} = {65B89479-F5CE-4861-94FB-98A0B9F49FDF}
+		{E53926C5-6650-4060-8404-1FC72DAB6546} = {65B89479-F5CE-4861-94FB-98A0B9F49FDF}
 	EndGlobalSection
 EndGlobal
