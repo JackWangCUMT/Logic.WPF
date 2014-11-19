@@ -11,10 +11,17 @@ namespace Logic.Graph
     {
         public static PageGraphContext Create(XPage page)
         {
-            var blocks = page.Blocks.Cast<XBlock>();
-            var pins = page.Pins.Cast<XPin>();
-            var wires = page.Wires.Cast<XWire>();
+            return Create(
+                page.Blocks.Cast<XBlock>(),
+                page.Pins.Cast<XPin>(),
+                page.Wires.Cast<XWire>());
+        }
 
+        public static PageGraphContext Create(
+            IEnumerable<XBlock> blocks,
+            IEnumerable<XPin> pins,
+            IEnumerable<XWire> wires)
+        {
             var context = new PageGraphContext();
             context.Connections = FindConnections(blocks, pins, wires);
             context.Dependencies = FindDependencies(blocks, context.Connections);
