@@ -37,6 +37,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Timers.Pulse", "Blocks\Time
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logic.Simulation", "Logic.Simulation\Logic.Simulation.csproj", "{65628359-E4D7-4031-95C8-760AE5CEED5F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Signal.Input", "Blocks\Signal.Input\Signal.Input.csproj", "{5ECA5F44-FA39-4797-AFA8-113A9514B200}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -107,6 +109,10 @@ Global
 		{65628359-E4D7-4031-95C8-760AE5CEED5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{65628359-E4D7-4031-95C8-760AE5CEED5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{65628359-E4D7-4031-95C8-760AE5CEED5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5ECA5F44-FA39-4797-AFA8-113A9514B200}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5ECA5F44-FA39-4797-AFA8-113A9514B200}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5ECA5F44-FA39-4797-AFA8-113A9514B200}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5ECA5F44-FA39-4797-AFA8-113A9514B200}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -124,5 +130,6 @@ Global
 		{F2D538B0-E363-453E-A97F-9B37138472E5} = {65B89479-F5CE-4861-94FB-98A0B9F49FDF}
 		{E5ED7BFB-911D-4F2E-BF45-D9B200802578} = {65B89479-F5CE-4861-94FB-98A0B9F49FDF}
 		{99C61D20-165D-45F8-9BA6-E50AA0803558} = {65B89479-F5CE-4861-94FB-98A0B9F49FDF}
+		{5ECA5F44-FA39-4797-AFA8-113A9514B200} = {65B89479-F5CE-4861-94FB-98A0B9F49FDF}
 	EndGlobalSection
 EndGlobal
