@@ -311,7 +311,7 @@ namespace Logic.WPF
             page.overlayLayer.IsOverlay = true;
 
             // renderer
-            _renderer = new XRenderer()
+            _renderer = new NativeRenderer()
             {
                 InvertSize = 6.0,
                 PinRadius = 4.0,

@@ -9,7 +9,7 @@ using System.Windows.Media;
 
 namespace Logic.WPF.Page
 {
-    public class XRenderer : IRenderer
+    public class NativeRenderer : IRenderer
     {
         public ICollection<IShape> Selected { get; set; }
         public double InvertSize { get; set; }
