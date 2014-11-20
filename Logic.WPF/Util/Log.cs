@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Logic.WPF.Util
 {
-    public static class XLog
+    public static class Log
     {
         public static bool IsEnabled { get; set; }
 
