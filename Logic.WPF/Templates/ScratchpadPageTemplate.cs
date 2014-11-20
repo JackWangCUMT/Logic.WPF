@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Logic.WPF.Templates
 {
-    public class XScratchpadPageTemplate : ITemplate
+    public class ScratchpadPageTemplate : ITemplate
     {
         public string Name { get; set; }
         public double Width { get; set; }
@@ -18,7 +18,7 @@ namespace Logic.WPF.Templates
         public XContainer Table { get; set; }
         public XContainer Frame { get; set; }
 
-        public XScratchpadPageTemplate()
+        public ScratchpadPageTemplate()
         {
             this.Name = "Scratchpad";
 

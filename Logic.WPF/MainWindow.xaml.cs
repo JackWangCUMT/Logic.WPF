@@ -327,7 +327,7 @@ namespace Logic.WPF
             page.overlayLayer.Renderer = _renderer;
 
             // template
-            _template = new XLogicPageTemplate();
+            _template = new LogicPageTemplate();
             ApplyPageTemplate(_template, _renderer);
 
             // history

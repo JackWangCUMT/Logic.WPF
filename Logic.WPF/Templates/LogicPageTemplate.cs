@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Logic.WPF.Templates
 {
-    public class XLogicPageTemplate : ITemplate
+    public class LogicPageTemplate : ITemplate
     {
         public string Name { get; set; }
         public double Width { get; set; }
@@ -19,7 +19,7 @@ namespace Logic.WPF.Templates
         public XContainer Table { get; set; }
         public XContainer Frame { get; set; }
 
-        public XLogicPageTemplate()
+        public LogicPageTemplate()
         {
             this.Name = "Logic Page";
 
