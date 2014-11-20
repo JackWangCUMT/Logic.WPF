@@ -18,7 +18,7 @@ namespace Logic.WPF.Page
     {
         #region Properties
 
-        public XLayers Layers { get; set; }
+        public NativeLayers Layers { get; set; }
         public IList<IShape> Shapes { get; set; }
         public ICollection<IShape> Hidden { get; set; }
         public IDictionary<XBlock, BoolSimulation> Simulations { get; set; }

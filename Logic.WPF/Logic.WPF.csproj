@@ -104,7 +104,7 @@
     <Compile Include="Page\XStyle.cs" />
     <Compile Include="Util\XHistory.cs" />
     <Compile Include="Util\XJson.cs" />
-    <Compile Include="Page\XLayers.cs" />
+    <Compile Include="Page\NativeLayers.cs" />
     <Compile Include="Page\XRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

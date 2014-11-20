@@ -297,7 +297,7 @@ namespace Logic.WPF
         private void InitializePage()
         {
             // layers
-            var layers = new XLayers();
+            var layers = new NativeLayers();
             layers.Shapes = page.shapeLayer;
             layers.Blocks = page.blockLayer;
             layers.Wires = page.wireLayer;

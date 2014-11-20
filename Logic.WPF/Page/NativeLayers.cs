@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Logic.WPF.Page
 {
-    public class XLayers
+    public class NativeLayers
     {
         public NativeCanvas Shapes { get; set; }
         public NativeCanvas Blocks { get; set; }
