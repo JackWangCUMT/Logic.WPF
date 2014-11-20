@@ -61,7 +61,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Simulation\BoolSimulationFactory.cs" />
-    <Compile Include="Page\XGridFactory.cs" />
+    <Compile Include="Util\XGridFactory.cs" />
     <Compile Include="Templates\XLogicPageTemplate.cs" />
     <Compile Include="Templates\XScratchpadPageTemplate.cs" />
     <Compile Include="Util\CSharpProjectCreator.cs" />
@@ -100,7 +100,6 @@
     </Compile>
     <Compile Include="Page\XBorder.cs" />
     <Compile Include="Page\XCanvas.cs" />
-    <Compile Include="Page\XColor.cs" />
     <Compile Include="Page\XView.cs" />
     <Compile Include="Page\XStyle.cs" />
     <Compile Include="Util\XHistory.cs" />

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Logic.WPF.Page
+namespace Logic.WPF.Util
 {
     public static class XGridFactory
     {
