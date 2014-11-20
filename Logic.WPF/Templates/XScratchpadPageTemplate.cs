@@ -45,7 +45,7 @@ namespace Logic.WPF.Templates
             };
 
             // styles
-            var gridStyle = new XStyle(
+            var gridStyle = new NativeStyle(
                 name: "Grid",
                 fill: new XColor() { A = 0x00, R = 0x00, G = 0x00, B = 0x00 },
                 stroke: new XColor() { A = 0xFF, R = 0xD3, G = 0xD3, B = 0xD3 },

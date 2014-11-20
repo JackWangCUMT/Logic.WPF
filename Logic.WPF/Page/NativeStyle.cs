@@ -8,7 +8,7 @@ using System.Windows.Media;
 
 namespace Logic.WPF.Page
 {
-    public class XStyle : IStyle
+    public class NativeStyle : IStyle
     {
         public string Name { get; set; }
 
@@ -106,9 +106,9 @@ namespace Logic.WPF.Page
             return _pen;
         }
 
-        public XStyle() { }
+        public NativeStyle() { }
 
-        public XStyle(string name, XColor fill, XColor stroke, double thickness)
+        public NativeStyle(string name, XColor fill, XColor stroke, double thickness)
         {
             Name = name;
             Fill = fill;

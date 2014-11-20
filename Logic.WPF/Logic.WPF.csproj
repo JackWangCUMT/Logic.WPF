@@ -101,7 +101,7 @@
     <Compile Include="Page\NativeZoom.cs" />
     <Compile Include="Page\NativeCanvas.cs" />
     <Compile Include="Page\NativeView.cs" />
-    <Compile Include="Page\XStyle.cs" />
+    <Compile Include="Page\NativeStyle.cs" />
     <Compile Include="Util\XHistory.cs" />
     <Compile Include="Util\XJson.cs" />
     <Compile Include="Page\NativeLayers.cs" />
