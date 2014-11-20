@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Logic.WPF
+namespace Logic.WPF.Simulation
 {
     public static class BoolSimulationFactory
     {

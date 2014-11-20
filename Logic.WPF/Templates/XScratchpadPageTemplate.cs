@@ -52,7 +52,7 @@ namespace Logic.WPF.Templates
             this.Grid.Styles.Add(gridStyle);
 
             // grid
-            var options = new GridFactory.Options()
+            var options = new XGridFactory.Options()
             {
                 StartX = 0.0,
                 StartY = 0.0,
@@ -61,7 +61,7 @@ namespace Logic.WPF.Templates
                 SizeX = 30.0,
                 SizeY = 30.0
             };
-            GridFactory.Create(this.Grid.Shapes, gridStyle, options);
+            XGridFactory.Create(this.Grid.Shapes, gridStyle, options);
         }
     }
 }

@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Logic.WPF.Templates
+namespace Logic.WPF.Page
 {
-    public static class GridFactory
+    public static class XGridFactory
     {
         public class Options
         {

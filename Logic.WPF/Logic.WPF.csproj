@@ -60,8 +60,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="BoolSimulationFactory.cs" />
-    <Compile Include="Templates\GridFactory.cs" />
+    <Compile Include="Simulation\BoolSimulationFactory.cs" />
+    <Compile Include="Page\XGridFactory.cs" />
     <Compile Include="Templates\XLogicPageTemplate.cs" />
     <Compile Include="Templates\XScratchpadPageTemplate.cs" />
     <Compile Include="Util\CSharpProjectCreator.cs" />

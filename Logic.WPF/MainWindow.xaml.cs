@@ -2,6 +2,7 @@
 using Logic.Graph;
 using Logic.Simulation;
 using Logic.WPF.Page;
+using Logic.WPF.Simulation;
 using Logic.WPF.Templates;
 using Logic.WPF.Util;
 using Logic.WPF.ViewModels;
