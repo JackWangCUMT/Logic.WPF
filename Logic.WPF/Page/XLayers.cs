@@ -9,11 +9,11 @@ namespace Logic.WPF.Page
 {
     public class XLayers
     {
-        public XCanvas Shapes { get; set; }
-        public XCanvas Blocks { get; set; }
-        public XCanvas Wires { get; set; }
-        public XCanvas Pins { get; set; }
-        public XCanvas Overlay { get; set; }
+        public NativeCanvas Shapes { get; set; }
+        public NativeCanvas Blocks { get; set; }
+        public NativeCanvas Wires { get; set; }
+        public NativeCanvas Pins { get; set; }
+        public NativeCanvas Overlay { get; set; }
         public XPage ToPage(string name, ITemplate template)
         {
             return new XPage()

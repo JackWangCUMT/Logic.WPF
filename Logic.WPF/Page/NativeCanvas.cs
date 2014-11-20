@@ -14,7 +14,7 @@ using System.Windows.Media;
 
 namespace Logic.WPF.Page
 {
-    public class XCanvas : Canvas
+    public class NativeCanvas : Canvas
     {
         #region Properties
 
@@ -104,7 +104,7 @@ namespace Logic.WPF.Page
 
         #region Constructor
 
-        public XCanvas()
+        public NativeCanvas()
         {
             InitStyles();
             InitProperties();

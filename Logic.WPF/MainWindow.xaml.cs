@@ -333,7 +333,7 @@ namespace Logic.WPF
             page.editorLayer.History = new XHistory<XPage>();
 
             // tool
-            page.editorLayer.CurrentTool = XCanvas.Tool.Selection;
+            page.editorLayer.CurrentTool = NativeCanvas.Tool.Selection;
 
             // drag & drop
             page.editorLayer.AllowDrop = true;
@@ -684,63 +684,63 @@ namespace Logic.WPF
 
         private void SetToolNone()
         {
-            page.editorLayer.CurrentTool = XCanvas.Tool.None;
+            page.editorLayer.CurrentTool = NativeCanvas.Tool.None;
             UpdateToolMenu();
         }
 
         private void SetToolSelection()
         {
-            page.editorLayer.CurrentTool = XCanvas.Tool.Selection;
+            page.editorLayer.CurrentTool = NativeCanvas.Tool.Selection;
             UpdateToolMenu();
         }
 
         private void SetToolLine()
         {
-            page.editorLayer.CurrentTool = XCanvas.Tool.Line;
+            page.editorLayer.CurrentTool = NativeCanvas.Tool.Line;
             UpdateToolMenu();
         }
 
         private void SetToolEllipse()
         {
-            page.editorLayer.CurrentTool = XCanvas.Tool.Ellipse;
+            page.editorLayer.CurrentTool = NativeCanvas.Tool.Ellipse;
             UpdateToolMenu();
         }
 
         private void SetToolRectangle()
         {
-            page.editorLayer.CurrentTool = XCanvas.Tool.Rectangle;
+            page.editorLayer.CurrentTool = NativeCanvas.Tool.Rectangle;
             UpdateToolMenu();
         }
 
         private void SetToolText()
         {
-            page.editorLayer.CurrentTool = XCanvas.Tool.Text;
+            page.editorLayer.CurrentTool = NativeCanvas.Tool.Text;
             UpdateToolMenu();
         }
 
         private void SetToolWire()
         {
-            page.editorLayer.CurrentTool = XCanvas.Tool.Wire;
+            page.editorLayer.CurrentTool = NativeCanvas.Tool.Wire;
             UpdateToolMenu();
         }
 
         private void SetToolPin()
         {
-            page.editorLayer.CurrentTool = XCanvas.Tool.Pin;
+            page.editorLayer.CurrentTool = NativeCanvas.Tool.Pin;
             UpdateToolMenu();
         }
 
         private void UpdateToolMenu()
         {
             var tool = page.editorLayer.CurrentTool;
-            toolNone.IsChecked = (tool == XCanvas.Tool.None);
-            toolSelection.IsChecked = (tool == XCanvas.Tool.Selection);
-            toolWire.IsChecked = (tool == XCanvas.Tool.Wire);
-            toolPin.IsChecked = (tool == XCanvas.Tool.Pin);
-            toolLine.IsChecked = (tool == XCanvas.Tool.Line);
-            toolEllipse.IsChecked = (tool == XCanvas.Tool.Ellipse);
-            toolRectangle.IsChecked = (tool == XCanvas.Tool.Rectangle);
-            toolText.IsChecked = (tool == XCanvas.Tool.Text);
+            toolNone.IsChecked = (tool == NativeCanvas.Tool.None);
+            toolSelection.IsChecked = (tool == NativeCanvas.Tool.Selection);
+            toolWire.IsChecked = (tool == NativeCanvas.Tool.Wire);
+            toolPin.IsChecked = (tool == NativeCanvas.Tool.Pin);
+            toolLine.IsChecked = (tool == NativeCanvas.Tool.Line);
+            toolEllipse.IsChecked = (tool == NativeCanvas.Tool.Ellipse);
+            toolRectangle.IsChecked = (tool == NativeCanvas.Tool.Rectangle);
+            toolText.IsChecked = (tool == NativeCanvas.Tool.Text);
         }
 
         #endregion
