@@ -56,10 +56,11 @@ namespace Logic.WPF
             InitializeComponent();
 
             InitializeModel();
-            InitPage();
-            InitMenu();
-            InitBlocks();
-            InitMEF();
+            InitializePage();
+            InitializeBlocks();
+            InitializeMEF();
+
+            UpdateToolMenu();
         }
 
         #endregion
@@ -293,7 +294,7 @@ namespace Logic.WPF
                 (parameter) => IsSimulationRunning() ? false : true);
         }
 
-        private void InitPage()
+        private void InitializePage()
         {
             // layers
             var layers = new XLayers();
@@ -413,7 +414,7 @@ namespace Logic.WPF
             };
         }
 
-        private void InitBlocks()
+        private void InitializeBlocks()
         {
             blocks.PreviewMouseLeftButtonDown += (s, e) =>
             {
@@ -456,7 +457,7 @@ namespace Logic.WPF
             };
         }
 
-        private void InitMEF()
+        private void InitializeMEF()
         {
             try
             {
@@ -495,11 +496,6 @@ namespace Logic.WPF
 
             this.DataContext = Model;
         }
-
-        private void InitMenu()
-        {
-            UpdateToolMenu();
-        } 
 
         #endregion
 
