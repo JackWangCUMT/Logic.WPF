@@ -366,7 +366,7 @@ namespace Logic.WPF
                         if (block != null)
                         {
                             page.editorLayer.History.Snapshot(
-                                page.editorLayer.Create("Page"));
+                                page.editorLayer.Layers.ToPage("Page", null));
                             Point point = e.GetPosition(page.editorLayer);
                             XBlock copy = page.editorLayer.Insert(block, point.X, point.Y);
                             if (copy != null)
@@ -1013,7 +1013,7 @@ namespace Logic.WPF
         {
             try
             {
-                var temp = page.editorLayer.Create("Page");
+                XPage temp = page.editorLayer.Layers.ToPage("Page", null);
                 if (temp != null)
                 {
                     var context = PageGraph.Create(temp);
@@ -1115,7 +1115,7 @@ namespace Logic.WPF
                     return;
                 }
 
-                var temp = page.editorLayer.Create("Page");
+                XPage temp = page.editorLayer.Layers.ToPage("Page", null);
                 if (temp != null)
                 {
                     var context = PageGraph.Create(temp);

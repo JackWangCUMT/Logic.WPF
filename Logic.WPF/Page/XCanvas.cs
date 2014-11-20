@@ -373,7 +373,7 @@ namespace Logic.WPF.Page
             {
                 if (History != null)
                 {
-                    History.Snapshot(Create("Page"));
+                    History.Snapshot(Layers.ToPage("Page", null));
                 }
                 Delete(Renderer.Selected);
                 SelectionReset();
@@ -469,7 +469,7 @@ namespace Logic.WPF.Page
 
         private void MoveInit(IShape shape, Point p)
         {
-            History.Hold(Create("Page"));
+            History.Hold(Layers.ToPage("Page", null));
 
             _startx = EnableSnap ? Snap(p.X, SnapSize) : p.X;
             _starty = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
@@ -1253,7 +1253,8 @@ namespace Logic.WPF.Page
                             Shapes.Remove(_line);
                             if (History != null)
                             {
-                                History.Snapshot(Create("Page"));
+                                History.Snapshot(
+                                    Layers.ToPage("Page", null));
                             }
                             Layers.Shapes.Shapes.Add(_line);
                             Layers.Shapes.InvalidateVisual();
@@ -1273,7 +1274,8 @@ namespace Logic.WPF.Page
                             Shapes.Remove(_ellipse);
                             if (History != null)
                             {
-                                History.Snapshot(Create("Page"));
+                                History.Snapshot(
+                                    Layers.ToPage("Page", null));
                             }
                             Layers.Shapes.Shapes.Add(_ellipse);
                             Layers.Shapes.InvalidateVisual();
@@ -1293,7 +1295,8 @@ namespace Logic.WPF.Page
                             Shapes.Remove(_rectangle);
                             if (History != null)
                             {
-                                History.Snapshot(Create("Page"));
+                                History.Snapshot(
+                                    Layers.ToPage("Page", null));
                             }
                             Layers.Shapes.Shapes.Add(_rectangle);
                             Layers.Shapes.InvalidateVisual();
@@ -1313,7 +1316,8 @@ namespace Logic.WPF.Page
                             Shapes.Remove(_text);
                             if (History != null)
                             {
-                                History.Snapshot(Create("Page"));
+                                History.Snapshot(
+                                    Layers.ToPage("Page", null));
                             }
                             Layers.Shapes.Shapes.Add(_text);
                             Layers.Shapes.InvalidateVisual();
@@ -1337,7 +1341,8 @@ namespace Logic.WPF.Page
 
                             if (History != null)
                             {
-                                History.Snapshot(Create("Page"));
+                                History.Snapshot(
+                                    Layers.ToPage("Page", null));
                             }
 
                             Layers.Wires.Shapes.Add(_wire);
@@ -1362,7 +1367,8 @@ namespace Logic.WPF.Page
                             Shapes.Remove(_pin);
                             if (History != null)
                             {
-                                History.Snapshot(Create("Page"));
+                                History.Snapshot(
+                                    Layers.ToPage("Page", null));
                             }
                             Layers.Pins.Shapes.Add(_pin);
                             Layers.Pins.InvalidateVisual();
@@ -2219,7 +2225,8 @@ namespace Logic.WPF.Page
         {
             if (History != null)
             {
-                History.Snapshot(Create("Page"));
+                History.Snapshot(
+                    Layers.ToPage("Page", null));
             }
             SelectionReset();
             Add(shapes);
@@ -2470,19 +2477,6 @@ namespace Logic.WPF.Page
             InvalidatePage();
         }
 
-        public XPage Create(string name)
-        {
-            return new XPage()
-            {
-                Name = name,
-                Shapes = Layers.Shapes.Shapes,
-                Blocks = Layers.Blocks.Shapes,
-                Pins = Layers.Pins.Shapes,
-                Wires = Layers.Wires.Shapes,
-                Template = null
-            };
-        }
-
         public void New()
         {
             var page = new XPage()
@@ -2494,7 +2488,7 @@ namespace Logic.WPF.Page
                 Wires = new ObservableCollection<IShape>(),
                 Template = null
             };
-            History.Snapshot(Create("Page"));
+            History.Snapshot(Layers.ToPage("Page", null));
             Load(page);
         }
 
@@ -2544,15 +2538,14 @@ namespace Logic.WPF.Page
             if (page != null)
             {
                 SelectionReset();
-                History.Snapshot(Create("Page"));
+                History.Snapshot(Layers.ToPage("Page", null));
                 Load(page);
             }
         }
 
         public void Save(string path)
         {
-            var page = Create("Page");
-            Save(path, page);
+            Save(path, Layers.ToPage("Page", null));
         }
 
         #endregion
@@ -2584,7 +2577,7 @@ namespace Logic.WPF.Page
 
         public void Undo()
         {
-            var page = History.Undo(Create("Page"));
+            var page = History.Undo(Layers.ToPage("Page", null));
             if (page != null)
             {
                 SelectionReset();
@@ -2594,7 +2587,7 @@ namespace Logic.WPF.Page
 
         public void Redo()
         {
-            var page = History.Redo(Create("Page"));
+            var page = History.Redo(Layers.ToPage("Page", null));
             if (page != null)
             {
                 SelectionReset();
