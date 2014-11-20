@@ -29,7 +29,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Logic.WPF
+namespace Logic.WPF.Views
 {
     public partial class MainWindow : Window
     {
