@@ -330,7 +330,7 @@ namespace Logic.WPF
             ApplyPageTemplate(_template, _renderer);
 
             // history
-            page.editorLayer.History = new XHistory<XPage>();
+            page.editorLayer.History = new History<XPage>();
 
             // tool
             page.editorLayer.CurrentTool = NativeCanvas.Tool.Selection;

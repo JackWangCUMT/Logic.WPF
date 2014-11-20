@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Logic.WPF.Util
 {
-    public class XHistory<T> where T : class
+    public class History<T> where T : class
     {
         private XJson _json = new XJson();
         private Stack<byte[]> _undos = new Stack<byte[]>();

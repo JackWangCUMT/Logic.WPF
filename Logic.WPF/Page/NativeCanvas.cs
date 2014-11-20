@@ -26,7 +26,7 @@ namespace Logic.WPF.Page
         public bool EnableSnap { get; set; }
         public double SnapSize { get; set; }
         public IRenderer Renderer { get; set; } 
-        public XHistory<XPage> History { get; set; }
+        public History<XPage> History { get; set; }
         public bool IsOverlay { get; set; }
 
         #endregion
