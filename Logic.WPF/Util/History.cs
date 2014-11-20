@@ -8,7 +8,7 @@ namespace Logic.WPF.Util
 {
     public class History<T> where T : class
     {
-        private Json _json = new Json();
+        private Bson _bson = new Bson();
         private Stack<byte[]> _undos = new Stack<byte[]>();
         private Stack<byte[]> _redos = new Stack<byte[]>();
 
@@ -16,7 +16,7 @@ namespace Logic.WPF.Util
 
         public void Hold(T obj)
         {
-            _hold = _json.BsonSerialize(obj);
+            _hold = _bson.BsonSerialize(obj);
         }
 
         public void Commit()
@@ -31,7 +31,7 @@ namespace Logic.WPF.Util
 
         public void Snapshot(T obj)
         {
-            Snapshot(_json.BsonSerialize(obj));
+            Snapshot(_bson.BsonSerialize(obj));
         }
 
         private void Snapshot(byte[] bson)
@@ -50,11 +50,11 @@ namespace Logic.WPF.Util
         {
             if (_undos.Count > 0)
             {
-                var bson = _json.BsonSerialize(current);
+                var bson = _bson.BsonSerialize(current);
                 if (bson != null)
                 {
                     _redos.Push(bson);
-                    return _json.BsonDeserialize<T>(_undos.Pop());
+                    return _bson.BsonDeserialize<T>(_undos.Pop());
                 }
             }
             return null;
@@ -64,11 +64,11 @@ namespace Logic.WPF.Util
         {
             if (_redos.Count > 0)
             {
-                var bson = _json.BsonSerialize(current);
+                var bson = _bson.BsonSerialize(current);
                 if (bson != null)
                 {
                     _undos.Push(bson);
-                    return _json.BsonDeserialize<T>(_redos.Pop()); 
+                    return _bson.BsonDeserialize<T>(_redos.Pop()); 
                 }
             }
             return null;
