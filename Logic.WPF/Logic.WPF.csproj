@@ -100,7 +100,7 @@
     </Compile>
     <Compile Include="Page\XBorder.cs" />
     <Compile Include="Page\XCanvas.cs" />
-    <Compile Include="Page\XView.cs" />
+    <Compile Include="Page\NativeView.cs" />
     <Compile Include="Page\XStyle.cs" />
     <Compile Include="Util\XHistory.cs" />
     <Compile Include="Util\XJson.cs" />
