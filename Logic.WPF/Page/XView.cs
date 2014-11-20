@@ -11,7 +11,7 @@ using System.Windows.Media;
 
 namespace Logic.WPF.Page
 {
-    public class XView : Canvas
+    public class NativeView : Canvas
     {
         public IRenderer Renderer { get; set; }
         public XContainer Container { get; set; }

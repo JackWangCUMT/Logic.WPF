@@ -17,7 +17,7 @@
     <Grid x:Name="layout"
           Width="{Binding ElementName=pageControl, Path=Width}" 
           Height="{Binding ElementName=pageControl, Path=Height}">
-        <page:XView x:Name="gridView" 
+        <page:NativeView x:Name="gridView" 
                     Background="Transparent" 
                     FocusVisualStyle="{x:Null}"
                     IsHitTestVisible="False"
@@ -25,7 +25,7 @@
                     VerticalAlignment="Center" HorizontalAlignment="Center"
                     Width="{Binding ElementName=pageControl, Path=Width}" 
                     Height="{Binding ElementName=pageControl, Path=Height}"/>
-        <page:XView x:Name="tableView" 
+        <page:NativeView x:Name="tableView" 
                     Background="Transparent" 
                     FocusVisualStyle="{x:Null}"
                     IsHitTestVisible="False"
@@ -33,7 +33,7 @@
                     VerticalAlignment="Center" HorizontalAlignment="Center"
                     Width="{Binding ElementName=pageControl, Path=Width}" 
                     Height="{Binding ElementName=pageControl, Path=Height}"/>
-        <page:XView x:Name="frameView" 
+        <page:NativeView x:Name="frameView" 
                     Background="Transparent" 
                     FocusVisualStyle="{x:Null}"
                     IsHitTestVisible="False"
