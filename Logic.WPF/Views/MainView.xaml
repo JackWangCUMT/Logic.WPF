@@ -52,6 +52,7 @@
         <KeyBinding Command="{Binding BlockExportBlockCommand}" Key="B" Modifiers=""/>
         <KeyBinding Command="{Binding BlockCreateCodeCommand}" Gesture="Ctrl+B"/>
         <KeyBinding Command="{Binding TemplateImportCommand}" Gesture="Ctrl+Shift+I"/>
+        <KeyBinding Command="{Binding TemplateImportCodeCommand}" Gesture="Ctrl+Alt+I"/>
         <KeyBinding Command="{Binding TemplateExportCommand}" Gesture="Ctrl+Shift+E"/>
         <KeyBinding Command="{Binding SimulationStartCommand}" Gesture="F5"/>
         <KeyBinding Command="{Binding SimulationStopCommand}" Gesture="F6"/>
@@ -145,6 +146,7 @@
                 </MenuItem>
                 <Separator/>
                 <MenuItem x:Name="templateImport" Header="_Import..." InputGestureText="Ctrl+Shift+I" Command="{Binding TemplateImportCommand}"/>
+                <MenuItem x:Name="templateImportCode" Header="Import From Code..." InputGestureText="Ctrl+Alt+I" Command="{Binding TemplateImportCodeCommand}"/>
                 <Separator/>
                 <MenuItem x:Name="templateExport" Header="_Export..." InputGestureText="Ctrl+Shift+E" Command="{Binding TemplateExportCommand}"/>
             </MenuItem>

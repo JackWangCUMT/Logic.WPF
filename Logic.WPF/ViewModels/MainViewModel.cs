@@ -111,6 +111,7 @@ namespace Logic.WPF.ViewModels
         public ICommand BlockExportBlockCommand { get; set; }
         public ICommand BlockCreateCodeCommand { get; set; }
         public ICommand TemplateImportCommand { get; set; }
+        public ICommand TemplateImportCodeCommand { get; set; }
         public ICommand TemplateExportCommand { get; set; }
         public ICommand ApplyTemplateCommand { get; set; }
         public ICommand SimulationStartCommand { get; set; }

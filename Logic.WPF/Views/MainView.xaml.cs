@@ -257,6 +257,10 @@ namespace Logic.WPF.Views
                 (parameter) => this.ImportTemplate(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
+            Model.TemplateImportCodeCommand = new Command(
+                (parameter) => this.ImportTemplatesFromCode(),
+                (parameter) => IsSimulationRunning() ? false : true);
+
             Model.TemplateExportCommand = new Command(
                 (parameter) => this.ExportTemplate(), 
                 (parameter) => IsSimulationRunning() ? false : true);
@@ -865,6 +869,49 @@ namespace Logic.WPF.Views
                 ApplyPageTemplate(template, _renderer);
                 _template = template;
                 InvalidatePageTemplate();
+            }
+        }
+
+        private void ImportTemplatesFromCode()
+        {
+            var dlg = new Microsoft.Win32.OpenFileDialog()
+            {
+                Filter = "CSharp (*.cs)|*.cs",
+                Multiselect = true
+            };
+
+            if (dlg.ShowDialog(this) == true)
+            {
+                ImportTemplatesFromCode(dlg.FileNames);
+            }
+        }
+
+        private void ImportTemplatesFromCode(string[] paths)
+        {
+            try
+            {
+                foreach (var path in paths)
+                {
+                    using (var fs = System.IO.File.OpenText(path))
+                    {
+                        var csharp = fs.ReadToEnd();
+                        var templates = CodeTemplates.Import(csharp);
+                        if (templates != null)
+                        {
+                            foreach (var template in templates)
+                            {
+                                Model.Templates.Add(template);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.LogError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
             }
         }
 
