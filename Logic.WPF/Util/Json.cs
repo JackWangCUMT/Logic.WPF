@@ -10,7 +10,7 @@ namespace Logic.WPF.Util
 {
     public class Json
     {
-        public string JsonSerialize<T>(T obj) where T : class
+        public string Serialize<T>(T obj) where T : class
         {
             try
             {
@@ -35,7 +35,7 @@ namespace Logic.WPF.Util
             return null;
         }
 
-        public T JsonDeserialize<T>(string json) where T : class
+        public T Deserialize<T>(string json) where T : class
         {
             try
             {

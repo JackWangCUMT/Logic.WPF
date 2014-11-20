@@ -2337,13 +2337,13 @@ namespace Logic.WPF.Page
         {
             try
             {
-                var jshapes = _serializer.JsonSerialize(source.Shapes);
-                var jpins = _serializer.JsonSerialize(source.Pins);
+                var jshapes = _serializer.Serialize(source.Shapes);
+                var jpins = _serializer.Serialize(source.Pins);
                 var copy = new XBlock()
                 {
                     Name = source.Name,
-                    Shapes = _serializer.JsonDeserialize<IList<IShape>>(jshapes),
-                    Pins = _serializer.JsonDeserialize<IList<XPin>>(jpins)
+                    Shapes = _serializer.Deserialize<IList<IShape>>(jshapes),
+                    Pins = _serializer.Deserialize<IList<XPin>>(jpins)
                 };
                 foreach (var pin in copy.Pins)
                 {
@@ -2499,7 +2499,7 @@ namespace Logic.WPF.Page
                 using (var fs = System.IO.File.OpenText(path))
                 {
                     var json = fs.ReadToEnd();
-                    var page = _serializer.JsonDeserialize<XPage>(json);
+                    var page = _serializer.Deserialize<XPage>(json);
                     return page;
                 }
             }
@@ -2517,7 +2517,7 @@ namespace Logic.WPF.Page
         {
             try
             {
-                var json = _serializer.JsonSerialize(page);
+                var json = _serializer.Serialize(page);
                 using (var fs = System.IO.File.CreateText(path))
                 {
                     fs.Write(json);
@@ -2556,7 +2556,7 @@ namespace Logic.WPF.Page
         {
             try
             {
-                var json = _serializer.JsonSerialize(shapes);
+                var json = _serializer.Serialize(shapes);
                 if (!string.IsNullOrEmpty(json))
                 {
                     Clipboard.SetText(json, TextDataFormat.UnicodeText);
@@ -2640,7 +2640,7 @@ namespace Logic.WPF.Page
         {
             try
             {
-                var shapes = _serializer.JsonDeserialize<IList<IShape>>(json);
+                var shapes = _serializer.Deserialize<IList<IShape>>(json);
                 if (shapes != null && shapes.Count > 0)
                 {
                     Insert(shapes);

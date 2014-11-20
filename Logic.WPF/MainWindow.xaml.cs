@@ -771,7 +771,7 @@ namespace Logic.WPF
         {
             try
             {
-                var json = _serializer.JsonSerialize(block);
+                var json = _serializer.Serialize(block);
                 using (var fs = System.IO.File.CreateText(path))
                 {
                     fs.Write(json);
@@ -910,7 +910,7 @@ namespace Logic.WPF
                 using (var fs = System.IO.File.OpenText(path))
                 {
                     var json = fs.ReadToEnd();
-                    var template = _serializer.JsonDeserialize<XTemplate>(json);
+                    var template = _serializer.Deserialize<XTemplate>(json);
                     return template;
                 }
             }
@@ -928,7 +928,7 @@ namespace Logic.WPF
         {
             try
             {
-                var json = _serializer.JsonSerialize(template);
+                var json = _serializer.Serialize(template);
                 using (var fs = System.IO.File.CreateText(path))
                 {
                     fs.Write(json);
