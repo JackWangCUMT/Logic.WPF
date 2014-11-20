@@ -1,4 +1,4 @@
-﻿<Window x:Class="Logic.WPF.Views.MainWindow"
+﻿<Window x:Class="Logic.WPF.Views.MainView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:Logic.WPF"
@@ -178,7 +178,7 @@
                       HorizontalScrollBarVisibility="Auto"
                       VerticalScrollBarVisibility="Auto"
                       FocusVisualStyle="{x:Null}">
-            <views:PageControl x:Name="page" Margin="10"/>
+            <views:PageView x:Name="pageView" Margin="10"/>
         </ScrollViewer>
     </Grid>
 </Window>

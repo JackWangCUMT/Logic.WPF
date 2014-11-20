@@ -14,9 +14,9 @@ using System.Windows.Shapes;
 
 namespace Logic.WPF.Views
 {
-    public partial class CodeWindow : Window
+    public partial class CodeView : Window
     {
-        public CodeWindow()
+        public CodeView()
         {
             InitializeComponent();
         }

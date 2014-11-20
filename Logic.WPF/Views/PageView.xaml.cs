@@ -15,9 +15,9 @@ using System.Windows.Shapes;
 
 namespace Logic.WPF.Views
 {
-    public partial class PageControl : UserControl
+    public partial class PageView : UserControl
     {
-        public PageControl()
+        public PageView()
         {
             InitializeComponent();
         }

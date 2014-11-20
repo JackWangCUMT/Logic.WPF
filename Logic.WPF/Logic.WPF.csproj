@@ -69,11 +69,11 @@
     <Compile Include="Util\ViewModel.cs" />
     <Compile Include="ViewModels\CodeViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
-    <Page Include="Views\CodeWindow.xaml">
+    <Page Include="Views\CodeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\MainWindow.xaml">
+    <Page Include="Views\MainView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -81,23 +81,23 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Views\CodeWindow.xaml.cs">
-      <DependentUpon>CodeWindow.xaml</DependentUpon>
+    <Compile Include="Views\CodeView.xaml.cs">
+      <DependentUpon>CodeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Util\Command.cs" />
     <Compile Include="Util\Log.cs" />
-    <Compile Include="Views\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
+    <Compile Include="Views\MainView.xaml.cs">
+      <DependentUpon>MainView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\PageControl.xaml">
+    <Page Include="Views\PageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Views\PageControl.xaml.cs">
-      <DependentUpon>PageControl.xaml</DependentUpon>
+    <Compile Include="Views\PageView.xaml.cs">
+      <DependentUpon>PageView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Page\NativeZoom.cs" />
     <Compile Include="Page\NativeCanvas.cs" />

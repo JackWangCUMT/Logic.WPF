@@ -31,7 +31,7 @@ using System.Windows.Shapes;
 
 namespace Logic.WPF.Views
 {
-    public partial class MainWindow : Window
+    public partial class MainView : Window
     {
         #region Properties
 
@@ -52,7 +52,7 @@ namespace Logic.WPF.Views
 
         #region Constructor
 
-        public MainWindow()
+        public MainView()
         {
             InitializeComponent();
 
@@ -299,17 +299,17 @@ namespace Logic.WPF.Views
         {
             // layers
             var layers = new NativeLayers();
-            layers.Shapes = page.shapeLayer;
-            layers.Blocks = page.blockLayer;
-            layers.Wires = page.wireLayer;
-            layers.Pins = page.pinLayer;
-            layers.Overlay = page.overlayLayer;
+            layers.Shapes = pageView.shapeLayer;
+            layers.Blocks = pageView.blockLayer;
+            layers.Wires = pageView.wireLayer;
+            layers.Pins = pageView.pinLayer;
+            layers.Overlay = pageView.overlayLayer;
 
             // editor
-            page.editorLayer.Layers = layers;
+            pageView.editorLayer.Layers = layers;
 
             // overlay
-            page.overlayLayer.IsOverlay = true;
+            pageView.overlayLayer.IsOverlay = true;
 
             // renderer
             _renderer = new NativeRenderer()
@@ -319,27 +319,27 @@ namespace Logic.WPF.Views
                 HitTreshold = 6.0
             };
 
-            page.shapeLayer.Renderer = _renderer;
-            page.blockLayer.Renderer = _renderer;
-            page.wireLayer.Renderer = _renderer;
-            page.pinLayer.Renderer = _renderer;
-            page.editorLayer.Renderer = _renderer;
-            page.overlayLayer.Renderer = _renderer;
+            pageView.shapeLayer.Renderer = _renderer;
+            pageView.blockLayer.Renderer = _renderer;
+            pageView.wireLayer.Renderer = _renderer;
+            pageView.pinLayer.Renderer = _renderer;
+            pageView.editorLayer.Renderer = _renderer;
+            pageView.overlayLayer.Renderer = _renderer;
 
             // template
             _template = new LogicPageTemplate();
             ApplyPageTemplate(_template, _renderer);
 
             // history
-            page.editorLayer.History = new History<XPage>();
+            pageView.editorLayer.History = new History<XPage>();
 
             // tool
-            page.editorLayer.CurrentTool = NativeCanvas.Tool.Selection;
+            pageView.editorLayer.CurrentTool = NativeCanvas.Tool.Selection;
 
             // drag & drop
-            page.editorLayer.AllowDrop = true;
+            pageView.editorLayer.AllowDrop = true;
 
-            page.editorLayer.DragEnter += (s, e) =>
+            pageView.editorLayer.DragEnter += (s, e) =>
             {
                 if (IsSimulationRunning())
                 {
@@ -352,7 +352,7 @@ namespace Logic.WPF.Views
                 }
             };
 
-            page.editorLayer.Drop += (s, e) =>
+            pageView.editorLayer.Drop += (s, e) =>
             {
                 if (IsSimulationRunning())
                 {
@@ -367,13 +367,13 @@ namespace Logic.WPF.Views
                         XBlock block = e.Data.GetData("Block") as XBlock;
                         if (block != null)
                         {
-                            page.editorLayer.History.Snapshot(
-                                page.editorLayer.Layers.ToPage("Page", null));
-                            Point point = e.GetPosition(page.editorLayer);
-                            XBlock copy = page.editorLayer.Insert(block, point.X, point.Y);
+                            pageView.editorLayer.History.Snapshot(
+                                pageView.editorLayer.Layers.ToPage("Page", null));
+                            Point point = e.GetPosition(pageView.editorLayer);
+                            XBlock copy = pageView.editorLayer.Insert(block, point.X, point.Y);
                             if (copy != null)
                             {
-                                page.editorLayer.Connect(copy);
+                                pageView.editorLayer.Connect(copy);
                                 e.Handled = true;
                             }
                         }
@@ -397,7 +397,7 @@ namespace Logic.WPF.Views
                             string path = files[0];
                             if (!string.IsNullOrEmpty(path))
                             {
-                                page.editorLayer.Load(path);
+                                pageView.editorLayer.Load(path);
                                 Model.FileName = System.IO.Path.GetFileNameWithoutExtension(path);
                                 Model.FilePath = path;
                                 e.Handled = true;
@@ -504,7 +504,7 @@ namespace Logic.WPF.Views
 
         private void New()
         {
-            page.editorLayer.New();
+            pageView.editorLayer.New();
             Model.FileName = null;
             Model.FilePath = null;
         }
@@ -518,7 +518,7 @@ namespace Logic.WPF.Views
 
             if (dlg.ShowDialog(this) == true)
             {
-                page.editorLayer.Load(dlg.FileName);
+                pageView.editorLayer.Load(dlg.FileName);
                 Model.FileName = System.IO.Path.GetFileNameWithoutExtension(dlg.FileName);
                 Model.FilePath = dlg.FileName;
             }
@@ -528,7 +528,7 @@ namespace Logic.WPF.Views
         {
             if (!string.IsNullOrEmpty(Model.FilePath))
             {
-                page.editorLayer.Save(Model.FilePath);
+                pageView.editorLayer.Save(Model.FilePath);
             }
             else
             {
@@ -549,7 +549,7 @@ namespace Logic.WPF.Views
 
             if (dlg.ShowDialog(this) == true)
             {
-                page.editorLayer.Save(dlg.FileName);
+                pageView.editorLayer.Save(dlg.FileName);
                 Model.FileName = System.IO.Path.GetFileNameWithoutExtension(dlg.FileName);
                 Model.FilePath = dlg.FileName;
             }
@@ -561,122 +561,122 @@ namespace Logic.WPF.Views
 
         private void Undo()
         {
-            page.editorLayer.Undo();
+            pageView.editorLayer.Undo();
         }
 
         private void Redo()
         {
-            page.editorLayer.Redo();
+            pageView.editorLayer.Redo();
         }
 
         private void Cut()
         {
-            page.editorLayer.Cut();
+            pageView.editorLayer.Cut();
         }
 
         private void Copy()
         {
-            page.editorLayer.Copy();
+            pageView.editorLayer.Copy();
         }
 
         private void Paste()
         {
-            page.editorLayer.Paste();
+            pageView.editorLayer.Paste();
         }
 
         private void Delete()
         {
-            page.editorLayer.SelectionDelete();
+            pageView.editorLayer.SelectionDelete();
         }
 
         private void SelectAll()
         {
-            page.editorLayer.SelectAll();
+            pageView.editorLayer.SelectAll();
         }
 
         private void ToggleFill()
         {
-            page.editorLayer.ToggleFill();
+            pageView.editorLayer.ToggleFill();
         }
 
         private void ToggleSnap()
         {
-            page.editorLayer.EnableSnap = !page.editorLayer.EnableSnap;
+            pageView.editorLayer.EnableSnap = !pageView.editorLayer.EnableSnap;
         }
 
         private void ToggleInvertStart()
         {
-            page.editorLayer.ToggleInvertStart();
+            pageView.editorLayer.ToggleInvertStart();
         }
 
         private void ToggleInvertEnd()
         {
-            page.editorLayer.ToggleInvertEnd();
+            pageView.editorLayer.ToggleInvertEnd();
         }
 
         private void IncreaseTextSize()
         {
-            page.editorLayer.SetTextSizeDelta(+1.0);
+            pageView.editorLayer.SetTextSizeDelta(+1.0);
         }
 
         private void DecreaseTextSize()
         {
-            page.editorLayer.SetTextSizeDelta(-1.0);
+            pageView.editorLayer.SetTextSizeDelta(-1.0);
         }
 
         private void AlignLeftBottom()
         {
-            page.editorLayer.SetTextHAlignment(HAlignment.Left);
-            page.editorLayer.SetTextVAlignment(VAlignment.Bottom);
+            pageView.editorLayer.SetTextHAlignment(HAlignment.Left);
+            pageView.editorLayer.SetTextVAlignment(VAlignment.Bottom);
         }
 
         private void AlignBottom()
         {
-            page.editorLayer.SetTextVAlignment(VAlignment.Bottom);
+            pageView.editorLayer.SetTextVAlignment(VAlignment.Bottom);
         }
 
         private void AlignRightBottom()
         {
-            page.editorLayer.SetTextHAlignment(HAlignment.Right);
-            page.editorLayer.SetTextVAlignment(VAlignment.Bottom);
+            pageView.editorLayer.SetTextHAlignment(HAlignment.Right);
+            pageView.editorLayer.SetTextVAlignment(VAlignment.Bottom);
         }
 
         private void AlignLeft()
         {
-            page.editorLayer.SetTextHAlignment(HAlignment.Left);
+            pageView.editorLayer.SetTextHAlignment(HAlignment.Left);
         }
 
         private void AlignCenterCenter()
         {
-            page.editorLayer.SetTextHAlignment(HAlignment.Center);
-            page.editorLayer.SetTextVAlignment(VAlignment.Center);
+            pageView.editorLayer.SetTextHAlignment(HAlignment.Center);
+            pageView.editorLayer.SetTextVAlignment(VAlignment.Center);
         }
 
         private void AlignRight()
         {
-            page.editorLayer.SetTextHAlignment(HAlignment.Right);
+            pageView.editorLayer.SetTextHAlignment(HAlignment.Right);
         }
 
         private void AlignLeftTop()
         {
-            page.editorLayer.SetTextHAlignment(HAlignment.Left);
-            page.editorLayer.SetTextVAlignment(VAlignment.Top);
+            pageView.editorLayer.SetTextHAlignment(HAlignment.Left);
+            pageView.editorLayer.SetTextVAlignment(VAlignment.Top);
         }
 
         private void AlignTop()
         {
-            page.editorLayer.SetTextVAlignment(VAlignment.Top);
+            pageView.editorLayer.SetTextVAlignment(VAlignment.Top);
         }
 
         private void AlignRightTop()
         {
-            page.editorLayer.SetTextHAlignment(HAlignment.Right);
-            page.editorLayer.SetTextVAlignment(VAlignment.Top);
+            pageView.editorLayer.SetTextHAlignment(HAlignment.Right);
+            pageView.editorLayer.SetTextVAlignment(VAlignment.Top);
         }
 
         private void Cancel()
         {
-            page.editorLayer.Cancel();
+            pageView.editorLayer.Cancel();
         }
 
         #endregion
@@ -685,55 +685,55 @@ namespace Logic.WPF.Views
 
         private void SetToolNone()
         {
-            page.editorLayer.CurrentTool = NativeCanvas.Tool.None;
+            pageView.editorLayer.CurrentTool = NativeCanvas.Tool.None;
             UpdateToolMenu();
         }
 
         private void SetToolSelection()
         {
-            page.editorLayer.CurrentTool = NativeCanvas.Tool.Selection;
+            pageView.editorLayer.CurrentTool = NativeCanvas.Tool.Selection;
             UpdateToolMenu();
         }
 
         private void SetToolLine()
         {
-            page.editorLayer.CurrentTool = NativeCanvas.Tool.Line;
+            pageView.editorLayer.CurrentTool = NativeCanvas.Tool.Line;
             UpdateToolMenu();
         }
 
         private void SetToolEllipse()
         {
-            page.editorLayer.CurrentTool = NativeCanvas.Tool.Ellipse;
+            pageView.editorLayer.CurrentTool = NativeCanvas.Tool.Ellipse;
             UpdateToolMenu();
         }
 
         private void SetToolRectangle()
         {
-            page.editorLayer.CurrentTool = NativeCanvas.Tool.Rectangle;
+            pageView.editorLayer.CurrentTool = NativeCanvas.Tool.Rectangle;
             UpdateToolMenu();
         }
 
         private void SetToolText()
         {
-            page.editorLayer.CurrentTool = NativeCanvas.Tool.Text;
+            pageView.editorLayer.CurrentTool = NativeCanvas.Tool.Text;
             UpdateToolMenu();
         }
 
         private void SetToolWire()
         {
-            page.editorLayer.CurrentTool = NativeCanvas.Tool.Wire;
+            pageView.editorLayer.CurrentTool = NativeCanvas.Tool.Wire;
             UpdateToolMenu();
         }
 
         private void SetToolPin()
         {
-            page.editorLayer.CurrentTool = NativeCanvas.Tool.Pin;
+            pageView.editorLayer.CurrentTool = NativeCanvas.Tool.Pin;
             UpdateToolMenu();
         }
 
         private void UpdateToolMenu()
         {
-            var tool = page.editorLayer.CurrentTool;
+            var tool = pageView.editorLayer.CurrentTool;
             toolNone.IsChecked = (tool == NativeCanvas.Tool.None);
             toolSelection.IsChecked = (tool == NativeCanvas.Tool.Selection);
             toolWire.IsChecked = (tool == NativeCanvas.Tool.Wire);
@@ -750,7 +750,7 @@ namespace Logic.WPF.Views
 
         private void Block()
         {
-            var block = page.editorLayer.CreateBlockFromSelected("Block");
+            var block = pageView.editorLayer.CreateBlockFromSelected("Block");
             if (block != null)
             {
                 var dlg = new Microsoft.Win32.SaveFileDialog()
@@ -789,13 +789,13 @@ namespace Logic.WPF.Views
 
         private void Code()
         {
-            var block = page.editorLayer.CreateBlockFromSelected("Block");
+            var block = pageView.editorLayer.CreateBlockFromSelected("Block");
             if (block == null)
                 return;
 
-            var window = new CodeWindow();
-            window.Owner = this;
-            window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            var view = new CodeView();
+            view.Owner = this;
+            view.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
             var vm = new CodeViewModel()
             {
@@ -813,7 +813,7 @@ namespace Logic.WPF.Views
                     FileName = vm.ProjectPath
                 };
 
-                if (dlg.ShowDialog(window) == true)
+                if (dlg.ShowDialog(view) == true)
                 {
                     vm.ProjectPath = dlg.FileName;
                 }
@@ -834,18 +834,18 @@ namespace Logic.WPF.Views
                         ex.StackTrace);
                 }
 
-                window.Close();
+                view.Close();
             },
             (parameter) => true);
 
             vm.CancelCommand = new Command((parameter) =>
             {
-                window.Close();
+                view.Close();
             },
             (parameter) => true);
 
-            window.DataContext = vm;
-            window.ShowDialog();
+            view.DataContext = vm;
+            view.ShowDialog();
         }
 
         #endregion
@@ -946,23 +946,23 @@ namespace Logic.WPF.Views
 
         private void ApplyPageTemplate(ITemplate template, IRenderer renderer)
         {
-            page.Width = template.Width;
-            page.Height = template.Height;
+            pageView.Width = template.Width;
+            pageView.Height = template.Height;
 
-            page.gridView.Container = template.Grid;
-            page.tableView.Container = template.Table;
-            page.frameView.Container = template.Frame;
+            pageView.gridView.Container = template.Grid;
+            pageView.tableView.Container = template.Table;
+            pageView.frameView.Container = template.Frame;
 
-            page.gridView.Renderer = renderer;
-            page.tableView.Renderer = renderer;
-            page.frameView.Renderer = renderer;
+            pageView.gridView.Renderer = renderer;
+            pageView.tableView.Renderer = renderer;
+            pageView.frameView.Renderer = renderer;
         }
 
         private void InvalidatePageTemplate()
         {
-            page.gridView.InvalidateVisual();
-            page.tableView.InvalidateVisual();
-            page.frameView.InvalidateVisual();
+            pageView.gridView.InvalidateVisual();
+            pageView.tableView.InvalidateVisual();
+            pageView.frameView.InvalidateVisual();
         }
 
         #endregion
@@ -971,35 +971,35 @@ namespace Logic.WPF.Views
 
         private void InitSimulationOverlay(IDictionary<XBlock, BoolSimulation> simulations)
         {
-            page.editorLayer.SelectionReset();
+            pageView.editorLayer.SelectionReset();
 
-            page.overlayLayer.EnableSimulationCache = true;
-            page.overlayLayer.HaveSimulationCache = false;
+            pageView.overlayLayer.EnableSimulationCache = true;
+            pageView.overlayLayer.HaveSimulationCache = false;
 
             foreach (var simulation in simulations)
             {
-                page.blockLayer.Hidden.Add(simulation.Key);
-                page.overlayLayer.Shapes.Add(simulation.Key);
+                pageView.blockLayer.Hidden.Add(simulation.Key);
+                pageView.overlayLayer.Shapes.Add(simulation.Key);
             }
 
-            page.editorLayer.Simulations = simulations;
-            page.overlayLayer.Simulations = simulations;
+            pageView.editorLayer.Simulations = simulations;
+            pageView.overlayLayer.Simulations = simulations;
 
-            page.blockLayer.InvalidateVisual();
-            page.overlayLayer.InvalidateVisual();
+            pageView.blockLayer.InvalidateVisual();
+            pageView.overlayLayer.InvalidateVisual();
         }
 
         private void ResetSimulationOverlay()
         {
-            page.editorLayer.Simulations = null;
-            page.overlayLayer.Simulations = null;
+            pageView.editorLayer.Simulations = null;
+            pageView.overlayLayer.Simulations = null;
 
-            page.overlayLayer.HaveSimulationCache = false;
+            pageView.overlayLayer.HaveSimulationCache = false;
 
-            page.blockLayer.Hidden.Clear();
-            page.overlayLayer.Shapes.Clear();
-            page.blockLayer.InvalidateVisual();
-            page.overlayLayer.InvalidateVisual();
+            pageView.blockLayer.Hidden.Clear();
+            pageView.overlayLayer.Shapes.Clear();
+            pageView.blockLayer.InvalidateVisual();
+            pageView.overlayLayer.InvalidateVisual();
         }
 
         #endregion
@@ -1010,7 +1010,7 @@ namespace Logic.WPF.Views
         {
             try
             {
-                XPage temp = page.editorLayer.Layers.ToPage("Page", null);
+                XPage temp = pageView.editorLayer.Layers.ToPage("Page", null);
                 if (temp != null)
                 {
                     var context = PageGraph.Create(temp);
@@ -1082,7 +1082,7 @@ namespace Logic.WPF.Views
                     {
                         BoolSimulationFactory.Run(simulations, _clock);
                         _clock.Tick();
-                        Dispatcher.Invoke(() => page.overlayLayer.InvalidateVisual());
+                        Dispatcher.Invoke(() => pageView.overlayLayer.InvalidateVisual());
                     }
                     catch (Exception ex)
                     {
@@ -1112,7 +1112,7 @@ namespace Logic.WPF.Views
                     return;
                 }
 
-                XPage temp = page.editorLayer.Layers.ToPage("Page", null);
+                XPage temp = pageView.editorLayer.Layers.ToPage("Page", null);
                 if (temp != null)
                 {
                     var context = PageGraph.Create(temp);

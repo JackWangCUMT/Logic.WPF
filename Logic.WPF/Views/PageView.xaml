@@ -1,5 +1,5 @@
-﻿<UserControl x:Class="Logic.WPF.Views.PageControl"
-             x:Name="pageControl"
+﻿<UserControl x:Class="Logic.WPF.Views.PageView"
+             x:Name="pageView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -15,79 +15,79 @@
              TextOptions.TextHintingMode="Auto" 
              TextOptions.TextRenderingMode="Auto">
     <Grid x:Name="layout"
-          Width="{Binding ElementName=pageControl, Path=Width}" 
-          Height="{Binding ElementName=pageControl, Path=Height}">
+          Width="{Binding ElementName=pageView, Path=Width}" 
+          Height="{Binding ElementName=pageView, Path=Height}">
         <page:NativeView x:Name="gridView" 
                          Background="Transparent" 
                          FocusVisualStyle="{x:Null}"
                          IsHitTestVisible="False"
                          Focusable="False"
                          VerticalAlignment="Center" HorizontalAlignment="Center"
-                         Width="{Binding ElementName=pageControl, Path=Width}" 
-                         Height="{Binding ElementName=pageControl, Path=Height}"/>
+                         Width="{Binding ElementName=pageView, Path=Width}" 
+                         Height="{Binding ElementName=pageView, Path=Height}"/>
         <page:NativeView x:Name="tableView" 
                          Background="Transparent" 
                          FocusVisualStyle="{x:Null}"
                          IsHitTestVisible="False"
                          Focusable="False"
                          VerticalAlignment="Center" HorizontalAlignment="Center"
-                         Width="{Binding ElementName=pageControl, Path=Width}" 
-                         Height="{Binding ElementName=pageControl, Path=Height}"/>
+                         Width="{Binding ElementName=pageView, Path=Width}" 
+                         Height="{Binding ElementName=pageView, Path=Height}"/>
         <page:NativeView x:Name="frameView" 
                          Background="Transparent" 
                          FocusVisualStyle="{x:Null}"
                          IsHitTestVisible="False"
                          Focusable="False"
                          VerticalAlignment="Center" HorizontalAlignment="Center"
-                         Width="{Binding ElementName=pageControl, Path=Width}" 
-                         Height="{Binding ElementName=pageControl, Path=Height}"/>
+                         Width="{Binding ElementName=pageView, Path=Width}" 
+                         Height="{Binding ElementName=pageView, Path=Height}"/>
         <page:NativeCanvas x:Name="shapeLayer" 
                            Background="Transparent" 
                            FocusVisualStyle="{x:Null}"
                            IsHitTestVisible="False"
                            Focusable="False"
                            VerticalAlignment="Center" HorizontalAlignment="Center"
-                           Width="{Binding ElementName=pageControl, Path=Width}" 
-                           Height="{Binding ElementName=pageControl, Path=Height}"/>
+                           Width="{Binding ElementName=pageView, Path=Width}" 
+                           Height="{Binding ElementName=pageView, Path=Height}"/>
         <page:NativeCanvas x:Name="blockLayer" 
                            Background="Transparent" 
                            FocusVisualStyle="{x:Null}"
                            IsHitTestVisible="False"
                            Focusable="False"
                            VerticalAlignment="Center" HorizontalAlignment="Center"
-                           Width="{Binding ElementName=pageControl, Path=Width}" 
-                           Height="{Binding ElementName=pageControl, Path=Height}"/>
+                           Width="{Binding ElementName=pageView, Path=Width}" 
+                           Height="{Binding ElementName=pageView, Path=Height}"/>
         <page:NativeCanvas x:Name="wireLayer" 
                            Background="Transparent" 
                            FocusVisualStyle="{x:Null}"
                            IsHitTestVisible="False"
                            Focusable="False"
                            VerticalAlignment="Center" HorizontalAlignment="Center"
-                           Width="{Binding ElementName=pageControl, Path=Width}" 
-                           Height="{Binding ElementName=pageControl, Path=Height}"/>
+                           Width="{Binding ElementName=pageView, Path=Width}" 
+                           Height="{Binding ElementName=pageView, Path=Height}"/>
         <page:NativeCanvas x:Name="pinLayer" 
                            Background="Transparent" 
                            FocusVisualStyle="{x:Null}"
                            IsHitTestVisible="False"
                            Focusable="False"
                            VerticalAlignment="Center" HorizontalAlignment="Center"
-                           Width="{Binding ElementName=pageControl, Path=Width}" 
-                           Height="{Binding ElementName=pageControl, Path=Height}"/>
+                           Width="{Binding ElementName=pageView, Path=Width}" 
+                           Height="{Binding ElementName=pageView, Path=Height}"/>
         <page:NativeCanvas x:Name="editorLayer" 
                            Background="Transparent" 
                            FocusVisualStyle="{x:Null}"
                            IsHitTestVisible="True"
                            Focusable="True"
                            VerticalAlignment="Center" HorizontalAlignment="Center"
-                           Width="{Binding ElementName=pageControl, Path=Width}" 
-                           Height="{Binding ElementName=pageControl, Path=Height}"/>
+                           Width="{Binding ElementName=pageView, Path=Width}" 
+                           Height="{Binding ElementName=pageView, Path=Height}"/>
         <page:NativeCanvas x:Name="overlayLayer" 
                            Background="{x:Null}" 
                            FocusVisualStyle="{x:Null}"
                            IsHitTestVisible="False"
                            Focusable="False"
                            VerticalAlignment="Center" HorizontalAlignment="Center"
-                           Width="{Binding ElementName=pageControl, Path=Width}" 
-                           Height="{Binding ElementName=pageControl, Path=Height}"/>
+                           Width="{Binding ElementName=pageView, Path=Width}" 
+                           Height="{Binding ElementName=pageView, Path=Height}"/>
     </Grid>
 </UserControl>
