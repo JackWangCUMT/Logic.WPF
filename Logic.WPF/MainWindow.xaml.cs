@@ -888,18 +888,18 @@ namespace Logic.WPF
                     Name = _template.Name,
                     Grid = new XContainer()
                     {
-                        Styles = new ObservableCollection<IStyle>(_template.Grid.Styles),
-                        Shapes = new ObservableCollection<IShape>(_template.Grid.Shapes)
+                        Styles = new List<IStyle>(_template.Grid.Styles),
+                        Shapes = new List<IShape>(_template.Grid.Shapes)
                     },
                     Table = new XContainer()
                     {
-                        Styles = new ObservableCollection<IStyle>(_template.Table.Styles),
-                        Shapes = new ObservableCollection<IShape>(_template.Table.Shapes)
+                        Styles = new List<IStyle>(_template.Table.Styles),
+                        Shapes = new List<IShape>(_template.Table.Shapes)
                     },
                     Frame = new XContainer()
                     {
-                        Styles = new ObservableCollection<IStyle>(_template.Frame.Styles),
-                        Shapes = new ObservableCollection<IShape>(_template.Frame.Shapes)
+                        Styles = new List<IStyle>(_template.Frame.Styles),
+                        Shapes = new List<IShape>(_template.Frame.Shapes)
                     }
                 };
 

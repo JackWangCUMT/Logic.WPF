@@ -162,7 +162,7 @@ namespace Logic.WPF.Page
 
         private void InitProperties()
         {
-            Shapes = new ObservableCollection<IShape>();
+            Shapes = new List<IShape>();
             Hidden = new HashSet<IShape>();
             EnableSnap = true;
             SnapSize = 15.0;
@@ -2482,10 +2482,10 @@ namespace Logic.WPF.Page
             var page = new XPage()
             {
                 Name = "Page",
-                Shapes = new ObservableCollection<IShape>(),
-                Blocks = new ObservableCollection<IShape>(),
-                Pins = new ObservableCollection<IShape>(),
-                Wires = new ObservableCollection<IShape>(),
+                Shapes = new List<IShape>(),
+                Blocks = new List<IShape>(),
+                Pins = new List<IShape>(),
+                Wires = new List<IShape>(),
                 Template = null
             };
             History.Snapshot(Layers.ToPage("Page", null));
@@ -2674,8 +2674,8 @@ namespace Logic.WPF.Page
             var block = new XBlock()
             {
                 Name = name,
-                Shapes = new ObservableCollection<IShape>(),
-                Pins = new ObservableCollection<XPin>()
+                Shapes = new List<IShape>(),
+                Pins = new List<XPin>()
             };
 
             foreach (var shape in shapes)
