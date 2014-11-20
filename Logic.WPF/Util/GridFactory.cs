@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Logic.WPF.Util
 {
-    public static class XGridFactory
+    public static class GridFactory
     {
         public class Options
         {
