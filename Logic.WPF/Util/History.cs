@@ -16,7 +16,7 @@ namespace Logic.WPF.Util
 
         public void Hold(T obj)
         {
-            _hold = _bson.BsonSerialize(obj);
+            _hold = _bson.Serialize(obj);
         }
 
         public void Commit()
@@ -31,7 +31,7 @@ namespace Logic.WPF.Util
 
         public void Snapshot(T obj)
         {
-            Snapshot(_bson.BsonSerialize(obj));
+            Snapshot(_bson.Serialize(obj));
         }
 
         private void Snapshot(byte[] bson)
@@ -50,11 +50,11 @@ namespace Logic.WPF.Util
         {
             if (_undos.Count > 0)
             {
-                var bson = _bson.BsonSerialize(current);
+                var bson = _bson.Serialize(current);
                 if (bson != null)
                 {
                     _redos.Push(bson);
-                    return _bson.BsonDeserialize<T>(_undos.Pop());
+                    return _bson.Deserialize<T>(_undos.Pop());
                 }
             }
             return null;
@@ -64,11 +64,11 @@ namespace Logic.WPF.Util
         {
             if (_redos.Count > 0)
             {
-                var bson = _bson.BsonSerialize(current);
+                var bson = _bson.Serialize(current);
                 if (bson != null)
                 {
                     _undos.Push(bson);
-                    return _bson.BsonDeserialize<T>(_redos.Pop()); 
+                    return _bson.Deserialize<T>(_redos.Pop()); 
                 }
             }
             return null;

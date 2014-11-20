@@ -11,7 +11,7 @@ namespace Logic.WPF.Util
 {
     public class Bson
     {
-        public byte[] BsonSerialize<T>(T obj) where T : class
+        public byte[] Serialize<T>(T obj) where T : class
         {
             try
             {
@@ -40,7 +40,7 @@ namespace Logic.WPF.Util
             return null;
         }
 
-        public T BsonDeserialize<T>(byte[] bson) where T : class
+        public T Deserialize<T>(byte[] bson) where T : class
         {
             try
             {
