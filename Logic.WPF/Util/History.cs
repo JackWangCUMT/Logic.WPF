@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Logic.Core;
+using Logic.WPF.Serialization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +10,7 @@ namespace Logic.WPF.Util
 {
     public class History<T> where T : class
     {
-        private Bson _bson = new Bson();
+        private IBinarySerializer _bson = new Bson();
         private Stack<byte[]> _undos = new Stack<byte[]>();
         private Stack<byte[]> _redos = new Stack<byte[]>();
 

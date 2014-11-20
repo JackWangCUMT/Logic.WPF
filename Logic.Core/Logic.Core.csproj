@@ -38,9 +38,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HAlignment.cs" />
+    <Compile Include="IBinarySerializer.cs" />
     <Compile Include="IColor.cs" />
     <Compile Include="IRenderer.cs" />
     <Compile Include="IShape.cs" />
+    <Compile Include="IStringSerializer.cs" />
     <Compile Include="IStyle.cs" />
     <Compile Include="ITemplate.cs" />
     <Compile Include="PinType.cs" />

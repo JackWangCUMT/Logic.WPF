@@ -1,5 +1,6 @@
 ﻿using Logic.Core;
 using Logic.Simulation;
+using Logic.WPF.Serialization;
 using Logic.WPF.Util;
 using System;
 using System.Collections.Generic;
@@ -78,7 +79,7 @@ namespace Logic.WPF.Page
 
         #region Fields
 
-        private Json _serializer = new Json();
+        private IStringSerializer _serializer = new Json();
         private IStyle _shapeStyle = null;
         private IStyle _selectedShapeStyle = null;
         private IStyle _selectionStyle = null;

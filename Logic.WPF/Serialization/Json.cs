@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using Logic.Core;
+using Logic.WPF.Util;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,9 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Logic.WPF.Util
+namespace Logic.WPF.Serialization
 {
-    public class Json
+    public class Json : IStringSerializer
     {
         public string Serialize<T>(T obj) where T : class
         {

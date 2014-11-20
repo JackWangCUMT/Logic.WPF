@@ -2,6 +2,7 @@
 using Logic.Graph;
 using Logic.Simulation;
 using Logic.WPF.Page;
+using Logic.WPF.Serialization;
 using Logic.WPF.Simulation;
 using Logic.WPF.Templates;
 using Logic.WPF.Util;
@@ -40,7 +41,7 @@ namespace Logic.WPF
 
         #region Fields
 
-        private Json _serializer = new Json();
+        private IStringSerializer _serializer = new Json();
         private IRenderer _renderer;
         private ITemplate _template;
         private Point _dragStartPoint;

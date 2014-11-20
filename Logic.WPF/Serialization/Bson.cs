@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using Logic.Core;
+using Logic.WPF.Util;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Bson;
 using System;
 using System.Collections.Generic;
@@ -7,9 +9,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Logic.WPF.Util
+namespace Logic.WPF.Serialization
 {
-    public class Bson
+    public class Bson : IBinarySerializer
     {
         public byte[] Serialize<T>(T obj) where T : class
         {

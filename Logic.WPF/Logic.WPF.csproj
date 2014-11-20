@@ -61,7 +61,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Simulation\BoolSimulationFactory.cs" />
-    <Compile Include="Util\Bson.cs" />
+    <Compile Include="Serialization\Bson.cs" />
     <Compile Include="Util\GridFactory.cs" />
     <Compile Include="Templates\XLogicPageTemplate.cs" />
     <Compile Include="Templates\XScratchpadPageTemplate.cs" />
@@ -104,7 +104,7 @@
     <Compile Include="Page\NativeView.cs" />
     <Compile Include="Page\NativeStyle.cs" />
     <Compile Include="Util\History.cs" />
-    <Compile Include="Util\Json.cs" />
+    <Compile Include="Serialization\Json.cs" />
     <Compile Include="Page\NativeLayers.cs" />
     <Compile Include="Page\NativeRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
