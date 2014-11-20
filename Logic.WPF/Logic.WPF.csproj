@@ -98,7 +98,7 @@
     <Compile Include="PageControl.xaml.cs">
       <DependentUpon>PageControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Page\XBorder.cs" />
+    <Compile Include="Page\NativeZoom.cs" />
     <Compile Include="Page\XCanvas.cs" />
     <Compile Include="Page\NativeView.cs" />
     <Compile Include="Page\XStyle.cs" />

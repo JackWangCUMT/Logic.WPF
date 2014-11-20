@@ -10,7 +10,7 @@ using System.Windows.Media;
 
 namespace Logic.WPF.Page
 {
-    public class XBorder : Border
+    public class NativeZoom : Border
     {
         public override UIElement Child
         {
