@@ -40,7 +40,7 @@ namespace Logic.WPF
 
         #region Fields
 
-        private XJson _serializer = new XJson();
+        private Json _serializer = new Json();
         private IRenderer _renderer;
         private ITemplate _template;
         private Point _dragStartPoint;

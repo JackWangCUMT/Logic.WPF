@@ -8,7 +8,7 @@ namespace Logic.WPF.Util
 {
     public class History<T> where T : class
     {
-        private XJson _json = new XJson();
+        private Json _json = new Json();
         private Stack<byte[]> _undos = new Stack<byte[]>();
         private Stack<byte[]> _redos = new Stack<byte[]>();
 

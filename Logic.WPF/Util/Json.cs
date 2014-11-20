@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Logic.WPF.Util
 {
-    public class XJson
+    public class Json
     {
         #region Json
 

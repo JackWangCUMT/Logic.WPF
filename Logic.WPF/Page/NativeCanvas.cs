@@ -78,7 +78,7 @@ namespace Logic.WPF.Page
 
         #region Fields
 
-        private XJson _serializer = new XJson();
+        private Json _serializer = new Json();
         private IStyle _shapeStyle = null;
         private IStyle _selectedShapeStyle = null;
         private IStyle _selectionStyle = null;

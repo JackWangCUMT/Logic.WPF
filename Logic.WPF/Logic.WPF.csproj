@@ -103,7 +103,7 @@
     <Compile Include="Page\NativeView.cs" />
     <Compile Include="Page\NativeStyle.cs" />
     <Compile Include="Util\History.cs" />
-    <Compile Include="Util\XJson.cs" />
+    <Compile Include="Util\Json.cs" />
     <Compile Include="Page\NativeLayers.cs" />
     <Compile Include="Page\NativeRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
