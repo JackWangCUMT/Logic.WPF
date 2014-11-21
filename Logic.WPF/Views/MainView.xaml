@@ -49,11 +49,13 @@
         <KeyBinding Command="{Binding ToolEllipseCommand}" Key="E" Modifiers=""/>
         <KeyBinding Command="{Binding ToolRectangleCommand}" Key="R" Modifiers=""/>
         <KeyBinding Command="{Binding ToolTextCommand}" Key="T" Modifiers=""/>
-        <KeyBinding Command="{Binding BlockExportBlockCommand}" Key="B" Modifiers=""/>
-        <KeyBinding Command="{Binding BlockCreateCodeCommand}" Gesture="Ctrl+B"/>
-        <KeyBinding Command="{Binding TemplateImportCommand}" Gesture="Ctrl+Shift+I"/>
-        <KeyBinding Command="{Binding TemplateImportCodeCommand}" Gesture="Ctrl+Alt+I"/>
-        <KeyBinding Command="{Binding TemplateExportCommand}" Gesture="Ctrl+Shift+E"/>
+        <KeyBinding Command="{Binding BlockImportCommand}" Gesture="Ctrl+Shift+B"/>
+        <KeyBinding Command="{Binding BlockImportCodeCommand}" Gesture="Shift+Alt+B"/>
+        <KeyBinding Command="{Binding BlockExportCommand}" Key="B" Modifiers=""/>
+        <KeyBinding Command="{Binding BlockCreateProjectCommand}" Gesture="Ctrl+B"/>
+        <KeyBinding Command="{Binding TemplateImportCommand}" Gesture="Ctrl+Shift+T"/>
+        <KeyBinding Command="{Binding TemplateImportCodeCommand}" Gesture="Shift+Alt+T"/>
+        <KeyBinding Command="{Binding TemplateExportCommand}" Gesture="Ctrl+T"/>
         <KeyBinding Command="{Binding SimulationStartCommand}" Gesture="F5"/>
         <KeyBinding Command="{Binding SimulationStopCommand}" Gesture="F6"/>
         <KeyBinding Command="{Binding SimulationRestartCommand}" Gesture="F7"/>
@@ -73,48 +75,48 @@
               Background="Transparent"
               Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0">
             <MenuItem Header="_File">
-                <MenuItem x:Name="fileNew" Header="_New" InputGestureText="Ctrl+N" Command="{Binding FileNewCommand}"/>
+                <MenuItem Header="_New" InputGestureText="Ctrl+N" Command="{Binding FileNewCommand}"/>
                 <Separator/>
-                <MenuItem x:Name="fileOpen" Header="_Open..." InputGestureText="Ctrl+O" Command="{Binding FileOpenCommand}"/>
-                <MenuItem x:Name="fileSave" Header="_Save..." InputGestureText="Ctrl+S" Command="{Binding FileSaveCommand}"/>
-                <MenuItem x:Name="fileSaveAs" Header="Save _As..." InputGestureText="" Command="{Binding FileSaveAsCommand}"/>
+                <MenuItem Header="_Open..." InputGestureText="Ctrl+O" Command="{Binding FileOpenCommand}"/>
+                <MenuItem Header="_Save..." InputGestureText="Ctrl+S" Command="{Binding FileSaveCommand}"/>
+                <MenuItem Header="Save _As..." InputGestureText="" Command="{Binding FileSaveAsCommand}"/>
                 <Separator/>
-                <MenuItem x:Name="fileExit" Header="E_xit" InputGestureText="Alt+F4" Command="{Binding FileExitCommand}"/>
+                <MenuItem Header="E_xit" InputGestureText="Alt+F4" Command="{Binding FileExitCommand}"/>
             </MenuItem>
             <MenuItem Header="_Edit">
-                <MenuItem x:Name="editUndo" Header="_Undo" InputGestureText="Ctrl+Z" Command="{Binding EditUndoCommand}"/>
-                <MenuItem x:Name="editRedo" Header="_Redo" InputGestureText="Ctrl+Y" Command="{Binding EditRedoCommand}"/>
+                <MenuItem Header="_Undo" InputGestureText="Ctrl+Z" Command="{Binding EditUndoCommand}"/>
+                <MenuItem Header="_Redo" InputGestureText="Ctrl+Y" Command="{Binding EditRedoCommand}"/>
                 <Separator/>
-                <MenuItem x:Name="editCut" Header="Cu_t" InputGestureText="Ctrl+X" Command="{Binding EditCutCommand}"/>
-                <MenuItem x:Name="editCopy" Header="_Copy" InputGestureText="Ctrl+C" Command="{Binding EditCopyCommand}"/>
-                <MenuItem x:Name="editPaste" Header="_Paste" InputGestureText="Ctrl+V" Command="{Binding EditPasteCommand}"/>
-                <MenuItem x:Name="editDelete" Header="_Delete" InputGestureText="Del" Command="{Binding EditDeleteCommand}"/>
+                <MenuItem Header="Cu_t" InputGestureText="Ctrl+X" Command="{Binding EditCutCommand}"/>
+                <MenuItem Header="_Copy" InputGestureText="Ctrl+C" Command="{Binding EditCopyCommand}"/>
+                <MenuItem Header="_Paste" InputGestureText="Ctrl+V" Command="{Binding EditPasteCommand}"/>
+                <MenuItem Header="_Delete" InputGestureText="Del" Command="{Binding EditDeleteCommand}"/>
                 <Separator/>
-                <MenuItem x:Name="editSelectAll" Header="Select _All" InputGestureText="Ctrl+A" Command="{Binding EditSelectAllCommand}"/>
+                <MenuItem Header="Select _All" InputGestureText="Ctrl+A" Command="{Binding EditSelectAllCommand}"/>
                 <Separator/>
                 <MenuItem Header="Text A_lignment">
-                    <MenuItem x:Name="editAlignLeftBottom" Header="Le_ft-Bottom" InputGestureText="Ctrl+1" Command="{Binding EditAlignLeftBottomCommand}"/>
-                    <MenuItem x:Name="editAlignBottom" Header="_Bottom" InputGestureText="Ctrl+2" Command="{Binding EditAlignBottomCommand}"/>
-                    <MenuItem x:Name="editAlignRightBottom" Header="Ri_ght-Bottom" InputGestureText="Ctrl+3" Command="{Binding EditAlignRightBottomCommand}"/>
-                    <MenuItem x:Name="editAlignLeft" Header="_Left" InputGestureText="Ctrl+4" Command="{Binding EditAlignLeftCommand}"/>
-                    <MenuItem x:Name="editAlignCenterCenter" Header="Ce_nter-Center" InputGestureText="Ctrl+5" Command="{Binding EditAlignCenterCenterCommand}"/>
-                    <MenuItem x:Name="editAlignRight" Header="_Right" InputGestureText="Ctrl+6" Command="{Binding EditAlignRightCommand}"/>
-                    <MenuItem x:Name="editAlignLeftTop" Header="Left-To_p" InputGestureText="Ctrl+7" Command="{Binding EditAlignLeftTopCommand}"/>
-                    <MenuItem x:Name="editAlignTop" Header="_Top" InputGestureText="Ctrl+8" Command="{Binding EditAlignTopCommand}"/>
-                    <MenuItem x:Name="editAlignRightTop" Header="Rig_ht-Top" InputGestureText="Ctrl+9" Command="{Binding EditAlignRightTopCommand}"/>
+                    <MenuItem Header="Le_ft-Bottom" InputGestureText="Ctrl+1" Command="{Binding EditAlignLeftBottomCommand}"/>
+                    <MenuItem Header="_Bottom" InputGestureText="Ctrl+2" Command="{Binding EditAlignBottomCommand}"/>
+                    <MenuItem Header="Ri_ght-Bottom" InputGestureText="Ctrl+3" Command="{Binding EditAlignRightBottomCommand}"/>
+                    <MenuItem Header="_Left" InputGestureText="Ctrl+4" Command="{Binding EditAlignLeftCommand}"/>
+                    <MenuItem Header="Ce_nter-Center" InputGestureText="Ctrl+5" Command="{Binding EditAlignCenterCenterCommand}"/>
+                    <MenuItem Header="_Right" InputGestureText="Ctrl+6" Command="{Binding EditAlignRightCommand}"/>
+                    <MenuItem Header="Left-To_p" InputGestureText="Ctrl+7" Command="{Binding EditAlignLeftTopCommand}"/>
+                    <MenuItem Header="_Top" InputGestureText="Ctrl+8" Command="{Binding EditAlignTopCommand}"/>
+                    <MenuItem Header="Rig_ht-Top" InputGestureText="Ctrl+9" Command="{Binding EditAlignRightTopCommand}"/>
                 </MenuItem>
                 <Separator/>
-                <MenuItem x:Name="editIncreaseTextSize" Header="_Increase Text Size" InputGestureText="Ctrl++" Command="{Binding EditIncreaseTextSizeCommand}"/>
-                <MenuItem x:Name="editDecreaseTextSize" Header="Decrease Te_xt Size" InputGestureText="Ctrl+-" Command="{Binding EditDecreaseTextSizeCommand}"/>
+                <MenuItem Header="_Increase Text Size" InputGestureText="Ctrl++" Command="{Binding EditIncreaseTextSizeCommand}"/>
+                <MenuItem Header="Decrease Te_xt Size" InputGestureText="Ctrl+-" Command="{Binding EditDecreaseTextSizeCommand}"/>
                 <Separator/>
-                <MenuItem x:Name="editToggleFill" Header="Toggle _Fill" InputGestureText="F" Command="{Binding EditToggleFillCommand}"/>
+                <MenuItem Header="Toggle _Fill" InputGestureText="F" Command="{Binding EditToggleFillCommand}"/>
                 <Separator/>
-                <MenuItem x:Name="editToggleSnap" Header="Toggle Snap to _Grid" InputGestureText="G" Command="{Binding EditToggleSnapCommand}"/>
+                <MenuItem Header="Toggle Snap to _Grid" InputGestureText="G" Command="{Binding EditToggleSnapCommand}"/>
                 <Separator/>
-                <MenuItem x:Name="editToggleInvertStart" Header="Toggle Invert Wire _Start" InputGestureText="[" Command="{Binding EditToggleInvertStartCommand}"/>
-                <MenuItem x:Name="editToggleInvertEnd" Header="Toggle Invert Wire _End" InputGestureText="]" Command="{Binding EditToggleInvertEndCommand}"/>
+                <MenuItem Header="Toggle Invert Wire _Start" InputGestureText="[" Command="{Binding EditToggleInvertStartCommand}"/>
+                <MenuItem Header="Toggle Invert Wire _End" InputGestureText="]" Command="{Binding EditToggleInvertEndCommand}"/>
                 <Separator/>
-                <MenuItem x:Name="editCancel" Header="Ca_ncel" InputGestureText="Esc" Command="{Binding EditCancelCommand}"/>
+                <MenuItem Header="Ca_ncel" InputGestureText="Esc" Command="{Binding EditCancelCommand}"/>
             </MenuItem>
             <MenuItem Header="_Tool">
                 <MenuItem x:Name="toolNone" Header="_None" InputGestureText="N" Command="{Binding ToolNoneCommand}"/>
@@ -130,12 +132,25 @@
                 <MenuItem x:Name="toolText" Header="_Text" InputGestureText="T" Command="{Binding ToolTextCommand}"/>
             </MenuItem>
             <MenuItem Header="_Block">
-                <MenuItem x:Name="blockExportBlock" Header="_Export Block..." InputGestureText="B" Command="{Binding BlockExportBlockCommand}"/>
+                <MenuItem Header="I_nsert" ItemsSource="{Binding Blocks}">
+                    <MenuItem.ItemContainerStyle>
+                        <Style TargetType="MenuItem">
+                            <Setter Property="Header" Value="{Binding Name}"/>
+                            <Setter Property="Command" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=DataContext.InsertBlockCommand}"/>
+                            <Setter Property="CommandParameter" Value="{Binding}"/>
+                        </Style>
+                    </MenuItem.ItemContainerStyle>
+                </MenuItem>
                 <Separator/>
-                <MenuItem x:Name="blockCreateCode" Header="Create _Project..." InputGestureText="Ctrl+B" Command="{Binding BlockCreateCodeCommand}"/>
+                <MenuItem Header="_Import..." InputGestureText="Ctrl+Shift+B" Command="{Binding BlockImportCommand}"/>
+                <MenuItem Header="Import From _Code..." InputGestureText="Shift+Alt+B" Command="{Binding BlockImportCodeCommand}"/>
+                <Separator/>
+                <MenuItem Header="_Export..." InputGestureText="B" Command="{Binding BlockExportCommand}"/>
+                <Separator/>
+                <MenuItem  Header="Create _Project..." InputGestureText="Ctrl+B" Command="{Binding BlockCreateProjectCommand}"/>
             </MenuItem>
             <MenuItem Header="Te_mplate">
-                <MenuItem Header="_Page" ItemsSource="{Binding Templates}">
+                <MenuItem Header="_Apply" ItemsSource="{Binding Templates}">
                     <MenuItem.ItemContainerStyle>
                         <Style TargetType="MenuItem">
                             <Setter Property="Header" Value="{Binding Name}"/>
@@ -145,20 +160,20 @@
                     </MenuItem.ItemContainerStyle>
                 </MenuItem>
                 <Separator/>
-                <MenuItem x:Name="templateImport" Header="_Import..." InputGestureText="Ctrl+Shift+I" Command="{Binding TemplateImportCommand}"/>
-                <MenuItem x:Name="templateImportCode" Header="Import From Code..." InputGestureText="Ctrl+Alt+I" Command="{Binding TemplateImportCodeCommand}"/>
+                <MenuItem Header="_Import..." InputGestureText="Ctrl+Shift+T" Command="{Binding TemplateImportCommand}"/>
+                <MenuItem Header="Import From _Code..." InputGestureText="Shift+Alt+T" Command="{Binding TemplateImportCodeCommand}"/>
                 <Separator/>
-                <MenuItem x:Name="templateExport" Header="_Export..." InputGestureText="Ctrl+Shift+E" Command="{Binding TemplateExportCommand}"/>
+                <MenuItem Header="_Export..." InputGestureText="Ctrl+T" Command="{Binding TemplateExportCommand}"/>
             </MenuItem>
             <MenuItem Header="_Simulation">
-                <MenuItem x:Name="simulationStart" Header="_Start" InputGestureText="F5" Command="{Binding SimulationStartCommand}"/>
-                <MenuItem x:Name="simulationStop" Header="S_top" InputGestureText="F6" Command="{Binding SimulationStopCommand}"/>
+                <MenuItem Header="_Start" InputGestureText="F5" Command="{Binding SimulationStartCommand}"/>
+                <MenuItem Header="S_top" InputGestureText="F6" Command="{Binding SimulationStopCommand}"/>
                 <Separator/>
-                <MenuItem x:Name="simulationRestart" Header="_Restart" InputGestureText="F7" Command="{Binding SimulationRestartCommand}"/>
+                <MenuItem Header="_Restart" InputGestureText="F7" Command="{Binding SimulationRestartCommand}"/>
                 <Separator/>
-                <MenuItem x:Name="simulationCreateGraph" Header="Create _Graph..." InputGestureText="F8" Command="{Binding SimulationCreateGraphCommand}"/>
+                <MenuItem Header="Create _Graph..." InputGestureText="F8" Command="{Binding SimulationCreateGraphCommand}"/>
                 <Separator/>
-                <MenuItem x:Name="simulationOptions" Header="_Options..." InputGestureText="F9" Command="{Binding SimulationOptionsCommand}"/>
+                <MenuItem Header="_Options..." InputGestureText="F9" Command="{Binding SimulationOptionsCommand}"/>
             </MenuItem>
         </Menu>
         <ListBox x:Name="blocks" 

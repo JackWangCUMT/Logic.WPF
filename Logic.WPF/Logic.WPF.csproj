@@ -80,11 +80,13 @@
     </ApplicationDefinition>
     <Compile Include="Simulation\BoolSimulationFactory.cs" />
     <Compile Include="Serialization\Bson.cs" />
+    <Compile Include="Util\CSharpCodeImporter.cs" />
     <Compile Include="Util\GridFactory.cs" />
     <Compile Include="Templates\LogicPageTemplate.cs" />
     <Compile Include="Templates\ScratchpadPageTemplate.cs" />
     <Compile Include="Util\CSharpProjectCreator.cs" />
-    <Compile Include="Util\CodeTemplates.cs" />
+    <Compile Include="Util\Parts\BlockPart.cs" />
+    <Compile Include="Util\Parts\TemplatePart.cs" />
     <Compile Include="Util\ViewModel.cs" />
     <Compile Include="ViewModels\CodeViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />

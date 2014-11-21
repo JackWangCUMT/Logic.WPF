@@ -15,23 +15,13 @@ using System.Threading.Tasks;
 
 namespace Logic.WPF.Util
 {
-    public class CodeTemplates
+    public class CSharpCodeImporter
     {
-        public class Imports
+        public static PortableExecutableReference[] GetReferences()
         {
-            [ImportMany(typeof(ITemplate))]
-            public IList<ITemplate> Templates { get; set; }
-        }
-
-        public static IList<ITemplate> Import(string csharp)
-        {
-            var sw = Stopwatch.StartNew();
-
-            var imports = new Imports() { Templates = new List<ITemplate>() };
-
             var assemblyPath = System.IO.Path.GetDirectoryName(typeof(object).Assembly.Location);
             var executingPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var references = new[] 
+            return new[]
             {
                 MetadataReference.CreateFromFile(System.IO.Path.Combine(assemblyPath, "mscorlib.dll")),
                 MetadataReference.CreateFromFile(System.IO.Path.Combine(assemblyPath, "System.dll")),
@@ -39,7 +29,25 @@ namespace Logic.WPF.Util
                 MetadataReference.CreateFromFile(System.IO.Path.Combine(executingPath, "Logic.Core.dll")),
                 MetadataReference.CreateFromFile((Assembly.GetEntryAssembly().Location))
             };
+        }
 
+        public static void Compose<T>(Assembly assembly, object part)
+        {
+            var builder = new RegistrationBuilder();
+            builder.ForTypesDerivedFrom<T>().Export<T>();
+
+            var catalog = new AggregateCatalog();
+            catalog.Catalogs.Add(new AssemblyCatalog(assembly, builder));
+
+            var container = new CompositionContainer(catalog);
+            container.ComposeParts(part);
+        }
+
+        public static bool Import<T>(string csharp, object part)
+        {
+            var sw = Stopwatch.StartNew();
+
+            var references = GetReferences();
             var syntaxTree = CSharpSyntaxTree.ParseText(csharp);
             var compilation = CSharpCompilation.Create(
                 "Imports",
@@ -47,28 +55,23 @@ namespace Logic.WPF.Util
                 references,
                 new CSharpCompilationOptions(
                     outputKind: OutputKind.DynamicallyLinkedLibrary,
-                    assemblyIdentityComparer : DesktopAssemblyIdentityComparer.Default));
+                    assemblyIdentityComparer: DesktopAssemblyIdentityComparer.Default));
 
             using (var ms = new System.IO.MemoryStream())
             {
                 var result = compilation.Emit(ms);
                 if (result.Success)
                 {
-                    var assembly = Assembly.Load(ms.GetBuffer());
+                    Assembly assembly = Assembly.Load(ms.GetBuffer());
+                    if (assembly != null)
+                    {
+                        Compose<T>(assembly, part);
 
-                    var builder = new RegistrationBuilder();
-                    builder.ForTypesDerivedFrom<ITemplate>().Export<ITemplate>();
+                        sw.Stop();
+                        Log.LogInformation("Roslyn code import: " + sw.Elapsed.TotalMilliseconds + "ms");
 
-                    var catalog = new AggregateCatalog();
-                    catalog.Catalogs.Add(new AssemblyCatalog(assembly, builder));
-
-                    var container = new CompositionContainer(catalog);
-                    container.ComposeParts(imports);
-
-                    sw.Stop();
-                    Log.LogInformation("Roslyn code import: " + sw.Elapsed.TotalMilliseconds + "ms");
-
-                    return imports.Templates;
+                        return true;
+                    }
                 }
                 else
                 {
@@ -79,8 +82,7 @@ namespace Logic.WPF.Util
                     }
                 }
             }
-
-            return null;
+            return false;
         }
     }
 }

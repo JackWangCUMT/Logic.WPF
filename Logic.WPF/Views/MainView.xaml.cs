@@ -6,6 +6,7 @@ using Logic.WPF.Serialization;
 using Logic.WPF.Simulation;
 using Logic.WPF.Templates;
 using Logic.WPF.Util;
+using Logic.WPF.Util.Parts;
 using Logic.WPF.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -245,12 +246,31 @@ namespace Logic.WPF.Views
                 (parameter) => this.SetToolText(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.BlockExportBlockCommand = new Command(
-                (parameter) => this.Block(), 
+            Model.BlockImportCommand = new Command(
+                (parameter) => this.ImportBlock(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.BlockCreateCodeCommand = new Command(
-                (parameter) => this.Code(), 
+            Model.BlockImportCodeCommand = new Command(
+                (parameter) => this.ImportBlocksFromCode(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.BlockExportCommand = new Command(
+                (parameter) => this.ExportBlock(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.BlockCreateProjectCommand = new Command(
+                (parameter) => this.CreateProject(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.InsertBlockCommand = new Command(
+                (parameter) =>
+                {
+                    XBlock block = parameter as XBlock;
+                    if (block != null)
+                    {
+                        InsertBlock(block, 0.0, 0.0);
+                    }
+                },
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.TemplateImportCommand = new Command(
@@ -271,9 +291,7 @@ namespace Logic.WPF.Views
                     ITemplate template = parameter as ITemplate;
                     if (template != null)
                     {
-                        ApplyPageTemplate(template, _renderer);
-                        _template = template;
-                        InvalidatePageTemplate();
+                        ApplyTemplate(template, _renderer);
                     }
                 },
                 (parameter) => IsSimulationRunning() ? false : true);
@@ -331,8 +349,7 @@ namespace Logic.WPF.Views
             pageView.overlayLayer.Renderer = _renderer;
 
             // template
-            _template = new LogicPageTemplate();
-            ApplyPageTemplate(_template, _renderer);
+            ApplyTemplate(new LogicPageTemplate(), _renderer);
 
             // history
             pageView.editorLayer.History = new History<XPage>();
@@ -371,15 +388,9 @@ namespace Logic.WPF.Views
                         XBlock block = e.Data.GetData("Block") as XBlock;
                         if (block != null)
                         {
-                            pageView.editorLayer.History.Snapshot(
-                                pageView.editorLayer.Layers.ToPage("Page", null));
                             Point point = e.GetPosition(pageView.editorLayer);
-                            XBlock copy = pageView.editorLayer.Insert(block, point.X, point.Y);
-                            if (copy != null)
-                            {
-                                pageView.editorLayer.Connect(copy);
-                                e.Handled = true;
-                            }
+                            InsertBlock(block, point.X, point.Y);
+                            e.Handled = true;
                         }
                     }
                     catch (Exception ex)
@@ -752,46 +763,35 @@ namespace Logic.WPF.Views
 
         #region Block
 
-        private void Block()
+        private void InsertBlock(XBlock block, double x, double y)
         {
-            var block = pageView.editorLayer.CreateBlockFromSelected("Block");
-            if (block != null)
+            pageView.editorLayer.History.Snapshot(
+                pageView.editorLayer.Layers.ToPage("Page", null));
+            XBlock copy = pageView.editorLayer.Insert(block, x, y);
+            if (copy != null)
             {
-                var dlg = new Microsoft.Win32.SaveFileDialog()
-                {
-                    Filter = "Json (*.json)|*.json",
-                    FileName = "block"
-                };
+                pageView.editorLayer.Connect(copy);
+            }
+        }
 
-                if (dlg.ShowDialog(this) == true)
+        private void ImportBlock()
+        {
+            var dlg = new Microsoft.Win32.OpenFileDialog()
+            {
+                Filter = "Json (*.json)|*.json"
+            };
+
+            if (dlg.ShowDialog(this) == true)
+            {
+                var block = OpenBlock(dlg.FileName);
+                if (block != null)
                 {
-                    var path = dlg.FileName;
-                    Block(block, path);
-                    System.Diagnostics.Process.Start("notepad", path);
+                    Model.Blocks.Add(block);
                 }
             }
         }
 
-        private void Block(XBlock block, string path)
-        {
-            try
-            {
-                var json = _serializer.Serialize(block);
-                using (var fs = System.IO.File.CreateText(path))
-                {
-                    fs.Write(json);
-                };
-            }
-            catch (Exception ex)
-            {
-                Log.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
-            }
-        }
-
-        private void Code()
+        private void CreateProject()
         {
             var block = pageView.editorLayer.CreateBlockFromSelected("Block");
             if (block == null)
@@ -852,9 +852,141 @@ namespace Logic.WPF.Views
             view.ShowDialog();
         }
 
+        private void ImportBlocksFromCode()
+        {
+            var dlg = new Microsoft.Win32.OpenFileDialog()
+            {
+                Filter = "CSharp (*.cs)|*.cs",
+                Multiselect = true
+            };
+
+            if (dlg.ShowDialog(this) == true)
+            {
+                ImportBlocksFromCode(dlg.FileNames);
+            }
+        }
+
+        private void ImportBlocksFromCode(string[] paths)
+        {
+            try
+            {
+                foreach (var path in paths)
+                {
+                    using (var fs = System.IO.File.OpenText(path))
+                    {
+                        var csharp = fs.ReadToEnd();
+                        if (!string.IsNullOrEmpty(csharp))
+                        {
+                            ImportBlocks(csharp);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.LogError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
+            }
+        }
+
+        private void ImportBlocks(string csharp)
+        {
+            var part = new BlockPart() { Blocks = new List<XBlock>() };
+            bool result = CSharpCodeImporter.Import<XBlock>(csharp, part);
+            if (result == true)
+            {
+                foreach (var block in part.Blocks)
+                {
+                    Model.Blocks.Add(block);
+                }
+            }
+        }
+
+        private XBlock OpenBlock(string path)
+        {
+            try
+            {
+                using (var fs = System.IO.File.OpenText(path))
+                {
+                    var json = fs.ReadToEnd();
+                    var block = _serializer.Deserialize<XBlock>(json);
+                    return block;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.LogError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
+            }
+            return null;
+        }
+
+        private void ExportBlock()
+        {
+            var block = pageView.editorLayer.CreateBlockFromSelected("Block");
+            if (block != null)
+            {
+                var dlg = new Microsoft.Win32.SaveFileDialog()
+                {
+                    Filter = "Json (*.json)|*.json",
+                    FileName = "block"
+                };
+
+                if (dlg.ShowDialog(this) == true)
+                {
+                    var path = dlg.FileName;
+                    SaveBlock(block, path);
+                    System.Diagnostics.Process.Start("notepad", path);
+                }
+            }
+        }
+
+        private void SaveBlock(XBlock block, string path)
+        {
+            try
+            {
+                var json = _serializer.Serialize(block);
+                using (var fs = System.IO.File.CreateText(path))
+                {
+                    fs.Write(json);
+                };
+            }
+            catch (Exception ex)
+            {
+                Log.LogError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
+            }
+        }
+
         #endregion
 
         #region Template
+
+        private void ApplyTemplate(ITemplate template, IRenderer renderer)
+        {
+            pageView.Width = template.Width;
+            pageView.Height = template.Height;
+
+            pageView.gridView.Container = template.Grid;
+            pageView.tableView.Container = template.Table;
+            pageView.frameView.Container = template.Frame;
+
+            pageView.gridView.Renderer = renderer;
+            pageView.tableView.Renderer = renderer;
+            pageView.frameView.Renderer = renderer;
+
+            _template = template;
+
+            pageView.gridView.InvalidateVisual();
+            pageView.tableView.InvalidateVisual();
+            pageView.frameView.InvalidateVisual();
+        }
 
         private void ImportTemplate()
         {
@@ -866,9 +998,10 @@ namespace Logic.WPF.Views
             if (dlg.ShowDialog(this) == true)
             {
                 var template = OpenTemplate(dlg.FileName);
-                ApplyPageTemplate(template, _renderer);
-                _template = template;
-                InvalidatePageTemplate();
+                if (template != null)
+                {
+                    Model.Templates.Add(template);
+                }
             }
         }
 
@@ -895,13 +1028,9 @@ namespace Logic.WPF.Views
                     using (var fs = System.IO.File.OpenText(path))
                     {
                         var csharp = fs.ReadToEnd();
-                        var templates = CodeTemplates.Import(csharp);
-                        if (templates != null)
+                        if (!string.IsNullOrEmpty(csharp))
                         {
-                            foreach (var template in templates)
-                            {
-                                Model.Templates.Add(template);
-                            }
+                            ImportTemplates(csharp);
                         }
                     }
                 }
@@ -915,39 +1044,16 @@ namespace Logic.WPF.Views
             }
         }
 
-        private void ExportTemplate()
+        private void ImportTemplates(string csharp)
         {
-            var dlg = new Microsoft.Win32.SaveFileDialog()
+            var part = new TemplatePart() { Templates = new List<ITemplate>() };
+            bool result = CSharpCodeImporter.Import<ITemplate>(csharp, part);
+            if (result == true)
             {
-                Filter = "Json (*.json)|*.json",
-                FileName = _template.Name
-            };
-
-            if (dlg.ShowDialog(this) == true)
-            {
-                var template = new XTemplate()
+                foreach (var template in part.Templates)
                 {
-                    Width = _template.Width,
-                    Height = _template.Height,
-                    Name = _template.Name,
-                    Grid = new XContainer()
-                    {
-                        Styles = new List<IStyle>(_template.Grid.Styles),
-                        Shapes = new List<IShape>(_template.Grid.Shapes)
-                    },
-                    Table = new XContainer()
-                    {
-                        Styles = new List<IStyle>(_template.Table.Styles),
-                        Shapes = new List<IShape>(_template.Table.Shapes)
-                    },
-                    Frame = new XContainer()
-                    {
-                        Styles = new List<IStyle>(_template.Frame.Styles),
-                        Shapes = new List<IShape>(_template.Frame.Shapes)
-                    }
-                };
-
-                SaveTemplate(dlg.FileName, template);
+                    Model.Templates.Add(template);
+                }
             }
         }
 
@@ -972,6 +1078,48 @@ namespace Logic.WPF.Views
             return null;
         }
 
+        private void ExportTemplate()
+        {
+            var dlg = new Microsoft.Win32.SaveFileDialog()
+            {
+                Filter = "Json (*.json)|*.json",
+                FileName = _template.Name
+            };
+
+            if (dlg.ShowDialog(this) == true)
+            {
+                var template = CreateTemplate(_template);
+                var path = dlg.FileName;
+                SaveTemplate(path, template);
+                System.Diagnostics.Process.Start("notepad", path);
+            }
+        }
+
+        private XTemplate CreateTemplate(ITemplate template)
+        {
+            return new XTemplate()
+            {
+                Width = template.Width,
+                Height = template.Height,
+                Name = template.Name,
+                Grid = new XContainer()
+                {
+                    Styles = new List<IStyle>(template.Grid.Styles),
+                    Shapes = new List<IShape>(template.Grid.Shapes)
+                },
+                Table = new XContainer()
+                {
+                    Styles = new List<IStyle>(template.Table.Styles),
+                    Shapes = new List<IShape>(template.Table.Shapes)
+                },
+                Frame = new XContainer()
+                {
+                    Styles = new List<IStyle>(template.Frame.Styles),
+                    Shapes = new List<IShape>(template.Frame.Shapes)
+                }
+            };
+        }
+
         private void SaveTemplate(string path, ITemplate template)
         {
             try
@@ -989,27 +1137,6 @@ namespace Logic.WPF.Views
                     Environment.NewLine,
                     ex.StackTrace);
             }
-        }
-
-        private void ApplyPageTemplate(ITemplate template, IRenderer renderer)
-        {
-            pageView.Width = template.Width;
-            pageView.Height = template.Height;
-
-            pageView.gridView.Container = template.Grid;
-            pageView.tableView.Container = template.Table;
-            pageView.frameView.Container = template.Frame;
-
-            pageView.gridView.Renderer = renderer;
-            pageView.tableView.Renderer = renderer;
-            pageView.frameView.Renderer = renderer;
-        }
-
-        private void InvalidatePageTemplate()
-        {
-            pageView.gridView.InvalidateVisual();
-            pageView.tableView.InvalidateVisual();
-            pageView.frameView.InvalidateVisual();
         }
 
         #endregion
