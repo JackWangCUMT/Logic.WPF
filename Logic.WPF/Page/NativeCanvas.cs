@@ -554,7 +554,7 @@ namespace Logic.WPF.Page
             _mode = Mode.None;
         }
 
-        private void Move(Point p)
+        public void Move(Point p)
         {
             double x = EnableSnap ? Snap(p.X, SnapSize) : p.X;
             double y = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
@@ -567,11 +567,21 @@ namespace Logic.WPF.Page
 
             if (Renderer.Selected != null)
             {
-                MoveSelected(dx, dy);
+                MoveSelected(Renderer.Selected, dx, dy);
             }
             else
             {
                 MoveElement(dx, dy);
+            }
+        }
+
+        public void Move(ICollection<IShape> shapes, double dx, double dy)
+        {
+            if (Renderer.Selected != null)
+            {
+                double x = EnableSnap ? Snap(dx, SnapSize) : dx;
+                double y = EnableSnap ? Snap(dy, SnapSize) : dy;
+                MoveSelected(shapes, x, y);
             }
         }
 
@@ -632,9 +642,9 @@ namespace Logic.WPF.Page
             }
         }
 
-        private void MoveSelected(double dx, double dy)
+        public void MoveSelected(ICollection<IShape> shapes, double dx, double dy)
         {
-            foreach (var shape in Renderer.Selected)
+            foreach (var shape in shapes)
             {
                 if (shape is XLine)
                 {
@@ -2595,10 +2605,31 @@ namespace Logic.WPF.Page
             }
         }
 
+        public bool CanCopy()
+        {
+            return Renderer.Selected != null
+                && Renderer.Selected.Count > 0;
+        }
+
+        public bool CanPaste()
+        {
+            try
+            {
+                return Clipboard.ContainsText(TextDataFormat.UnicodeText);
+            }
+            catch (Exception ex)
+            {
+                Log.LogError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
+            }
+            return false;
+        }
+
         public void Cut()
         {
-            if (Renderer.Selected != null
-                && Renderer.Selected.Count > 0)
+            if (CanCopy())
             {
                 CopyToClipboard(Renderer.Selected.ToList());
                 SelectionDelete();
@@ -2607,8 +2638,7 @@ namespace Logic.WPF.Page
 
         public void Copy()
         {
-            if (Renderer.Selected != null
-                && Renderer.Selected.Count > 0)
+            if (CanCopy())
             {
                 CopyToClipboard(Renderer.Selected.ToList());
             }
@@ -2618,7 +2648,7 @@ namespace Logic.WPF.Page
         {
             try
             {
-                if (Clipboard.ContainsText(TextDataFormat.UnicodeText))
+                if (CanPaste())
                 {
                     var json = Clipboard.GetText(TextDataFormat.UnicodeText);
                     if (!string.IsNullOrEmpty(json))

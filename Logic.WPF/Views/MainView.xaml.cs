@@ -46,6 +46,7 @@ namespace Logic.WPF.Views
         private IRenderer _renderer;
         private ITemplate _template;
         private Point _dragStartPoint;
+        private bool _isContextMenu = false;
         private System.Threading.Timer _timer = null;
         private Clock _clock = null;
 
@@ -131,16 +132,28 @@ namespace Logic.WPF.Views
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditCutCommand = new Command(
-                (parameter) => this.Cut(), 
-                (parameter) => IsSimulationRunning() ? false : true);
+                (parameter) => this.Cut(),
+                (parameter) => 
+                {
+                    return IsSimulationRunning()
+                        || !pageView.editorLayer.CanCopy() ? false : true;
+                });
 
             Model.EditCopyCommand = new Command(
-                (parameter) => this.Copy(), 
-                (parameter) => IsSimulationRunning() ? false : true);
+                (parameter) => this.Copy(),
+                (parameter) =>
+                {
+                    return IsSimulationRunning()
+                        || !pageView.editorLayer.CanCopy() ? false : true;
+                });
 
             Model.EditPasteCommand = new Command(
-                (parameter) => this.Paste(), 
-                (parameter) => IsSimulationRunning() ? false : true);
+                (parameter) => this.Paste(),
+                (parameter) =>
+                {
+                    return IsSimulationRunning()
+                        || !pageView.editorLayer.CanPaste() ? false : true;
+                });
 
             Model.EditDeleteCommand = new Command(
                 (parameter) => this.Delete(), 
@@ -268,10 +281,9 @@ namespace Logic.WPF.Views
                     XBlock block = parameter as XBlock;
                     if (block != null)
                     {
-                        InsertBlock(
-                            block, 
-                            pageView.editorLayer.RightX, 
-                            pageView.editorLayer.RightY);
+                        double x = _isContextMenu ? pageView.editorLayer.RightX : 0.0;
+                        double y = _isContextMenu ? pageView.editorLayer.RightY : 0.0;
+                        InsertBlock(block, x, y);
                     }
                 },
                 (parameter) => IsSimulationRunning() ? false : true);
@@ -440,12 +452,20 @@ namespace Logic.WPF.Views
                 {
                     e.Handled = true;
                 }
-
-                if (pageView.editorLayer.SkipContextMenu == true)
+                else if (pageView.editorLayer.SkipContextMenu == true)
                 {
                     pageView.editorLayer.SkipContextMenu = false;
                     e.Handled = true;
                 }
+                else
+                {
+                    _isContextMenu = true;
+                }
+            };
+
+            pageView.ContextMenuClosing += (s, e) =>
+            {
+                _isContextMenu = false;
             };
         }
 
@@ -616,6 +636,13 @@ namespace Logic.WPF.Views
         private void Paste()
         {
             pageView.editorLayer.Paste();
+            //if (_isContextMenu && _renderer.Selected != null)
+            //{
+            //    pageView.editorLayer.Move(
+            //        _renderer.Selected,
+            //        pageView.editorLayer.RightX,
+            //        pageView.editorLayer.RightY);
+            //}
         }
 
         private void Delete()
