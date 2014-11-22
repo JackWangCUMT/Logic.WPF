@@ -2,6 +2,7 @@
 using Logic.Simulation;
 using Logic.WPF.Serialization;
 using Logic.WPF.Util;
+using Logic.WPF.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -23,7 +24,7 @@ namespace Logic.WPF.Page
         public IList<IShape> Shapes { get; set; }
         public ICollection<IShape> Hidden { get; set; }
         public IDictionary<XBlock, BoolSimulation> Simulations { get; set; }
-        public Tool CurrentTool { get; set; }
+        public ToolMenuModel Tool { get; set; }
         public bool EnableSnap { get; set; }
         public double SnapSize { get; set; }
         public IRenderer Renderer { get; set; } 
@@ -33,18 +34,6 @@ namespace Logic.WPF.Page
         #endregion
 
         #region Enums
-
-        public enum Tool
-        {
-            None,
-            Selection,
-            Line,
-            Ellipse,
-            Rectangle,
-            Text,
-            Wire,
-            Pin
-        }
 
         public enum Mode
         {
@@ -189,23 +178,23 @@ namespace Logic.WPF.Page
                                 return;
                             }
 
-                            switch (CurrentTool)
+                            switch (Tool.CurrentTool)
                             {
-                                case Tool.None:
+                                case ToolMenuModel.Tool.None:
                                     SelectionReset();
                                     break;
-                                case Tool.Selection:
+                                case ToolMenuModel.Tool.Selection:
                                     SelectionInit(e.GetPosition(this));
                                     break;
-                                case Tool.Line:
-                                case Tool.Ellipse:
-                                case Tool.Rectangle:
-                                case Tool.Text:
-                                case Tool.Pin:
+                                case ToolMenuModel.Tool.Line:
+                                case ToolMenuModel.Tool.Ellipse:
+                                case ToolMenuModel.Tool.Rectangle:
+                                case ToolMenuModel.Tool.Text:
+                                case ToolMenuModel.Tool.Pin:
                                     SelectionReset();
                                     CreateInit(e.GetPosition(this));
                                     break;
-                                case Tool.Wire:
+                                case ToolMenuModel.Tool.Wire:
                                     SelectionReset();
                                     CreateWireInit(e.GetPosition(this));
                                     break;
@@ -217,18 +206,18 @@ namespace Logic.WPF.Page
                     case Mode.Create:
                         if (IsMouseCaptured)
                         {
-                            switch (CurrentTool)
+                            switch (Tool.CurrentTool)
                             {
-                                case Tool.None:
+                                case ToolMenuModel.Tool.None:
                                     break;
-                                case Tool.Line:
-                                case Tool.Ellipse:
-                                case Tool.Rectangle:
-                                case Tool.Text:
-                                case Tool.Pin:
+                                case ToolMenuModel.Tool.Line:
+                                case ToolMenuModel.Tool.Ellipse:
+                                case ToolMenuModel.Tool.Rectangle:
+                                case ToolMenuModel.Tool.Text:
+                                case ToolMenuModel.Tool.Pin:
                                     CreateFinish(e.GetPosition(this));
                                     break;
-                                case Tool.Wire:
+                                case ToolMenuModel.Tool.Wire:
                                     CreateWireFinish(e.GetPosition(this));
                                     break;
                             }
@@ -277,7 +266,7 @@ namespace Logic.WPF.Page
 
                 if (_mode != Mode.Move 
                     && _mode != Mode.Selection
-                    && CurrentTool != Tool.None
+                    && Tool.CurrentTool != ToolMenuModel.Tool.None
                     && Renderer.Selected == null
                     && Simulations == null)
                 {
@@ -783,7 +772,7 @@ namespace Logic.WPF.Page
                 else if (shapeHitResult is XPin)
                 {
                     XPin pin = shapeHitResult as XPin;
-                    if (CurrentTool == Tool.Wire)
+                    if (Tool.CurrentTool == ToolMenuModel.Tool.Wire)
                     {
                         Layers.Blocks.Hidden.Add(pin);
                         Layers.Pins.Hidden.Add(pin);
@@ -796,7 +785,7 @@ namespace Logic.WPF.Page
                 }
                 else if (shapeHitResult is XWire)
                 {
-                    if (CurrentTool == Tool.Wire || CurrentTool == Tool.Pin)
+                    if (Tool.CurrentTool == ToolMenuModel.Tool.Wire || Tool.CurrentTool == ToolMenuModel.Tool.Pin)
                     {
                         Layers.Wires.Hidden.Add(wireHitResult);
                         Layers.Wires.InvalidateVisual();
@@ -807,7 +796,7 @@ namespace Logic.WPF.Page
                 }
                 else
                 {
-                    if (CurrentTool == Tool.Wire)
+                    if (Tool.CurrentTool == ToolMenuModel.Tool.Wire)
                     {
                         Layers.Shapes.Hidden.Add(shapeHitResult);
                         Layers.Shapes.InvalidateVisual();
@@ -821,7 +810,7 @@ namespace Logic.WPF.Page
             if (pinHitResult != null)
             {
                 XPin pin = pinHitResult as XPin;
-                if (CurrentTool == Tool.Wire)
+                if (Tool.CurrentTool == ToolMenuModel.Tool.Wire)
                 {
                     Layers.Pins.Hidden.Add(pin);
                     Layers.Blocks.Hidden.Add(pin);
@@ -836,7 +825,7 @@ namespace Logic.WPF.Page
             {
                 if (wireHitResult is XWire)
                 {
-                    if (CurrentTool == Tool.Wire || CurrentTool == Tool.Pin)
+                    if (Tool.CurrentTool == ToolMenuModel.Tool.Wire || Tool.CurrentTool == ToolMenuModel.Tool.Pin)
                     {
                         Layers.Wires.Hidden.Add(wireHitResult);
                         Layers.Wires.InvalidateVisual();
@@ -848,7 +837,7 @@ namespace Logic.WPF.Page
                 else if (wireHitResult is XPin)
                 {
                     XPin pin = wireHitResult as XPin;
-                    if (CurrentTool == Tool.Wire)
+                    if (Tool.CurrentTool == ToolMenuModel.Tool.Wire)
                     {
                         if (pin.Owner == null)
                         {
@@ -871,7 +860,7 @@ namespace Logic.WPF.Page
                 if (blockHitResult is XBlock)
                 {
                     XBlock block = shapeHitResult as XBlock;
-                    if (CurrentTool == Tool.Wire)
+                    if (Tool.CurrentTool == ToolMenuModel.Tool.Wire)
                     {
                         Layers.Blocks.Hidden.Add(block);
                         Layers.Blocks.InvalidateVisual();
@@ -883,7 +872,7 @@ namespace Logic.WPF.Page
                 else if (blockHitResult is XPin)
                 {
                     XPin pin = blockHitResult as XPin;
-                    if (CurrentTool == Tool.Wire)
+                    if (Tool.CurrentTool == ToolMenuModel.Tool.Wire)
                     {
                         Layers.Blocks.Hidden.Add(pin);
                         Layers.Blocks.InvalidateVisual();
@@ -1073,9 +1062,9 @@ namespace Logic.WPF.Page
             double x = EnableSnap ? Snap(p.X, SnapSize) : p.X;
             double y = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
 
-            switch (CurrentTool)
+            switch (Tool.CurrentTool)
             {
-                case Tool.Line:
+                case ToolMenuModel.Tool.Line:
                     {
                         _line = new XLine()
                         {
@@ -1089,7 +1078,7 @@ namespace Logic.WPF.Page
                         InvalidateVisual();
                     }
                     break;
-                case Tool.Ellipse:
+                case ToolMenuModel.Tool.Ellipse:
                     {
                         _startx = x;
                         _starty = y;
@@ -1105,7 +1094,7 @@ namespace Logic.WPF.Page
                         InvalidateVisual();
                     }
                     break;
-                case Tool.Rectangle:
+                case ToolMenuModel.Tool.Rectangle:
                     {
                         _startx = x;
                         _starty = y;
@@ -1121,7 +1110,7 @@ namespace Logic.WPF.Page
                         InvalidateVisual();
                     }
                     break;
-                case Tool.Text:
+                case ToolMenuModel.Tool.Text:
                     {
                         _startx = x;
                         _starty = y;
@@ -1143,7 +1132,7 @@ namespace Logic.WPF.Page
                         InvalidateVisual();
                     }
                     break;
-                case Tool.Wire:
+                case ToolMenuModel.Tool.Wire:
                     {
                         _pin = null;
                         _wire = new XWire()
@@ -1160,7 +1149,7 @@ namespace Logic.WPF.Page
                         InvalidateVisual();
                     }
                     break;
-                case Tool.Pin:
+                case ToolMenuModel.Tool.Pin:
                     {
                         // create new standalone pin
                         _pin = new XPin()
@@ -1185,16 +1174,16 @@ namespace Logic.WPF.Page
             double x = EnableSnap ? Snap(p.X, SnapSize) : p.X;
             double y = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
 
-            switch (CurrentTool)
+            switch (Tool.CurrentTool)
             {
-                case Tool.Line:
+                case ToolMenuModel.Tool.Line:
                     {
                         _line.X2 = x;
                         _line.Y2 = y;
                         InvalidateVisual();
                     }
                     break;
-                case Tool.Ellipse:
+                case ToolMenuModel.Tool.Ellipse:
                     {
                         _ellipse.RadiusX = Math.Abs(x - _startx) / 2.0;
                         _ellipse.RadiusY = Math.Abs(y - _starty) / 2.0;
@@ -1203,7 +1192,7 @@ namespace Logic.WPF.Page
                         InvalidateVisual();
                     }
                     break;
-                case Tool.Rectangle:
+                case ToolMenuModel.Tool.Rectangle:
                     {
                         _rectangle.X = Math.Min(_startx, x);
                         _rectangle.Y = Math.Min(_starty, y);
@@ -1212,7 +1201,7 @@ namespace Logic.WPF.Page
                         InvalidateVisual();
                     }
                     break;
-                case Tool.Text:
+                case ToolMenuModel.Tool.Text:
                     {
                         _text.X = Math.Min(_startx, x);
                         _text.Y = Math.Min(_starty, y);
@@ -1221,14 +1210,14 @@ namespace Logic.WPF.Page
                         InvalidateVisual();
                     }
                     break;
-                case Tool.Wire:
+                case ToolMenuModel.Tool.Wire:
                     {
                         _wire.X2 = x;
                         _wire.Y2 = y;
                         InvalidateVisual();
                     }
                     break;
-                case Tool.Pin:
+                case ToolMenuModel.Tool.Pin:
                     {
                         _pin.X = x;
                         _pin.Y = y;
@@ -1243,9 +1232,9 @@ namespace Logic.WPF.Page
             double x = EnableSnap ? Snap(p.X, SnapSize) : p.X;
             double y = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
 
-            switch (CurrentTool)
+            switch (Tool.CurrentTool)
             {
-                case Tool.Line:
+                case ToolMenuModel.Tool.Line:
                     {
                         _line.X2 = x;
                         _line.Y2 = y;
@@ -1264,7 +1253,7 @@ namespace Logic.WPF.Page
                         InvalidateVisual();
                     }
                     break;
-                case Tool.Ellipse:
+                case ToolMenuModel.Tool.Ellipse:
                     {
                         _ellipse.RadiusX = Math.Abs(x - _startx) / 2.0;
                         _ellipse.RadiusY = Math.Abs(y - _starty) / 2.0;
@@ -1285,7 +1274,7 @@ namespace Logic.WPF.Page
                         InvalidateVisual();
                     }
                     break;
-                case Tool.Rectangle:
+                case ToolMenuModel.Tool.Rectangle:
                     {
                         _rectangle.X = Math.Min(_startx, x);
                         _rectangle.Y = Math.Min(_starty, y);
@@ -1306,7 +1295,7 @@ namespace Logic.WPF.Page
                         InvalidateVisual();
                     }
                     break;
-                case Tool.Text:
+                case ToolMenuModel.Tool.Text:
                     {
                         _text.X = Math.Min(_startx, x);
                         _text.Y = Math.Min(_starty, y);
@@ -1327,7 +1316,7 @@ namespace Logic.WPF.Page
                         InvalidateVisual();
                     }
                     break;
-                case Tool.Wire:
+                case ToolMenuModel.Tool.Wire:
                     {
                         _wire.X2 = x;
                         _wire.Y2 = y;
@@ -1359,7 +1348,7 @@ namespace Logic.WPF.Page
                         InvalidateVisual();
                     }
                     break;
-                case Tool.Pin:
+                case ToolMenuModel.Tool.Pin:
                     {
                         _pin.X = x;
                         _pin.Y = y;
@@ -1385,37 +1374,37 @@ namespace Logic.WPF.Page
 
         private void CreateCancel()
         {
-            switch (CurrentTool)
+            switch (Tool.CurrentTool)
             {
-                case Tool.Line:
+                case ToolMenuModel.Tool.Line:
                     {
                         ReleaseMouseCapture();
                         Shapes.Remove(_line);
                         InvalidateVisual();
                     }
                     break;
-                case Tool.Ellipse:
+                case ToolMenuModel.Tool.Ellipse:
                     {
                         ReleaseMouseCapture();
                         Shapes.Remove(_ellipse);
                         InvalidateVisual();
                     }
                     break;
-                case Tool.Rectangle:
+                case ToolMenuModel.Tool.Rectangle:
                     {
                         ReleaseMouseCapture();
                         Shapes.Remove(_rectangle);
                         InvalidateVisual();
                     }
                     break;
-                case Tool.Text:
+                case ToolMenuModel.Tool.Text:
                     {
                         ReleaseMouseCapture();
                         Shapes.Remove(_text);
                         InvalidateVisual();
                     }
                     break;
-                case Tool.Wire:
+                case ToolMenuModel.Tool.Wire:
                     {
                         ReleaseMouseCapture();
                         Shapes.Remove(_wire);
@@ -1426,7 +1415,7 @@ namespace Logic.WPF.Page
                         InvalidateVisual();
                     }
                     break;
-                case Tool.Pin:
+                case ToolMenuModel.Tool.Pin:
                     {
                         ReleaseMouseCapture();
                         Shapes.Remove(_pin);
@@ -1444,17 +1433,17 @@ namespace Logic.WPF.Page
 
         public void ToggleFill()
         {
-            if (IsMouseCaptured && CurrentTool == Tool.Rectangle)
+            if (IsMouseCaptured && Tool.CurrentTool == ToolMenuModel.Tool.Rectangle)
             {
                 _rectangle.IsFilled = !_rectangle.IsFilled;
                 InvalidateVisual();
             }
-            else if (IsMouseCaptured && CurrentTool == Tool.Ellipse)
+            else if (IsMouseCaptured && Tool.CurrentTool == ToolMenuModel.Tool.Ellipse)
             {
                 _ellipse.IsFilled = !_ellipse.IsFilled;
                 InvalidateVisual();
             }
-            else if (IsMouseCaptured && CurrentTool == Tool.Text)
+            else if (IsMouseCaptured && Tool.CurrentTool == ToolMenuModel.Tool.Text)
             {
                 _text.IsFilled = !_text.IsFilled;
                 InvalidateVisual();
@@ -1467,7 +1456,7 @@ namespace Logic.WPF.Page
 
         public void ToggleInvertStart()
         {
-            if (IsMouseCaptured && CurrentTool == Tool.Wire)
+            if (IsMouseCaptured && Tool.CurrentTool == ToolMenuModel.Tool.Wire)
             {
                 _wire.InvertStart = !_wire.InvertStart;
                 InvalidateVisual();
@@ -1480,7 +1469,7 @@ namespace Logic.WPF.Page
 
         public void ToggleInvertEnd()
         {
-            if (IsMouseCaptured && CurrentTool == Tool.Wire)
+            if (IsMouseCaptured && Tool.CurrentTool == ToolMenuModel.Tool.Wire)
             {
                 _wire.InvertEnd = !_wire.InvertEnd;
                 InvalidateVisual();
@@ -1493,7 +1482,7 @@ namespace Logic.WPF.Page
 
         public void SetTextSizeDelta(double delta)
         {
-            if (IsMouseCaptured && CurrentTool == Tool.Text)
+            if (IsMouseCaptured && Tool.CurrentTool == ToolMenuModel.Tool.Text)
             {
                 double size = _text.FontSize + delta;
                 if (size > 0.0)
@@ -1510,7 +1499,7 @@ namespace Logic.WPF.Page
 
         public void SetTextHAlignment(HAlignment halignment)
         {
-            if (IsMouseCaptured && CurrentTool == Tool.Text)
+            if (IsMouseCaptured && Tool.CurrentTool == ToolMenuModel.Tool.Text)
             {
                 _text.HAlignment = halignment;
                 InvalidateVisual();
@@ -1523,7 +1512,7 @@ namespace Logic.WPF.Page
 
         public void SetTextVAlignment(VAlignment valignment)
         {
-            if (IsMouseCaptured && CurrentTool == Tool.Text)
+            if (IsMouseCaptured && Tool.CurrentTool == ToolMenuModel.Tool.Text)
             {
                 _text.VAlignment = valignment;
                 InvalidateVisual();

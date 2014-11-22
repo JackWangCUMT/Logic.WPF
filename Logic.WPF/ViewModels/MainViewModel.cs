@@ -10,7 +10,7 @@ using System.Windows.Input;
 
 namespace Logic.WPF.ViewModels
 {
-    public class MainViewModel : ViewModel
+    public class MainViewModel : NotifyObject
     {
         #region Properties
 
@@ -70,6 +70,20 @@ namespace Logic.WPF.ViewModels
                 {
                     _filePath = value;
                     Notify("FilePath");
+                }
+            }
+        }
+
+        private ToolMenuModel _tool;
+        public ToolMenuModel Tool
+        {
+            get { return _tool; }
+            set
+            {
+                if (value != _tool)
+                {
+                    _tool = value;
+                    Notify("Tool");
                 }
             }
         }

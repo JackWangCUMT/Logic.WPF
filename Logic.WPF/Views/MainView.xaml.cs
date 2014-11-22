@@ -61,8 +61,6 @@ namespace Logic.WPF.Views
             InitializePage();
             InitializeBlocks();
             InitializeMEF();
-
-            UpdateToolMenu();
         }
 
         #endregion
@@ -94,6 +92,8 @@ namespace Logic.WPF.Views
 
             Model.FileName = null;
             Model.FilePath = null;
+
+            Model.Tool = new ToolMenuModel();
 
             Model.FileNewCommand = new Command(
                 (parameter) => this.New(),
@@ -355,7 +355,8 @@ namespace Logic.WPF.Views
             pageView.editorLayer.History = new History<XPage>();
 
             // tool
-            pageView.editorLayer.CurrentTool = NativeCanvas.Tool.Selection;
+            pageView.editorLayer.Tool = Model.Tool;
+            pageView.editorLayer.Tool.CurrentTool = ToolMenuModel.Tool.Selection;
 
             // drag & drop
             pageView.editorLayer.AllowDrop = true;
@@ -700,63 +701,42 @@ namespace Logic.WPF.Views
 
         private void SetToolNone()
         {
-            pageView.editorLayer.CurrentTool = NativeCanvas.Tool.None;
-            UpdateToolMenu();
+            Model.Tool.CurrentTool = ToolMenuModel.Tool.None;
         }
 
         private void SetToolSelection()
         {
-            pageView.editorLayer.CurrentTool = NativeCanvas.Tool.Selection;
-            UpdateToolMenu();
+            Model.Tool.CurrentTool = ToolMenuModel.Tool.Selection;
         }
 
         private void SetToolLine()
         {
-            pageView.editorLayer.CurrentTool = NativeCanvas.Tool.Line;
-            UpdateToolMenu();
+            Model.Tool.CurrentTool = ToolMenuModel.Tool.Line;
         }
 
         private void SetToolEllipse()
         {
-            pageView.editorLayer.CurrentTool = NativeCanvas.Tool.Ellipse;
-            UpdateToolMenu();
+            Model.Tool.CurrentTool = ToolMenuModel.Tool.Ellipse;
         }
 
         private void SetToolRectangle()
         {
-            pageView.editorLayer.CurrentTool = NativeCanvas.Tool.Rectangle;
-            UpdateToolMenu();
+            Model.Tool.CurrentTool = ToolMenuModel.Tool.Rectangle;
         }
 
         private void SetToolText()
         {
-            pageView.editorLayer.CurrentTool = NativeCanvas.Tool.Text;
-            UpdateToolMenu();
+            Model.Tool.CurrentTool = ToolMenuModel.Tool.Text;
         }
 
         private void SetToolWire()
         {
-            pageView.editorLayer.CurrentTool = NativeCanvas.Tool.Wire;
-            UpdateToolMenu();
+            Model.Tool.CurrentTool = ToolMenuModel.Tool.Wire;
         }
 
         private void SetToolPin()
         {
-            pageView.editorLayer.CurrentTool = NativeCanvas.Tool.Pin;
-            UpdateToolMenu();
-        }
-
-        private void UpdateToolMenu()
-        {
-            var tool = pageView.editorLayer.CurrentTool;
-            toolNone.IsChecked = (tool == NativeCanvas.Tool.None);
-            toolSelection.IsChecked = (tool == NativeCanvas.Tool.Selection);
-            toolWire.IsChecked = (tool == NativeCanvas.Tool.Wire);
-            toolPin.IsChecked = (tool == NativeCanvas.Tool.Pin);
-            toolLine.IsChecked = (tool == NativeCanvas.Tool.Line);
-            toolEllipse.IsChecked = (tool == NativeCanvas.Tool.Ellipse);
-            toolRectangle.IsChecked = (tool == NativeCanvas.Tool.Rectangle);
-            toolText.IsChecked = (tool == NativeCanvas.Tool.Text);
+            Model.Tool.CurrentTool = ToolMenuModel.Tool.Pin;
         }
 
         #endregion

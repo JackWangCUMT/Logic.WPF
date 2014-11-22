@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Logic.WPF.Util
 {
-    public abstract class ViewModel : INotifyPropertyChanged
+    public abstract class NotifyObject : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

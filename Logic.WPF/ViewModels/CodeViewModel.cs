@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace Logic.WPF.ViewModels
 {
-    public class CodeViewModel : ViewModel
+    public class CodeViewModel : NotifyObject
     {
         private string _namespaceName;
         public string NamespaceName

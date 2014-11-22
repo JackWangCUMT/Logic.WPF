@@ -119,17 +119,17 @@
                 <MenuItem Header="Ca_ncel" InputGestureText="Esc" Command="{Binding EditCancelCommand}"/>
             </MenuItem>
             <MenuItem Header="_Tool">
-                <MenuItem x:Name="toolNone" Header="_None" InputGestureText="N" Command="{Binding ToolNoneCommand}"/>
+                <MenuItem Header="_None" InputGestureText="N" Command="{Binding ToolNoneCommand}" IsChecked="{Binding Tool.IsNoneChecked, Mode=OneWay}"/>
                 <Separator/>
-                <MenuItem x:Name="toolSelection" Header="_Selection" InputGestureText="S" Command="{Binding ToolSelectionCommand}"/>
+                <MenuItem Header="_Selection" InputGestureText="S" Command="{Binding ToolSelectionCommand}" IsChecked="{Binding Tool.IsSelectionChecked, Mode=OneWay}"/>
                 <Separator/>
-                <MenuItem x:Name="toolWire" Header="_Wire" InputGestureText="W" Command="{Binding ToolWireCommand}"/>
-                <MenuItem x:Name="toolPin" Header="_Pin" InputGestureText="P" Command="{Binding ToolPinCommand}"/>
+                <MenuItem Header="_Wire" InputGestureText="W" Command="{Binding ToolWireCommand}" IsChecked="{Binding Tool.IsWireChecked, Mode=OneWay}"/>
+                <MenuItem Header="_Pin" InputGestureText="P" Command="{Binding ToolPinCommand}" IsChecked="{Binding Tool.IsPinChecked, Mode=OneWay}"/>
                 <Separator/>
-                <MenuItem x:Name="toolLine" Header="_Line" InputGestureText="L" Command="{Binding ToolLineCommand}"/>
-                <MenuItem x:Name="toolEllipse" Header="_Ellipse" InputGestureText="E" Command="{Binding ToolEllipseCommand}"/>
-                <MenuItem x:Name="toolRectangle" Header="_Rectangle" InputGestureText="R" Command="{Binding ToolRectangleCommand}"/>
-                <MenuItem x:Name="toolText" Header="_Text" InputGestureText="T" Command="{Binding ToolTextCommand}"/>
+                <MenuItem Header="_Line" InputGestureText="L" Command="{Binding ToolLineCommand}" IsChecked="{Binding Tool.IsLineChecked, Mode=OneWay}"/>
+                <MenuItem Header="_Ellipse" InputGestureText="E" Command="{Binding ToolEllipseCommand}" IsChecked="{Binding Tool.IsEllipseChecked, Mode=OneWay}"/>
+                <MenuItem Header="_Rectangle" InputGestureText="R" Command="{Binding ToolRectangleCommand}" IsChecked="{Binding Tool.IsRectangleChecked, Mode=OneWay}"/>
+                <MenuItem Header="_Text" InputGestureText="T" Command="{Binding ToolTextCommand}" IsChecked="{Binding Tool.IsTextChecked, Mode=OneWay}"/>
             </MenuItem>
             <MenuItem Header="_Block">
                 <MenuItem Header="I_nsert" ItemsSource="{Binding Blocks}">

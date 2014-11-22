@@ -87,7 +87,7 @@
     <Compile Include="Util\CSharpProjectCreator.cs" />
     <Compile Include="Util\Parts\BlockPart.cs" />
     <Compile Include="Util\Parts\TemplatePart.cs" />
-    <Compile Include="Util\ViewModel.cs" />
+    <Compile Include="Util\NotifyObject.cs" />
     <Compile Include="ViewModels\CodeViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Page Include="Views\CodeView.xaml">
@@ -102,6 +102,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ViewModels\ToolMenuModel.cs" />
     <Compile Include="Views\CodeView.xaml.cs">
       <DependentUpon>CodeView.xaml</DependentUpon>
     </Compile>
