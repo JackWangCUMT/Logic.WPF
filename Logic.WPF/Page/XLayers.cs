@@ -7,13 +7,15 @@ using System.Threading.Tasks;
 
 namespace Logic.WPF.Page
 {
-    public class NativeLayers
+    public class XLayers
     {
-        public NativeCanvas Shapes { get; set; }
-        public NativeCanvas Blocks { get; set; }
-        public NativeCanvas Wires { get; set; }
-        public NativeCanvas Pins { get; set; }
-        public NativeCanvas Overlay { get; set; }
+        public XLayer Shapes { get; set; }
+        public XLayer Blocks { get; set; }
+        public XLayer Wires { get; set; }
+        public XLayer Pins { get; set; }
+        public XLayer Editor { get; set; }
+        public XLayer Overlay { get; set; }
+
         public XPage ToPage(string name, ITemplate template)
         {
             return new XPage()

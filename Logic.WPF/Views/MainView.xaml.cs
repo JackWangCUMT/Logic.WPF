@@ -42,27 +42,14 @@ namespace Logic.WPF.Views
 
         #region Fields
 
-        private IStringSerializer _serializer = new Json();
-        private IRenderer _renderer;
-        private ITemplate _template;
+        private IStringSerializer _serializer = null;
+        private XLayers _layers = null;
+        private IRenderer _renderer = null;
+        private ITemplate _template = null;
         private Point _dragStartPoint;
         private bool _isContextMenu = false;
         private System.Threading.Timer _timer = null;
         private Clock _clock = null;
-
-        #endregion
-
-        #region Constructor
-
-        public MainView()
-        {
-            InitializeComponent();
-
-            InitializeModel();
-            InitializePage();
-            InitializeBlocks();
-            InitializeMEF();
-        }
 
         #endregion
 
@@ -79,6 +66,20 @@ namespace Logic.WPF.Views
                 return parent;
             return FindVisualParent<T>(parentObject);
         } 
+
+        #endregion
+
+        #region Constructor
+
+        public MainView()
+        {
+            InitializeComponent();
+
+            InitializeModel();
+            InitializePage();
+            InitializeBlocks();
+            InitializeMEF();
+        }
 
         #endregion
 
@@ -128,7 +129,7 @@ namespace Logic.WPF.Views
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !pageView.editorLayer.History.CanUndo() ? false : true;
+                        || !_layers.Editor.History.CanUndo() ? false : true;
                 });
 
             Model.EditRedoCommand = new Command
@@ -136,7 +137,7 @@ namespace Logic.WPF.Views
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !pageView.editorLayer.History.CanRedo() ? false : true;
+                        || !_layers.Editor.History.CanRedo() ? false : true;
                 });
 
             Model.EditCutCommand = new Command(
@@ -144,7 +145,7 @@ namespace Logic.WPF.Views
                 (parameter) => 
                 {
                     return IsSimulationRunning()
-                        || !pageView.editorLayer.CanCopy() ? false : true;
+                        || !_layers.Editor.CanCopy() ? false : true;
                 });
 
             Model.EditCopyCommand = new Command(
@@ -152,7 +153,7 @@ namespace Logic.WPF.Views
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !pageView.editorLayer.CanCopy() ? false : true;
+                        || !_layers.Editor.CanCopy() ? false : true;
                 });
 
             Model.EditPasteCommand = new Command(
@@ -160,7 +161,7 @@ namespace Logic.WPF.Views
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !pageView.editorLayer.CanPaste() ? false : true;
+                        || !_layers.Editor.CanPaste() ? false : true;
                 });
 
             Model.EditDeleteCommand = new Command(
@@ -168,7 +169,7 @@ namespace Logic.WPF.Views
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !pageView.editorLayer.HaveSelected() ? false : true;
+                        || !_layers.Editor.HaveSelected() ? false : true;
                 });
 
             Model.EditSelectAllCommand = new Command(
@@ -284,7 +285,7 @@ namespace Logic.WPF.Views
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !pageView.editorLayer.HaveSelected() ? false : true;
+                        || !_layers.Editor.HaveSelected() ? false : true;
                 });
 
             Model.BlockCreateProjectCommand = new Command(
@@ -292,7 +293,7 @@ namespace Logic.WPF.Views
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !pageView.editorLayer.HaveSelected() ? false : true;
+                        || !_layers.Editor.HaveSelected() ? false : true;
                 });
 
             Model.InsertBlockCommand = new Command(
@@ -301,8 +302,8 @@ namespace Logic.WPF.Views
                     XBlock block = parameter as XBlock;
                     if (block != null)
                     {
-                        double x = _isContextMenu ? pageView.editorLayer.RightX : 0.0;
-                        double y = _isContextMenu ? pageView.editorLayer.RightY : 0.0;
+                        double x = _isContextMenu ? _layers.Editor.RightX : 0.0;
+                        double y = _isContextMenu ? _layers.Editor.RightY : 0.0;
                         InsertBlock(block, x, y);
                     }
                 },
@@ -354,19 +355,23 @@ namespace Logic.WPF.Views
 
         private void InitializePage()
         {
+            // serializer
+            _serializer = new Json();
+
             // layers
-            var layers = new NativeLayers();
-            layers.Shapes = pageView.shapeLayer;
-            layers.Blocks = pageView.blockLayer;
-            layers.Wires = pageView.wireLayer;
-            layers.Pins = pageView.pinLayer;
-            layers.Overlay = pageView.overlayLayer;
+            _layers = new XLayers();
+            _layers.Shapes = pageView.shapeLayer.Layer;
+            _layers.Blocks = pageView.blockLayer.Layer;
+            _layers.Wires = pageView.wireLayer.Layer;
+            _layers.Pins = pageView.pinLayer.Layer;
+            _layers.Editor = pageView.editorLayer.Layer;
+            _layers.Overlay = pageView.overlayLayer.Layer;
 
             // editor
-            pageView.editorLayer.Layers = layers;
+            _layers.Editor.Layers = _layers;
 
             // overlay
-            pageView.overlayLayer.IsOverlay = true;
+            _layers.Overlay.IsOverlay = true;
 
             // renderer
             _renderer = new NativeRenderer()
@@ -376,22 +381,22 @@ namespace Logic.WPF.Views
                 HitTreshold = 6.0
             };
 
-            pageView.shapeLayer.Renderer = _renderer;
-            pageView.blockLayer.Renderer = _renderer;
-            pageView.wireLayer.Renderer = _renderer;
-            pageView.pinLayer.Renderer = _renderer;
-            pageView.editorLayer.Renderer = _renderer;
-            pageView.overlayLayer.Renderer = _renderer;
+            _layers.Shapes.Renderer = _renderer;
+            _layers.Blocks.Renderer = _renderer;
+            _layers.Wires.Renderer = _renderer;
+            _layers.Pins.Renderer = _renderer;
+            _layers.Editor.Renderer = _renderer;
+            _layers.Overlay.Renderer = _renderer;
 
             // template
             ApplyTemplate(new LogicPageTemplate(), _renderer);
 
             // history
-            pageView.editorLayer.History = new History<XPage>();
+            _layers.Editor.History = new History<XPage>();
 
             // tool
-            pageView.editorLayer.Tool = Model.Tool;
-            pageView.editorLayer.Tool.CurrentTool = ToolMenuModel.Tool.Selection;
+            _layers.Editor.Tool = Model.Tool;
+            _layers.Editor.Tool.CurrentTool = ToolMenuModel.Tool.Selection;
 
             // drag & drop
             pageView.editorLayer.AllowDrop = true;
@@ -448,7 +453,7 @@ namespace Logic.WPF.Views
                             string path = files[0];
                             if (!string.IsNullOrEmpty(path))
                             {
-                                pageView.editorLayer.Load(path);
+                                _layers.Editor.Load(path);
                                 Model.FileName = System.IO.Path.GetFileNameWithoutExtension(path);
                                 Model.FilePath = path;
                                 e.Handled = true;
@@ -468,13 +473,13 @@ namespace Logic.WPF.Views
             // context menu
             pageView.ContextMenuOpening += (s, e) =>
             {
-                if (pageView.editorLayer.CurrentMode != NativeCanvas.Mode.None)
+                if (_layers.Editor.CurrentMode != XLayer.Mode.None)
                 {
                     e.Handled = true;
                 }
-                else if (pageView.editorLayer.SkipContextMenu == true)
+                else if (_layers.Editor.SkipContextMenu == true)
                 {
-                    pageView.editorLayer.SkipContextMenu = false;
+                    _layers.Editor.SkipContextMenu = false;
                     e.Handled = true;
                 }
                 else
@@ -578,7 +583,7 @@ namespace Logic.WPF.Views
 
         private void New()
         {
-            pageView.editorLayer.New();
+            _layers.Editor.New();
             Model.FileName = null;
             Model.FilePath = null;
         }
@@ -592,7 +597,7 @@ namespace Logic.WPF.Views
 
             if (dlg.ShowDialog(this) == true)
             {
-                pageView.editorLayer.Load(dlg.FileName);
+                _layers.Editor.Load(dlg.FileName);
                 Model.FileName = System.IO.Path.GetFileNameWithoutExtension(dlg.FileName);
                 Model.FilePath = dlg.FileName;
             }
@@ -602,7 +607,7 @@ namespace Logic.WPF.Views
         {
             if (!string.IsNullOrEmpty(Model.FilePath))
             {
-                pageView.editorLayer.Save(Model.FilePath);
+                _layers.Editor.Save(Model.FilePath);
             }
             else
             {
@@ -623,7 +628,7 @@ namespace Logic.WPF.Views
 
             if (dlg.ShowDialog(this) == true)
             {
-                pageView.editorLayer.Save(dlg.FileName);
+                _layers.Editor.Save(dlg.FileName);
                 Model.FileName = System.IO.Path.GetFileNameWithoutExtension(dlg.FileName);
                 Model.FilePath = dlg.FileName;
             }
@@ -635,131 +640,131 @@ namespace Logic.WPF.Views
 
         private void Undo()
         {
-            pageView.editorLayer.Undo();
+            _layers.Editor.Undo();
         }
 
         private void Redo()
         {
-            pageView.editorLayer.Redo();
+            _layers.Editor.Redo();
         }
 
         private void Cut()
         {
-            pageView.editorLayer.Cut();
+            _layers.Editor.Cut();
         }
 
         private void Copy()
         {
-            pageView.editorLayer.Copy();
+            _layers.Editor.Copy();
         }
 
         private void Paste()
         {
-            pageView.editorLayer.Paste();
+            _layers.Editor.Paste();
             if (_isContextMenu && _renderer.Selected != null)
             {
                 double minX = pageView.editorLayer.Width;
                 double minY = pageView.editorLayer.Height;
-                pageView.editorLayer.GetMin(_renderer.Selected, ref minX, ref minY);
-                double x = pageView.editorLayer.RightX - minX;
-                double y = pageView.editorLayer.RightY - minY;
-                pageView.editorLayer.Move(_renderer.Selected, x, y);
+                _layers.Editor.GetMin(_renderer.Selected, ref minX, ref minY);
+                double x = _layers.Editor.RightX - minX;
+                double y = _layers.Editor.RightY - minY;
+                _layers.Editor.Move(_renderer.Selected, x, y);
             }
         }
 
         private void Delete()
         {
-            pageView.editorLayer.SelectionDelete();
+            _layers.Editor.SelectionDelete();
         }
 
         private void SelectAll()
         {
-            pageView.editorLayer.SelectAll();
+            _layers.Editor.SelectAll();
         }
 
         private void ToggleFill()
         {
-            pageView.editorLayer.ToggleFill();
+            _layers.Editor.ToggleFill();
         }
 
         private void ToggleSnap()
         {
-            pageView.editorLayer.EnableSnap = !pageView.editorLayer.EnableSnap;
+            _layers.Editor.EnableSnap = !_layers.Editor.EnableSnap;
         }
 
         private void ToggleInvertStart()
         {
-            pageView.editorLayer.ToggleInvertStart();
+            _layers.Editor.ToggleInvertStart();
         }
 
         private void ToggleInvertEnd()
         {
-            pageView.editorLayer.ToggleInvertEnd();
+            _layers.Editor.ToggleInvertEnd();
         }
 
         private void IncreaseTextSize()
         {
-            pageView.editorLayer.SetTextSizeDelta(+1.0);
+            _layers.Editor.SetTextSizeDelta(+1.0);
         }
 
         private void DecreaseTextSize()
         {
-            pageView.editorLayer.SetTextSizeDelta(-1.0);
+            _layers.Editor.SetTextSizeDelta(-1.0);
         }
 
         private void AlignLeftBottom()
         {
-            pageView.editorLayer.SetTextHAlignment(HAlignment.Left);
-            pageView.editorLayer.SetTextVAlignment(VAlignment.Bottom);
+            _layers.Editor.SetTextHAlignment(HAlignment.Left);
+            _layers.Editor.SetTextVAlignment(VAlignment.Bottom);
         }
 
         private void AlignBottom()
         {
-            pageView.editorLayer.SetTextVAlignment(VAlignment.Bottom);
+            _layers.Editor.SetTextVAlignment(VAlignment.Bottom);
         }
 
         private void AlignRightBottom()
         {
-            pageView.editorLayer.SetTextHAlignment(HAlignment.Right);
-            pageView.editorLayer.SetTextVAlignment(VAlignment.Bottom);
+            _layers.Editor.SetTextHAlignment(HAlignment.Right);
+            _layers.Editor.SetTextVAlignment(VAlignment.Bottom);
         }
 
         private void AlignLeft()
         {
-            pageView.editorLayer.SetTextHAlignment(HAlignment.Left);
+            _layers.Editor.SetTextHAlignment(HAlignment.Left);
         }
 
         private void AlignCenterCenter()
         {
-            pageView.editorLayer.SetTextHAlignment(HAlignment.Center);
-            pageView.editorLayer.SetTextVAlignment(VAlignment.Center);
+            _layers.Editor.SetTextHAlignment(HAlignment.Center);
+            _layers.Editor.SetTextVAlignment(VAlignment.Center);
         }
 
         private void AlignRight()
         {
-            pageView.editorLayer.SetTextHAlignment(HAlignment.Right);
+            _layers.Editor.SetTextHAlignment(HAlignment.Right);
         }
 
         private void AlignLeftTop()
         {
-            pageView.editorLayer.SetTextHAlignment(HAlignment.Left);
-            pageView.editorLayer.SetTextVAlignment(VAlignment.Top);
+            _layers.Editor.SetTextHAlignment(HAlignment.Left);
+            _layers.Editor.SetTextVAlignment(VAlignment.Top);
         }
 
         private void AlignTop()
         {
-            pageView.editorLayer.SetTextVAlignment(VAlignment.Top);
+            _layers.Editor.SetTextVAlignment(VAlignment.Top);
         }
 
         private void AlignRightTop()
         {
-            pageView.editorLayer.SetTextHAlignment(HAlignment.Right);
-            pageView.editorLayer.SetTextVAlignment(VAlignment.Top);
+            _layers.Editor.SetTextHAlignment(HAlignment.Right);
+            _layers.Editor.SetTextVAlignment(VAlignment.Top);
         }
 
         private void Cancel()
         {
-            pageView.editorLayer.Cancel();
+            _layers.Editor.Cancel();
         }
 
         #endregion
@@ -812,12 +817,12 @@ namespace Logic.WPF.Views
 
         private void InsertBlock(XBlock block, double x, double y)
         {
-            pageView.editorLayer.History.Snapshot(
-                pageView.editorLayer.Layers.ToPage("Page", null));
-            XBlock copy = pageView.editorLayer.Insert(block, x, y);
+            _layers.Editor.History.Snapshot(
+                _layers.Editor.Layers.ToPage("Page", null));
+            XBlock copy = _layers.Editor.Insert(block, x, y);
             if (copy != null)
             {
-                pageView.editorLayer.Connect(copy);
+                _layers.Editor.Connect(copy);
             }
         }
 
@@ -840,7 +845,7 @@ namespace Logic.WPF.Views
 
         private void CreateProject()
         {
-            var block = pageView.editorLayer.CreateBlockFromSelected("Block");
+            var block = _layers.Editor.CreateBlockFromSelected("Block");
             if (block == null)
                 return;
 
@@ -974,7 +979,7 @@ namespace Logic.WPF.Views
 
         private void ExportBlock()
         {
-            var block = pageView.editorLayer.CreateBlockFromSelected("Block");
+            var block = _layers.Editor.CreateBlockFromSelected("Block");
             if (block != null)
             {
                 var dlg = new Microsoft.Win32.SaveFileDialog()
@@ -1192,35 +1197,35 @@ namespace Logic.WPF.Views
 
         private void InitSimulationOverlay(IDictionary<XBlock, BoolSimulation> simulations)
         {
-            pageView.editorLayer.SelectionReset();
+            _layers.Editor.SelectionReset();
 
-            pageView.overlayLayer.EnableSimulationCache = true;
-            pageView.overlayLayer.HaveSimulationCache = false;
+            _layers.Overlay.EnableSimulationCache = true;
+            _layers.Overlay.HaveSimulationCache = false;
 
             foreach (var simulation in simulations)
             {
-                pageView.blockLayer.Hidden.Add(simulation.Key);
-                pageView.overlayLayer.Shapes.Add(simulation.Key);
+                _layers.Blocks.Hidden.Add(simulation.Key);
+                _layers.Overlay.Shapes.Add(simulation.Key);
             }
 
-            pageView.editorLayer.Simulations = simulations;
-            pageView.overlayLayer.Simulations = simulations;
+            _layers.Editor.Simulations = simulations;
+            _layers.Overlay.Simulations = simulations;
 
-            pageView.blockLayer.InvalidateVisual();
-            pageView.overlayLayer.InvalidateVisual();
+            _layers.Blocks.InvalidateVisual();
+            _layers.Overlay.InvalidateVisual();
         }
 
         private void ResetSimulationOverlay()
         {
-            pageView.editorLayer.Simulations = null;
-            pageView.overlayLayer.Simulations = null;
+            _layers.Editor.Simulations = null;
+            _layers.Overlay.Simulations = null;
 
-            pageView.overlayLayer.HaveSimulationCache = false;
+            _layers.Overlay.HaveSimulationCache = false;
 
-            pageView.blockLayer.Hidden.Clear();
-            pageView.overlayLayer.Shapes.Clear();
-            pageView.blockLayer.InvalidateVisual();
-            pageView.overlayLayer.InvalidateVisual();
+            _layers.Blocks.Hidden.Clear();
+            _layers.Overlay.Shapes.Clear();
+            _layers.Blocks.InvalidateVisual();
+            _layers.Overlay.InvalidateVisual();
         }
 
         #endregion
@@ -1231,7 +1236,7 @@ namespace Logic.WPF.Views
         {
             try
             {
-                XPage temp = pageView.editorLayer.Layers.ToPage("Page", null);
+                XPage temp = _layers.Editor.Layers.ToPage("Page", null);
                 if (temp != null)
                 {
                     var context = PageGraph.Create(temp);
@@ -1303,7 +1308,7 @@ namespace Logic.WPF.Views
                     {
                         BoolSimulationFactory.Run(simulations, _clock);
                         _clock.Tick();
-                        Dispatcher.Invoke(() => pageView.overlayLayer.InvalidateVisual());
+                        Dispatcher.Invoke(() => _layers.Overlay.InvalidateVisual());
                     }
                     catch (Exception ex)
                     {
@@ -1333,7 +1338,7 @@ namespace Logic.WPF.Views
                     return;
                 }
 
-                XPage temp = pageView.editorLayer.Layers.ToPage("Page", null);
+                XPage temp = _layers.Editor.Layers.ToPage("Page", null);
                 if (temp != null)
                 {
                     var context = PageGraph.Create(temp);

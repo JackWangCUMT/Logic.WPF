@@ -78,6 +78,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Page\ILayer.cs" />
+    <Compile Include="Page\XLayer.cs" />
     <Compile Include="Simulation\BoolSimulationFactory.cs" />
     <Compile Include="Serialization\Bson.cs" />
     <Compile Include="Util\CSharpCodeImporter.cs" />
@@ -127,7 +129,7 @@
     <Compile Include="Page\NativeStyle.cs" />
     <Compile Include="Util\History.cs" />
     <Compile Include="Serialization\Json.cs" />
-    <Compile Include="Page\NativeLayers.cs" />
+    <Compile Include="Page\XLayers.cs" />
     <Compile Include="Page\NativeRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
