@@ -164,8 +164,12 @@ namespace Logic.WPF.Views
                 });
 
             Model.EditDeleteCommand = new Command(
-                (parameter) => this.Delete(), 
-                (parameter) => IsSimulationRunning() ? false : true);
+                (parameter) => this.Delete(),
+                (parameter) =>
+                {
+                    return IsSimulationRunning()
+                        || !pageView.editorLayer.HaveSelected() ? false : true;
+                });
 
             Model.EditSelectAllCommand = new Command(
                 (parameter) => this.SelectAll(), 
@@ -276,12 +280,20 @@ namespace Logic.WPF.Views
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.BlockExportCommand = new Command(
-                (parameter) => this.ExportBlock(), 
-                (parameter) => IsSimulationRunning() ? false : true);
+                (parameter) => this.ExportBlock(),
+                (parameter) =>
+                {
+                    return IsSimulationRunning()
+                        || !pageView.editorLayer.HaveSelected() ? false : true;
+                });
 
             Model.BlockCreateProjectCommand = new Command(
-                (parameter) => this.CreateProject(), 
-                (parameter) => IsSimulationRunning() ? false : true);
+                (parameter) => this.CreateProject(),
+                (parameter) =>
+                {
+                    return IsSimulationRunning()
+                        || !pageView.editorLayer.HaveSelected() ? false : true;
+                });
 
             Model.InsertBlockCommand = new Command(
                 (parameter) =>

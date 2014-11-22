@@ -271,6 +271,7 @@ namespace Logic.WPF.Page
                 if (_mode != Mode.Move 
                     && _mode != Mode.Selection
                     && Tool.CurrentTool != ToolMenuModel.Tool.None
+                    && Renderer != null
                     && Renderer.Selected == null
                     && Simulations == null)
                 {
@@ -347,6 +348,13 @@ namespace Logic.WPF.Page
 
         #region Selection Mode
 
+        public bool HaveSelected()
+        {
+            return Renderer != null
+                && Renderer.Selected != null
+                && Renderer.Selected.Count > 0;
+        }
+
         public ICollection<IShape> GetAllShapes()
         {
             var all = Layers.Pins.Shapes
@@ -368,8 +376,7 @@ namespace Logic.WPF.Page
 
         public void SelectionDelete()
         {
-            if (Renderer.Selected != null
-                && Renderer.Selected.Count > 0)
+            if (HaveSelected())
             {
                 if (History != null)
                 {
@@ -382,7 +389,8 @@ namespace Logic.WPF.Page
 
         public void SelectionReset()
         {
-            if (Renderer.Selected != null)
+            if (Renderer != null 
+                && Renderer.Selected != null)
             {
                 Renderer.Selected = null;
                 InvalidatePage();
@@ -477,7 +485,8 @@ namespace Logic.WPF.Page
             _hx = _startx;
             _hy = _starty;
 
-            if (Renderer.Selected != null)
+            if (Renderer != null 
+                && Renderer.Selected != null)
             {
                 _element = Element.Selected;
             }
@@ -565,7 +574,8 @@ namespace Logic.WPF.Page
             _startx = x;
             _starty = y;
 
-            if (Renderer.Selected != null)
+            if (Renderer != null 
+                && Renderer.Selected != null)
             {
                 MoveSelected(Renderer.Selected, dx, dy);
             }
@@ -1609,9 +1619,7 @@ namespace Logic.WPF.Page
 
         public void ToggleSelectedFill()
         {
-            if (Renderer != null
-                && Renderer.Selected != null
-                && Renderer.Selected.Count > 0)
+            if (HaveSelected())
             {
                 var rectangles = Renderer.Selected.Where(x => x is XRectangle).Cast<XRectangle>();
                 foreach (var rectangle in rectangles)
@@ -1637,9 +1645,7 @@ namespace Logic.WPF.Page
 
         public void ToggleSelectedInvertStart()
         {
-            if (Renderer != null
-                && Renderer.Selected != null
-                && Renderer.Selected.Count > 0)
+            if (HaveSelected())
             {
                 var wires = Renderer.Selected.Where(x => x is XWire).Cast<XWire>();
                 foreach (var wire in wires)
@@ -1652,9 +1658,7 @@ namespace Logic.WPF.Page
 
         public void ToggleSelectedInvertEnd()
         {
-            if (Renderer != null
-                && Renderer.Selected != null
-                && Renderer.Selected.Count > 0)
+            if (HaveSelected())
             {
                 var wires = Renderer.Selected.Where(x => x is XWire).Cast<XWire>();
                 foreach (var wire in wires)
@@ -1667,9 +1671,7 @@ namespace Logic.WPF.Page
 
         public void SetSelectedTextSizeDelta(double delta)
         {
-            if (Renderer != null
-                && Renderer.Selected != null
-                && Renderer.Selected.Count > 0)
+            if (HaveSelected())
             {
                 var texts = Renderer.Selected.Where(x => x is XText).Cast<XText>();
                 foreach (var text in texts)
@@ -1686,9 +1688,7 @@ namespace Logic.WPF.Page
 
         public void SetSelectedTextHAlignment(HAlignment halignment)
         {
-            if (Renderer != null
-                && Renderer.Selected != null
-                && Renderer.Selected.Count > 0)
+            if (HaveSelected())
             {
                 var texts = Renderer.Selected.Where(x => x is XText).Cast<XText>();
                 foreach (var text in texts)
@@ -1701,9 +1701,7 @@ namespace Logic.WPF.Page
 
         public void SetSelectedTextVAlignment(VAlignment valignment)
         {
-            if (Renderer != null
-                && Renderer.Selected != null
-                && Renderer.Selected.Count > 0)
+            if (HaveSelected())
             {
                 var texts = Renderer.Selected.Where(x => x is XText).Cast<XText>();
                 foreach (var text in texts)
@@ -2671,8 +2669,7 @@ namespace Logic.WPF.Page
 
         public bool CanCopy()
         {
-            return Renderer.Selected != null
-                && Renderer.Selected.Count > 0;
+            return HaveSelected();
         }
 
         public bool CanPaste()
@@ -2755,8 +2752,7 @@ namespace Logic.WPF.Page
 
         public XBlock CreateBlockFromSelected(string name)
         {
-            if (Renderer.Selected != null
-                && Renderer.Selected.Count > 0)
+            if (HaveSelected())
             {
                 return CreateBlock(name, Renderer.Selected);
             }
@@ -3065,11 +3061,15 @@ namespace Logic.WPF.Page
                         selected = _selectedShapeStyle;
                     }
 
-                    if (Renderer.Selected != null)
+                    if (Renderer != null 
+                        && Renderer.Selected != null)
                     {
                         RenderSelectedMode(dc, normal, selected);
                     }
-                    else if (Renderer.Selected == null && Hidden != null && Hidden.Count > 0)
+                    else if (Renderer != null 
+                        && Renderer.Selected == null 
+                        && Hidden != null 
+                        && Hidden.Count > 0)
                     {
                         RenderHiddenMode(dc, normal);
                     }
