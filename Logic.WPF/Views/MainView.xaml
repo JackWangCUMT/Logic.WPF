@@ -88,6 +88,28 @@
                 <MenuItem Header="_Text" InputGestureText="T" Command="{Binding ToolTextCommand}" IsChecked="{Binding Tool.IsTextChecked, Mode=OneWay}"/>
             </MenuItem>
             <Separator/>
+            <MenuItem Header="_Properties">
+                <MenuItem Header="Toggle Invert Wire _Start" InputGestureText="[" Command="{Binding EditToggleInvertStartCommand}"/>
+                <MenuItem Header="Toggle Invert Wire _End" InputGestureText="]" Command="{Binding EditToggleInvertEndCommand}"/>
+                <Separator/>
+                <MenuItem Header="Toggle _Fill" InputGestureText="F" Command="{Binding EditToggleFillCommand}"/>
+                <Separator/>
+                <MenuItem Header="_Increase Text Size" InputGestureText="Ctrl++" Command="{Binding EditIncreaseTextSizeCommand}"/>
+                <MenuItem Header="Decrease Te_xt Size" InputGestureText="Ctrl+-" Command="{Binding EditDecreaseTextSizeCommand}"/>
+                <Separator/>
+                <MenuItem Header="Text A_lignment">
+                    <MenuItem Header="Le_ft-Bottom" InputGestureText="Ctrl+1" Command="{Binding EditAlignLeftBottomCommand}"/>
+                    <MenuItem Header="_Bottom" InputGestureText="Ctrl+2" Command="{Binding EditAlignBottomCommand}"/>
+                    <MenuItem Header="Ri_ght-Bottom" InputGestureText="Ctrl+3" Command="{Binding EditAlignRightBottomCommand}"/>
+                    <MenuItem Header="_Left" InputGestureText="Ctrl+4" Command="{Binding EditAlignLeftCommand}"/>
+                    <MenuItem Header="Ce_nter-Center" InputGestureText="Ctrl+5" Command="{Binding EditAlignCenterCenterCommand}"/>
+                    <MenuItem Header="_Right" InputGestureText="Ctrl+6" Command="{Binding EditAlignRightCommand}"/>
+                    <MenuItem Header="Left-To_p" InputGestureText="Ctrl+7" Command="{Binding EditAlignLeftTopCommand}"/>
+                    <MenuItem Header="_Top" InputGestureText="Ctrl+8" Command="{Binding EditAlignTopCommand}"/>
+                    <MenuItem Header="Rig_ht-Top" InputGestureText="Ctrl+9" Command="{Binding EditAlignRightTopCommand}"/>
+                </MenuItem>
+            </MenuItem>
+            <Separator/>
             <MenuItem Header="Te_mplate" ItemsSource="{Binding Templates}">
                 <MenuItem.ItemContainerStyle>
                     <Style TargetType="MenuItem">
@@ -101,6 +123,8 @@
             <MenuItem Header="Cu_t" InputGestureText="Ctrl+X" Command="{Binding EditCutCommand}"/>
             <MenuItem Header="_Copy" InputGestureText="Ctrl+C" Command="{Binding EditCopyCommand}"/>
             <MenuItem Header="_Paste" InputGestureText="Ctrl+V" Command="{Binding EditPasteCommand}"/>
+            <Separator/>
+            <MenuItem Header="Ca_ncel" InputGestureText="Esc" Command="{Binding EditCancelCommand}"/>
             <Separator/>
             <MenuItem Header="_Simulation">
                 <MenuItem Header="_Start" InputGestureText="F5" Command="{Binding SimulationStartCommand}"/>
