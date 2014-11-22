@@ -636,13 +636,15 @@ namespace Logic.WPF.Views
         private void Paste()
         {
             pageView.editorLayer.Paste();
-            //if (_isContextMenu && _renderer.Selected != null)
-            //{
-            //    pageView.editorLayer.Move(
-            //        _renderer.Selected,
-            //        pageView.editorLayer.RightX,
-            //        pageView.editorLayer.RightY);
-            //}
+            if (_isContextMenu && _renderer.Selected != null)
+            {
+                double minX = pageView.editorLayer.Width;
+                double minY = pageView.editorLayer.Height;
+                pageView.editorLayer.GetMin(_renderer.Selected, ref minX, ref minY);
+                double x = pageView.editorLayer.RightX - minX;
+                double y = pageView.editorLayer.RightY - minY;
+                pageView.editorLayer.Move(_renderer.Selected, x, y);
+            }
         }
 
         private void Delete()

@@ -577,12 +577,9 @@ namespace Logic.WPF.Page
 
         public void Move(ICollection<IShape> shapes, double dx, double dy)
         {
-            if (Renderer.Selected != null)
-            {
-                double x = EnableSnap ? Snap(dx, SnapSize) : dx;
-                double y = EnableSnap ? Snap(dy, SnapSize) : dy;
-                MoveSelected(shapes, x, y);
-            }
+            double x = EnableSnap ? Snap(dx, SnapSize) : dx;
+            double y = EnableSnap ? Snap(dy, SnapSize) : dy;
+            MoveSelected(shapes, x, y);
         }
 
         private void MoveElement(double dx, double dy)
@@ -749,6 +746,73 @@ namespace Logic.WPF.Page
             }
         }
 
+        #endregion
+
+        #region Min Position
+
+        public void GetMin(ICollection<IShape> shapes, ref double x, ref double y)
+        {
+            foreach (var shape in shapes)
+            {
+                if (shape is XLine)
+                {
+                    var line = shape as XLine;
+                    x = Math.Min(x, line.X1);
+                    y = Math.Min(y, line.Y1);
+                    x = Math.Min(x, line.X2);
+                    y = Math.Min(y, line.Y2);
+                }
+                else if (shape is XEllipse)
+                {
+                    var ellipse = shape as XEllipse;
+                    x = Math.Min(x, ellipse.X);
+                    y = Math.Min(y, ellipse.Y);
+                }
+                else if (shape is XRectangle)
+                {
+                    var rectangle = shape as XRectangle;
+                    x = Math.Min(x, rectangle.X);
+                    y = Math.Min(y, rectangle.Y);
+                }
+                else if (shape is XText)
+                {
+                    var text = shape as XText;
+                    x = Math.Min(x, text.X);
+                    y = Math.Min(y, text.Y);
+                }
+                else if (shape is XWire)
+                {
+                    var wire = shape as XWire;
+                    if (wire.Start == null)
+                    {
+                        x = Math.Min(x, wire.X1);
+                        y = Math.Min(y, wire.Y1);
+                    }
+                    if (wire.End == null)
+                    {
+                        x = Math.Min(x, wire.X2);
+                        y = Math.Min(y, wire.Y2);
+                    }
+                }
+                else if (shape is XPin)
+                {
+                    var pin = shape as XPin;
+                    x = Math.Min(x, pin.X);
+                    y = Math.Min(y, pin.Y);
+                }
+                else if (shape is XBlock)
+                {
+                    var block = shape as XBlock;
+                    GetMin(block.Shapes, ref x, ref y);
+                    foreach (var pin in block.Pins)
+                    {
+                        x = Math.Min(x, pin.X);
+                        y = Math.Min(y, pin.Y);
+                    }
+                }
+            }
+        }
+        
         #endregion
 
         #region Overlay
