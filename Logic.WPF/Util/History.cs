@@ -50,7 +50,7 @@ namespace Logic.WPF.Util
 
         public T Undo(T current)
         {
-            if (_undos.Count > 0)
+            if (CanUndo())
             {
                 var bson = _bson.Serialize(current);
                 if (bson != null)
@@ -64,7 +64,7 @@ namespace Logic.WPF.Util
 
         public T Redo(T current)
         {
-            if (_redos.Count > 0)
+            if (CanRedo())
             {
                 var bson = _bson.Serialize(current);
                 if (bson != null)
@@ -74,6 +74,16 @@ namespace Logic.WPF.Util
                 }
             }
             return null;
+        }
+
+        public bool CanUndo()
+        {
+            return _undos.Count > 0;
+        }
+
+        public bool CanRedo()
+        {
+            return _redos.Count > 0;
         }
     }
 }

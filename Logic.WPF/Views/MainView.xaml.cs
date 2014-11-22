@@ -124,12 +124,20 @@ namespace Logic.WPF.Views
                 (parameter) => true);
 
             Model.EditUndoCommand = new Command(
-                (parameter) => this.Undo(), 
-                (parameter) => IsSimulationRunning() ? false : true);
+                (parameter) => this.Undo(),
+                (parameter) =>
+                {
+                    return IsSimulationRunning()
+                        || !pageView.editorLayer.History.CanUndo() ? false : true;
+                });
 
             Model.EditRedoCommand = new Command
-                ((parameter) => this.Redo(), 
-                (parameter) => IsSimulationRunning() ? false : true);
+                ((parameter) => this.Redo(),
+                (parameter) =>
+                {
+                    return IsSimulationRunning()
+                        || !pageView.editorLayer.History.CanRedo() ? false : true;
+                });
 
             Model.EditCutCommand = new Command(
                 (parameter) => this.Cut(),
