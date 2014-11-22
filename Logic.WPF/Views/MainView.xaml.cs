@@ -268,7 +268,10 @@ namespace Logic.WPF.Views
                     XBlock block = parameter as XBlock;
                     if (block != null)
                     {
-                        InsertBlock(block, 0.0, 0.0);
+                        InsertBlock(
+                            block, 
+                            pageView.editorLayer.RightX, 
+                            pageView.editorLayer.RightY);
                     }
                 },
                 (parameter) => IsSimulationRunning() ? false : true);
@@ -427,6 +430,21 @@ namespace Logic.WPF.Views
                             Environment.NewLine,
                             ex.StackTrace);
                     }
+                }
+            };
+
+            // context menu
+            pageView.ContextMenuOpening += (s, e) =>
+            {
+                if (pageView.editorLayer.CurrentMode != NativeCanvas.Mode.None)
+                {
+                    e.Handled = true;
+                }
+
+                if (pageView.editorLayer.SkipContextMenu == true)
+                {
+                    pageView.editorLayer.SkipContextMenu = false;
+                    e.Handled = true;
                 }
             };
         }

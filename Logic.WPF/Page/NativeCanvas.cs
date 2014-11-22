@@ -30,6 +30,10 @@ namespace Logic.WPF.Page
         public IRenderer Renderer { get; set; } 
         public History<XPage> History { get; set; }
         public bool IsOverlay { get; set; }
+        public Mode CurrentMode { get { return _mode; } }
+        public bool SkipContextMenu { get; set; }
+        public double RightX { get; set; }
+        public double RightY { get; set; }
 
         #endregion
 
@@ -298,6 +302,9 @@ namespace Logic.WPF.Page
 
             PreviewMouseRightButtonDown += (s, e) =>
             {
+                var point = e.GetPosition(this);
+                RightX = point.X;
+                RightY = point.Y;
                 Cancel();
             };
 
@@ -318,18 +325,21 @@ namespace Logic.WPF.Page
                         break;
                     case Mode.Selection:
                         SelectionCancel();
+                        SkipContextMenu = true;
                         break;
                     case Mode.Create:
                         CreateCancel();
+                        SkipContextMenu = true;
                         break;
                     case Mode.Move:
                         MoveCancel();
+                        SkipContextMenu = true;
                         break;
                 }
             }
             else
             {
-                SelectionReset();
+                //SelectionReset();
             }
         }
 
