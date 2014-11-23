@@ -7,15 +7,18 @@ namespace Logic.Simulation.Blocks
 {
     public class OrSimulation : BoolSimulation
     {
+        public int Counter { get; set; }
+
         public OrSimulation()
             : base()
         {
         }
 
-        public OrSimulation(bool? state)
+        public OrSimulation(bool? state, int counter)
             : base()
         {
             base.State = state;
+            this.Counter = counter;
         }
 
         public override void Run(IClock clock)
@@ -27,20 +30,49 @@ namespace Logic.Simulation.Blocks
                 return;
             }
 
-            bool? result = null;
-            for (int i = 0; i < length; i++)
+            if (Counter <= 0)
             {
-                var input = Inputs[i];
-                if (i == 0)
+                throw new Exception("Or counter must greater than or equal 1.");
+            }
+            else
+            {
+                int counter = 0;
+                bool? result = null;
+                for (int i = 0; i < length; i++)
                 {
-                    result = input.IsInverted ? !(input.Simulation.State) : input.Simulation.State;
+                    var input = Inputs[i];
+                    if (i == 0)
+                    {
+                        result = input.IsInverted ? !(input.Simulation.State) : input.Simulation.State;
+                        if (result == true)
+                        {
+                            counter += 1;
+                        }
+                    }
+                    else
+                    {
+                        bool? value = input.IsInverted ? !(input.Simulation.State) : input.Simulation.State;
+                        result |= value;
+                        if (value == true)
+                        {
+                            counter += 1;
+                        }
+                    }
+                }
+
+                if (counter >= Counter)
+                {
+                    base.State = true;
+                }
+                else if (result == true)
+                {
+                    base.State = false;
                 }
                 else
                 {
-                    result |= input.IsInverted ? !(input.Simulation.State) : input.Simulation.State;
+                    base.State = result;
                 }
             }
-            base.State = result;
         }
     }
 }

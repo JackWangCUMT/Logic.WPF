@@ -75,7 +75,7 @@ namespace Logic.Page
         public void DrawText(object dc, IStyle style, XText text)
         {
             var ft = new FormattedText(
-                text.Text,
+                (text.TextProperty != null && text.TextProperty.Data != null) ? string.Format(text.Text, text.TextProperty.Data) : text.Text,
                 System.Globalization.CultureInfo.CurrentCulture,
                 FlowDirection.LeftToRight,
                 new Typeface(text.FontName),

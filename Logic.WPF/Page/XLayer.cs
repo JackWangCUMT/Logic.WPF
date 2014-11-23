@@ -2408,14 +2408,16 @@ namespace Logic.Page
         {
             try
             {
-                var jshapes = Serializer.Serialize(source.Shapes);
-                var jpins = Serializer.Serialize(source.Pins);
-                var copy = new XBlock()
+                var block = new XBlock()
                 {
                     Name = source.Name,
-                    Shapes = Serializer.Deserialize<IList<IShape>>(jshapes),
-                    Pins = Serializer.Deserialize<IList<XPin>>(jpins)
+                    Style = source.Style,
+                    Properties = source.Properties,
+                    Shapes = source.Shapes,
+                    Pins = source.Pins
                 };
+                var json = Serializer.Serialize(block);
+                var copy = Serializer.Deserialize<XBlock>(json);
                 foreach (var pin in copy.Pins)
                 {
                     pin.Owner = copy;

@@ -10,10 +10,14 @@ namespace Timers.Off
     {
         public TimerOff()
         {
+            base.Properties = new List<KeyValuePair<string, XProperty>>();
             base.Shapes = new List<IShape>();
             base.Pins = new List<XPin>();
 
             base.Name = "TIMER-OFF";
+
+            XProperty delayProperty = new XProperty("1");
+            base.Properties.Add(new KeyValuePair<string, XProperty>("Delay", delayProperty));
 
             base.Shapes.Add(
                 new XText()
@@ -26,7 +30,8 @@ namespace Timers.Off
                     VAlignment = VAlignment.Center,
                     FontName = "Consolas",
                     FontSize = 11.0,
-                    Text = "T=1s"
+                    Text = "T={0}s",
+                    TextProperty = delayProperty
                 });
             base.Shapes.Add(
                 new XText()

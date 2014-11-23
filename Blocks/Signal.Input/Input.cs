@@ -10,10 +10,14 @@ namespace Signal.Input
     {
         public Input()
         {
+            base.Properties = new List<KeyValuePair<string, XProperty>>();
             base.Shapes = new List<IShape>();
             base.Pins = new List<XPin>();
 
             base.Name = "INPUT";
+
+            XProperty labelProperty = new XProperty("IN");
+            base.Properties.Add(new KeyValuePair<string, XProperty>("Label", labelProperty));
 
             base.Shapes.Add(
                 new XText()
@@ -26,7 +30,8 @@ namespace Signal.Input
                     VAlignment = VAlignment.Center,
                     FontName = "Consolas",
                     FontSize = 14,
-                    Text = "IN"
+                    Text = "{0}",
+                    TextProperty = labelProperty
                 });
             base.Shapes.Add(new XRectangle() { X = 0, Y = 0, Width = 30, Height = 30, IsFilled = false });
             base.Pins.Add(new XPin() { Name = "O", X = 30, Y = 15, PinType = PinType.Output, Owner = null });

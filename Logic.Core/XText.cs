@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Logic.Core
 {
     public class XText : IShape
     {
+        public XProperty TextProperty { get; set; }
         public IStyle Style { get; set; }
         public string Text { get; set; }
         public double X { get; set; }

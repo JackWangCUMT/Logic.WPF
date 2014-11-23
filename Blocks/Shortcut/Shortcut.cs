@@ -10,10 +10,14 @@ namespace Shortcut
     {
         public Shortcut()
         {
+            base.Properties = new List<KeyValuePair<string, XProperty>>();
             base.Shapes = new List<IShape>();
             base.Pins = new List<XPin>();
 
             base.Name = "SHORTCUT";
+
+            XProperty labelProperty = new XProperty("A");
+            base.Properties.Add(new KeyValuePair<string, XProperty>("Label", labelProperty));
 
             base.Shapes.Add(
                 new XText()
@@ -26,7 +30,8 @@ namespace Shortcut
                     VAlignment = VAlignment.Center,
                     FontName = "Consolas",
                     FontSize = 14.0,
-                    Text = "A"
+                    Text = "{0}",
+                    TextProperty = labelProperty
                 });
             base.Shapes.Add(new XEllipse() { X = 15.0, Y = 15.0, RadiusX = 15.0, RadiusY = 15.0 });
             base.Pins.Add(new XPin() { Name = "L", X = 0.0, Y = 15.0, PinType = PinType.None, Owner = null });

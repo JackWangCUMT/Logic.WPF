@@ -13,29 +13,70 @@ namespace Logic.Simulation
 {
     public static class BoolSimulationFactory
     {
-        public static IDictionary<string, Func<BoolSimulation>> SimulationsDict
-            = new Dictionary<string, Func<BoolSimulation>>()
+        public static IDictionary<string, Func<XBlock, BoolSimulation>> SimulationsDict
+            = new Dictionary<string, Func<XBlock, BoolSimulation>>()
         {
             // Gates
-            { "AND", () => { return new AndSimulation(null); } },
-            { "INVERTER", () => { return new InverterSimulation(null); } },
-            { "OR", () => { return new OrSimulation(null); } },
+            { "AND", (block) => { return new AndSimulation(null); } },
+            { "INVERTER", (block) => { return new InverterSimulation(null); } },
+            { "OR", (block) => { return new OrSimulation(null, GetIntPropertyValue(block, "Counter")); } },
             // Memory
-            { "SR-RESET", () => { return new MemorySetResetSimulation(MemoryPriority.Reset); } },
-            { "SR-RESET-V", () => { return new MemorySetResetSimulation(MemoryPriority.Reset); } },
-            { "SR-SET", () => { return new MemorySetResetSimulation(MemoryPriority.Set); } },
-            { "SR-SET-V", () => { return new MemorySetResetSimulation(MemoryPriority.Set); } },
+            { "SR-RESET", (block) => { return new MemorySetResetSimulation(MemoryPriority.Reset); } },
+            { "SR-RESET-V", (block) => { return new MemorySetResetSimulation(MemoryPriority.Reset); } },
+            { "SR-SET", (block) => { return new MemorySetResetSimulation(MemoryPriority.Set); } },
+            { "SR-SET-V", (block) => { return new MemorySetResetSimulation(MemoryPriority.Set); } },
              // Shortcut
-            { "SHORTCUT", () => { return new ShortcutSimulation(); } },
+            { "SHORTCUT", (block) => { return new ShortcutSimulation(); } },
             // Signal
-            { "SIGNAL", () => { return new SignalSimulation(false); } },
-            { "INPUT", () => { return new InputSimulation(false); } },
-            { "OUTPUT", () => { return new OutputSimulation(false); } },
+            { "SIGNAL", (block) => { return new SignalSimulation(false); } },
+            { "INPUT", (block) => { return new InputSimulation(false); } },
+            { "OUTPUT", (block) => { return new OutputSimulation(false); } },
             // Timers
-            { "TIMER-OFF", () => { return new TimerOffSimulation(false, 1.0); } },
-            { "TIMER-ON", () => { return new TimerOnSimulation(false, 1.0); } },
-            { "TIMER-PULSE", () => { return new TimerPulseSimulation(false, 1.0); } }
+            { "TIMER-OFF", (block) => { return new TimerOffSimulation(false, GetDoublePropertyValue(block, "Delay")); } 
+            },
+            { "TIMER-ON", (block) => { return new TimerOnSimulation(false, GetDoublePropertyValue(block, "Delay")); } },
+            { "TIMER-PULSE", (block) => { return new TimerPulseSimulation(false, GetDoublePropertyValue(block, "Delay")); } }
         };
+
+        private static int GetIntPropertyValue(XBlock block, string key)
+        {
+            XProperty delayProperty = block.Properties.Where(p => p.Key == key).FirstOrDefault().Value;
+            int value;
+            if (delayProperty != null
+                && delayProperty.Data != null
+                && delayProperty.Data is string)
+            {
+                if (!int.TryParse(delayProperty.Data as string, out value))
+                {
+                    throw new Exception(string.Format("Invalid format of {0} property.", key));
+                }
+            }
+            else
+            {
+                throw new Exception(string.Format("Can not find {0} property.", key));
+            }
+            return value;
+        }
+
+        private static double GetDoublePropertyValue(XBlock block, string key)
+        {
+            XProperty delayProperty = block.Properties.Where(p => p.Key == key).FirstOrDefault().Value;
+            double value;
+            if (delayProperty != null
+                && delayProperty.Data != null
+                && delayProperty.Data is string)
+            {
+                if (!double.TryParse(delayProperty.Data as string, out value))
+                {
+                    throw new Exception(string.Format("Invalid format of {0} property.", key));
+                }
+            }
+            else
+            {
+                throw new Exception(string.Format("Can not find {0} property.", key));
+            }
+            return value;
+        }
 
         public static IDictionary<XBlock, BoolSimulation> Create(PageGraphContext context)
         {
@@ -44,7 +85,7 @@ namespace Logic.Simulation
             {
                 if (SimulationsDict.ContainsKey(block.Name))
                 {
-                    simulations.Add(block, SimulationsDict[block.Name]());
+                    simulations.Add(block, SimulationsDict[block.Name](block));
                 }
                 else
                 {

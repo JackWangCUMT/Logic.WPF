@@ -60,6 +60,7 @@
     <Compile Include="XPage.cs" />
     <Compile Include="XPin.cs" />
     <Compile Include="XProject.cs" />
+    <Compile Include="XProperty.cs" />
     <Compile Include="XRectangle.cs" />
     <Compile Include="XTemplate.cs" />
     <Compile Include="XText.cs" />

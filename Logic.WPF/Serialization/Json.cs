@@ -1,6 +1,7 @@
 ﻿using Logic.Core;
 using Logic.Util;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,15 +17,15 @@ namespace Logic.Serialization
         {
             try
             {
-                var json = JsonConvert.SerializeObject(
-                    obj,
-                    new JsonSerializerSettings()
-                    {
-                        Formatting = Formatting.Indented,
-                        TypeNameHandling = TypeNameHandling.Objects,
-                        PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                        ReferenceLoopHandling = ReferenceLoopHandling.Serialize
-                    });
+                var settings = new JsonSerializerSettings()
+                {
+                    Formatting = Formatting.Indented,
+                    TypeNameHandling = TypeNameHandling.Objects,
+                    PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                    ReferenceLoopHandling = ReferenceLoopHandling.Serialize
+                };
+                settings.Converters.Add(new KeyValuePairConverter());
+                var json = JsonConvert.SerializeObject(obj, settings);
                 return json;
             }
             catch (Exception ex)
@@ -41,14 +42,14 @@ namespace Logic.Serialization
         {
             try
             {
-                var page = JsonConvert.DeserializeObject<T>(
-                    json,
-                    new JsonSerializerSettings()
-                    {
-                        TypeNameHandling = TypeNameHandling.Objects,
-                        PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                        ReferenceLoopHandling = ReferenceLoopHandling.Serialize
-                    });
+                var settings = new JsonSerializerSettings()
+                {
+                    TypeNameHandling = TypeNameHandling.Objects,
+                    PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                    ReferenceLoopHandling = ReferenceLoopHandling.Serialize
+                };
+                settings.Converters.Add(new KeyValuePairConverter());
+                var page = JsonConvert.DeserializeObject<T>(json, settings);
                 return page;
             }
             catch (Exception ex)
