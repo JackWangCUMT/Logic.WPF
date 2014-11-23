@@ -16,7 +16,7 @@ namespace Logic.WPF.Page
 {
     public class XLayer : ILayer
     {
-        #region Portable
+        #region ILayer
 
         public Func<bool> IsMouseCaptured { get; set; }
         public Action CaptureMouse { get; set; }
