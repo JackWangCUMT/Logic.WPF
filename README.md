@@ -1,4 +1,4 @@
 Logic.WPF
 =========
 
-Logic Diagram Editor
+Logic Diagram Editor and Simulator
