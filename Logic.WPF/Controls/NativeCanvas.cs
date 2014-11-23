@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Logic.Page;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,7 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace Logic.Page
+namespace Logic.Controls
 {
     public class NativeCanvas : Canvas
     {

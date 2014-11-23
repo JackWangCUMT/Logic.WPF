@@ -9,7 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace Logic.Page
+namespace Logic.Controls
 {
     public class NativeView : Canvas
     {

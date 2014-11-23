@@ -123,9 +123,9 @@
     <Compile Include="Views\PageView.xaml.cs">
       <DependentUpon>PageView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Page\NativeZoom.cs" />
-    <Compile Include="Page\NativeCanvas.cs" />
-    <Compile Include="Page\NativeView.cs" />
+    <Compile Include="Controls\NativeZoom.cs" />
+    <Compile Include="Controls\NativeCanvas.cs" />
+    <Compile Include="Controls\NativeView.cs" />
     <Compile Include="Page\XStyle.cs" />
     <Compile Include="Util\History.cs" />
     <Compile Include="Serialization\Json.cs" />
