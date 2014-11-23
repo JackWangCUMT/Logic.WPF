@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Logic.Core
 {
-    public class XPage
+    public class XPage : IPage
     {
         public string Name { get; set; }
         public ITemplate Template { get; set; }
