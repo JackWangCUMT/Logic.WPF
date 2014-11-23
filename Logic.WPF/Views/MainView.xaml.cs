@@ -622,7 +622,11 @@ namespace Logic.WPF.Views
             // context menu
             pageView.ContextMenuOpening += (s, e) =>
             {
-                if (Model.Layers.Editor.CurrentMode != XLayer.Mode.None)
+                if (IsSimulationRunning())
+                {
+                    e.Handled = true;
+                }
+                else if (Model.Layers.Editor.CurrentMode != XLayer.Mode.None)
                 {
                     e.Handled = true;
                 }
@@ -633,12 +637,40 @@ namespace Logic.WPF.Views
                 }
                 else
                 {
+                    if (_renderer.Selected == null)
+                    {
+                        Point point = new Point(
+                            Model.Layers.Editor.RightX,
+                            Model.Layers.Editor.RightY);
+                        IShape shape = Model.Layers.Editor.HitTest(point);
+                        if (shape != null)
+                        {
+                            Model.Selected = shape;
+                            Model.HaveSelected = true;
+                        }
+                        else
+                        {
+                            Model.Selected = null;
+                            Model.HaveSelected = false;
+                        }
+                    }
+                    else
+                    {
+                        Model.Selected = null;
+                        Model.HaveSelected = false;
+                    }
+
                     _isContextMenu = true;
                 }
             };
 
             pageView.ContextMenuClosing += (s, e) =>
             {
+                if (Model.Selected != null)
+                {
+                    Model.Layers.Editor.InvalidatePage();
+                }
+
                 _isContextMenu = false;
             };
         }

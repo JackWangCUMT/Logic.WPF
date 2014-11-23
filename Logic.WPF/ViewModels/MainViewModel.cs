@@ -103,6 +103,9 @@ namespace Logic.ViewModels
             }
         }
 
+        public IShape Selected { get; set; }
+        public bool HaveSelected { get; set; }
+
         #endregion
 
         #region Commands

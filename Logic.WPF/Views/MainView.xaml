@@ -63,7 +63,55 @@
         <KeyBinding Command="{Binding SimulationOptionsCommand}" Gesture="F9"/>
     </Window.InputBindings>
     <Window.Resources>
-        <ContextMenu x:Key="PageContextMenuKey">
+        <ControlTemplate x:Key="PropertiesControlTemplateKey">
+            <ItemsControl VerticalContentAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding Properties, UpdateSourceTrigger=PropertyChanged}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Height="Auto" VerticalAlignment="Top">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="70"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Key}"/>
+                            <TextBox Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Margin="4,2,2,2" Padding="2" Text="{Binding Value.Data, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ControlTemplate>
+        <ControlTemplate x:Key="BlockContextMenuControlTemplateKey">
+            <Border BorderThickness="1" BorderBrush="Black" Background="White" Padding="20">
+                <Grid Width="300" Height="Auto" VerticalAlignment="Top">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center" Text="Name"/>
+                    <TextBox Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Margin="4,2,2,2" Padding="2" Text="{Binding Path=Selected.Name}" IsReadOnly="True"/>
+                    <Control DataContext="{Binding Selected}" Grid.Column="1" Grid.ColumnSpan="1" Grid.Row="1" Template="{StaticResource PropertiesControlTemplateKey}"/>
+                </Grid>
+            </Border>
+        </ControlTemplate>
+        <ContextMenu x:Key="PageContextMenuKey" DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+            <ContextMenu.Style>
+                <Style TargetType="ContextMenu">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Path=HaveSelected}" Value="True">
+                            <Setter Property="Template" Value="{StaticResource ResourceKey=BlockContextMenuControlTemplateKey}"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ContextMenu.Style>
             <MenuItem Header="I_nsert" ItemsSource="{Binding Blocks}">
                 <MenuItem.ItemContainerStyle>
                     <Style TargetType="MenuItem">

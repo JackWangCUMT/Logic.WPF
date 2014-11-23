@@ -151,7 +151,10 @@ namespace Logic.Page
             RightX = point.X;
             RightY = point.Y;
 
-            Cancel();
+            if (IsMouseCaptured())
+            {
+                Cancel();
+            }
         }
 
         public void OnRender(object dc)
@@ -339,7 +342,7 @@ namespace Logic.Page
             }
             else
             {
-                //SelectionReset();
+                InvalidatePage();
             }
         }
 
@@ -3006,7 +3009,7 @@ namespace Logic.Page
 
         #region Invalidate
 
-        private void InvalidatePage()
+        public void InvalidatePage()
         {
             if (Layers != null)
             {
