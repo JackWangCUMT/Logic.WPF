@@ -383,11 +383,117 @@ namespace Logic.WPF.Views
                 (parameter) => IsSimulationRunning() ? false : true);
         }
 
+        public IProject Project { get; set; }
+        public IDocument Document { get; set; }
+
+        private void InitializeProject()
+        {
+            // project
+            Project = new XProject()
+            {
+                Name = "Project",
+                Styles = new ObservableCollection<IStyle>(),
+                Templates = new ObservableCollection<ITemplate>(),
+                Documents = new ObservableCollection<IDocument>()
+            };
+
+            // styles
+            IStyle shapeStyle = new XStyle(
+                name: "Shape",
+                fill: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
+                stroke: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
+                thickness: 2.0);
+            Project.Styles.Add(shapeStyle);
+
+            IStyle selectedShapeStyle = new XStyle(
+                name: "Selected",
+                fill: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
+                stroke: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
+                thickness: 2.0);
+            Project.Styles.Add(selectedShapeStyle);
+
+            IStyle selectionStyle = new XStyle(
+                name: "Selection",
+                fill: new XColor() { A = 0x1F, R = 0x00, G = 0x00, B = 0xFF },
+                stroke: new XColor() { A = 0x9F, R = 0x00, G = 0x00, B = 0xFF },
+                thickness: 1.0);
+            Project.Styles.Add(selectionStyle);
+
+            IStyle hoverStyle = new XStyle(
+                name: "Overlay",
+                fill: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
+                stroke: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
+                thickness: 2.0);
+            Project.Styles.Add(hoverStyle);
+
+            IStyle nullStateStyle = new XStyle(
+                name: "NullState",
+                fill: new XColor() { A = 0xFF, R = 0x66, G = 0x66, B = 0x66 },
+                stroke: new XColor() { A = 0xFF, R = 0x66, G = 0x66, B = 0x66 },
+                thickness: 2.0);
+            Project.Styles.Add(nullStateStyle);
+
+            IStyle trueStateStyle = new XStyle(
+                name: "TrueState",
+                fill: new XColor() { A = 0xFF, R = 0xFF, G = 0x14, B = 0x93 },
+                stroke: new XColor() { A = 0xFF, R = 0xFF, G = 0x14, B = 0x93 },
+                thickness: 2.0);
+            Project.Styles.Add(trueStateStyle);
+
+            IStyle falseStateStyle = new XStyle(
+                name: "FalseState",
+                fill: new XColor() { A = 0xFF, R = 0x00, G = 0xBF, B = 0xFF },
+                stroke: new XColor() { A = 0xFF, R = 0x00, G = 0xBF, B = 0xFF },
+                thickness: 2.0);
+            Project.Styles.Add(falseStateStyle);
+
+            // templates
+            Project.Templates.Add(new LogicPageTemplate());
+            Project.Templates.Add(new ScratchpadPageTemplate());
+
+            // documents
+            Document = new XDocument()
+            {
+                Name = "Document",
+                Pages = new ObservableCollection<IPage>()
+            };
+            Project.Documents.Add(Document);
+
+            // pages
+            Document.Pages.Add(
+                new XPage()
+                {
+                    Name = "Page",
+                    Shapes = new List<IShape>(),
+                    Blocks = new List<IShape>(),
+                    Pins = new List<IShape>(),
+                    Wires = new List<IShape>(),
+                    Template = null
+                });
+
+            // layers
+            var layers = new List<XLayer>();
+            layers.Add(Model.Layers.Shapes);
+            layers.Add(Model.Layers.Blocks);
+            layers.Add(Model.Layers.Wires);
+            layers.Add(Model.Layers.Pins);
+            layers.Add(Model.Layers.Editor);
+            layers.Add(Model.Layers.Overlay);
+
+            foreach (var layer in layers)
+            {
+                layer.ShapeStyle = shapeStyle;
+                layer.SelectedShapeStyle = selectedShapeStyle;
+                layer.SelectionStyle = selectionStyle;
+                layer.HoverStyle = hoverStyle;
+                layer.NullStateStyle = nullStateStyle;
+                layer.TrueStateStyle = trueStateStyle;
+                layer.FalseStateStyle = falseStateStyle;
+            }
+        }
+
         private void InitializePage()
         {
-            // serializer
-            _serializer = new Json();
-
             // layers
             Model.Layers = new XLayers();
             Model.Layers.Shapes = pageView.shapeLayer.Layer;
@@ -397,11 +503,24 @@ namespace Logic.WPF.Views
             Model.Layers.Editor = pageView.editorLayer.Layer;
             Model.Layers.Overlay = pageView.overlayLayer.Layer;
 
+            // project
+            InitializeProject();
+
             // editor
             Model.Layers.Editor.Layers = Model.Layers;
 
             // overlay
             Model.Layers.Overlay.IsOverlay = true;
+
+            // serializer
+            _serializer = new Json();
+
+            Model.Layers.Shapes.Serializer = _serializer;
+            Model.Layers.Blocks.Serializer = _serializer;
+            Model.Layers.Wires.Serializer = _serializer;
+            Model.Layers.Pins.Serializer = _serializer;
+            Model.Layers.Editor.Serializer = _serializer;
+            Model.Layers.Overlay.Serializer = _serializer;
 
             // renderer
             _renderer = new XRenderer()

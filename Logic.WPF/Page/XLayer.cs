@@ -162,7 +162,7 @@ namespace Logic.Page
 
                 if (_mode == Mode.Selection)
                 {
-                    _selection.Render(dc, Renderer, _selectionStyle);
+                    _selection.Render(dc, Renderer, SelectionStyle);
                 }
                 else if (IsOverlay && Simulations != null)
                 {
@@ -186,13 +186,13 @@ namespace Logic.Page
                     IStyle selected;
                     if (IsOverlay)
                     {
-                        normal = _hoverStyle;
-                        selected = _hoverStyle;
+                        normal = HoverStyle;
+                        selected = HoverStyle;
                     }
                     else
                     {
-                        normal = _shapeStyle;
-                        selected = _selectedShapeStyle;
+                        normal = ShapeStyle;
+                        selected = SelectedShapeStyle;
                     }
 
                     if (Renderer != null
@@ -239,6 +239,14 @@ namespace Logic.Page
         public bool SkipContextMenu { get; set; }
         public double RightX { get; set; }
         public double RightY { get; set; }
+        public IStringSerializer Serializer { get; set; }
+        public IStyle ShapeStyle { get; set; }
+        public IStyle SelectedShapeStyle { get; set; }
+        public IStyle SelectionStyle { get; set; }
+        public IStyle HoverStyle { get; set; }
+        public IStyle NullStateStyle { get; set; }
+        public IStyle TrueStateStyle { get; set; }
+        public IStyle FalseStateStyle { get; set; }
 
         #endregion
 
@@ -277,14 +285,6 @@ namespace Logic.Page
 
         #region Fields
 
-        private IStringSerializer _serializer = null;
-        private IStyle _shapeStyle = null;
-        private IStyle _selectedShapeStyle = null;
-        private IStyle _selectionStyle = null;
-        private IStyle _hoverStyle = null;
-        private IStyle _nullStateStyle = null;
-        private IStyle _trueStateStyle = null;
-        private IStyle _falseStateStyle = null;
         private double _startx, _starty;
         private double _hx, _hy;
         private XBlock _block = null;
@@ -304,67 +304,6 @@ namespace Logic.Page
         #region Constructor
 
         public XLayer()
-        {
-            InitializeLayer();
-            InitStyles();
-            InitProperties();
-        }
-
-        #endregion
-
-        #region Initialize
-
-        private void InitializeLayer()
-        {
-            _serializer = new Json();
-        }
-
-        private void InitStyles()
-        {
-            _shapeStyle = new XStyle(
-                name: "Shape",
-                fill: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
-                stroke: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
-                thickness: 2.0);
-
-            _selectedShapeStyle = new XStyle(
-                name: "Selected",
-                fill: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
-                stroke: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
-                thickness: 2.0);
-
-            _selectionStyle = new XStyle(
-                name: "Selection",
-                fill: new XColor() { A = 0x1F, R = 0x00, G = 0x00, B = 0xFF },
-                stroke: new XColor() { A = 0x9F, R = 0x00, G = 0x00, B = 0xFF },
-                thickness: 1.0);
-
-            _hoverStyle = new XStyle(
-                name: "Overlay",
-                fill: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
-                stroke: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
-                thickness: 2.0);
-
-            _nullStateStyle = new XStyle(
-                name: "NullState",
-                fill: new XColor() { A = 0xFF, R = 0x66, G = 0x66, B = 0x66 },
-                stroke: new XColor() { A = 0xFF, R = 0x66, G = 0x66, B = 0x66 },
-                thickness: 2.0);
-
-            _trueStateStyle = new XStyle(
-                name: "TrueState",
-                fill: new XColor() { A = 0xFF, R = 0xFF, G = 0x14, B = 0x93 },
-                stroke: new XColor() { A = 0xFF, R = 0xFF, G = 0x14, B = 0x93 },
-                thickness: 2.0);
-
-            _falseStateStyle = new XStyle(
-                name: "FalseState",
-                fill: new XColor() { A = 0xFF, R = 0x00, G = 0xBF, B = 0xFF },
-                stroke: new XColor() { A = 0xFF, R = 0x00, G = 0xBF, B = 0xFF },
-                thickness: 2.0);
-        }
-
-        private void InitProperties()
         {
             Shapes = new List<IShape>();
             Hidden = new HashSet<IShape>();
@@ -2469,13 +2408,13 @@ namespace Logic.Page
         {
             try
             {
-                var jshapes = _serializer.Serialize(source.Shapes);
-                var jpins = _serializer.Serialize(source.Pins);
+                var jshapes = Serializer.Serialize(source.Shapes);
+                var jpins = Serializer.Serialize(source.Pins);
                 var copy = new XBlock()
                 {
                     Name = source.Name,
-                    Shapes = _serializer.Deserialize<IList<IShape>>(jshapes),
-                    Pins = _serializer.Deserialize<IList<XPin>>(jpins)
+                    Shapes = Serializer.Deserialize<IList<IShape>>(jshapes),
+                    Pins = Serializer.Deserialize<IList<XPin>>(jpins)
                 };
                 foreach (var pin in copy.Pins)
                 {
@@ -2631,7 +2570,7 @@ namespace Logic.Page
                 using (var fs = System.IO.File.OpenText(path))
                 {
                     var json = fs.ReadToEnd();
-                    var page = _serializer.Deserialize<XPage>(json);
+                    var page = Serializer.Deserialize<XPage>(json);
                     return page;
                 }
             }
@@ -2649,7 +2588,7 @@ namespace Logic.Page
         {
             try
             {
-                var json = _serializer.Serialize(page);
+                var json = Serializer.Serialize(page);
                 using (var fs = System.IO.File.CreateText(path))
                 {
                     fs.Write(json);
@@ -2688,7 +2627,7 @@ namespace Logic.Page
         {
             try
             {
-                var json = _serializer.Serialize(shapes);
+                var json = Serializer.Serialize(shapes);
                 if (!string.IsNullOrEmpty(json))
                 {
                     Clipboard.SetText(json, TextDataFormat.UnicodeText);
@@ -2791,7 +2730,7 @@ namespace Logic.Page
         {
             try
             {
-                var shapes = _serializer.Deserialize<IList<IShape>>(json);
+                var shapes = Serializer.Deserialize<IList<IShape>>(json);
                 if (shapes != null && shapes.Count > 0)
                 {
                     Insert(shapes);
@@ -2944,9 +2883,9 @@ namespace Logic.Page
                 _cache[i] = Simulations[block];
 
                 _dwCache[i] = new DrawingVisual[3];
-                _dwCache[i][0] = RenderToDrawingVisual(block, _trueStateStyle);
-                _dwCache[i][1] = RenderToDrawingVisual(block, _falseStateStyle);
-                _dwCache[i][2] = RenderToDrawingVisual(block, _nullStateStyle);
+                _dwCache[i][0] = RenderToDrawingVisual(block, TrueStateStyle);
+                _dwCache[i][1] = RenderToDrawingVisual(block, FalseStateStyle);
+                _dwCache[i][2] = RenderToDrawingVisual(block, NullStateStyle);
             }
         }
 
@@ -2982,14 +2921,14 @@ namespace Logic.Page
                     switch (state)
                     {
                         case true:
-                            style = _trueStateStyle;
+                            style = TrueStateStyle;
                             break;
                         case false:
-                            style = _falseStateStyle;
+                            style = FalseStateStyle;
                             break;
                         case null:
                         default:
-                            style = _nullStateStyle;
+                            style = NullStateStyle;
                             break;
                     }
                     RenderSimulationBlock(dc, block, style);
