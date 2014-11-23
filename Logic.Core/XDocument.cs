@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Logic.Core
 {
-    public class XDocument
+    public class XDocument : IDocument
     {
         public string Name { get; set; }
-        public IList<XPage> Pages { get; set; }
+        public IList<IPage> Pages { get; set; }
     }
 }
