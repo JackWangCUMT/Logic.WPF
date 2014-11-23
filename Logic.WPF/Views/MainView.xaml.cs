@@ -43,7 +43,6 @@ namespace Logic.WPF.Views
         #region Fields
 
         private IStringSerializer _serializer = null;
-        private XLayers _layers = null;
         private IRenderer _renderer = null;
         private ITemplate _template = null;
         private Point _dragStartPoint;
@@ -125,151 +124,183 @@ namespace Logic.WPF.Views
                 (parameter) => true);
 
             Model.EditUndoCommand = new Command(
-                (parameter) => this.Undo(),
+                (parameter) => Model.Layers.Editor.Undo(),
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !_layers.Editor.History.CanUndo() ? false : true;
+                        || !Model.Layers.Editor.History.CanUndo() ? false : true;
                 });
 
             Model.EditRedoCommand = new Command
-                ((parameter) => this.Redo(),
+                ((parameter) => Model.Layers.Editor.Redo(),
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !_layers.Editor.History.CanRedo() ? false : true;
+                        || !Model.Layers.Editor.History.CanRedo() ? false : true;
                 });
 
             Model.EditCutCommand = new Command(
-                (parameter) => this.Cut(),
+                (parameter) => Model.Layers.Editor.Cut(),
                 (parameter) => 
                 {
                     return IsSimulationRunning()
-                        || !_layers.Editor.CanCopy() ? false : true;
+                        || !Model.Layers.Editor.CanCopy() ? false : true;
                 });
 
             Model.EditCopyCommand = new Command(
-                (parameter) => this.Copy(),
+                (parameter) => Model.Layers.Editor.Copy(),
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !_layers.Editor.CanCopy() ? false : true;
+                        || !Model.Layers.Editor.CanCopy() ? false : true;
                 });
 
             Model.EditPasteCommand = new Command(
-                (parameter) => this.Paste(),
+                (parameter) =>
+                {
+                    Model.Layers.Editor.Paste();
+                    if (_isContextMenu && _renderer.Selected != null)
+                    {
+                        double minX = pageView.editorLayer.Width;
+                        double minY = pageView.editorLayer.Height;
+                        Model.Layers.Editor.GetMin(_renderer.Selected, ref minX, ref minY);
+                        double x = Model.Layers.Editor.RightX - minX;
+                        double y = Model.Layers.Editor.RightY - minY;
+                        Model.Layers.Editor.Move(_renderer.Selected, x, y);
+                    }
+                },
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !_layers.Editor.CanPaste() ? false : true;
+                        || !Model.Layers.Editor.CanPaste() ? false : true;
                 });
 
             Model.EditDeleteCommand = new Command(
-                (parameter) => this.Delete(),
+                (parameter) => Model.Layers.Editor.SelectionDelete(),
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !_layers.Editor.HaveSelected() ? false : true;
+                        || !Model.Layers.Editor.HaveSelected() ? false : true;
                 });
 
             Model.EditSelectAllCommand = new Command(
-                (parameter) => this.SelectAll(), 
+                (parameter) => Model.Layers.Editor.SelectAll(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignLeftBottomCommand = new Command(
-                (parameter) => this.AlignLeftBottom(), 
+                (parameter) =>
+                {
+                    Model.Layers.Editor.SetTextHAlignment(HAlignment.Left);
+                    Model.Layers.Editor.SetTextVAlignment(VAlignment.Bottom);
+                },
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignBottomCommand = new Command(
-                (parameter) => this.AlignBottom(), 
+                (parameter) => Model.Layers.Editor.SetTextVAlignment(VAlignment.Bottom), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignRightBottomCommand = new Command(
-                (parameter) => this.AlignRightBottom(), 
+                (parameter) =>
+                {
+                    Model.Layers.Editor.SetTextHAlignment(HAlignment.Right);
+                    Model.Layers.Editor.SetTextVAlignment(VAlignment.Bottom);
+                },
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignLeftCommand = new Command(
-                (parameter) => this.AlignLeft(), 
+                (parameter) => Model.Layers.Editor.SetTextHAlignment(HAlignment.Left), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignCenterCenterCommand = new Command(
-                (parameter) => this.AlignCenterCenter(), 
+                (parameter) =>
+                {
+                    Model.Layers.Editor.SetTextHAlignment(HAlignment.Center);
+                    Model.Layers.Editor.SetTextVAlignment(VAlignment.Center);
+                },
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignRightCommand = new Command(
-                (parameter) => this.AlignRight(), 
+                (parameter) => Model.Layers.Editor.SetTextHAlignment(HAlignment.Right), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignLeftTopCommand = new Command(
-                (parameter) => this.AlignLeftTop(), 
+                (parameter) =>
+                {
+                    Model.Layers.Editor.SetTextHAlignment(HAlignment.Left);
+                    Model.Layers.Editor.SetTextVAlignment(VAlignment.Top);
+                },
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignTopCommand = new Command(
-                (parameter) => this.AlignTop(), 
+                (parameter) => Model.Layers.Editor.SetTextVAlignment(VAlignment.Top), 
                 (parameter) => IsSimulationRunning() ? false : true);
-           
+
             Model.EditAlignRightTopCommand = new Command
-                ((parameter) => this.AlignRightTop(), 
+                ((parameter) =>
+                {
+                    Model.Layers.Editor.SetTextHAlignment(HAlignment.Right);
+                    Model.Layers.Editor.SetTextVAlignment(VAlignment.Top);
+                },
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditIncreaseTextSizeCommand = new Command(
-                (parameter) => this.IncreaseTextSize(), 
+                (parameter) => Model.Layers.Editor.SetTextSizeDelta(+1.0), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditDecreaseTextSizeCommand = new Command(
-                (parameter) => this.DecreaseTextSize(), 
+                (parameter) => Model.Layers.Editor.SetTextSizeDelta(-1.0), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditToggleFillCommand = new Command(
-                (parameter) => this.ToggleFill(), 
+                (parameter) => Model.Layers.Editor.ToggleFill(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditToggleSnapCommand = new Command(
-                (parameter) => this.ToggleSnap(), 
+                (parameter) => Model.Layers.Editor.EnableSnap = !Model.Layers.Editor.EnableSnap, 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditToggleInvertStartCommand = new Command(
-                (parameter) => this.ToggleInvertStart(), 
+                (parameter) => Model.Layers.Editor.ToggleInvertStart(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditToggleInvertEndCommand = new Command(
-                (parameter) => this.ToggleInvertEnd(), 
+                (parameter) => Model.Layers.Editor.ToggleInvertEnd(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditCancelCommand = new Command(
-                (parameter) => this.Cancel(), 
+                (parameter) => Model.Layers.Editor.Cancel(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.ToolNoneCommand = new Command(
-                (parameter) => this.SetToolNone(), 
+                (parameter) => Model.Tool.CurrentTool = ToolMenuModel.Tool.None, 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.ToolSelectionCommand = new Command(
-                (parameter) => this.SetToolSelection(), 
+                (parameter) => Model.Tool.CurrentTool = ToolMenuModel.Tool.Selection, 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.ToolWireCommand = new Command(
-                (parameter) => this.SetToolWire(), 
+                (parameter) => Model.Tool.CurrentTool = ToolMenuModel.Tool.Wire, 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.ToolPinCommand = new Command(
-                (parameter) => this.SetToolPin(), 
+                (parameter) => Model.Tool.CurrentTool = ToolMenuModel.Tool.Pin, 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.ToolLineCommand = new Command(
-                (parameter) => this.SetToolLine(), 
+                (parameter) => Model.Tool.CurrentTool = ToolMenuModel.Tool.Line, 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.ToolEllipseCommand = new Command(
-                (parameter) => this.SetToolEllipse(), 
+                (parameter) => Model.Tool.CurrentTool = ToolMenuModel.Tool.Ellipse, 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.ToolRectangleCommand = new Command(
-                (parameter) => this.SetToolRectangle(), 
+                (parameter) => Model.Tool.CurrentTool = ToolMenuModel.Tool.Rectangle, 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.ToolTextCommand = new Command(
-                (parameter) => this.SetToolText(), 
+                (parameter) => Model.Tool.CurrentTool = ToolMenuModel.Tool.Text, 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.BlockImportCommand = new Command(
@@ -285,7 +316,7 @@ namespace Logic.WPF.Views
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !_layers.Editor.HaveSelected() ? false : true;
+                        || !Model.Layers.Editor.HaveSelected() ? false : true;
                 });
 
             Model.BlockCreateProjectCommand = new Command(
@@ -293,7 +324,7 @@ namespace Logic.WPF.Views
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !_layers.Editor.HaveSelected() ? false : true;
+                        || !Model.Layers.Editor.HaveSelected() ? false : true;
                 });
 
             Model.InsertBlockCommand = new Command(
@@ -302,8 +333,8 @@ namespace Logic.WPF.Views
                     XBlock block = parameter as XBlock;
                     if (block != null)
                     {
-                        double x = _isContextMenu ? _layers.Editor.RightX : 0.0;
-                        double y = _isContextMenu ? _layers.Editor.RightY : 0.0;
+                        double x = _isContextMenu ? Model.Layers.Editor.RightX : 0.0;
+                        double y = _isContextMenu ? Model.Layers.Editor.RightY : 0.0;
                         InsertBlock(block, x, y);
                     }
                 },
@@ -359,19 +390,19 @@ namespace Logic.WPF.Views
             _serializer = new Json();
 
             // layers
-            _layers = new XLayers();
-            _layers.Shapes = pageView.shapeLayer.Layer;
-            _layers.Blocks = pageView.blockLayer.Layer;
-            _layers.Wires = pageView.wireLayer.Layer;
-            _layers.Pins = pageView.pinLayer.Layer;
-            _layers.Editor = pageView.editorLayer.Layer;
-            _layers.Overlay = pageView.overlayLayer.Layer;
+            Model.Layers = new XLayers();
+            Model.Layers.Shapes = pageView.shapeLayer.Layer;
+            Model.Layers.Blocks = pageView.blockLayer.Layer;
+            Model.Layers.Wires = pageView.wireLayer.Layer;
+            Model.Layers.Pins = pageView.pinLayer.Layer;
+            Model.Layers.Editor = pageView.editorLayer.Layer;
+            Model.Layers.Overlay = pageView.overlayLayer.Layer;
 
             // editor
-            _layers.Editor.Layers = _layers;
+            Model.Layers.Editor.Layers = Model.Layers;
 
             // overlay
-            _layers.Overlay.IsOverlay = true;
+            Model.Layers.Overlay.IsOverlay = true;
 
             // renderer
             _renderer = new NativeRenderer()
@@ -381,22 +412,22 @@ namespace Logic.WPF.Views
                 HitTreshold = 6.0
             };
 
-            _layers.Shapes.Renderer = _renderer;
-            _layers.Blocks.Renderer = _renderer;
-            _layers.Wires.Renderer = _renderer;
-            _layers.Pins.Renderer = _renderer;
-            _layers.Editor.Renderer = _renderer;
-            _layers.Overlay.Renderer = _renderer;
+            Model.Layers.Shapes.Renderer = _renderer;
+            Model.Layers.Blocks.Renderer = _renderer;
+            Model.Layers.Wires.Renderer = _renderer;
+            Model.Layers.Pins.Renderer = _renderer;
+            Model.Layers.Editor.Renderer = _renderer;
+            Model.Layers.Overlay.Renderer = _renderer;
 
             // template
             ApplyTemplate(new LogicPageTemplate(), _renderer);
 
             // history
-            _layers.Editor.History = new History<XPage>();
+            Model.Layers.Editor.History = new History<XPage>();
 
             // tool
-            _layers.Editor.Tool = Model.Tool;
-            _layers.Editor.Tool.CurrentTool = ToolMenuModel.Tool.Selection;
+            Model.Layers.Editor.Tool = Model.Tool;
+            Model.Layers.Editor.Tool.CurrentTool = ToolMenuModel.Tool.Selection;
 
             // drag & drop
             pageView.editorLayer.AllowDrop = true;
@@ -453,7 +484,7 @@ namespace Logic.WPF.Views
                             string path = files[0];
                             if (!string.IsNullOrEmpty(path))
                             {
-                                _layers.Editor.Load(path);
+                                Model.Layers.Editor.Load(path);
                                 Model.FileName = System.IO.Path.GetFileNameWithoutExtension(path);
                                 Model.FilePath = path;
                                 e.Handled = true;
@@ -473,13 +504,13 @@ namespace Logic.WPF.Views
             // context menu
             pageView.ContextMenuOpening += (s, e) =>
             {
-                if (_layers.Editor.CurrentMode != XLayer.Mode.None)
+                if (Model.Layers.Editor.CurrentMode != XLayer.Mode.None)
                 {
                     e.Handled = true;
                 }
-                else if (_layers.Editor.SkipContextMenu == true)
+                else if (Model.Layers.Editor.SkipContextMenu == true)
                 {
-                    _layers.Editor.SkipContextMenu = false;
+                    Model.Layers.Editor.SkipContextMenu = false;
                     e.Handled = true;
                 }
                 else
@@ -583,7 +614,7 @@ namespace Logic.WPF.Views
 
         private void New()
         {
-            _layers.Editor.New();
+            Model.Layers.Editor.New();
             Model.FileName = null;
             Model.FilePath = null;
         }
@@ -597,7 +628,7 @@ namespace Logic.WPF.Views
 
             if (dlg.ShowDialog(this) == true)
             {
-                _layers.Editor.Load(dlg.FileName);
+                Model.Layers.Editor.Load(dlg.FileName);
                 Model.FileName = System.IO.Path.GetFileNameWithoutExtension(dlg.FileName);
                 Model.FilePath = dlg.FileName;
             }
@@ -607,7 +638,7 @@ namespace Logic.WPF.Views
         {
             if (!string.IsNullOrEmpty(Model.FilePath))
             {
-                _layers.Editor.Save(Model.FilePath);
+                Model.Layers.Editor.Save(Model.FilePath);
             }
             else
             {
@@ -628,187 +659,10 @@ namespace Logic.WPF.Views
 
             if (dlg.ShowDialog(this) == true)
             {
-                _layers.Editor.Save(dlg.FileName);
+                Model.Layers.Editor.Save(dlg.FileName);
                 Model.FileName = System.IO.Path.GetFileNameWithoutExtension(dlg.FileName);
                 Model.FilePath = dlg.FileName;
             }
-        }
-
-        #endregion
-
-        #region Edit
-
-        private void Undo()
-        {
-            _layers.Editor.Undo();
-        }
-
-        private void Redo()
-        {
-            _layers.Editor.Redo();
-        }
-
-        private void Cut()
-        {
-            _layers.Editor.Cut();
-        }
-
-        private void Copy()
-        {
-            _layers.Editor.Copy();
-        }
-
-        private void Paste()
-        {
-            _layers.Editor.Paste();
-            if (_isContextMenu && _renderer.Selected != null)
-            {
-                double minX = pageView.editorLayer.Width;
-                double minY = pageView.editorLayer.Height;
-                _layers.Editor.GetMin(_renderer.Selected, ref minX, ref minY);
-                double x = _layers.Editor.RightX - minX;
-                double y = _layers.Editor.RightY - minY;
-                _layers.Editor.Move(_renderer.Selected, x, y);
-            }
-        }
-
-        private void Delete()
-        {
-            _layers.Editor.SelectionDelete();
-        }
-
-        private void SelectAll()
-        {
-            _layers.Editor.SelectAll();
-        }
-
-        private void ToggleFill()
-        {
-            _layers.Editor.ToggleFill();
-        }
-
-        private void ToggleSnap()
-        {
-            _layers.Editor.EnableSnap = !_layers.Editor.EnableSnap;
-        }
-
-        private void ToggleInvertStart()
-        {
-            _layers.Editor.ToggleInvertStart();
-        }
-
-        private void ToggleInvertEnd()
-        {
-            _layers.Editor.ToggleInvertEnd();
-        }
-
-        private void IncreaseTextSize()
-        {
-            _layers.Editor.SetTextSizeDelta(+1.0);
-        }
-
-        private void DecreaseTextSize()
-        {
-            _layers.Editor.SetTextSizeDelta(-1.0);
-        }
-
-        private void AlignLeftBottom()
-        {
-            _layers.Editor.SetTextHAlignment(HAlignment.Left);
-            _layers.Editor.SetTextVAlignment(VAlignment.Bottom);
-        }
-
-        private void AlignBottom()
-        {
-            _layers.Editor.SetTextVAlignment(VAlignment.Bottom);
-        }
-
-        private void AlignRightBottom()
-        {
-            _layers.Editor.SetTextHAlignment(HAlignment.Right);
-            _layers.Editor.SetTextVAlignment(VAlignment.Bottom);
-        }
-
-        private void AlignLeft()
-        {
-            _layers.Editor.SetTextHAlignment(HAlignment.Left);
-        }
-
-        private void AlignCenterCenter()
-        {
-            _layers.Editor.SetTextHAlignment(HAlignment.Center);
-            _layers.Editor.SetTextVAlignment(VAlignment.Center);
-        }
-
-        private void AlignRight()
-        {
-            _layers.Editor.SetTextHAlignment(HAlignment.Right);
-        }
-
-        private void AlignLeftTop()
-        {
-            _layers.Editor.SetTextHAlignment(HAlignment.Left);
-            _layers.Editor.SetTextVAlignment(VAlignment.Top);
-        }
-
-        private void AlignTop()
-        {
-            _layers.Editor.SetTextVAlignment(VAlignment.Top);
-        }
-
-        private void AlignRightTop()
-        {
-            _layers.Editor.SetTextHAlignment(HAlignment.Right);
-            _layers.Editor.SetTextVAlignment(VAlignment.Top);
-        }
-
-        private void Cancel()
-        {
-            _layers.Editor.Cancel();
-        }
-
-        #endregion
-
-        #region Tool
-
-        private void SetToolNone()
-        {
-            Model.Tool.CurrentTool = ToolMenuModel.Tool.None;
-        }
-
-        private void SetToolSelection()
-        {
-            Model.Tool.CurrentTool = ToolMenuModel.Tool.Selection;
-        }
-
-        private void SetToolLine()
-        {
-            Model.Tool.CurrentTool = ToolMenuModel.Tool.Line;
-        }
-
-        private void SetToolEllipse()
-        {
-            Model.Tool.CurrentTool = ToolMenuModel.Tool.Ellipse;
-        }
-
-        private void SetToolRectangle()
-        {
-            Model.Tool.CurrentTool = ToolMenuModel.Tool.Rectangle;
-        }
-
-        private void SetToolText()
-        {
-            Model.Tool.CurrentTool = ToolMenuModel.Tool.Text;
-        }
-
-        private void SetToolWire()
-        {
-            Model.Tool.CurrentTool = ToolMenuModel.Tool.Wire;
-        }
-
-        private void SetToolPin()
-        {
-            Model.Tool.CurrentTool = ToolMenuModel.Tool.Pin;
         }
 
         #endregion
@@ -817,12 +671,12 @@ namespace Logic.WPF.Views
 
         private void InsertBlock(XBlock block, double x, double y)
         {
-            _layers.Editor.History.Snapshot(
-                _layers.Editor.Layers.ToPage("Page", null));
-            XBlock copy = _layers.Editor.Insert(block, x, y);
+            Model.Layers.Editor.History.Snapshot(
+                Model.Layers.Editor.Layers.ToPage("Page", null));
+            XBlock copy = Model.Layers.Editor.Insert(block, x, y);
             if (copy != null)
             {
-                _layers.Editor.Connect(copy);
+                Model.Layers.Editor.Connect(copy);
             }
         }
 
@@ -845,7 +699,7 @@ namespace Logic.WPF.Views
 
         private void CreateProject()
         {
-            var block = _layers.Editor.CreateBlockFromSelected("Block");
+            var block = Model.Layers.Editor.CreateBlockFromSelected("Block");
             if (block == null)
                 return;
 
@@ -979,7 +833,7 @@ namespace Logic.WPF.Views
 
         private void ExportBlock()
         {
-            var block = _layers.Editor.CreateBlockFromSelected("Block");
+            var block = Model.Layers.Editor.CreateBlockFromSelected("Block");
             if (block != null)
             {
                 var dlg = new Microsoft.Win32.SaveFileDialog()
@@ -1197,35 +1051,35 @@ namespace Logic.WPF.Views
 
         private void InitSimulationOverlay(IDictionary<XBlock, BoolSimulation> simulations)
         {
-            _layers.Editor.SelectionReset();
+            Model.Layers.Editor.SelectionReset();
 
-            _layers.Overlay.EnableSimulationCache = true;
-            _layers.Overlay.HaveSimulationCache = false;
+            Model.Layers.Overlay.EnableSimulationCache = true;
+            Model.Layers.Overlay.HaveSimulationCache = false;
 
             foreach (var simulation in simulations)
             {
-                _layers.Blocks.Hidden.Add(simulation.Key);
-                _layers.Overlay.Shapes.Add(simulation.Key);
+                Model.Layers.Blocks.Hidden.Add(simulation.Key);
+                Model.Layers.Overlay.Shapes.Add(simulation.Key);
             }
 
-            _layers.Editor.Simulations = simulations;
-            _layers.Overlay.Simulations = simulations;
+            Model.Layers.Editor.Simulations = simulations;
+            Model.Layers.Overlay.Simulations = simulations;
 
-            _layers.Blocks.InvalidateVisual();
-            _layers.Overlay.InvalidateVisual();
+            Model.Layers.Blocks.InvalidateVisual();
+            Model.Layers.Overlay.InvalidateVisual();
         }
 
         private void ResetSimulationOverlay()
         {
-            _layers.Editor.Simulations = null;
-            _layers.Overlay.Simulations = null;
+            Model.Layers.Editor.Simulations = null;
+            Model.Layers.Overlay.Simulations = null;
 
-            _layers.Overlay.HaveSimulationCache = false;
+            Model.Layers.Overlay.HaveSimulationCache = false;
 
-            _layers.Blocks.Hidden.Clear();
-            _layers.Overlay.Shapes.Clear();
-            _layers.Blocks.InvalidateVisual();
-            _layers.Overlay.InvalidateVisual();
+            Model.Layers.Blocks.Hidden.Clear();
+            Model.Layers.Overlay.Shapes.Clear();
+            Model.Layers.Blocks.InvalidateVisual();
+            Model.Layers.Overlay.InvalidateVisual();
         }
 
         #endregion
@@ -1236,7 +1090,7 @@ namespace Logic.WPF.Views
         {
             try
             {
-                XPage temp = _layers.Editor.Layers.ToPage("Page", null);
+                XPage temp = Model.Layers.Editor.Layers.ToPage("Page", null);
                 if (temp != null)
                 {
                     var context = PageGraph.Create(temp);
@@ -1308,7 +1162,7 @@ namespace Logic.WPF.Views
                     {
                         BoolSimulationFactory.Run(simulations, _clock);
                         _clock.Tick();
-                        Dispatcher.Invoke(() => _layers.Overlay.InvalidateVisual());
+                        Dispatcher.Invoke(() => Model.Layers.Overlay.InvalidateVisual());
                     }
                     catch (Exception ex)
                     {
@@ -1338,7 +1192,7 @@ namespace Logic.WPF.Views
                     return;
                 }
 
-                XPage temp = _layers.Editor.Layers.ToPage("Page", null);
+                XPage temp = Model.Layers.Editor.Layers.ToPage("Page", null);
                 if (temp != null)
                 {
                     var context = PageGraph.Create(temp);
@@ -1347,7 +1201,7 @@ namespace Logic.WPF.Views
                         var simulations = BoolSimulationFactory.Create(context);
                         if (simulations != null)
                         {
-                            SetToolSelection();
+
                             InitSimulationOverlay(simulations);
                             Start(simulations);
                         }
