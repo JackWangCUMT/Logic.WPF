@@ -1,4 +1,4 @@
-﻿using Logic.WPF.Util;
+﻿using Logic.Util;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace Logic.WPF.ViewModels
+namespace Logic.ViewModels
 {
     public class CodeViewModel : NotifyObject
     {

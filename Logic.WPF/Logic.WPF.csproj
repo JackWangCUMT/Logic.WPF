@@ -126,11 +126,11 @@
     <Compile Include="Page\NativeZoom.cs" />
     <Compile Include="Page\NativeCanvas.cs" />
     <Compile Include="Page\NativeView.cs" />
-    <Compile Include="Page\NativeStyle.cs" />
+    <Compile Include="Page\XStyle.cs" />
     <Compile Include="Util\History.cs" />
     <Compile Include="Serialization\Json.cs" />
     <Compile Include="Page\XLayers.cs" />
-    <Compile Include="Page\NativeRenderer.cs" />
+    <Compile Include="Page\XRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

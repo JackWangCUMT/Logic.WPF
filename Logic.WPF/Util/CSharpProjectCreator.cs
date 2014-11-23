@@ -1,12 +1,12 @@
 ﻿using Logic.Core;
-using Logic.WPF.ViewModels;
+using Logic.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Logic.WPF.Util
+namespace Logic.Util
 {
     public class CSharpProjectCreator
     {

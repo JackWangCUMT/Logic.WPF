@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:Logic.WPF"
-        xmlns:page="clr-namespace:Logic.WPF.Page"
+        xmlns:page="clr-namespace:Logic.Page"
         xmlns:views="clr-namespace:Logic.WPF.Views"
         Title="{Binding FileName, StringFormat={}{0} - Logic, FallbackValue=Logic, TargetNullValue=Logic}" 
         Height="980" Width="1420"

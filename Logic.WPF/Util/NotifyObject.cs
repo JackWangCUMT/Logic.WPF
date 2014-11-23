@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Logic.WPF.Util
+namespace Logic.Util
 {
     public abstract class NotifyObject : INotifyPropertyChanged
     {

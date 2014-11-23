@@ -8,7 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace Logic.WPF.Page
+namespace Logic.Page
 {
     public class NativeZoom : Border
     {

@@ -1,13 +1,13 @@
 ﻿using Logic.Core;
-using Logic.WPF.Page;
-using Logic.WPF.Util;
+using Logic.Page;
+using Logic.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Logic.WPF.Templates
+namespace Logic.Templates
 {
     public class ScratchpadPageTemplate : ITemplate
     {
@@ -45,7 +45,7 @@ namespace Logic.WPF.Templates
             };
 
             // styles
-            var gridStyle = new NativeStyle(
+            var gridStyle = new XStyle(
                 name: "Grid",
                 fill: new XColor() { A = 0x00, R = 0x00, G = 0x00, B = 0x00 },
                 stroke: new XColor() { A = 0xFF, R = 0xD3, G = 0xD3, B = 0xD3 },

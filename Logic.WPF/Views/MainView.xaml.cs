@@ -1,13 +1,12 @@
 ﻿using Logic.Core;
 using Logic.Graph;
 using Logic.Simulation;
-using Logic.WPF.Page;
-using Logic.WPF.Serialization;
-using Logic.WPF.Simulation;
-using Logic.WPF.Templates;
-using Logic.WPF.Util;
-using Logic.WPF.Util.Parts;
-using Logic.WPF.ViewModels;
+using Logic.Page;
+using Logic.Serialization;
+using Logic.Templates;
+using Logic.Util;
+using Logic.Util.Parts;
+using Logic.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -405,7 +404,7 @@ namespace Logic.WPF.Views
             Model.Layers.Overlay.IsOverlay = true;
 
             // renderer
-            _renderer = new NativeRenderer()
+            _renderer = new XRenderer()
             {
                 InvertSize = 6.0,
                 PinRadius = 4.0,

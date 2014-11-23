@@ -1,4 +1,4 @@
-﻿using Logic.WPF.Util;
+﻿using Logic.Util;
 using System;
 using System.Collections.Generic;
 using System.Configuration;

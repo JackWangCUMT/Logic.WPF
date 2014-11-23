@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Logic.WPF.Page
+namespace Logic.Page
 {
     public class XLayers
     {

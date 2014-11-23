@@ -13,7 +13,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Logic.WPF.Util
+namespace Logic.Util
 {
     public class CSharpCodeImporter
     {

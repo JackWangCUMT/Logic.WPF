@@ -1,12 +1,12 @@
 ﻿using Logic.Core;
-using Logic.WPF.Serialization;
+using Logic.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Logic.WPF.Util
+namespace Logic.Util
 {
     public class History<T> where T : class
     {

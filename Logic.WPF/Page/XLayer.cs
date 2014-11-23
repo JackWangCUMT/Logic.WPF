@@ -1,8 +1,8 @@
 ﻿using Logic.Core;
 using Logic.Simulation;
-using Logic.WPF.Serialization;
-using Logic.WPF.Util;
-using Logic.WPF.ViewModels;
+using Logic.Serialization;
+using Logic.Util;
+using Logic.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
-namespace Logic.WPF.Page
+namespace Logic.Page
 {
     public class XLayer : ILayer
     {
@@ -321,43 +321,43 @@ namespace Logic.WPF.Page
 
         private void InitStyles()
         {
-            _shapeStyle = new NativeStyle(
+            _shapeStyle = new XStyle(
                 name: "Shape",
                 fill: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
                 stroke: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
                 thickness: 2.0);
 
-            _selectedShapeStyle = new NativeStyle(
+            _selectedShapeStyle = new XStyle(
                 name: "Selected",
                 fill: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
                 stroke: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
                 thickness: 2.0);
 
-            _selectionStyle = new NativeStyle(
+            _selectionStyle = new XStyle(
                 name: "Selection",
                 fill: new XColor() { A = 0x1F, R = 0x00, G = 0x00, B = 0xFF },
                 stroke: new XColor() { A = 0x9F, R = 0x00, G = 0x00, B = 0xFF },
                 thickness: 1.0);
 
-            _hoverStyle = new NativeStyle(
+            _hoverStyle = new XStyle(
                 name: "Overlay",
                 fill: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
                 stroke: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
                 thickness: 2.0);
 
-            _nullStateStyle = new NativeStyle(
+            _nullStateStyle = new XStyle(
                 name: "NullState",
                 fill: new XColor() { A = 0xFF, R = 0x66, G = 0x66, B = 0x66 },
                 stroke: new XColor() { A = 0xFF, R = 0x66, G = 0x66, B = 0x66 },
                 thickness: 2.0);
 
-            _trueStateStyle = new NativeStyle(
+            _trueStateStyle = new XStyle(
                 name: "TrueState",
                 fill: new XColor() { A = 0xFF, R = 0xFF, G = 0x14, B = 0x93 },
                 stroke: new XColor() { A = 0xFF, R = 0xFF, G = 0x14, B = 0x93 },
                 thickness: 2.0);
 
-            _falseStateStyle = new NativeStyle(
+            _falseStateStyle = new XStyle(
                 name: "FalseState",
                 fill: new XColor() { A = 0xFF, R = 0x00, G = 0xBF, B = 0xFF },
                 stroke: new XColor() { A = 0xFF, R = 0x00, G = 0xBF, B = 0xFF },

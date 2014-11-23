@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
-namespace Logic.WPF.Page
+namespace Logic.Page
 {
-    public class NativeRenderer : IRenderer
+    public class XRenderer : IRenderer
     {
         public ICollection<IShape> Selected { get; set; }
         public double InvertSize { get; set; }

@@ -1,6 +1,6 @@
 ﻿using Logic.Core;
-using Logic.WPF.Page;
-using Logic.WPF.Util;
+using Logic.Page;
+using Logic.Util;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace Logic.WPF.ViewModels
+namespace Logic.ViewModels
 {
     public class MainViewModel : NotifyObject
     {

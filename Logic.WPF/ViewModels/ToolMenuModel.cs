@@ -1,11 +1,11 @@
-﻿using Logic.WPF.Util;
+﻿using Logic.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Logic.WPF.ViewModels
+namespace Logic.ViewModels
 {
     public class ToolMenuModel : NotifyObject
     {

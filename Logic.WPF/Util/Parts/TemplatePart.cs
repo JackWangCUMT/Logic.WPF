@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Logic.WPF.Util.Parts
+namespace Logic.Util.Parts
 {
     public class TemplatePart
     {

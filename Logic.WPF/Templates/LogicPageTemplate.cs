@@ -1,6 +1,6 @@
 ﻿using Logic.Core;
-using Logic.WPF.Page;
-using Logic.WPF.Util;
+using Logic.Page;
+using Logic.Util;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Logic.WPF.Templates
+namespace Logic.Templates
 {
     public class LogicPageTemplate : ITemplate
     {
@@ -46,21 +46,21 @@ namespace Logic.WPF.Templates
             };
 
             // styles
-            var gridStyle = new NativeStyle(
+            var gridStyle = new XStyle(
                 name: "Grid",
                 fill: new XColor() { A = 0x00, R = 0x00, G = 0x00, B = 0x00 },
                 stroke: new XColor() { A = 0xFF, R = 0xD3, G = 0xD3, B = 0xD3 },
                 thickness: 1.0);
             this.Grid.Styles.Add(gridStyle);
 
-            var tableStyle = new NativeStyle(
+            var tableStyle = new XStyle(
                 name: "Table",
                 fill: new XColor() { A = 0x00, R = 0x00, G = 0x00, B = 0x00 },
                 stroke: new XColor() { A = 0xFF, R = 0xD3, G = 0xD3, B = 0xD3 },
                 thickness: 1.0);
             this.Table.Styles.Add(tableStyle);
 
-            var frameStyle = new NativeStyle(
+            var frameStyle = new XStyle(
                 name: "Frame",
                 fill: new XColor() { A = 0x00, R = 0x00, G = 0x00, B = 0x00 },
                 stroke: new XColor() { A = 0xFF, R = 0xA9, G = 0xA9, B = 0xA9 },

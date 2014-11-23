@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace Logic.WPF.Util
+namespace Logic.Util
 {
     public class Command : ICommand
     {
