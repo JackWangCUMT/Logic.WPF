@@ -40,6 +40,9 @@
     <Compile Include="HAlignment.cs" />
     <Compile Include="IBinarySerializer.cs" />
     <Compile Include="IColor.cs" />
+    <Compile Include="IDocument.cs" />
+    <Compile Include="IPage.cs" />
+    <Compile Include="IProject.cs" />
     <Compile Include="IRenderer.cs" />
     <Compile Include="IShape.cs" />
     <Compile Include="IStringSerializer.cs" />
