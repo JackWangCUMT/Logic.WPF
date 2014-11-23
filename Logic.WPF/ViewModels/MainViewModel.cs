@@ -1,4 +1,5 @@
 ﻿using Logic.Core;
+using Logic.WPF.Page;
 using Logic.WPF.Util;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,20 @@ namespace Logic.WPF.ViewModels
     public class MainViewModel : NotifyObject
     {
         #region Properties
+
+        private XLayers _layers;
+        public XLayers Layers
+        {
+            get { return _layers; }
+            set
+            {
+                if (value != _layers)
+                {
+                    _layers = value;
+                    Notify("Layers");
+                }
+            }
+        }
 
         private IList<XBlock> _blocks;
 
