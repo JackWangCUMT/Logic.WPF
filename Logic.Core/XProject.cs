@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Logic.Core
 {
-    public class XProject
+    public class XProject : IProject
     {
         public string Name { get; set; }
         public IList<IStyle> Styles { get; set; }
         public IList<ITemplate> Templates { get; set; }
-        public IList<XDocument> Documents { get; set; }
+        public IList<IDocument> Documents { get; set; }
     }
 }
