@@ -20,6 +20,39 @@ namespace Logic.Page
 
         #endregion
 
+        #region Enums
+
+        public enum Mode
+        {
+            None,
+            Selection,
+            Create,
+            Move
+        }
+
+        public enum Element
+        {
+            None,
+            Selected,
+            Line,
+            Ellipse,
+            Rectangle,
+            Text,
+            Wire,
+            Pin,
+            Block
+        }
+
+        public enum LineHit
+        {
+            None,
+            Start,
+            End,
+            Line
+        }
+
+        #endregion
+
         #region ILayer
 
         public Func<bool> IsMouseCaptured { get; set; }
@@ -264,39 +297,6 @@ namespace Logic.Page
         public IStyle FalseStateStyle { get; set; }
         public BoolSimulationCacheRenderer CacheRenderer { get; set; }
         public bool EnableSimulationCache { get; set; }
-
-        #endregion
-
-        #region Enums
-
-        public enum Mode
-        {
-            None,
-            Selection,
-            Create,
-            Move
-        }
-
-        public enum Element
-        {
-            None,
-            Selected,
-            Line,
-            Ellipse,
-            Rectangle,
-            Text,
-            Wire,
-            Pin,
-            Block
-        }
-
-        public enum LineHit
-        {
-            None,
-            Start,
-            End,
-            Line
-        }
 
         #endregion
 
