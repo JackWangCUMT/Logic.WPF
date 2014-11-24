@@ -131,8 +131,8 @@ namespace Logic.Page
                     {
                         if (Simulations != null && !IsOverlay)
                         {
-                            // change block state in simulation mode
-                            ChangeBlockState(point);
+                            // toggle block state in simulation mode
+                            BlockToggleState(point);
 
                             // do not process other mouse events
                             return;
@@ -213,7 +213,7 @@ namespace Logic.Page
             if (Layers != null
                 && Simulations == null)
             {
-                ResetOverlay();
+                OverlayReset();
             }
 
             if (_mode != Mode.Move
@@ -223,7 +223,7 @@ namespace Logic.Page
                 && Renderer.Selected == null
                 && Simulations == null)
             {
-                MoveOverlay(point);
+                OverlayMove(point);
             }
 
             if (IsMouseCaptured())
@@ -252,11 +252,11 @@ namespace Logic.Page
 
             if (IsMouseCaptured())
             {
-                Cancel();
+                MouseCancel();
             }
         }
 
-        public void Cancel()
+        public void MouseCancel()
         {
             if (IsMouseCaptured())
             {
@@ -367,25 +367,6 @@ namespace Logic.Page
             return Renderer != null
                 && Renderer.Selected != null
                 && Renderer.Selected.Count > 0;
-        }
-
-        public ICollection<IShape> GetAllShapes()
-        {
-            var all = Layers.Pins.Shapes
-                .Concat(Layers.Wires.Shapes)
-                .Concat(Layers.Blocks.Shapes)
-                .Concat(Layers.Shapes.Shapes);
-            return new HashSet<IShape>(all);
-        }
-
-        public void SelectAll()
-        {
-            var hs = GetAllShapes();
-            if (hs != null && hs.Count > 0)
-            {
-                Renderer.Selected = hs;
-                Layers.Invalidate();
-            }
         }
 
         public void SelectionDelete()
@@ -783,7 +764,7 @@ namespace Logic.Page
 
         #region Overlay
 
-        private void MoveOverlay(Point2 p)
+        private void OverlayMove(Point2 p)
         {
             if (Layers == null)
                 return;
@@ -934,7 +915,7 @@ namespace Logic.Page
             }
         }
 
-        private void ResetOverlay()
+        private void OverlayReset()
         {
             if (Layers.Overlay.Shapes.Count > 0)
             {
@@ -1033,7 +1014,7 @@ namespace Logic.Page
                     // split wire
                     if (Layers.Pins != null && Layers.Wires != null)
                     {
-                        SplitStart(wireHitResult, x, y);
+                        WireSplitStart(wireHitResult, x, y);
                     }
                 }
                 else if (blockHitResult != null && blockHitResult is XPin)
@@ -1098,7 +1079,7 @@ namespace Logic.Page
                 // split wire
                 if (Layers.Pins != null && Layers.Wires != null)
                 {
-                    SplitEnd(wireHitResult, x, y);
+                    WireSplitEnd(wireHitResult, x, y);
                 }
             }
             else if (blockHitResult != null && blockHitResult is XPin)
@@ -1457,7 +1438,7 @@ namespace Logic.Page
 
         #region Shape Properties
 
-        public void ToggleFill()
+        public void ShapeToggleFill()
         {
             if (IsMouseCaptured() && Tool.CurrentTool == ToolMenuModel.Tool.Rectangle)
             {
@@ -1476,11 +1457,11 @@ namespace Logic.Page
             }
             else
             {
-                ToggleSelectedFill();
+                ShapeToggleSelectedFill();
             }
         }
 
-        public void ToggleInvertStart()
+        public void ShapeToggleInvertStart()
         {
             if (IsMouseCaptured() && Tool.CurrentTool == ToolMenuModel.Tool.Wire)
             {
@@ -1489,11 +1470,11 @@ namespace Logic.Page
             }
             else
             {
-                ToggleSelectedInvertStart();
+                ShapeToggleSelectedInvertStart();
             }
         }
 
-        public void ToggleInvertEnd()
+        public void ShapeToggleInvertEnd()
         {
             if (IsMouseCaptured() && Tool.CurrentTool == ToolMenuModel.Tool.Wire)
             {
@@ -1502,11 +1483,11 @@ namespace Logic.Page
             }
             else
             {
-                ToggleSelectedInvertEnd();
+                ShapeToggleSelectedInvertEnd();
             }
         }
 
-        public void SetTextSizeDelta(double delta)
+        public void ShapeSetTextSizeDelta(double delta)
         {
             if (IsMouseCaptured() && Tool.CurrentTool == ToolMenuModel.Tool.Text)
             {
@@ -1519,11 +1500,11 @@ namespace Logic.Page
             }
             else
             {
-                SetSelectedTextSizeDelta(delta);
+                ShapeSetSelectedTextSizeDelta(delta);
             }
         }
 
-        public void SetTextHAlignment(HAlignment halignment)
+        public void ShapeSetTextHAlignment(HAlignment halignment)
         {
             if (IsMouseCaptured() && Tool.CurrentTool == ToolMenuModel.Tool.Text)
             {
@@ -1532,11 +1513,11 @@ namespace Logic.Page
             }
             else
             {
-                SetSelectedTextHAlignment(halignment);
+                ShapeSetSelectedTextHAlignment(halignment);
             }
         }
 
-        public void SetTextVAlignment(VAlignment valignment)
+        public void ShapeSetTextVAlignment(VAlignment valignment)
         {
             if (IsMouseCaptured() && Tool.CurrentTool == ToolMenuModel.Tool.Text)
             {
@@ -1545,11 +1526,11 @@ namespace Logic.Page
             }
             else
             {
-                SetSelectedTextVAlignment(valignment);
+                ShapeSetSelectedTextVAlignment(valignment);
             }
         }
 
-        public void ToggleSelectedFill()
+        public void ShapeToggleSelectedFill()
         {
             if (HaveSelected())
             {
@@ -1575,7 +1556,7 @@ namespace Logic.Page
             }
         }
 
-        public void ToggleSelectedInvertStart()
+        public void ShapeToggleSelectedInvertStart()
         {
             if (HaveSelected())
             {
@@ -1588,7 +1569,7 @@ namespace Logic.Page
             }
         }
 
-        public void ToggleSelectedInvertEnd()
+        public void ShapeToggleSelectedInvertEnd()
         {
             if (HaveSelected())
             {
@@ -1601,7 +1582,7 @@ namespace Logic.Page
             }
         }
 
-        public void SetSelectedTextSizeDelta(double delta)
+        public void ShapeSetSelectedTextSizeDelta(double delta)
         {
             if (HaveSelected())
             {
@@ -1618,7 +1599,7 @@ namespace Logic.Page
             }
         }
 
-        public void SetSelectedTextHAlignment(HAlignment halignment)
+        public void ShapeSetSelectedTextHAlignment(HAlignment halignment)
         {
             if (HaveSelected())
             {
@@ -1631,7 +1612,7 @@ namespace Logic.Page
             }
         }
 
-        public void SetSelectedTextVAlignment(VAlignment valignment)
+        public void ShapeSetSelectedTextVAlignment(VAlignment valignment)
         {
             if (HaveSelected())
             {
@@ -1723,22 +1704,9 @@ namespace Logic.Page
 
         #endregion
 
-        #region Insert
-
-        public void Insert(IEnumerable<IShape> shapes)
-        {
-            Snapshot();
-            SelectionReset();
-            Layers.Add(shapes);
-            Renderer.Selected = new HashSet<IShape>(shapes);
-            Layers.Invalidate();
-        }
-
-        #endregion
-
         #region Wire
 
-        private void Split(XWire wire, double x, double y, out XPin pin, out XWire split)
+        private void WireSplit(XWire wire, double x, double y, out XPin pin, out XWire split)
         {
             // create new standalone pin
             pin = new XPin()
@@ -1762,12 +1730,12 @@ namespace Logic.Page
             wire.End = pin as XPin;
         }
 
-        private void SplitStart(IShape wireHitResult, double x, double y)
+        private void WireSplitStart(IShape wireHitResult, double x, double y)
         {
             XPin pin;
             XWire split;
 
-            Split(wireHitResult as XWire, x, y, out pin, out split);
+            WireSplit(wireHitResult as XWire, x, y, out pin, out split);
 
             _wire.Start = pin;
 
@@ -1778,12 +1746,12 @@ namespace Logic.Page
             Layers.Pins.InvalidateVisual();
         }
 
-        private void SplitEnd(IShape wireHitResult, double x, double y)
+        private void WireSplitEnd(IShape wireHitResult, double x, double y)
         {
             XPin pin;
             XWire split;
 
-            Split(wireHitResult as XWire, x, y, out pin, out split);
+            WireSplit(wireHitResult as XWire, x, y, out pin, out split);
 
             _wire.End = pin;
 
@@ -2109,7 +2077,7 @@ namespace Logic.Page
                     var json = Clipboard.GetText();
                     if (!string.IsNullOrEmpty(json))
                     {
-                        Insert(json);
+                        Paste(json);
                     }
                 }
             }
@@ -2122,14 +2090,14 @@ namespace Logic.Page
             }
         }
 
-        public void Insert(string json)
+        public void Paste(string json)
         {
             try
             {
                 var shapes = Serializer.Deserialize<IList<IShape>>(json);
                 if (shapes != null && shapes.Count > 0)
                 {
-                    Insert(shapes);
+                    Paste(shapes);
                 }
             }
             catch (Exception ex)
@@ -2141,20 +2109,29 @@ namespace Logic.Page
             }
         }
 
+        public void Paste(IEnumerable<IShape> shapes)
+        {
+            Snapshot();
+            SelectionReset();
+            Layers.Add(shapes);
+            Renderer.Selected = new HashSet<IShape>(shapes);
+            Layers.Invalidate();
+        }
+
         #endregion
 
         #region Block
 
-        public XBlock CreateBlockFromSelected(string name)
+        public XBlock BlockCreateFromSelected(string name)
         {
             if (HaveSelected())
             {
-                return CreateBlock(name, Renderer.Selected);
+                return BlockCreate(name, Renderer.Selected);
             }
             return null;
         }
 
-        public XBlock CreateBlock(string name, IEnumerable<IShape> shapes)
+        public XBlock BlockCreate(string name, IEnumerable<IShape> shapes)
         {
             var block = new XBlock()
             {
@@ -2197,11 +2174,7 @@ namespace Logic.Page
             return block;
         }
 
-        #endregion
-
-        #region Simulation
-
-        private void ChangeBlockState(Point2 p)
+        private void BlockToggleState(Point2 p)
         {
             IShape shape = Layers != null ? Layers.HitTest(p) : null;
             if (shape is XBlock)

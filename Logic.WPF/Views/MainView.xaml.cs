@@ -53,22 +53,6 @@ namespace Logic.WPF.Views
 
         #endregion
 
-        #region Visual Parent
-
-        public T FindVisualParent<T>(DependencyObject child) 
-            where T : DependencyObject
-        {
-            var parentObject = VisualTreeHelper.GetParent(child);
-            if (parentObject == null)
-                return null;
-            T parent = parentObject as T;
-            if (parent != null)
-                return parent;
-            return FindVisualParent<T>(parentObject);
-        } 
-
-        #endregion
-
         #region Constructor
 
         public MainView()
@@ -98,19 +82,19 @@ namespace Logic.WPF.Views
             Model.Tool = new ToolMenuModel();
 
             Model.FileNewCommand = new NativeCommand(
-                (parameter) => this.New(),
+                (parameter) => this.FileNew(),
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.FileOpenCommand = new NativeCommand
-                ((parameter) => this.Open(),
+                ((parameter) => this.FileOpen(),
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.FileSaveCommand = new NativeCommand(
-                (parameter) => this.Save(), 
+                (parameter) => this.FileSave(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.FileSaveAsCommand = new NativeCommand(
-                (parameter) => this.SaveAs(), 
+                (parameter) => this.FileSaveAs(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.FileExitCommand = new NativeCommand(
@@ -118,7 +102,7 @@ namespace Logic.WPF.Views
                 {
                     if (IsSimulationRunning())
                     {
-                        this.Stop();
+                        this.SimulationStop();
                     }
                     this.Close();
                 }, 
@@ -185,75 +169,79 @@ namespace Logic.WPF.Views
                 });
 
             Model.EditSelectAllCommand = new NativeCommand(
-                (parameter) => Model.Layers.Editor.SelectAll(), 
+                (parameter) => 
+                {
+                    Model.Layers.SelectAll();
+                    Model.Layers.Invalidate();
+                }, 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignLeftBottomCommand = new NativeCommand(
                 (parameter) =>
                 {
-                    Model.Layers.Editor.SetTextHAlignment(HAlignment.Left);
-                    Model.Layers.Editor.SetTextVAlignment(VAlignment.Bottom);
+                    Model.Layers.Editor.ShapeSetTextHAlignment(HAlignment.Left);
+                    Model.Layers.Editor.ShapeSetTextVAlignment(VAlignment.Bottom);
                 },
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignBottomCommand = new NativeCommand(
-                (parameter) => Model.Layers.Editor.SetTextVAlignment(VAlignment.Bottom), 
+                (parameter) => Model.Layers.Editor.ShapeSetTextVAlignment(VAlignment.Bottom), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignRightBottomCommand = new NativeCommand(
                 (parameter) =>
                 {
-                    Model.Layers.Editor.SetTextHAlignment(HAlignment.Right);
-                    Model.Layers.Editor.SetTextVAlignment(VAlignment.Bottom);
+                    Model.Layers.Editor.ShapeSetTextHAlignment(HAlignment.Right);
+                    Model.Layers.Editor.ShapeSetTextVAlignment(VAlignment.Bottom);
                 },
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignLeftCommand = new NativeCommand(
-                (parameter) => Model.Layers.Editor.SetTextHAlignment(HAlignment.Left), 
+                (parameter) => Model.Layers.Editor.ShapeSetTextHAlignment(HAlignment.Left), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignCenterCenterCommand = new NativeCommand(
                 (parameter) =>
                 {
-                    Model.Layers.Editor.SetTextHAlignment(HAlignment.Center);
-                    Model.Layers.Editor.SetTextVAlignment(VAlignment.Center);
+                    Model.Layers.Editor.ShapeSetTextHAlignment(HAlignment.Center);
+                    Model.Layers.Editor.ShapeSetTextVAlignment(VAlignment.Center);
                 },
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignRightCommand = new NativeCommand(
-                (parameter) => Model.Layers.Editor.SetTextHAlignment(HAlignment.Right), 
+                (parameter) => Model.Layers.Editor.ShapeSetTextHAlignment(HAlignment.Right), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignLeftTopCommand = new NativeCommand(
                 (parameter) =>
                 {
-                    Model.Layers.Editor.SetTextHAlignment(HAlignment.Left);
-                    Model.Layers.Editor.SetTextVAlignment(VAlignment.Top);
+                    Model.Layers.Editor.ShapeSetTextHAlignment(HAlignment.Left);
+                    Model.Layers.Editor.ShapeSetTextVAlignment(VAlignment.Top);
                 },
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignTopCommand = new NativeCommand(
-                (parameter) => Model.Layers.Editor.SetTextVAlignment(VAlignment.Top), 
+                (parameter) => Model.Layers.Editor.ShapeSetTextVAlignment(VAlignment.Top), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignRightTopCommand = new NativeCommand
                 ((parameter) =>
                 {
-                    Model.Layers.Editor.SetTextHAlignment(HAlignment.Right);
-                    Model.Layers.Editor.SetTextVAlignment(VAlignment.Top);
+                    Model.Layers.Editor.ShapeSetTextHAlignment(HAlignment.Right);
+                    Model.Layers.Editor.ShapeSetTextVAlignment(VAlignment.Top);
                 },
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditIncreaseTextSizeCommand = new NativeCommand(
-                (parameter) => Model.Layers.Editor.SetTextSizeDelta(+1.0), 
+                (parameter) => Model.Layers.Editor.ShapeSetTextSizeDelta(+1.0), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditDecreaseTextSizeCommand = new NativeCommand(
-                (parameter) => Model.Layers.Editor.SetTextSizeDelta(-1.0), 
+                (parameter) => Model.Layers.Editor.ShapeSetTextSizeDelta(-1.0), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditToggleFillCommand = new NativeCommand(
-                (parameter) => Model.Layers.Editor.ToggleFill(), 
+                (parameter) => Model.Layers.Editor.ShapeToggleFill(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditToggleSnapCommand = new NativeCommand(
@@ -261,15 +249,15 @@ namespace Logic.WPF.Views
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditToggleInvertStartCommand = new NativeCommand(
-                (parameter) => Model.Layers.Editor.ToggleInvertStart(), 
+                (parameter) => Model.Layers.Editor.ShapeToggleInvertStart(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditToggleInvertEndCommand = new NativeCommand(
-                (parameter) => Model.Layers.Editor.ToggleInvertEnd(), 
+                (parameter) => Model.Layers.Editor.ShapeToggleInvertEnd(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditCancelCommand = new NativeCommand(
-                (parameter) => Model.Layers.Editor.Cancel(), 
+                (parameter) => Model.Layers.Editor.MouseCancel(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.ToolNoneCommand = new NativeCommand(
@@ -305,15 +293,15 @@ namespace Logic.WPF.Views
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.BlockImportCommand = new NativeCommand(
-                (parameter) => this.ImportBlock(), 
+                (parameter) => this.BlockImport(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.BlockImportCodeCommand = new NativeCommand(
-                (parameter) => this.ImportBlocksFromCode(), 
+                (parameter) => this.BlocksImportFromCode(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.BlockExportCommand = new NativeCommand(
-                (parameter) => this.ExportBlock(),
+                (parameter) => this.BlockExport(),
                 (parameter) =>
                 {
                     return IsSimulationRunning()
@@ -321,7 +309,7 @@ namespace Logic.WPF.Views
                 });
 
             Model.BlockCreateProjectCommand = new NativeCommand(
-                (parameter) => this.CreateProject(),
+                (parameter) => this.BlockCreateProject(),
                 (parameter) =>
                 {
                     return IsSimulationRunning()
@@ -336,21 +324,21 @@ namespace Logic.WPF.Views
                     {
                         double x = _isContextMenu ? Model.Layers.Editor.RightX : 0.0;
                         double y = _isContextMenu ? Model.Layers.Editor.RightY : 0.0;
-                        InsertBlock(block, x, y);
+                        BlockInsert(block, x, y);
                     }
                 },
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.TemplateImportCommand = new NativeCommand(
-                (parameter) => this.ImportTemplate(), 
+                (parameter) => this.TemplateImport(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.TemplateImportCodeCommand = new NativeCommand(
-                (parameter) => this.ImportTemplatesFromCode(),
+                (parameter) => this.TemplatesImportFromCode(),
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.TemplateExportCommand = new NativeCommand(
-                (parameter) => this.ExportTemplate(), 
+                (parameter) => this.TemplateExport(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.ApplyTemplateCommand = new NativeCommand(
@@ -359,21 +347,21 @@ namespace Logic.WPF.Views
                     ITemplate template = parameter as ITemplate;
                     if (template != null)
                     {
-                        ApplyTemplate(template, _renderer);
+                        TemplateApply(template, _renderer);
                     }
                 },
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.SimulationStartCommand = new NativeCommand(
-                (parameter) => this.Start(),
+                (parameter) => this.SimulationStart(),
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.SimulationStopCommand = new NativeCommand(
-                (parameter) => this.Stop(), 
+                (parameter) => this.SimulationStop(), 
                 (parameter) => IsSimulationRunning() ? true : false);
 
             Model.SimulationRestartCommand = new NativeCommand(
-                (parameter) => this.Restart(), 
+                (parameter) => this.SimulationRestart(), 
                 (parameter) => IsSimulationRunning() ? true : false);
 
             Model.SimulationCreateGraphCommand = new NativeCommand(
@@ -381,7 +369,7 @@ namespace Logic.WPF.Views
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.SimulationOptionsCommand = new NativeCommand(
-                (parameter) => this.Options(), 
+                (parameter) => this.SimulationOptions(), 
                 (parameter) => IsSimulationRunning() ? false : true);
         }
 
@@ -539,7 +527,7 @@ namespace Logic.WPF.Views
             Model.Layers.Overlay.Renderer = _renderer;
 
             // template
-            ApplyTemplate(new LogicPageTemplate(), _renderer);
+            TemplateApply(new LogicPageTemplate(), _renderer);
 
             // clipboard
             Model.Layers.Editor.Clipboard = new NativeTextClipboard();
@@ -583,7 +571,7 @@ namespace Logic.WPF.Views
                         if (block != null)
                         {
                             Point point = e.GetPosition(pageView.editorLayer);
-                            InsertBlock(block, point.X, point.Y);
+                            BlockInsert(block, point.X, point.Y);
                             e.Handled = true;
                         }
                     }
@@ -705,8 +693,7 @@ namespace Logic.WPF.Views
                         Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance))
                 {
                     var listBox = s as ListBox;
-                    var listBoxItem = FindVisualParent<ListBoxItem>(
-                        (DependencyObject)e.OriginalSource);
+                    var listBoxItem = ((DependencyObject)e.OriginalSource).FindVisualParent<ListBoxItem>();
                     if (listBoxItem != null)
                     {
                         var block = (XBlock)listBox
@@ -766,14 +753,14 @@ namespace Logic.WPF.Views
 
         #region File
 
-        private void New()
+        private void FileNew()
         {
             Model.Layers.Editor.New();
             Model.FileName = null;
             Model.FilePath = null;
         }
 
-        private void Open()
+        private void FileOpen()
         {
             var dlg = new Microsoft.Win32.OpenFileDialog()
             {
@@ -788,7 +775,7 @@ namespace Logic.WPF.Views
             }
         }
 
-        private void Save()
+        private void FileSave()
         {
             if (!string.IsNullOrEmpty(Model.FilePath))
             {
@@ -796,11 +783,11 @@ namespace Logic.WPF.Views
             }
             else
             {
-                SaveAs();
+                FileSaveAs();
             }
         }
 
-        private void SaveAs()
+        private void FileSaveAs()
         {
             string fileName = string.IsNullOrEmpty(Model.FilePath) ?
                 "shapes" : System.IO.Path.GetFileName(Model.FilePath);
@@ -823,7 +810,7 @@ namespace Logic.WPF.Views
 
         #region Block
 
-        private void InsertBlock(XBlock block, double x, double y)
+        private void BlockInsert(XBlock block, double x, double y)
         {
             Model.Layers.Editor.Snapshot();
             XBlock copy = Model.Layers.Editor.Insert(block, x, y);
@@ -833,7 +820,7 @@ namespace Logic.WPF.Views
             }
         }
 
-        private void ImportBlock()
+        private void BlockImport()
         {
             var dlg = new Microsoft.Win32.OpenFileDialog()
             {
@@ -842,7 +829,7 @@ namespace Logic.WPF.Views
 
             if (dlg.ShowDialog(this) == true)
             {
-                var block = OpenBlock(dlg.FileName);
+                var block = BlockOpen(dlg.FileName);
                 if (block != null)
                 {
                     Model.Blocks.Add(block);
@@ -850,9 +837,9 @@ namespace Logic.WPF.Views
             }
         }
 
-        private void CreateProject()
+        private void BlockCreateProject()
         {
-            var block = Model.Layers.Editor.CreateBlockFromSelected("Block");
+            var block = Model.Layers.Editor.BlockCreateFromSelected("Block");
             if (block == null)
                 return;
 
@@ -911,7 +898,7 @@ namespace Logic.WPF.Views
             view.ShowDialog();
         }
 
-        private void ImportBlocksFromCode()
+        private void BlocksImportFromCode()
         {
             var dlg = new Microsoft.Win32.OpenFileDialog()
             {
@@ -921,11 +908,11 @@ namespace Logic.WPF.Views
 
             if (dlg.ShowDialog(this) == true)
             {
-                ImportBlocksFromCode(dlg.FileNames);
+                BlocksImportFromCode(dlg.FileNames);
             }
         }
 
-        private void ImportBlocksFromCode(string[] paths)
+        private void BlocksImportFromCode(string[] paths)
         {
             try
             {
@@ -936,7 +923,7 @@ namespace Logic.WPF.Views
                         var csharp = fs.ReadToEnd();
                         if (!string.IsNullOrEmpty(csharp))
                         {
-                            ImportBlocks(csharp);
+                            BlocksImport(csharp);
                         }
                     }
                 }
@@ -950,7 +937,7 @@ namespace Logic.WPF.Views
             }
         }
 
-        private void ImportBlocks(string csharp)
+        private void BlocksImport(string csharp)
         {
             var part = new BlockPart() { Blocks = new List<XBlock>() };
             bool result = CSharpCodeImporter.Import<XBlock>(csharp, part);
@@ -963,7 +950,7 @@ namespace Logic.WPF.Views
             }
         }
 
-        private XBlock OpenBlock(string path)
+        private XBlock BlockOpen(string path)
         {
             try
             {
@@ -984,9 +971,9 @@ namespace Logic.WPF.Views
             return null;
         }
 
-        private void ExportBlock()
+        private void BlockExport()
         {
-            var block = Model.Layers.Editor.CreateBlockFromSelected("Block");
+            var block = Model.Layers.Editor.BlockCreateFromSelected("Block");
             if (block != null)
             {
                 var dlg = new Microsoft.Win32.SaveFileDialog()
@@ -998,13 +985,13 @@ namespace Logic.WPF.Views
                 if (dlg.ShowDialog(this) == true)
                 {
                     var path = dlg.FileName;
-                    SaveBlock(block, path);
+                    BlockSave(block, path);
                     System.Diagnostics.Process.Start("notepad", path);
                 }
             }
         }
 
-        private void SaveBlock(XBlock block, string path)
+        private void BlockSave(XBlock block, string path)
         {
             try
             {
@@ -1027,7 +1014,7 @@ namespace Logic.WPF.Views
 
         #region Template
 
-        private void ApplyTemplate(ITemplate template, IRenderer renderer)
+        private void TemplateApply(ITemplate template, IRenderer renderer)
         {
             pageView.Width = template.Width;
             pageView.Height = template.Height;
@@ -1047,7 +1034,7 @@ namespace Logic.WPF.Views
             pageView.frameView.InvalidateVisual();
         }
 
-        private void ImportTemplate()
+        private void TemplateImport()
         {
             var dlg = new Microsoft.Win32.OpenFileDialog()
             {
@@ -1056,7 +1043,7 @@ namespace Logic.WPF.Views
 
             if (dlg.ShowDialog(this) == true)
             {
-                var template = OpenTemplate(dlg.FileName);
+                var template = TemplateOpen(dlg.FileName);
                 if (template != null)
                 {
                     Model.Templates.Add(template);
@@ -1064,7 +1051,7 @@ namespace Logic.WPF.Views
             }
         }
 
-        private void ImportTemplatesFromCode()
+        private void TemplatesImportFromCode()
         {
             var dlg = new Microsoft.Win32.OpenFileDialog()
             {
@@ -1074,11 +1061,11 @@ namespace Logic.WPF.Views
 
             if (dlg.ShowDialog(this) == true)
             {
-                ImportTemplatesFromCode(dlg.FileNames);
+                TemplatesImportFromCode(dlg.FileNames);
             }
         }
 
-        private void ImportTemplatesFromCode(string[] paths)
+        private void TemplatesImportFromCode(string[] paths)
         {
             try
             {
@@ -1089,7 +1076,7 @@ namespace Logic.WPF.Views
                         var csharp = fs.ReadToEnd();
                         if (!string.IsNullOrEmpty(csharp))
                         {
-                            ImportTemplates(csharp);
+                            TemplatesImport(csharp);
                         }
                     }
                 }
@@ -1103,7 +1090,7 @@ namespace Logic.WPF.Views
             }
         }
 
-        private void ImportTemplates(string csharp)
+        private void TemplatesImport(string csharp)
         {
             var part = new TemplatePart() { Templates = new List<ITemplate>() };
             bool result = CSharpCodeImporter.Import<ITemplate>(csharp, part);
@@ -1116,7 +1103,7 @@ namespace Logic.WPF.Views
             }
         }
 
-        private ITemplate OpenTemplate(string path)
+        private ITemplate TemplateOpen(string path)
         {
             try
             {
@@ -1137,7 +1124,7 @@ namespace Logic.WPF.Views
             return null;
         }
 
-        private void ExportTemplate()
+        private void TemplateExport()
         {
             var dlg = new Microsoft.Win32.SaveFileDialog()
             {
@@ -1147,14 +1134,14 @@ namespace Logic.WPF.Views
 
             if (dlg.ShowDialog(this) == true)
             {
-                var template = CreateTemplate(_template);
+                var template = TemplateCreate(_template);
                 var path = dlg.FileName;
-                SaveTemplate(path, template);
+                TemplateSave(path, template);
                 System.Diagnostics.Process.Start("notepad", path);
             }
         }
 
-        private XTemplate CreateTemplate(ITemplate template)
+        private XTemplate TemplateCreate(ITemplate template)
         {
             return new XTemplate()
             {
@@ -1179,7 +1166,7 @@ namespace Logic.WPF.Views
             };
         }
 
-        private void SaveTemplate(string path, ITemplate template)
+        private void TemplateSave(string path, ITemplate template)
         {
             try
             {
@@ -1200,9 +1187,9 @@ namespace Logic.WPF.Views
 
         #endregion
 
-        #region Simulation Overlay
+        #region Overlay
 
-        private void InitSimulationOverlay(IDictionary<XBlock, BoolSimulation> simulations)
+        private void OverlayInit(IDictionary<XBlock, BoolSimulation> simulations)
         {
             Model.Layers.Editor.SelectionReset();
 
@@ -1222,7 +1209,7 @@ namespace Logic.WPF.Views
             Model.Layers.Overlay.InvalidateVisual();
         }
 
-        private void ResetSimulationOverlay()
+        private void OverlayReset()
         {
             Model.Layers.Editor.Simulations = null;
             Model.Layers.Overlay.Simulations = null;
@@ -1236,7 +1223,7 @@ namespace Logic.WPF.Views
 
         #endregion
 
-        #region Simulation Graph
+        #region Graph
 
         private void Graph()
         {
@@ -1248,7 +1235,7 @@ namespace Logic.WPF.Views
                     var context = PageGraph.Create(temp);
                     if (context != null)
                     {
-                        SaveGraph(context);
+                        GraphSave(context);
                     }
                 }
             }
@@ -1261,7 +1248,7 @@ namespace Logic.WPF.Views
             }
         }
 
-        private void SaveGraph(PageGraphContext context)
+        private void GraphSave(PageGraphContext context)
         {
             var dlg = new Microsoft.Win32.SaveFileDialog()
             {
@@ -1272,12 +1259,12 @@ namespace Logic.WPF.Views
             if (dlg.ShowDialog(this) == true)
             {
                 var path = dlg.FileName;
-                SaveGraph(path, context);
+                GraphSave(path, context);
                 System.Diagnostics.Process.Start("notepad", path);
             }
         }
 
-        private void SaveGraph(string path, PageGraphContext context)
+        private void GraphSave(string path, PageGraphContext context)
         {
             using (var writer = new System.IO.StringWriter())
             {
@@ -1296,14 +1283,14 @@ namespace Logic.WPF.Views
 
         #endregion
 
-        #region Simulation Mode
+        #region Simulation
 
         private bool IsSimulationRunning()
         {
             return _timer != null;
         }
 
-        private void Start(IDictionary<XBlock, BoolSimulation> simulations)
+        private void SimulationStart(IDictionary<XBlock, BoolSimulation> simulations)
         {
             _clock = new Clock(cycle: 0L, resolution: 100);
 
@@ -1327,7 +1314,7 @@ namespace Logic.WPF.Views
                         {
                             if (IsSimulationRunning())
                             {
-                                Stop();
+                                SimulationStop();
                             }
                         });
                     }
@@ -1335,7 +1322,7 @@ namespace Logic.WPF.Views
                 null, 0, _clock.Resolution);
         }
 
-        private void Start()
+        private void SimulationStart()
         {
             try
             {
@@ -1354,8 +1341,8 @@ namespace Logic.WPF.Views
                         if (simulations != null)
                         {
 
-                            InitSimulationOverlay(simulations);
-                            Start(simulations);
+                            OverlayInit(simulations);
+                            SimulationStart(simulations);
                         }
                     }
                 }
@@ -1369,17 +1356,17 @@ namespace Logic.WPF.Views
             }
         }
 
-        private void Restart()
+        private void SimulationRestart()
         {
-            Stop();
-            Start();
+            SimulationStop();
+            SimulationStart();
         }
 
-        private void Stop()
+        private void SimulationStop()
         {
             try
             {
-                ResetSimulationOverlay();
+                OverlayReset();
 
                 if (IsSimulationRunning())
                 {
@@ -1396,7 +1383,7 @@ namespace Logic.WPF.Views
             }
         }
 
-        private void Options()
+        private void SimulationOptions()
         {
             throw new NotImplementedException();
         }

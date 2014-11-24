@@ -146,9 +146,37 @@ namespace Logic.Page
         
         #endregion
 
-        #region HitTest
+        #region GetAll
 
-        public bool LineIntersectsWithRect(
+        public ICollection<IShape> GetAll()
+        {
+            return 
+                new HashSet<IShape>(
+                    Enumerable.Empty<IShape>()
+                              .Concat(Pins.Shapes)
+                              .Concat(Wires.Shapes)
+                              .Concat(Blocks.Shapes)
+                              .Concat(Shapes.Shapes));
+        }
+
+        #endregion
+
+        #region SelectAll
+
+        public void SelectAll()
+        {
+            var shapes = GetAll();
+            if (shapes != null && shapes.Count > 0)
+            {
+                Renderer.Selected = shapes;
+            }
+        }
+
+        #endregion
+
+        #region Math
+
+        private bool LineIntersectsWithRect(
             double left, double right,
             double bottom, double top,
             double x0, double y0,
@@ -255,6 +283,10 @@ namespace Logic.Page
             point.Y = (y1 + y2) / 2.0;
         }
 
+        #endregion
+
+        #region Bounds
+
         private Rect2 GetPinBounds(double x, double y)
         {
             return new Rect2(
@@ -293,6 +325,10 @@ namespace Logic.Page
                 text.Height);
             return bounds;
         }
+
+        #endregion
+
+        #region HitTest
 
         public bool HitTest(XLine line, Point2 p, double treshold)
         {

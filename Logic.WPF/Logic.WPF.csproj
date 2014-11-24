@@ -83,6 +83,7 @@
     <Compile Include="Simulation\BoolSimulationFactory.cs" />
     <Compile Include="Serialization\Bson.cs" />
     <Compile Include="Util\CSharpCodeImporter.cs" />
+    <Compile Include="Util\DependencyObjectExtensions.cs" />
     <Compile Include="Util\GridFactory.cs" />
     <Compile Include="Templates\LogicPageTemplate.cs" />
     <Compile Include="Templates\ScratchpadPageTemplate.cs" />

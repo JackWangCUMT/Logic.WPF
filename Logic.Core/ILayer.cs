@@ -15,7 +15,7 @@ namespace Logic.Core
         void MouseLeftButtonUp(Point2 point);
         void MouseMove(Point2 point);
         void MouseRightButtonDown(Point2 point);
-        void Cancel();
+        void MouseCancel();
         void OnRender(object dc);
     }
 }
