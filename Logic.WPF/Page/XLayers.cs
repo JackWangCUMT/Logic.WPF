@@ -61,9 +61,9 @@ namespace Logic.Page
             Blocks.Shapes = page.Blocks;
             Wires.Shapes = page.Wires;
             Pins.Shapes = page.Pins;
+
             Editor.Shapes.Clear();
             Overlay.Shapes.Clear();
-            Invalidate();
         }
 
         #endregion

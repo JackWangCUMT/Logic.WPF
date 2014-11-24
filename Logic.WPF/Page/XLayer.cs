@@ -1,5 +1,4 @@
 ﻿using Logic.Core;
-using Logic.Serialization;
 using Logic.Simulation;
 using Logic.Util;
 using Logic.ViewModels;
@@ -41,6 +40,77 @@ namespace Logic.Page
             Wire,
             Pin,
             Block
+        }
+
+        #endregion
+
+        #region Properties
+
+        public XLayers Layers { get; set; }
+        public IList<IShape> Shapes { get; set; }
+        public ICollection<IShape> Hidden { get; set; }
+        public IDictionary<XBlock, BoolSimulation> Simulations { get; set; }
+        public ToolMenuModel Tool { get; set; }
+        public bool EnableSnap { get; set; }
+        public double SnapSize { get; set; }
+        public IRenderer Renderer { get; set; }
+        public History<XPage> History { get; set; }
+        public ITextClipboard Clipboard { get; set; }
+        public bool IsOverlay { get; set; }
+        public Mode CurrentMode { get { return _mode; } }
+        public bool SkipContextMenu { get; set; }
+        public double RightX { get; set; }
+        public double RightY { get; set; }
+        public IStringSerializer Serializer { get; set; }
+        public IStyle ShapeStyle { get; set; }
+        public IStyle SelectedShapeStyle { get; set; }
+        public IStyle SelectionStyle { get; set; }
+        public IStyle HoverStyle { get; set; }
+        public IStyle NullStateStyle { get; set; }
+        public IStyle TrueStateStyle { get; set; }
+        public IStyle FalseStateStyle { get; set; }
+        public BoolSimulationCacheRenderer CacheRenderer { get; set; }
+        public bool EnableSimulationCache { get; set; }
+
+        #endregion
+
+        #region Fields
+
+        private double _startx, _starty;
+        private double _hx, _hy;
+        private XBlock _block = null;
+        private XLine _line = null;
+        private XEllipse _ellipse = null;
+        private XRectangle _rectangle = null;
+        private XText _text = null;
+        private XWire _wire = null;
+        private XPin _pin = null;
+        private XRectangle _selection = null;
+        private Mode _mode = Mode.None;
+        private Element _element = Element.None;
+
+        #endregion
+
+        #region Constructor
+
+        public XLayer()
+        {
+            Shapes = new List<IShape>();
+            Hidden = new HashSet<IShape>();
+            EnableSnap = true;
+            SnapSize = 15.0;
+        }
+
+        #endregion
+
+        #region History
+
+        public void Snapshot()
+        {
+            if (History != null && Layers != null)
+            {
+                History.Snapshot(Layers.ToPage(DefaultPageName, null));
+            }
         }
 
         #endregion
@@ -186,6 +256,34 @@ namespace Logic.Page
             }
         }
 
+        public void Cancel()
+        {
+            if (IsMouseCaptured())
+            {
+                switch (_mode)
+                {
+                    case Mode.None:
+                        break;
+                    case Mode.Selection:
+                        SelectionCancel();
+                        SkipContextMenu = true;
+                        break;
+                    case Mode.Create:
+                        CreateCancel();
+                        SkipContextMenu = true;
+                        break;
+                    case Mode.Move:
+                        MoveCancel();
+                        SkipContextMenu = true;
+                        break;
+                }
+            }
+            else
+            {
+                Layers.Invalidate();
+            }
+        }
+
         public void OnRender(object dc)
         {
             if (Renderer != null)
@@ -262,97 +360,6 @@ namespace Logic.Page
 
         #endregion
 
-        #region Properties
-
-        public XLayers Layers { get; set; }
-        public IList<IShape> Shapes { get; set; }
-        public ICollection<IShape> Hidden { get; set; }
-        public IDictionary<XBlock, BoolSimulation> Simulations { get; set; }
-        public ToolMenuModel Tool { get; set; }
-        public bool EnableSnap { get; set; }
-        public double SnapSize { get; set; }
-        public IRenderer Renderer { get; set; }
-        public History<XPage> History { get; set; }
-        public ITextClipboard Clipboard { get; set; }
-        public bool IsOverlay { get; set; }
-        public Mode CurrentMode { get { return _mode; } }
-        public bool SkipContextMenu { get; set; }
-        public double RightX { get; set; }
-        public double RightY { get; set; }
-        public IStringSerializer Serializer { get; set; }
-        public IStyle ShapeStyle { get; set; }
-        public IStyle SelectedShapeStyle { get; set; }
-        public IStyle SelectionStyle { get; set; }
-        public IStyle HoverStyle { get; set; }
-        public IStyle NullStateStyle { get; set; }
-        public IStyle TrueStateStyle { get; set; }
-        public IStyle FalseStateStyle { get; set; }
-        public BoolSimulationCacheRenderer CacheRenderer { get; set; }
-        public bool EnableSimulationCache { get; set; }
-
-        #endregion
-
-        #region Fields
-
-        private double _startx, _starty;
-        private double _hx, _hy;
-        private XBlock _block = null;
-        private XLine _line = null;
-        private XEllipse _ellipse = null;
-        private XRectangle _rectangle = null;
-        private XText _text = null;
-        private XWire _wire = null;
-        private XPin _pin = null;
-        private XRectangle _selection = null;
-        private Mode _mode = Mode.None;
-        private Element _element = Element.None;
-
-        #endregion
-
-        #region Constructor
-
-        public XLayer()
-        {
-            Shapes = new List<IShape>();
-            Hidden = new HashSet<IShape>();
-            EnableSnap = true;
-            SnapSize = 15.0;
-        }
-
-        #endregion
-
-        #region Cancel
-
-        public void Cancel()
-        {
-            if (IsMouseCaptured())
-            {
-                switch (_mode)
-                {
-                    case Mode.None:
-                        break;
-                    case Mode.Selection:
-                        SelectionCancel();
-                        SkipContextMenu = true;
-                        break;
-                    case Mode.Create:
-                        CreateCancel();
-                        SkipContextMenu = true;
-                        break;
-                    case Mode.Move:
-                        MoveCancel();
-                        SkipContextMenu = true;
-                        break;
-                }
-            }
-            else
-            {
-                Layers.Invalidate();
-            }
-        }
-
-        #endregion
-
         #region Selection Mode
 
         public bool HaveSelected()
@@ -385,10 +392,7 @@ namespace Logic.Page
         {
             if (HaveSelected())
             {
-                if (History != null)
-                {
-                    History.Snapshot(Layers.ToPage(DefaultPageName, null));
-                }
+                Snapshot();
                 Layers.Delete(Renderer.Selected);
                 SelectionReset();
             }
@@ -484,7 +488,10 @@ namespace Logic.Page
 
         private void MoveInit(IShape shape, Point2 p)
         {
-            History.Hold(Layers.ToPage(DefaultPageName, null));
+            if (History != null && Layers != null)
+            {
+                History.Hold(Layers.ToPage(DefaultPageName, null));
+            }
 
             _startx = EnableSnap ? Snap(p.X, SnapSize) : p.X;
             _starty = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
@@ -551,11 +558,17 @@ namespace Logic.Page
             double y = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
             if (_hx != x || _hy != y)
             {
-                History.Commit();
+                if (History != null)
+                {
+                    History.Commit();
+                }
             }
             else
             {
-                History.Release();
+                if (History != null)
+                {
+                    History.Release();
+                }
             }
 
             ReleaseMouseCapture();
@@ -564,7 +577,10 @@ namespace Logic.Page
 
         private void MoveCancel()
         {
-            History.Release();
+            if (History != null && Layers != null)
+            {
+                History.Release();
+            }
 
             ReleaseMouseCapture();
             _mode = Mode.None;
@@ -760,73 +776,6 @@ namespace Logic.Page
             {
                 pin.X += dx;
                 pin.Y += dy;
-            }
-        }
-
-        #endregion
-
-        #region Min Position
-
-        public void GetMin(ICollection<IShape> shapes, ref double x, ref double y)
-        {
-            foreach (var shape in shapes)
-            {
-                if (shape is XLine)
-                {
-                    var line = shape as XLine;
-                    x = Math.Min(x, line.X1);
-                    y = Math.Min(y, line.Y1);
-                    x = Math.Min(x, line.X2);
-                    y = Math.Min(y, line.Y2);
-                }
-                else if (shape is XEllipse)
-                {
-                    var ellipse = shape as XEllipse;
-                    x = Math.Min(x, ellipse.X);
-                    y = Math.Min(y, ellipse.Y);
-                }
-                else if (shape is XRectangle)
-                {
-                    var rectangle = shape as XRectangle;
-                    x = Math.Min(x, rectangle.X);
-                    y = Math.Min(y, rectangle.Y);
-                }
-                else if (shape is XText)
-                {
-                    var text = shape as XText;
-                    x = Math.Min(x, text.X);
-                    y = Math.Min(y, text.Y);
-                }
-                else if (shape is XWire)
-                {
-                    var wire = shape as XWire;
-                    if (wire.Start == null)
-                    {
-                        x = Math.Min(x, wire.X1);
-                        y = Math.Min(y, wire.Y1);
-                    }
-                    if (wire.End == null)
-                    {
-                        x = Math.Min(x, wire.X2);
-                        y = Math.Min(y, wire.Y2);
-                    }
-                }
-                else if (shape is XPin)
-                {
-                    var pin = shape as XPin;
-                    x = Math.Min(x, pin.X);
-                    y = Math.Min(y, pin.Y);
-                }
-                else if (shape is XBlock)
-                {
-                    var block = shape as XBlock;
-                    GetMin(block.Shapes, ref x, ref y);
-                    foreach (var pin in block.Pins)
-                    {
-                        x = Math.Min(x, pin.X);
-                        y = Math.Min(y, pin.Y);
-                    }
-                }
             }
         }
 
@@ -1342,11 +1291,7 @@ namespace Logic.Page
                         if (Layers.Shapes != null)
                         {
                             Shapes.Remove(_line);
-                            if (History != null)
-                            {
-                                History.Snapshot(
-                                    Layers.ToPage(DefaultPageName, null));
-                            }
+                            Snapshot();
                             Layers.Shapes.Shapes.Add(_line);
                             Layers.Shapes.InvalidateVisual();
                         }
@@ -1363,11 +1308,7 @@ namespace Logic.Page
                         if (Layers.Shapes != null)
                         {
                             Shapes.Remove(_ellipse);
-                            if (History != null)
-                            {
-                                History.Snapshot(
-                                    Layers.ToPage(DefaultPageName, null));
-                            }
+                            Snapshot();
                             Layers.Shapes.Shapes.Add(_ellipse);
                             Layers.Shapes.InvalidateVisual();
                         }
@@ -1384,11 +1325,7 @@ namespace Logic.Page
                         if (Layers.Shapes != null)
                         {
                             Shapes.Remove(_rectangle);
-                            if (History != null)
-                            {
-                                History.Snapshot(
-                                    Layers.ToPage(DefaultPageName, null));
-                            }
+                            Snapshot();
                             Layers.Shapes.Shapes.Add(_rectangle);
                             Layers.Shapes.InvalidateVisual();
                         }
@@ -1405,11 +1342,7 @@ namespace Logic.Page
                         if (Layers.Shapes != null)
                         {
                             Shapes.Remove(_text);
-                            if (History != null)
-                            {
-                                History.Snapshot(
-                                    Layers.ToPage(DefaultPageName, null));
-                            }
+                            Snapshot();
                             Layers.Shapes.Shapes.Add(_text);
                             Layers.Shapes.InvalidateVisual();
                         }
@@ -1430,11 +1363,7 @@ namespace Logic.Page
                                 Shapes.Remove(_pin);
                             }
 
-                            if (History != null)
-                            {
-                                History.Snapshot(
-                                    Layers.ToPage(DefaultPageName, null));
-                            }
+                            Snapshot();
 
                             Layers.Wires.Shapes.Add(_wire);
                             Layers.Wires.InvalidateVisual();
@@ -1456,11 +1385,7 @@ namespace Logic.Page
                         if (Layers.Pins != null)
                         {
                             Shapes.Remove(_pin);
-                            if (History != null)
-                            {
-                                History.Snapshot(
-                                    Layers.ToPage(DefaultPageName, null));
-                            }
+                            Snapshot();
                             Layers.Pins.Shapes.Add(_pin);
                             Layers.Pins.InvalidateVisual();
                         }
@@ -1731,15 +1656,78 @@ namespace Logic.Page
 
         #endregion
 
+        #region Min
+
+        public void Min(ICollection<IShape> shapes, ref double x, ref double y)
+        {
+            foreach (var shape in shapes)
+            {
+                if (shape is XLine)
+                {
+                    var line = shape as XLine;
+                    x = Math.Min(x, line.X1);
+                    y = Math.Min(y, line.Y1);
+                    x = Math.Min(x, line.X2);
+                    y = Math.Min(y, line.Y2);
+                }
+                else if (shape is XEllipse)
+                {
+                    var ellipse = shape as XEllipse;
+                    x = Math.Min(x, ellipse.X);
+                    y = Math.Min(y, ellipse.Y);
+                }
+                else if (shape is XRectangle)
+                {
+                    var rectangle = shape as XRectangle;
+                    x = Math.Min(x, rectangle.X);
+                    y = Math.Min(y, rectangle.Y);
+                }
+                else if (shape is XText)
+                {
+                    var text = shape as XText;
+                    x = Math.Min(x, text.X);
+                    y = Math.Min(y, text.Y);
+                }
+                else if (shape is XWire)
+                {
+                    var wire = shape as XWire;
+                    if (wire.Start == null)
+                    {
+                        x = Math.Min(x, wire.X1);
+                        y = Math.Min(y, wire.Y1);
+                    }
+                    if (wire.End == null)
+                    {
+                        x = Math.Min(x, wire.X2);
+                        y = Math.Min(y, wire.Y2);
+                    }
+                }
+                else if (shape is XPin)
+                {
+                    var pin = shape as XPin;
+                    x = Math.Min(x, pin.X);
+                    y = Math.Min(y, pin.Y);
+                }
+                else if (shape is XBlock)
+                {
+                    var block = shape as XBlock;
+                    Min(block.Shapes, ref x, ref y);
+                    foreach (var pin in block.Pins)
+                    {
+                        x = Math.Min(x, pin.X);
+                        y = Math.Min(y, pin.Y);
+                    }
+                }
+            }
+        }
+
+        #endregion
+
         #region Insert
 
         public void Insert(IEnumerable<IShape> shapes)
         {
-            if (History != null)
-            {
-                History.Snapshot(
-                    Layers.ToPage(DefaultPageName, null));
-            }
+            Snapshot();
             SelectionReset();
             Layers.Add(shapes);
             Renderer.Selected = new HashSet<IShape>(shapes);
@@ -1957,8 +1945,9 @@ namespace Logic.Page
                 Wires = new List<IShape>(),
                 Template = null
             };
-            History.Snapshot(Layers.ToPage(DefaultPageName, null));
+            Snapshot();
             Layers.Load(page);
+            Layers.Invalidate();
         }
 
         public XPage Open(string path)
@@ -2007,8 +1996,9 @@ namespace Logic.Page
             if (page != null)
             {
                 SelectionReset();
-                History.Snapshot(Layers.ToPage(DefaultPageName, null));
+                Snapshot();
                 Layers.Load(page);
+                Layers.Invalidate();
             }
         }
 
@@ -2046,21 +2036,29 @@ namespace Logic.Page
 
         public void Undo()
         {
-            var page = History.Undo(Layers.ToPage(DefaultPageName, null));
-            if (page != null)
+            if (History != null && Layers != null)
             {
-                SelectionReset();
-                Layers.Load(page);
+                var page = History.Undo(Layers.ToPage(DefaultPageName, null));
+                if (page != null)
+                {
+                    SelectionReset();
+                    Layers.Load(page);
+                    Layers.Invalidate();
+                }
             }
         }
 
         public void Redo()
         {
-            var page = History.Redo(Layers.ToPage(DefaultPageName, null));
-            if (page != null)
+            if (History != null && Layers != null)
             {
-                SelectionReset();
-                Layers.Load(page);
+                var page = History.Redo(Layers.ToPage(DefaultPageName, null));
+                if (page != null)
+                {
+                    SelectionReset();
+                    Layers.Load(page);
+                    Layers.Invalidate();
+                }
             }
         }
 

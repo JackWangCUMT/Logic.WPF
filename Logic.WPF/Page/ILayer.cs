@@ -18,6 +18,7 @@ namespace Logic.Page
         void MouseLeftButtonUp(Point2 point);
         void MouseMove(Point2 point);
         void MouseRightButtonDown(Point2 point);
+        void Cancel();
         void OnRender(object dc);
     }
 }

@@ -162,7 +162,7 @@ namespace Logic.WPF.Views
                     {
                         double minX = pageView.editorLayer.Width;
                         double minY = pageView.editorLayer.Height;
-                        Model.Layers.Editor.GetMin(_renderer.Selected, ref minX, ref minY);
+                        Model.Layers.Editor.Min(_renderer.Selected, ref minX, ref minY);
                         double x = Model.Layers.Editor.RightX - minX;
                         double y = Model.Layers.Editor.RightY - minY;
                         Model.Layers.Editor.Move(_renderer.Selected, x, y);
@@ -826,8 +826,7 @@ namespace Logic.WPF.Views
 
         private void InsertBlock(XBlock block, double x, double y)
         {
-            Model.Layers.Editor.History.Snapshot(
-                Model.Layers.ToPage(XLayer.DefaultPageName, null));
+            Model.Layers.Editor.Snapshot();
             XBlock copy = Model.Layers.Editor.Insert(block, x, y);
             if (copy != null)
             {
