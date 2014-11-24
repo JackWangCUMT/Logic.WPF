@@ -78,7 +78,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Page\ILayer.cs" />
     <Compile Include="Page\XLayer.cs" />
     <Compile Include="Simulation\BoolSimulationCacheRenderer.cs" />
     <Compile Include="Simulation\BoolSimulationFactory.cs" />
@@ -93,9 +92,7 @@
     <Compile Include="Util\Parts\BlockPart.cs" />
     <Compile Include="Util\Parts\TemplatePart.cs" />
     <Compile Include="Util\NotifyObject.cs" />
-    <Compile Include="Util\Point2.cs" />
     <Compile Include="Util\NativePointExtensions.cs" />
-    <Compile Include="Util\Rect2.cs" />
     <Compile Include="ViewModels\CodeViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Page Include="Views\CodeView.xaml">

@@ -41,6 +41,7 @@
     <Compile Include="IBinarySerializer.cs" />
     <Compile Include="IColor.cs" />
     <Compile Include="IDocument.cs" />
+    <Compile Include="ILayer.cs" />
     <Compile Include="IPage.cs" />
     <Compile Include="IProject.cs" />
     <Compile Include="IRenderer.cs" />
@@ -49,7 +50,9 @@
     <Compile Include="IStyle.cs" />
     <Compile Include="ITemplate.cs" />
     <Compile Include="PinType.cs" />
+    <Compile Include="Point2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rect2.cs" />
     <Compile Include="VAlignment.cs" />
     <Compile Include="XBlock.cs" />
     <Compile Include="XColor.cs" />
