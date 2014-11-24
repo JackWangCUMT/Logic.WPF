@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Logic.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,10 +14,10 @@ namespace Logic.Page
         Action CaptureMouse { get; set; }
         Action ReleaseMouseCapture { get; set; }
         Action InvalidateVisual { get; set; }
-        void MouseLeftButtonDown(Point point);
-        void MouseLeftButtonUp(Point point);
-        void MouseMove(Point point);
-        void MouseRightButtonDown(Point point);
+        void MouseLeftButtonDown(Point1 point);
+        void MouseLeftButtonUp(Point1 point);
+        void MouseMove(Point1 point);
+        void MouseRightButtonDown(Point1 point);
         void OnRender(object dc);
     }
 }

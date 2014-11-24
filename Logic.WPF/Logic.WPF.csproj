@@ -80,6 +80,7 @@
     </ApplicationDefinition>
     <Compile Include="Page\ILayer.cs" />
     <Compile Include="Page\XLayer.cs" />
+    <Compile Include="Simulation\BoolSimulationCacheRenderer.cs" />
     <Compile Include="Simulation\BoolSimulationFactory.cs" />
     <Compile Include="Serialization\Bson.cs" />
     <Compile Include="Util\CSharpCodeImporter.cs" />
@@ -87,9 +88,14 @@
     <Compile Include="Templates\LogicPageTemplate.cs" />
     <Compile Include="Templates\ScratchpadPageTemplate.cs" />
     <Compile Include="Util\CSharpProjectCreator.cs" />
+    <Compile Include="Util\ITextClipboard.cs" />
+    <Compile Include="Util\NativeTextClipboard.cs" />
     <Compile Include="Util\Parts\BlockPart.cs" />
     <Compile Include="Util\Parts\TemplatePart.cs" />
     <Compile Include="Util\NotifyObject.cs" />
+    <Compile Include="Util\Point1.cs" />
+    <Compile Include="Util\NativePointExtensions.cs" />
+    <Compile Include="Util\Rect1.cs" />
     <Compile Include="ViewModels\CodeViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Page Include="Views\CodeView.xaml">
@@ -108,7 +114,7 @@
     <Compile Include="Views\CodeView.xaml.cs">
       <DependentUpon>CodeView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Util\Command.cs" />
+    <Compile Include="Util\NativeCommand.cs" />
     <Compile Include="Util\Log.cs" />
     <Compile Include="Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>

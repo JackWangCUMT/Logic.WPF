@@ -95,23 +95,23 @@ namespace Logic.WPF.Views
 
             Model.Tool = new ToolMenuModel();
 
-            Model.FileNewCommand = new Command(
+            Model.FileNewCommand = new NativeCommand(
                 (parameter) => this.New(),
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.FileOpenCommand = new Command
+            Model.FileOpenCommand = new NativeCommand
                 ((parameter) => this.Open(),
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.FileSaveCommand = new Command(
+            Model.FileSaveCommand = new NativeCommand(
                 (parameter) => this.Save(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.FileSaveAsCommand = new Command(
+            Model.FileSaveAsCommand = new NativeCommand(
                 (parameter) => this.SaveAs(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.FileExitCommand = new Command(
+            Model.FileExitCommand = new NativeCommand(
                 (parameter) => 
                 {
                     if (IsSimulationRunning())
@@ -122,7 +122,7 @@ namespace Logic.WPF.Views
                 }, 
                 (parameter) => true);
 
-            Model.EditUndoCommand = new Command(
+            Model.EditUndoCommand = new NativeCommand(
                 (parameter) => Model.Layers.Editor.Undo(),
                 (parameter) =>
                 {
@@ -130,7 +130,7 @@ namespace Logic.WPF.Views
                         || !Model.Layers.Editor.History.CanUndo() ? false : true;
                 });
 
-            Model.EditRedoCommand = new Command
+            Model.EditRedoCommand = new NativeCommand
                 ((parameter) => Model.Layers.Editor.Redo(),
                 (parameter) =>
                 {
@@ -138,7 +138,7 @@ namespace Logic.WPF.Views
                         || !Model.Layers.Editor.History.CanRedo() ? false : true;
                 });
 
-            Model.EditCutCommand = new Command(
+            Model.EditCutCommand = new NativeCommand(
                 (parameter) => Model.Layers.Editor.Cut(),
                 (parameter) => 
                 {
@@ -146,7 +146,7 @@ namespace Logic.WPF.Views
                         || !Model.Layers.Editor.CanCopy() ? false : true;
                 });
 
-            Model.EditCopyCommand = new Command(
+            Model.EditCopyCommand = new NativeCommand(
                 (parameter) => Model.Layers.Editor.Copy(),
                 (parameter) =>
                 {
@@ -154,7 +154,7 @@ namespace Logic.WPF.Views
                         || !Model.Layers.Editor.CanCopy() ? false : true;
                 });
 
-            Model.EditPasteCommand = new Command(
+            Model.EditPasteCommand = new NativeCommand(
                 (parameter) =>
                 {
                     Model.Layers.Editor.Paste();
@@ -174,7 +174,7 @@ namespace Logic.WPF.Views
                         || !Model.Layers.Editor.CanPaste() ? false : true;
                 });
 
-            Model.EditDeleteCommand = new Command(
+            Model.EditDeleteCommand = new NativeCommand(
                 (parameter) => Model.Layers.Editor.SelectionDelete(),
                 (parameter) =>
                 {
@@ -182,11 +182,11 @@ namespace Logic.WPF.Views
                         || !Model.Layers.Editor.HaveSelected() ? false : true;
                 });
 
-            Model.EditSelectAllCommand = new Command(
+            Model.EditSelectAllCommand = new NativeCommand(
                 (parameter) => Model.Layers.Editor.SelectAll(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.EditAlignLeftBottomCommand = new Command(
+            Model.EditAlignLeftBottomCommand = new NativeCommand(
                 (parameter) =>
                 {
                     Model.Layers.Editor.SetTextHAlignment(HAlignment.Left);
@@ -194,11 +194,11 @@ namespace Logic.WPF.Views
                 },
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.EditAlignBottomCommand = new Command(
+            Model.EditAlignBottomCommand = new NativeCommand(
                 (parameter) => Model.Layers.Editor.SetTextVAlignment(VAlignment.Bottom), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.EditAlignRightBottomCommand = new Command(
+            Model.EditAlignRightBottomCommand = new NativeCommand(
                 (parameter) =>
                 {
                     Model.Layers.Editor.SetTextHAlignment(HAlignment.Right);
@@ -206,11 +206,11 @@ namespace Logic.WPF.Views
                 },
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.EditAlignLeftCommand = new Command(
+            Model.EditAlignLeftCommand = new NativeCommand(
                 (parameter) => Model.Layers.Editor.SetTextHAlignment(HAlignment.Left), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.EditAlignCenterCenterCommand = new Command(
+            Model.EditAlignCenterCenterCommand = new NativeCommand(
                 (parameter) =>
                 {
                     Model.Layers.Editor.SetTextHAlignment(HAlignment.Center);
@@ -218,11 +218,11 @@ namespace Logic.WPF.Views
                 },
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.EditAlignRightCommand = new Command(
+            Model.EditAlignRightCommand = new NativeCommand(
                 (parameter) => Model.Layers.Editor.SetTextHAlignment(HAlignment.Right), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.EditAlignLeftTopCommand = new Command(
+            Model.EditAlignLeftTopCommand = new NativeCommand(
                 (parameter) =>
                 {
                     Model.Layers.Editor.SetTextHAlignment(HAlignment.Left);
@@ -230,11 +230,11 @@ namespace Logic.WPF.Views
                 },
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.EditAlignTopCommand = new Command(
+            Model.EditAlignTopCommand = new NativeCommand(
                 (parameter) => Model.Layers.Editor.SetTextVAlignment(VAlignment.Top), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.EditAlignRightTopCommand = new Command
+            Model.EditAlignRightTopCommand = new NativeCommand
                 ((parameter) =>
                 {
                     Model.Layers.Editor.SetTextHAlignment(HAlignment.Right);
@@ -242,75 +242,75 @@ namespace Logic.WPF.Views
                 },
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.EditIncreaseTextSizeCommand = new Command(
+            Model.EditIncreaseTextSizeCommand = new NativeCommand(
                 (parameter) => Model.Layers.Editor.SetTextSizeDelta(+1.0), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.EditDecreaseTextSizeCommand = new Command(
+            Model.EditDecreaseTextSizeCommand = new NativeCommand(
                 (parameter) => Model.Layers.Editor.SetTextSizeDelta(-1.0), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.EditToggleFillCommand = new Command(
+            Model.EditToggleFillCommand = new NativeCommand(
                 (parameter) => Model.Layers.Editor.ToggleFill(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.EditToggleSnapCommand = new Command(
+            Model.EditToggleSnapCommand = new NativeCommand(
                 (parameter) => Model.Layers.Editor.EnableSnap = !Model.Layers.Editor.EnableSnap, 
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.EditToggleInvertStartCommand = new Command(
+            Model.EditToggleInvertStartCommand = new NativeCommand(
                 (parameter) => Model.Layers.Editor.ToggleInvertStart(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.EditToggleInvertEndCommand = new Command(
+            Model.EditToggleInvertEndCommand = new NativeCommand(
                 (parameter) => Model.Layers.Editor.ToggleInvertEnd(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.EditCancelCommand = new Command(
+            Model.EditCancelCommand = new NativeCommand(
                 (parameter) => Model.Layers.Editor.Cancel(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.ToolNoneCommand = new Command(
+            Model.ToolNoneCommand = new NativeCommand(
                 (parameter) => Model.Tool.CurrentTool = ToolMenuModel.Tool.None, 
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.ToolSelectionCommand = new Command(
+            Model.ToolSelectionCommand = new NativeCommand(
                 (parameter) => Model.Tool.CurrentTool = ToolMenuModel.Tool.Selection, 
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.ToolWireCommand = new Command(
+            Model.ToolWireCommand = new NativeCommand(
                 (parameter) => Model.Tool.CurrentTool = ToolMenuModel.Tool.Wire, 
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.ToolPinCommand = new Command(
+            Model.ToolPinCommand = new NativeCommand(
                 (parameter) => Model.Tool.CurrentTool = ToolMenuModel.Tool.Pin, 
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.ToolLineCommand = new Command(
+            Model.ToolLineCommand = new NativeCommand(
                 (parameter) => Model.Tool.CurrentTool = ToolMenuModel.Tool.Line, 
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.ToolEllipseCommand = new Command(
+            Model.ToolEllipseCommand = new NativeCommand(
                 (parameter) => Model.Tool.CurrentTool = ToolMenuModel.Tool.Ellipse, 
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.ToolRectangleCommand = new Command(
+            Model.ToolRectangleCommand = new NativeCommand(
                 (parameter) => Model.Tool.CurrentTool = ToolMenuModel.Tool.Rectangle, 
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.ToolTextCommand = new Command(
+            Model.ToolTextCommand = new NativeCommand(
                 (parameter) => Model.Tool.CurrentTool = ToolMenuModel.Tool.Text, 
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.BlockImportCommand = new Command(
+            Model.BlockImportCommand = new NativeCommand(
                 (parameter) => this.ImportBlock(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.BlockImportCodeCommand = new Command(
+            Model.BlockImportCodeCommand = new NativeCommand(
                 (parameter) => this.ImportBlocksFromCode(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.BlockExportCommand = new Command(
+            Model.BlockExportCommand = new NativeCommand(
                 (parameter) => this.ExportBlock(),
                 (parameter) =>
                 {
@@ -318,7 +318,7 @@ namespace Logic.WPF.Views
                         || !Model.Layers.Editor.HaveSelected() ? false : true;
                 });
 
-            Model.BlockCreateProjectCommand = new Command(
+            Model.BlockCreateProjectCommand = new NativeCommand(
                 (parameter) => this.CreateProject(),
                 (parameter) =>
                 {
@@ -326,7 +326,7 @@ namespace Logic.WPF.Views
                         || !Model.Layers.Editor.HaveSelected() ? false : true;
                 });
 
-            Model.InsertBlockCommand = new Command(
+            Model.InsertBlockCommand = new NativeCommand(
                 (parameter) =>
                 {
                     XBlock block = parameter as XBlock;
@@ -339,19 +339,19 @@ namespace Logic.WPF.Views
                 },
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.TemplateImportCommand = new Command(
+            Model.TemplateImportCommand = new NativeCommand(
                 (parameter) => this.ImportTemplate(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.TemplateImportCodeCommand = new Command(
+            Model.TemplateImportCodeCommand = new NativeCommand(
                 (parameter) => this.ImportTemplatesFromCode(),
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.TemplateExportCommand = new Command(
+            Model.TemplateExportCommand = new NativeCommand(
                 (parameter) => this.ExportTemplate(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.ApplyTemplateCommand = new Command(
+            Model.ApplyTemplateCommand = new NativeCommand(
                 (parameter) =>
                 {
                     ITemplate template = parameter as ITemplate;
@@ -362,23 +362,23 @@ namespace Logic.WPF.Views
                 },
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.SimulationStartCommand = new Command(
+            Model.SimulationStartCommand = new NativeCommand(
                 (parameter) => this.Start(),
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.SimulationStopCommand = new Command(
+            Model.SimulationStopCommand = new NativeCommand(
                 (parameter) => this.Stop(), 
                 (parameter) => IsSimulationRunning() ? true : false);
 
-            Model.SimulationRestartCommand = new Command(
+            Model.SimulationRestartCommand = new NativeCommand(
                 (parameter) => this.Restart(), 
                 (parameter) => IsSimulationRunning() ? true : false);
 
-            Model.SimulationCreateGraphCommand = new Command(
+            Model.SimulationCreateGraphCommand = new NativeCommand(
                 (parameter) => this.Graph(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            Model.SimulationOptionsCommand = new Command(
+            Model.SimulationOptionsCommand = new NativeCommand(
                 (parameter) => this.Options(), 
                 (parameter) => IsSimulationRunning() ? false : true);
         }
@@ -540,6 +540,9 @@ namespace Logic.WPF.Views
             // template
             ApplyTemplate(new LogicPageTemplate(), _renderer);
 
+            // clipboard
+            Model.Layers.Editor.Clipboard = new NativeTextClipboard();
+
             // history
             Model.Layers.Editor.History = new History<XPage>();
 
@@ -639,7 +642,7 @@ namespace Logic.WPF.Views
                 {
                     if (_renderer.Selected == null)
                     {
-                        Point point = new Point(
+                        Point1 point = new Point1(
                             Model.Layers.Editor.RightX,
                             Model.Layers.Editor.RightY);
                         IShape shape = Model.Layers.Editor.HitTest(point);
@@ -865,7 +868,7 @@ namespace Logic.WPF.Views
                 ProjectPath = "Blocks.Name.csproj"
             };
 
-            vm.BrowseCommand = new Command((parameter) => 
+            vm.BrowseCommand = new NativeCommand((parameter) => 
             { 
                 var dlg = new Microsoft.Win32.SaveFileDialog()
                 {
@@ -880,7 +883,7 @@ namespace Logic.WPF.Views
             },
             (parameter) => true);
 
-            vm.CreateCommand = new Command((parameter) => 
+            vm.CreateCommand = new NativeCommand((parameter) => 
             {
                 try
                 {
@@ -898,7 +901,7 @@ namespace Logic.WPF.Views
             },
             (parameter) => true);
 
-            vm.CancelCommand = new Command((parameter) =>
+            vm.CancelCommand = new NativeCommand((parameter) =>
             {
                 view.Close();
             },
@@ -1204,7 +1207,7 @@ namespace Logic.WPF.Views
             Model.Layers.Editor.SelectionReset();
 
             Model.Layers.Overlay.EnableSimulationCache = true;
-            Model.Layers.Overlay.HaveSimulationCache = false;
+            Model.Layers.Overlay.CacheRenderer = null;
 
             foreach (var simulation in simulations)
             {
@@ -1223,8 +1226,7 @@ namespace Logic.WPF.Views
         {
             Model.Layers.Editor.Simulations = null;
             Model.Layers.Overlay.Simulations = null;
-
-            Model.Layers.Overlay.HaveSimulationCache = false;
+            Model.Layers.Overlay.CacheRenderer = null;
 
             Model.Layers.Blocks.Hidden.Clear();
             Model.Layers.Overlay.Shapes.Clear();

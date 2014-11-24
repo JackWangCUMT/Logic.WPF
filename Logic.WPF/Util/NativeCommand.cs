@@ -7,12 +7,12 @@ using System.Windows.Input;
 
 namespace Logic.Util
 {
-    public class Command : ICommand
+    public class NativeCommand : ICommand
     {
         private Action<object> _execute;
         private Func<object, bool> _canExecute;
 
-        public Command(Action<object> execute, Func<object, bool> canExecute)
+        public NativeCommand(Action<object> execute, Func<object, bool> canExecute)
         {
             this._execute = execute;
             this._canExecute = canExecute;

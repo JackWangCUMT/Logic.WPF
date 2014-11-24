@@ -1,4 +1,5 @@
 ﻿using Logic.Page;
+using Logic.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,22 +44,22 @@ namespace Logic.Controls
 
             PreviewMouseLeftButtonDown += (s, e) =>
             {
-                Layer.MouseLeftButtonDown(e.GetPosition(this));
+                Layer.MouseLeftButtonDown(e.GetPosition(this).ToPoint1());
             };
 
             PreviewMouseLeftButtonUp += (s, e) =>
             {
-                Layer.MouseLeftButtonUp(e.GetPosition(this));
+                Layer.MouseLeftButtonUp(e.GetPosition(this).ToPoint1());
             };
 
             PreviewMouseMove += (s, e) =>
             {
-                Layer.MouseMove(e.GetPosition(this));
+                Layer.MouseMove(e.GetPosition(this).ToPoint1());
             };
 
             PreviewMouseRightButtonDown += (s, e) =>
             {
-                Layer.MouseRightButtonDown(e.GetPosition(this));
+                Layer.MouseRightButtonDown(e.GetPosition(this).ToPoint1());
             };
         }
 

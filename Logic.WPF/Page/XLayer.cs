@@ -1,6 +1,6 @@
 ﻿using Logic.Core;
-using Logic.Simulation;
 using Logic.Serialization;
+using Logic.Simulation;
 using Logic.Util;
 using Logic.ViewModels;
 using System;
@@ -9,8 +9,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Media;
 
 namespace Logic.Page
 {
@@ -23,7 +21,7 @@ namespace Logic.Page
         public Action ReleaseMouseCapture { get; set; }
         public Action InvalidateVisual { get; set; }
 
-        public void MouseLeftButtonDown(Point point)
+        public void MouseLeftButtonDown(Point1 point)
         {
             switch (_mode)
             {
@@ -89,7 +87,7 @@ namespace Logic.Page
             }
         }
 
-        public void MouseLeftButtonUp(Point point)
+        public void MouseLeftButtonUp(Point1 point)
         {
             if (IsMouseCaptured())
             {
@@ -109,7 +107,7 @@ namespace Logic.Page
             }
         }
 
-        public void MouseMove(Point point)
+        public void MouseMove(Point1 point)
         {
             if (Layers != null
                 && Simulations == null)
@@ -146,7 +144,7 @@ namespace Logic.Page
             }
         }
 
-        public void MouseRightButtonDown(Point point)
+        public void MouseRightButtonDown(Point1 point)
         {
             RightX = point.X;
             RightY = point.Y;
@@ -171,12 +169,19 @@ namespace Logic.Page
                 {
                     if (EnableSimulationCache)
                     {
-                        if (!HaveSimulationCache)
+                        if (CacheRenderer == null)
                         {
-                            CreateSimulationModeCache();
-                            HaveSimulationCache = true;
+                            CacheRenderer = new BoolSimulationCacheRenderer()
+                            {
+                                Renderer = this.Renderer,
+                                NullStateStyle = this.NullStateStyle,
+                                TrueStateStyle = this.TrueStateStyle,
+                                FalseStateStyle = this.FalseStateStyle,
+                                Shapes = this.Shapes,
+                                Simulations = this.Simulations
+                            };
                         }
-                        RenderSimulationModeCached(dc);
+                        CacheRenderer.Render(dc);
                     }
                     else
                     {
@@ -237,6 +242,7 @@ namespace Logic.Page
         public double SnapSize { get; set; }
         public IRenderer Renderer { get; set; }
         public History<XPage> History { get; set; }
+        public ITextClipboard Clipboard { get; set; }
         public bool IsOverlay { get; set; }
         public Mode CurrentMode { get { return _mode; } }
         public bool SkipContextMenu { get; set; }
@@ -250,6 +256,8 @@ namespace Logic.Page
         public IStyle NullStateStyle { get; set; }
         public IStyle TrueStateStyle { get; set; }
         public IStyle FalseStateStyle { get; set; }
+        public BoolSimulationCacheRenderer CacheRenderer { get; set; }
+        public bool EnableSimulationCache { get; set; }
 
         #endregion
 
@@ -399,7 +407,7 @@ namespace Logic.Page
             }
         }
 
-        private void SelectionInit(Point p)
+        private void SelectionInit(Point1 p)
         {
             IShape shape = Layers != null ? HitTest(p) : null;
             if (shape != null)
@@ -413,7 +421,7 @@ namespace Logic.Page
             }
         }
 
-        private void SelectionStart(Point p)
+        private void SelectionStart(Point1 p)
         {
             _startx = p.X;
             _starty = p.Y;
@@ -431,7 +439,7 @@ namespace Logic.Page
             _mode = Mode.Selection;
         }
 
-        private void SelectionMove(Point p)
+        private void SelectionMove(Point1 p)
         {
             _selection.X = Math.Min(_startx, p.X);
             _selection.Y = Math.Min(_starty, p.Y);
@@ -440,14 +448,14 @@ namespace Logic.Page
             InvalidateVisual();
         }
 
-        private void SelectionFinish(Point p)
+        private void SelectionFinish(Point1 p)
         {
             ReleaseMouseCapture();
             Shapes.Remove(_selection);
             InvalidateVisual();
             _mode = Mode.None;
 
-            var rect = new Rect(
+            var rect = new Rect1(
                 Math.Min(_startx, p.X),
                 Math.Min(_starty, p.Y),
                 Math.Abs(p.X - _startx),
@@ -477,7 +485,7 @@ namespace Logic.Page
 
         #region Move Mode
 
-        private void MoveInit(IShape shape, Point p)
+        private void MoveInit(IShape shape, Point1 p)
         {
             History.Hold(Layers.ToPage("Page", null));
 
@@ -540,7 +548,7 @@ namespace Logic.Page
             }
         }
 
-        private void MoveFinish(Point p)
+        private void MoveFinish(Point1 p)
         {
             double x = EnableSnap ? Snap(p.X, SnapSize) : p.X;
             double y = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
@@ -565,7 +573,7 @@ namespace Logic.Page
             _mode = Mode.None;
         }
 
-        public void Move(Point p)
+        public void Move(Point1 p)
         {
             double x = EnableSnap ? Snap(p.X, SnapSize) : p.X;
             double y = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
@@ -829,7 +837,7 @@ namespace Logic.Page
 
         #region Overlay
 
-        private void MoveOverlay(Point p)
+        private void MoveOverlay(Point1 p)
         {
             if (Layers == null)
                 return;
@@ -1018,7 +1026,7 @@ namespace Logic.Page
 
         #region Create Mode
 
-        private void CreateWireInit(Point p)
+        private void CreateWireInit(Point1 p)
         {
             IShape pinHitResult = null;
             IShape wireHitResult = null;
@@ -1089,7 +1097,7 @@ namespace Logic.Page
             }
         }
 
-        private void CreateWireFinish(Point p)
+        private void CreateWireFinish(Point1 p)
         {
             IShape pinHitResult = null;
             IShape wireHitResult = null;
@@ -1153,7 +1161,7 @@ namespace Logic.Page
             }
         }
 
-        private void CreateInit(Point p)
+        private void CreateInit(Point1 p)
         {
             double x = EnableSnap ? Snap(p.X, SnapSize) : p.X;
             double y = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
@@ -1265,7 +1273,7 @@ namespace Logic.Page
             _mode = Mode.Create;
         }
 
-        private void CreateMove(Point p)
+        private void CreateMove(Point1 p)
         {
             double x = EnableSnap ? Snap(p.X, SnapSize) : p.X;
             double y = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
@@ -1323,7 +1331,7 @@ namespace Logic.Page
             }
         }
 
-        private void CreateFinish(Point p)
+        private void CreateFinish(Point1 p)
         {
             double x = EnableSnap ? Snap(p.X, SnapSize) : p.X;
             double y = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
@@ -1804,7 +1812,7 @@ namespace Logic.Page
             return true;
         }
 
-        private Point NearestPointOnLine(Point a, Point b, Point p)
+        private Point1 NearestPointOnLine(Point1 a, Point1 b, Point1 p)
         {
             double ax = p.X - a.X;
             double ay = p.Y - a.Y;
@@ -1813,13 +1821,13 @@ namespace Logic.Page
             double t = (ax * bx + ay * by) / (bx * bx + by * by);
             if (t < 0.0)
             {
-                return new Point(a.X, a.Y);
+                return new Point1(a.X, a.Y);
             }
             else if (t > 1.0)
             {
-                return new Point(b.X, b.Y);
+                return new Point1(b.X, b.Y);
             }
-            return new Point(bx * t + a.X, by * t + a.Y);
+            return new Point1(bx * t + a.X, by * t + a.Y);
         }
 
         private double Distance(double x1, double y1, double x2, double y2)
@@ -1829,24 +1837,24 @@ namespace Logic.Page
             return Math.Sqrt(dx * dx + dy * dy);
         }
 
-        private void Middle(ref Point point, double x1, double y1, double x2, double y2)
+        private void Middle(ref Point1 point, double x1, double y1, double x2, double y2)
         {
             point.X = (x1 + x2) / 2.0;
             point.Y = (y1 + y2) / 2.0;
         }
 
-        private Rect GetPinBounds(double x, double y)
+        private Rect1 GetPinBounds(double x, double y)
         {
-            return new Rect(
+            return new Rect1(
                 x - Renderer.PinRadius,
                 y - Renderer.PinRadius,
                 Renderer.PinRadius + Renderer.PinRadius,
                 Renderer.PinRadius + Renderer.PinRadius);
         }
 
-        private Rect GetEllipseBounds(XEllipse ellipse)
+        private Rect1 GetEllipseBounds(XEllipse ellipse)
         {
-            var bounds = new Rect(
+            var bounds = new Rect1(
                 ellipse.X - ellipse.RadiusX,
                 ellipse.Y - ellipse.RadiusY,
                 ellipse.RadiusX + ellipse.RadiusX,
@@ -1854,9 +1862,9 @@ namespace Logic.Page
             return bounds;
         }
 
-        private Rect GetRectangleBounds(XRectangle rectangle)
+        private Rect1 GetRectangleBounds(XRectangle rectangle)
         {
-            var bounds = new Rect(
+            var bounds = new Rect1(
                 rectangle.X,
                 rectangle.Y,
                 rectangle.Width,
@@ -1864,9 +1872,9 @@ namespace Logic.Page
             return bounds;
         }
 
-        private Rect GetTextBounds(XText text)
+        private Rect1 GetTextBounds(XText text)
         {
-            var bounds = new Rect(
+            var bounds = new Rect1(
                 text.X,
                 text.Y,
                 text.Width,
@@ -1874,27 +1882,27 @@ namespace Logic.Page
             return bounds;
         }
 
-        public bool HitTest(XLine line, Point p, double treshold)
+        public bool HitTest(XLine line, Point1 p, double treshold)
         {
-            var a = new Point(line.X1, line.Y1);
-            var b = new Point(line.X2, line.Y2);
+            var a = new Point1(line.X1, line.Y1);
+            var b = new Point1(line.X2, line.Y2);
             var nearest = NearestPointOnLine(a, b, p);
             double distance = Distance(p.X, p.Y, nearest.X, nearest.Y);
             return distance < treshold;
         }
 
-        public bool HitTest(XWire wire, Point p, double treshold)
+        public bool HitTest(XWire wire, Point1 p, double treshold)
         {
             var a = wire.Start != null ?
-                new Point(wire.Start.X, wire.Start.Y) : new Point(wire.X1, wire.Y1);
+                new Point1(wire.Start.X, wire.Start.Y) : new Point1(wire.X1, wire.Y1);
             var b = wire.End != null ?
-                new Point(wire.End.X, wire.End.Y) : new Point(wire.X2, wire.Y2);
+                new Point1(wire.End.X, wire.End.Y) : new Point1(wire.X2, wire.Y2);
             var nearest = NearestPointOnLine(a, b, p);
             double distance = Distance(p.X, p.Y, nearest.X, nearest.Y);
             return distance < treshold;
         }
 
-        public IShape HitTest(IEnumerable<XPin> pins, Point p)
+        public IShape HitTest(IEnumerable<XPin> pins, Point1 p)
         {
             foreach (var pin in pins)
             {
@@ -1908,7 +1916,7 @@ namespace Logic.Page
             return null;
         }
 
-        public IShape HitTest(IEnumerable<XWire> wires, Point p)
+        public IShape HitTest(IEnumerable<XWire> wires, Point1 p)
         {
             foreach (var wire in wires)
             {
@@ -1953,7 +1961,7 @@ namespace Logic.Page
             return null;
         }
 
-        public IShape HitTest(IEnumerable<XBlock> blocks, Point p)
+        public IShape HitTest(IEnumerable<XBlock> blocks, Point1 p)
         {
             foreach (var block in blocks)
             {
@@ -1973,7 +1981,7 @@ namespace Logic.Page
             return null;
         }
 
-        public IShape HitTest(IEnumerable<IShape> shapes, Point p)
+        public IShape HitTest(IEnumerable<IShape> shapes, Point1 p)
         {
             foreach (var shape in shapes)
             {
@@ -2030,7 +2038,7 @@ namespace Logic.Page
             return null;
         }
 
-        public IShape HitTest(Point p)
+        public IShape HitTest(Point1 p)
         {
             var pin = HitTest(Layers.Pins.Shapes.Cast<XPin>(), p);
             if (pin != null)
@@ -2066,7 +2074,7 @@ namespace Logic.Page
             return null;
         }
 
-        public bool HitTest(IEnumerable<XPin> pins, Rect rect, ICollection<IShape> hs)
+        public bool HitTest(IEnumerable<XPin> pins, Rect1 rect, ICollection<IShape> hs)
         {
             foreach (var pin in pins)
             {
@@ -2085,7 +2093,7 @@ namespace Logic.Page
             return false;
         }
 
-        public bool HitTest(IEnumerable<XWire> wires, Rect rect, ICollection<IShape> hs)
+        public bool HitTest(IEnumerable<XWire> wires, Rect1 rect, ICollection<IShape> hs)
         {
             foreach (var wire in wires)
             {
@@ -2131,7 +2139,7 @@ namespace Logic.Page
             return false;
         }
 
-        public bool HitTest(IEnumerable<XBlock> blocks, Rect rect, ICollection<IShape> hs)
+        public bool HitTest(IEnumerable<XBlock> blocks, Rect1 rect, ICollection<IShape> hs)
         {
             foreach (var block in blocks)
             {
@@ -2165,7 +2173,7 @@ namespace Logic.Page
             return false;
         }
 
-        public bool HitTest(IEnumerable<IShape> shapes, Rect rect, ICollection<IShape> hs)
+        public bool HitTest(IEnumerable<IShape> shapes, Rect1 rect, ICollection<IShape> hs)
         {
             foreach (var shape in shapes)
             {
@@ -2241,7 +2249,7 @@ namespace Logic.Page
             return false;
         }
 
-        public ICollection<IShape> HitTest(Rect rect)
+        public ICollection<IShape> HitTest(Rect1 rect)
         {
             var hs = new HashSet<IShape>();
 
@@ -2511,7 +2519,7 @@ namespace Logic.Page
                 // find connections
                 foreach (var pin in block.Pins)
                 {
-                    IShape hit = HitTest(wires, new Point(pin.X, pin.Y));
+                    IShape hit = HitTest(wires, new Point1(pin.X, pin.Y));
                     if (hit != null && hit is XWire)
                     {
                         var wire = hit as XWire;
@@ -2635,7 +2643,7 @@ namespace Logic.Page
                 var json = Serializer.Serialize(shapes);
                 if (!string.IsNullOrEmpty(json))
                 {
-                    Clipboard.SetText(json, TextDataFormat.UnicodeText);
+                    Clipboard.SetText(json);
                 }
             }
             catch (Exception ex)
@@ -2680,7 +2688,7 @@ namespace Logic.Page
         {
             try
             {
-                return Clipboard.ContainsText(TextDataFormat.UnicodeText);
+                return Clipboard.ContainsText();
             }
             catch (Exception ex)
             {
@@ -2715,7 +2723,7 @@ namespace Logic.Page
             {
                 if (CanPaste())
                 {
-                    var json = Clipboard.GetText(TextDataFormat.UnicodeText);
+                    var json = Clipboard.GetText();
                     if (!string.IsNullOrEmpty(json))
                     {
                         Insert(json);
@@ -2810,7 +2818,7 @@ namespace Logic.Page
 
         #region Simulation
 
-        private void ChangeBlockState(Point p)
+        private void ChangeBlockState(Point1 p)
         {
             IShape shape = Layers != null ? HitTest(p) : null;
             if (shape is XBlock)
@@ -2824,95 +2832,7 @@ namespace Logic.Page
 
         #endregion
 
-        #region Render Simulation
-
-        public bool EnableSimulationCache { get; set; }
-
-        private DrawingVisual[][] _dwCache = null;
-        private BoolSimulation[] _cache = null;
-
-        private bool _haveSimulationCache = false;
-        public bool HaveSimulationCache
-        {
-            get { return _haveSimulationCache; }
-            set
-            {
-                if (value != _haveSimulationCache)
-                {
-                    if (value == false)
-                    {
-                        _dwCache = null;
-                        _cache = null;
-                    }
-                    _haveSimulationCache = value;
-                }
-            }
-        }
-
-        private void RenderSimulationBlock(object dc, XBlock block, IStyle style)
-        {
-            block.Render(dc, Renderer, style);
-            foreach (var pin in block.Pins)
-            {
-                pin.Render(dc, Renderer, style);
-            }
-        }
-
-        private DrawingVisual RenderToDrawingVisual(XBlock block, IStyle style)
-        {
-            var dw = new DrawingVisual();
-
-            using (var dcv = dw.RenderOpen())
-            {
-                RenderSimulationBlock(dcv, block, style);
-            }
-
-            dw.Drawing.Freeze();
-            return dw;
-        }
-
-        private void CreateSimulationModeCache()
-        {
-            XBlock[] blocks = Shapes
-                .Where(s => s is XBlock)
-                .Cast<XBlock>()
-                .ToArray();
-
-            _dwCache = new DrawingVisual[blocks.Length][];
-            _cache = new BoolSimulation[blocks.Length];
-
-            for (int i = 0; i < blocks.Length; i++)
-            {
-                XBlock block = blocks[i];
-
-                _cache[i] = Simulations[block];
-
-                _dwCache[i] = new DrawingVisual[3];
-                _dwCache[i][0] = RenderToDrawingVisual(block, TrueStateStyle);
-                _dwCache[i][1] = RenderToDrawingVisual(block, FalseStateStyle);
-                _dwCache[i][2] = RenderToDrawingVisual(block, NullStateStyle);
-            }
-        }
-
-        private void RenderSimulationModeCached(object dc)
-        {
-            for (int i = 0; i < _dwCache.Length; i++)
-            {
-                switch (_cache[i].State)
-                {
-                    case true:
-                        (dc as DrawingContext).DrawDrawing(_dwCache[i][0].Drawing);
-                        break;
-                    case false:
-                        (dc as DrawingContext).DrawDrawing(_dwCache[i][1].Drawing);
-                        break;
-                    case null:
-                    default:
-                        (dc as DrawingContext).DrawDrawing(_dwCache[i][2].Drawing);
-                        break;
-                }
-            }
-        }
+        #region Render
 
         private void RenderSimulationMode(object dc)
         {
@@ -2936,14 +2856,14 @@ namespace Logic.Page
                             style = NullStateStyle;
                             break;
                     }
-                    RenderSimulationBlock(dc, block, style);
+                    block.Render(dc, Renderer, style);
+                    foreach (var pin in block.Pins)
+                    {
+                        pin.Render(dc, Renderer, style);
+                    }
                 }
             }
         }
-
-        #endregion
-
-        #region Render Normal
 
         private void RenderNormalMode(object dc, IStyle style)
         {
@@ -2960,10 +2880,6 @@ namespace Logic.Page
             }
         }
 
-        #endregion
-
-        #region Render Selected
-
         private void RenderSelectedMode(object dc, IStyle normal, IStyle selected)
         {
             foreach (var shape in Shapes)
@@ -2979,10 +2895,6 @@ namespace Logic.Page
                 }
             }
         }
-
-        #endregion
-
-        #region Render Hidden
 
         private void RenderHiddenMode(object dc, IStyle style)
         {
