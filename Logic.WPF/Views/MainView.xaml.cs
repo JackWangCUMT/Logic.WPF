@@ -36,6 +36,8 @@ namespace Logic.WPF.Views
         #region Properties
 
         public MainViewModel Model { get; set; }
+        public IProject Project { get; set; }
+        public IDocument Document { get; set; }
 
         #endregion
 
@@ -382,9 +384,6 @@ namespace Logic.WPF.Views
                 (parameter) => this.Options(), 
                 (parameter) => IsSimulationRunning() ? false : true);
         }
-
-        public IProject Project { get; set; }
-        public IDocument Document { get; set; }
 
         private void InitializeProject()
         {
