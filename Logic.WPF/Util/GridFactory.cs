@@ -9,7 +9,7 @@ namespace Logic.Util
 {
     public static class GridFactory
     {
-        public class Options
+        public class GridSettings
         {
             public double StartX { get; set; }
             public double StartY { get; set; }
@@ -19,30 +19,30 @@ namespace Logic.Util
             public double SizeY { get; set; }
         }
 
-        public static void Create(IList<IShape> shapes, IStyle style, Options options)
+        public static void Create(IList<IShape> shapes, IStyle style, GridSettings settings)
         {
-            double sx = options.StartX + options.SizeX;
-            double sy = options.StartY + options.SizeY;
-            double ex = options.StartX + options.Width;
-            double ey = options.StartY + options.Height;
+            double sx = settings.StartX + settings.SizeX;
+            double sy = settings.StartY + settings.SizeY;
+            double ex = settings.StartX + settings.Width;
+            double ey = settings.StartY + settings.Height;
 
-            for (double x = sx; x < ex; x += options.SizeX)
+            for (double x = sx; x < ex; x += settings.SizeX)
             {
                 shapes.Add(new XLine()
                 {
                     X1 = x,
-                    Y1 = options.StartY,
+                    Y1 = settings.StartY,
                     X2 = x,
                     Y2 = ey,
                     Style = style
                 });
             }
 
-            for (double y = sy; y < ey; y += options.SizeY)
+            for (double y = sy; y < ey; y += settings.SizeY)
             {
                 shapes.Add(new XLine()
                 {
-                    X1 = options.StartX,
+                    X1 = settings.StartX,
                     Y1 = y,
                     X2 = ex,
                     Y2 = y,

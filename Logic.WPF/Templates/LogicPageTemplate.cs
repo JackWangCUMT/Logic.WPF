@@ -68,7 +68,7 @@ namespace Logic.Templates
             this.Frame.Styles.Add(frameStyle);
 
             // grid
-            var options = new GridFactory.Options()
+            var settings = new GridFactory.GridSettings()
             {
                 StartX = 330.0,
                 StartY = 30.0,
@@ -77,7 +77,7 @@ namespace Logic.Templates
                 SizeX = 30.0,
                 SizeY = 30.0
             };
-            GridFactory.Create(this.Grid.Shapes, gridStyle, options);
+            GridFactory.Create(this.Grid.Shapes, gridStyle, settings);
 
             // table
             CreateTable(this.Table.Shapes, tableStyle);

@@ -463,7 +463,7 @@ namespace Logic.WPF.Views
             Document.Pages.Add(
                 new XPage()
                 {
-                    Name = "Page",
+                    Name = XLayer.DefaultPageName,
                     Shapes = new List<IShape>(),
                     Blocks = new List<IShape>(),
                     Pins = new List<IShape>(),
@@ -825,7 +825,7 @@ namespace Logic.WPF.Views
         private void InsertBlock(XBlock block, double x, double y)
         {
             Model.Layers.Editor.History.Snapshot(
-                Model.Layers.Editor.Layers.ToPage("Page", null));
+                Model.Layers.Editor.Layers.ToPage(XLayer.DefaultPageName, null));
             XBlock copy = Model.Layers.Editor.Insert(block, x, y);
             if (copy != null)
             {
@@ -1242,7 +1242,7 @@ namespace Logic.WPF.Views
         {
             try
             {
-                XPage temp = Model.Layers.Editor.Layers.ToPage("Page", null);
+                XPage temp = Model.Layers.Editor.Layers.ToPage(XLayer.DefaultPageName, null);
                 if (temp != null)
                 {
                     var context = PageGraph.Create(temp);
@@ -1344,7 +1344,7 @@ namespace Logic.WPF.Views
                     return;
                 }
 
-                XPage temp = Model.Layers.Editor.Layers.ToPage("Page", null);
+                XPage temp = Model.Layers.Editor.Layers.ToPage(XLayer.DefaultPageName, null);
                 if (temp != null)
                 {
                     var context = PageGraph.Create(temp);

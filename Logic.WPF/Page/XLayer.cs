@@ -14,6 +14,12 @@ namespace Logic.Page
 {
     public class XLayer : ILayer
     {
+        #region Constants
+
+        public const string DefaultPageName = "Page";
+
+        #endregion
+
         #region ILayer
 
         public Func<bool> IsMouseCaptured { get; set; }
@@ -390,7 +396,7 @@ namespace Logic.Page
             {
                 if (History != null)
                 {
-                    History.Snapshot(Layers.ToPage("Page", null));
+                    History.Snapshot(Layers.ToPage(DefaultPageName, null));
                 }
                 Delete(Renderer.Selected);
                 SelectionReset();
@@ -487,7 +493,7 @@ namespace Logic.Page
 
         private void MoveInit(IShape shape, Point1 p)
         {
-            History.Hold(Layers.ToPage("Page", null));
+            History.Hold(Layers.ToPage(DefaultPageName, null));
 
             _startx = EnableSnap ? Snap(p.X, SnapSize) : p.X;
             _starty = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
@@ -1348,7 +1354,7 @@ namespace Logic.Page
                             if (History != null)
                             {
                                 History.Snapshot(
-                                    Layers.ToPage("Page", null));
+                                    Layers.ToPage(DefaultPageName, null));
                             }
                             Layers.Shapes.Shapes.Add(_line);
                             Layers.Shapes.InvalidateVisual();
@@ -1369,7 +1375,7 @@ namespace Logic.Page
                             if (History != null)
                             {
                                 History.Snapshot(
-                                    Layers.ToPage("Page", null));
+                                    Layers.ToPage(DefaultPageName, null));
                             }
                             Layers.Shapes.Shapes.Add(_ellipse);
                             Layers.Shapes.InvalidateVisual();
@@ -1390,7 +1396,7 @@ namespace Logic.Page
                             if (History != null)
                             {
                                 History.Snapshot(
-                                    Layers.ToPage("Page", null));
+                                    Layers.ToPage(DefaultPageName, null));
                             }
                             Layers.Shapes.Shapes.Add(_rectangle);
                             Layers.Shapes.InvalidateVisual();
@@ -1411,7 +1417,7 @@ namespace Logic.Page
                             if (History != null)
                             {
                                 History.Snapshot(
-                                    Layers.ToPage("Page", null));
+                                    Layers.ToPage(DefaultPageName, null));
                             }
                             Layers.Shapes.Shapes.Add(_text);
                             Layers.Shapes.InvalidateVisual();
@@ -1436,7 +1442,7 @@ namespace Logic.Page
                             if (History != null)
                             {
                                 History.Snapshot(
-                                    Layers.ToPage("Page", null));
+                                    Layers.ToPage(DefaultPageName, null));
                             }
 
                             Layers.Wires.Shapes.Add(_wire);
@@ -1462,7 +1468,7 @@ namespace Logic.Page
                             if (History != null)
                             {
                                 History.Snapshot(
-                                    Layers.ToPage("Page", null));
+                                    Layers.ToPage(DefaultPageName, null));
                             }
                             Layers.Pins.Shapes.Add(_pin);
                             Layers.Pins.InvalidateVisual();
@@ -2308,7 +2314,7 @@ namespace Logic.Page
             if (History != null)
             {
                 History.Snapshot(
-                    Layers.ToPage("Page", null));
+                    Layers.ToPage(DefaultPageName, null));
             }
             SelectionReset();
             Add(shapes);
@@ -2565,14 +2571,14 @@ namespace Logic.Page
         {
             var page = new XPage()
             {
-                Name = "Page",
+                Name = DefaultPageName,
                 Shapes = new List<IShape>(),
                 Blocks = new List<IShape>(),
                 Pins = new List<IShape>(),
                 Wires = new List<IShape>(),
                 Template = null
             };
-            History.Snapshot(Layers.ToPage("Page", null));
+            History.Snapshot(Layers.ToPage(DefaultPageName, null));
             Load(page);
         }
 
@@ -2622,14 +2628,14 @@ namespace Logic.Page
             if (page != null)
             {
                 SelectionReset();
-                History.Snapshot(Layers.ToPage("Page", null));
+                History.Snapshot(Layers.ToPage(DefaultPageName, null));
                 Load(page);
             }
         }
 
         public void Save(string path)
         {
-            Save(path, Layers.ToPage("Page", null));
+            Save(path, Layers.ToPage(DefaultPageName, null));
         }
 
         #endregion
@@ -2661,7 +2667,7 @@ namespace Logic.Page
 
         public void Undo()
         {
-            var page = History.Undo(Layers.ToPage("Page", null));
+            var page = History.Undo(Layers.ToPage(DefaultPageName, null));
             if (page != null)
             {
                 SelectionReset();
@@ -2671,7 +2677,7 @@ namespace Logic.Page
 
         public void Redo()
         {
-            var page = History.Redo(Layers.ToPage("Page", null));
+            var page = History.Redo(Layers.ToPage(DefaultPageName, null));
             if (page != null)
             {
                 SelectionReset();
