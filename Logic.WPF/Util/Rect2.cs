@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Logic.Util
 {
-    public struct Rect1
+    public struct Rect2
     {
         public double X;
         public double Y;
@@ -17,7 +17,7 @@ namespace Logic.Util
         public double Top { get { return Y; } }
         public double Bottom { get { return Y + Height; } }
 
-        public Rect1(double x, double y, double width, double height)
+        public Rect2(double x, double y, double width, double height)
         {
             this.X = x;
             this.Y = y;
@@ -25,7 +25,7 @@ namespace Logic.Util
             this.Height = height;
         }
 
-        public bool Contains(Point1 point)
+        public bool Contains(Point2 point)
         {
             return ((point.X >= X)
                 && (point.X - Width <= X)
@@ -33,7 +33,7 @@ namespace Logic.Util
                 && (point.Y - Height <= Y));
         }
 
-        public bool IntersectsWith(Rect1 rect)
+        public bool IntersectsWith(Rect2 rect)
         {
             return (rect.Left <= Right)
                 && (rect.Right >= Left)

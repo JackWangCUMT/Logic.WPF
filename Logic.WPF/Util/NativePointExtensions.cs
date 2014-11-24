@@ -9,9 +9,9 @@ namespace Logic.Util
 {
     public static class NativePointExtensions
     {
-        public static Point1 ToPoint1(this Point point)
+        public static Point2 ToPoint1(this Point point)
         {
-            return new Point1(point.X, point.Y);
+            return new Point2(point.X, point.Y);
         }
     }
 }

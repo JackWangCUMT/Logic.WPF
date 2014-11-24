@@ -642,7 +642,7 @@ namespace Logic.WPF.Views
                 {
                     if (_renderer.Selected == null)
                     {
-                        Point1 point = new Point1(
+                        Point2 point = new Point2(
                             Model.Layers.Editor.RightX,
                             Model.Layers.Editor.RightY);
                         IShape shape = Model.Layers.Editor.HitTest(point);

@@ -27,7 +27,7 @@ namespace Logic.Page
         public Action ReleaseMouseCapture { get; set; }
         public Action InvalidateVisual { get; set; }
 
-        public void MouseLeftButtonDown(Point1 point)
+        public void MouseLeftButtonDown(Point2 point)
         {
             switch (_mode)
             {
@@ -93,7 +93,7 @@ namespace Logic.Page
             }
         }
 
-        public void MouseLeftButtonUp(Point1 point)
+        public void MouseLeftButtonUp(Point2 point)
         {
             if (IsMouseCaptured())
             {
@@ -113,7 +113,7 @@ namespace Logic.Page
             }
         }
 
-        public void MouseMove(Point1 point)
+        public void MouseMove(Point2 point)
         {
             if (Layers != null
                 && Simulations == null)
@@ -150,7 +150,7 @@ namespace Logic.Page
             }
         }
 
-        public void MouseRightButtonDown(Point1 point)
+        public void MouseRightButtonDown(Point2 point)
         {
             RightX = point.X;
             RightY = point.Y;
@@ -413,7 +413,7 @@ namespace Logic.Page
             }
         }
 
-        private void SelectionInit(Point1 p)
+        private void SelectionInit(Point2 p)
         {
             IShape shape = Layers != null ? HitTest(p) : null;
             if (shape != null)
@@ -427,7 +427,7 @@ namespace Logic.Page
             }
         }
 
-        private void SelectionStart(Point1 p)
+        private void SelectionStart(Point2 p)
         {
             _startx = p.X;
             _starty = p.Y;
@@ -445,7 +445,7 @@ namespace Logic.Page
             _mode = Mode.Selection;
         }
 
-        private void SelectionMove(Point1 p)
+        private void SelectionMove(Point2 p)
         {
             _selection.X = Math.Min(_startx, p.X);
             _selection.Y = Math.Min(_starty, p.Y);
@@ -454,14 +454,14 @@ namespace Logic.Page
             InvalidateVisual();
         }
 
-        private void SelectionFinish(Point1 p)
+        private void SelectionFinish(Point2 p)
         {
             ReleaseMouseCapture();
             Shapes.Remove(_selection);
             InvalidateVisual();
             _mode = Mode.None;
 
-            var rect = new Rect1(
+            var rect = new Rect2(
                 Math.Min(_startx, p.X),
                 Math.Min(_starty, p.Y),
                 Math.Abs(p.X - _startx),
@@ -491,7 +491,7 @@ namespace Logic.Page
 
         #region Move Mode
 
-        private void MoveInit(IShape shape, Point1 p)
+        private void MoveInit(IShape shape, Point2 p)
         {
             History.Hold(Layers.ToPage(DefaultPageName, null));
 
@@ -554,7 +554,7 @@ namespace Logic.Page
             }
         }
 
-        private void MoveFinish(Point1 p)
+        private void MoveFinish(Point2 p)
         {
             double x = EnableSnap ? Snap(p.X, SnapSize) : p.X;
             double y = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
@@ -579,7 +579,7 @@ namespace Logic.Page
             _mode = Mode.None;
         }
 
-        public void Move(Point1 p)
+        public void Move(Point2 p)
         {
             double x = EnableSnap ? Snap(p.X, SnapSize) : p.X;
             double y = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
@@ -843,7 +843,7 @@ namespace Logic.Page
 
         #region Overlay
 
-        private void MoveOverlay(Point1 p)
+        private void MoveOverlay(Point2 p)
         {
             if (Layers == null)
                 return;
@@ -1032,7 +1032,7 @@ namespace Logic.Page
 
         #region Create Mode
 
-        private void CreateWireInit(Point1 p)
+        private void CreateWireInit(Point2 p)
         {
             IShape pinHitResult = null;
             IShape wireHitResult = null;
@@ -1103,7 +1103,7 @@ namespace Logic.Page
             }
         }
 
-        private void CreateWireFinish(Point1 p)
+        private void CreateWireFinish(Point2 p)
         {
             IShape pinHitResult = null;
             IShape wireHitResult = null;
@@ -1167,7 +1167,7 @@ namespace Logic.Page
             }
         }
 
-        private void CreateInit(Point1 p)
+        private void CreateInit(Point2 p)
         {
             double x = EnableSnap ? Snap(p.X, SnapSize) : p.X;
             double y = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
@@ -1279,7 +1279,7 @@ namespace Logic.Page
             _mode = Mode.Create;
         }
 
-        private void CreateMove(Point1 p)
+        private void CreateMove(Point2 p)
         {
             double x = EnableSnap ? Snap(p.X, SnapSize) : p.X;
             double y = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
@@ -1337,7 +1337,7 @@ namespace Logic.Page
             }
         }
 
-        private void CreateFinish(Point1 p)
+        private void CreateFinish(Point2 p)
         {
             double x = EnableSnap ? Snap(p.X, SnapSize) : p.X;
             double y = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
@@ -1818,7 +1818,7 @@ namespace Logic.Page
             return true;
         }
 
-        private Point1 NearestPointOnLine(Point1 a, Point1 b, Point1 p)
+        private Point2 NearestPointOnLine(Point2 a, Point2 b, Point2 p)
         {
             double ax = p.X - a.X;
             double ay = p.Y - a.Y;
@@ -1827,13 +1827,13 @@ namespace Logic.Page
             double t = (ax * bx + ay * by) / (bx * bx + by * by);
             if (t < 0.0)
             {
-                return new Point1(a.X, a.Y);
+                return new Point2(a.X, a.Y);
             }
             else if (t > 1.0)
             {
-                return new Point1(b.X, b.Y);
+                return new Point2(b.X, b.Y);
             }
-            return new Point1(bx * t + a.X, by * t + a.Y);
+            return new Point2(bx * t + a.X, by * t + a.Y);
         }
 
         private double Distance(double x1, double y1, double x2, double y2)
@@ -1843,24 +1843,24 @@ namespace Logic.Page
             return Math.Sqrt(dx * dx + dy * dy);
         }
 
-        private void Middle(ref Point1 point, double x1, double y1, double x2, double y2)
+        private void Middle(ref Point2 point, double x1, double y1, double x2, double y2)
         {
             point.X = (x1 + x2) / 2.0;
             point.Y = (y1 + y2) / 2.0;
         }
 
-        private Rect1 GetPinBounds(double x, double y)
+        private Rect2 GetPinBounds(double x, double y)
         {
-            return new Rect1(
+            return new Rect2(
                 x - Renderer.PinRadius,
                 y - Renderer.PinRadius,
                 Renderer.PinRadius + Renderer.PinRadius,
                 Renderer.PinRadius + Renderer.PinRadius);
         }
 
-        private Rect1 GetEllipseBounds(XEllipse ellipse)
+        private Rect2 GetEllipseBounds(XEllipse ellipse)
         {
-            var bounds = new Rect1(
+            var bounds = new Rect2(
                 ellipse.X - ellipse.RadiusX,
                 ellipse.Y - ellipse.RadiusY,
                 ellipse.RadiusX + ellipse.RadiusX,
@@ -1868,9 +1868,9 @@ namespace Logic.Page
             return bounds;
         }
 
-        private Rect1 GetRectangleBounds(XRectangle rectangle)
+        private Rect2 GetRectangleBounds(XRectangle rectangle)
         {
-            var bounds = new Rect1(
+            var bounds = new Rect2(
                 rectangle.X,
                 rectangle.Y,
                 rectangle.Width,
@@ -1878,9 +1878,9 @@ namespace Logic.Page
             return bounds;
         }
 
-        private Rect1 GetTextBounds(XText text)
+        private Rect2 GetTextBounds(XText text)
         {
-            var bounds = new Rect1(
+            var bounds = new Rect2(
                 text.X,
                 text.Y,
                 text.Width,
@@ -1888,27 +1888,27 @@ namespace Logic.Page
             return bounds;
         }
 
-        public bool HitTest(XLine line, Point1 p, double treshold)
+        public bool HitTest(XLine line, Point2 p, double treshold)
         {
-            var a = new Point1(line.X1, line.Y1);
-            var b = new Point1(line.X2, line.Y2);
+            var a = new Point2(line.X1, line.Y1);
+            var b = new Point2(line.X2, line.Y2);
             var nearest = NearestPointOnLine(a, b, p);
             double distance = Distance(p.X, p.Y, nearest.X, nearest.Y);
             return distance < treshold;
         }
 
-        public bool HitTest(XWire wire, Point1 p, double treshold)
+        public bool HitTest(XWire wire, Point2 p, double treshold)
         {
             var a = wire.Start != null ?
-                new Point1(wire.Start.X, wire.Start.Y) : new Point1(wire.X1, wire.Y1);
+                new Point2(wire.Start.X, wire.Start.Y) : new Point2(wire.X1, wire.Y1);
             var b = wire.End != null ?
-                new Point1(wire.End.X, wire.End.Y) : new Point1(wire.X2, wire.Y2);
+                new Point2(wire.End.X, wire.End.Y) : new Point2(wire.X2, wire.Y2);
             var nearest = NearestPointOnLine(a, b, p);
             double distance = Distance(p.X, p.Y, nearest.X, nearest.Y);
             return distance < treshold;
         }
 
-        public IShape HitTest(IEnumerable<XPin> pins, Point1 p)
+        public IShape HitTest(IEnumerable<XPin> pins, Point2 p)
         {
             foreach (var pin in pins)
             {
@@ -1922,7 +1922,7 @@ namespace Logic.Page
             return null;
         }
 
-        public IShape HitTest(IEnumerable<XWire> wires, Point1 p)
+        public IShape HitTest(IEnumerable<XWire> wires, Point2 p)
         {
             foreach (var wire in wires)
             {
@@ -1967,7 +1967,7 @@ namespace Logic.Page
             return null;
         }
 
-        public IShape HitTest(IEnumerable<XBlock> blocks, Point1 p)
+        public IShape HitTest(IEnumerable<XBlock> blocks, Point2 p)
         {
             foreach (var block in blocks)
             {
@@ -1987,7 +1987,7 @@ namespace Logic.Page
             return null;
         }
 
-        public IShape HitTest(IEnumerable<IShape> shapes, Point1 p)
+        public IShape HitTest(IEnumerable<IShape> shapes, Point2 p)
         {
             foreach (var shape in shapes)
             {
@@ -2044,7 +2044,7 @@ namespace Logic.Page
             return null;
         }
 
-        public IShape HitTest(Point1 p)
+        public IShape HitTest(Point2 p)
         {
             var pin = HitTest(Layers.Pins.Shapes.Cast<XPin>(), p);
             if (pin != null)
@@ -2080,7 +2080,7 @@ namespace Logic.Page
             return null;
         }
 
-        public bool HitTest(IEnumerable<XPin> pins, Rect1 rect, ICollection<IShape> hs)
+        public bool HitTest(IEnumerable<XPin> pins, Rect2 rect, ICollection<IShape> hs)
         {
             foreach (var pin in pins)
             {
@@ -2099,7 +2099,7 @@ namespace Logic.Page
             return false;
         }
 
-        public bool HitTest(IEnumerable<XWire> wires, Rect1 rect, ICollection<IShape> hs)
+        public bool HitTest(IEnumerable<XWire> wires, Rect2 rect, ICollection<IShape> hs)
         {
             foreach (var wire in wires)
             {
@@ -2145,7 +2145,7 @@ namespace Logic.Page
             return false;
         }
 
-        public bool HitTest(IEnumerable<XBlock> blocks, Rect1 rect, ICollection<IShape> hs)
+        public bool HitTest(IEnumerable<XBlock> blocks, Rect2 rect, ICollection<IShape> hs)
         {
             foreach (var block in blocks)
             {
@@ -2179,7 +2179,7 @@ namespace Logic.Page
             return false;
         }
 
-        public bool HitTest(IEnumerable<IShape> shapes, Rect1 rect, ICollection<IShape> hs)
+        public bool HitTest(IEnumerable<IShape> shapes, Rect2 rect, ICollection<IShape> hs)
         {
             foreach (var shape in shapes)
             {
@@ -2255,7 +2255,7 @@ namespace Logic.Page
             return false;
         }
 
-        public ICollection<IShape> HitTest(Rect1 rect)
+        public ICollection<IShape> HitTest(Rect2 rect)
         {
             var hs = new HashSet<IShape>();
 
@@ -2525,7 +2525,7 @@ namespace Logic.Page
                 // find connections
                 foreach (var pin in block.Pins)
                 {
-                    IShape hit = HitTest(wires, new Point1(pin.X, pin.Y));
+                    IShape hit = HitTest(wires, new Point2(pin.X, pin.Y));
                     if (hit != null && hit is XWire)
                     {
                         var wire = hit as XWire;
@@ -2824,7 +2824,7 @@ namespace Logic.Page
 
         #region Simulation
 
-        private void ChangeBlockState(Point1 p)
+        private void ChangeBlockState(Point2 p)
         {
             IShape shape = Layers != null ? HitTest(p) : null;
             if (shape is XBlock)

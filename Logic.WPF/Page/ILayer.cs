@@ -14,10 +14,10 @@ namespace Logic.Page
         Action CaptureMouse { get; set; }
         Action ReleaseMouseCapture { get; set; }
         Action InvalidateVisual { get; set; }
-        void MouseLeftButtonDown(Point1 point);
-        void MouseLeftButtonUp(Point1 point);
-        void MouseMove(Point1 point);
-        void MouseRightButtonDown(Point1 point);
+        void MouseLeftButtonDown(Point2 point);
+        void MouseLeftButtonUp(Point2 point);
+        void MouseMove(Point2 point);
+        void MouseRightButtonDown(Point2 point);
         void OnRender(object dc);
     }
 }
