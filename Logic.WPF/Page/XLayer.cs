@@ -43,14 +43,6 @@ namespace Logic.Page
             Block
         }
 
-        public enum LineHit
-        {
-            None,
-            Start,
-            End,
-            Line
-        }
-
         #endregion
 
         #region ILayer
@@ -314,7 +306,6 @@ namespace Logic.Page
         private XRectangle _selection = null;
         private Mode _mode = Mode.None;
         private Element _element = Element.None;
-        private LineHit _lineHit = LineHit.None;
 
         #endregion
 
@@ -356,7 +347,7 @@ namespace Logic.Page
             }
             else
             {
-                InvalidatePage();
+                Layers.Invalidate();
             }
         }
 
@@ -386,7 +377,7 @@ namespace Logic.Page
             if (hs != null && hs.Count > 0)
             {
                 Renderer.Selected = hs;
-                InvalidatePage();
+                Layers.Invalidate();
             }
         }
 
@@ -398,7 +389,7 @@ namespace Logic.Page
                 {
                     History.Snapshot(Layers.ToPage(DefaultPageName, null));
                 }
-                Delete(Renderer.Selected);
+                Layers.Delete(Renderer.Selected);
                 SelectionReset();
             }
         }
@@ -409,13 +400,13 @@ namespace Logic.Page
                 && Renderer.Selected != null)
             {
                 Renderer.Selected = null;
-                InvalidatePage();
+                Layers.Invalidate();
             }
         }
 
         private void SelectionInit(Point2 p)
         {
-            IShape shape = Layers != null ? HitTest(p) : null;
+            IShape shape = Layers != null ? Layers.HitTest(p) : null;
             if (shape != null)
             {
                 MoveInit(shape, p);
@@ -467,7 +458,7 @@ namespace Logic.Page
                 Math.Abs(p.X - _startx),
                 Math.Abs(p.Y - _starty));
 
-            var hs = HitTest(rect);
+            var hs = Layers.HitTest(rect);
             if (hs != null && hs.Count > 0)
             {
                 Renderer.Selected = hs;
@@ -476,7 +467,7 @@ namespace Logic.Page
             {
                 Renderer.Selected = null;
             }
-            InvalidatePage();
+            Layers.Invalidate();
         }
 
         private void SelectionCancel()
@@ -613,17 +604,17 @@ namespace Logic.Page
             switch (_element)
             {
                 case Element.Line:
-                    switch (_lineHit)
+                    switch (Layers.LineHitResult)
                     {
-                        case LineHit.Start:
+                        case XLayers.LineHit.Start:
                             _line.X1 += dx;
                             _line.Y1 += dy;
                             break;
-                        case LineHit.End:
+                        case XLayers.LineHit.End:
                             _line.X2 += dx;
                             _line.Y2 += dy;
                             break;
-                        case LineHit.Line:
+                        case XLayers.LineHit.Line:
                             _line.X1 += dx;
                             _line.Y1 += dy;
                             _line.X2 += dx;
@@ -853,14 +844,14 @@ namespace Logic.Page
             IShape wireHitResult = null;
             IShape blockHitResult = null;
 
-            shapeHitResult = HitTest(p);
-            pinHitResult = HitTest(Layers.Pins.Shapes.Cast<XPin>(), p);
+            shapeHitResult = Layers.HitTest(p);
+            pinHitResult = Layers.HitTest(Layers.Pins.Shapes.Cast<XPin>(), p);
             if (pinHitResult == null)
             {
-                wireHitResult = HitTest(Layers.Wires.Shapes.Cast<XWire>(), p);
+                wireHitResult = Layers.HitTest(Layers.Wires.Shapes.Cast<XWire>(), p);
                 if (wireHitResult == null)
                 {
-                    blockHitResult = HitTest(Layers.Blocks.Shapes.Cast<XBlock>(), p);
+                    blockHitResult = Layers.HitTest(Layers.Blocks.Shapes.Cast<XBlock>(), p);
                 }
             }
 
@@ -1040,13 +1031,13 @@ namespace Logic.Page
 
             if (Layers != null)
             {
-                pinHitResult = HitTest(Layers.Pins.Shapes.Cast<XPin>(), p);
+                pinHitResult = Layers.HitTest(Layers.Pins.Shapes.Cast<XPin>(), p);
                 if (pinHitResult == null)
                 {
-                    wireHitResult = HitTest(Layers.Wires.Shapes.Cast<XWire>(), p);
+                    wireHitResult = Layers.HitTest(Layers.Wires.Shapes.Cast<XWire>(), p);
                     if (wireHitResult == null)
                     {
-                        blockHitResult = HitTest(Layers.Blocks.Shapes.Cast<XBlock>(), p);
+                        blockHitResult = Layers.HitTest(Layers.Blocks.Shapes.Cast<XBlock>(), p);
                     }
                 }
             }
@@ -1111,13 +1102,13 @@ namespace Logic.Page
 
             if (Layers != null)
             {
-                pinHitResult = HitTest(Layers.Pins.Shapes.Cast<XPin>(), p);
+                pinHitResult = Layers.HitTest(Layers.Pins.Shapes.Cast<XPin>(), p);
                 if (pinHitResult == null)
                 {
-                    wireHitResult = HitTest(Layers.Wires.Shapes.Cast<XWire>(), p);
+                    wireHitResult = Layers.HitTest(Layers.Wires.Shapes.Cast<XWire>(), p);
                     if (wireHitResult == null)
                     {
-                        blockHitResult = HitTest(Layers.Blocks.Shapes.Cast<XBlock>(), p);
+                        blockHitResult = Layers.HitTest(Layers.Blocks.Shapes.Cast<XBlock>(), p);
                     }
                 }
             }
@@ -1740,574 +1731,7 @@ namespace Logic.Page
 
         #endregion
 
-        #region HitTest
-
-        public bool LineIntersectsWithRect(
-            double left, double right,
-            double bottom, double top,
-            double x0, double y0,
-            double x1, double y1)
-        {
-            // Liang-Barsky line clipping algorithm
-            double t0 = 0.0;
-            double t1 = 1.0;
-            double dx = x1 - x0;
-            double dy = y1 - y0;
-            double p = 0.0, q = 0.0, r;
-
-            for (int edge = 0; edge < 4; edge++)
-            {
-                if (edge == 0)
-                {
-                    p = -dx;
-                    q = -(left - x0);
-                }
-                if (edge == 1)
-                {
-                    p = dx;
-                    q = (right - x0);
-                }
-                if (edge == 2)
-                {
-                    p = dy;
-                    q = (bottom - y0);
-                }
-                if (edge == 3)
-                {
-                    p = -dy;
-                    q = -(top - y0);
-                }
-
-                r = q / p;
-
-                if (p == 0.0 && q < 0.0)
-                {
-                    return false;
-                }
-
-                if (p < 0.0)
-                {
-                    if (r > t1)
-                    {
-                        return false;
-                    }
-                    else if (r > t0)
-                    {
-                        t0 = r;
-                    }
-                }
-                else if (p > 0.0)
-                {
-                    if (r < t0)
-                    {
-                        return false;
-                    }
-                    else if (r < t1)
-                    {
-                        t1 = r;
-                    }
-                }
-            }
-
-            // Clipped line
-            //double x0clip = x0 + t0 * dx;
-            //double y0clip = y0 + t0 * dy;
-            //double x1clip = x0 + t1 * dx;
-            //double y1clip = y0 + t1 * dy;
-
-            return true;
-        }
-
-        private Point2 NearestPointOnLine(Point2 a, Point2 b, Point2 p)
-        {
-            double ax = p.X - a.X;
-            double ay = p.Y - a.Y;
-            double bx = b.X - a.X;
-            double by = b.Y - a.Y;
-            double t = (ax * bx + ay * by) / (bx * bx + by * by);
-            if (t < 0.0)
-            {
-                return new Point2(a.X, a.Y);
-            }
-            else if (t > 1.0)
-            {
-                return new Point2(b.X, b.Y);
-            }
-            return new Point2(bx * t + a.X, by * t + a.Y);
-        }
-
-        private double Distance(double x1, double y1, double x2, double y2)
-        {
-            double dx = x1 - x2;
-            double dy = y1 - y2;
-            return Math.Sqrt(dx * dx + dy * dy);
-        }
-
-        private void Middle(ref Point2 point, double x1, double y1, double x2, double y2)
-        {
-            point.X = (x1 + x2) / 2.0;
-            point.Y = (y1 + y2) / 2.0;
-        }
-
-        private Rect2 GetPinBounds(double x, double y)
-        {
-            return new Rect2(
-                x - Renderer.PinRadius,
-                y - Renderer.PinRadius,
-                Renderer.PinRadius + Renderer.PinRadius,
-                Renderer.PinRadius + Renderer.PinRadius);
-        }
-
-        private Rect2 GetEllipseBounds(XEllipse ellipse)
-        {
-            var bounds = new Rect2(
-                ellipse.X - ellipse.RadiusX,
-                ellipse.Y - ellipse.RadiusY,
-                ellipse.RadiusX + ellipse.RadiusX,
-                ellipse.RadiusY + ellipse.RadiusY);
-            return bounds;
-        }
-
-        private Rect2 GetRectangleBounds(XRectangle rectangle)
-        {
-            var bounds = new Rect2(
-                rectangle.X,
-                rectangle.Y,
-                rectangle.Width,
-                rectangle.Height);
-            return bounds;
-        }
-
-        private Rect2 GetTextBounds(XText text)
-        {
-            var bounds = new Rect2(
-                text.X,
-                text.Y,
-                text.Width,
-                text.Height);
-            return bounds;
-        }
-
-        public bool HitTest(XLine line, Point2 p, double treshold)
-        {
-            var a = new Point2(line.X1, line.Y1);
-            var b = new Point2(line.X2, line.Y2);
-            var nearest = NearestPointOnLine(a, b, p);
-            double distance = Distance(p.X, p.Y, nearest.X, nearest.Y);
-            return distance < treshold;
-        }
-
-        public bool HitTest(XWire wire, Point2 p, double treshold)
-        {
-            var a = wire.Start != null ?
-                new Point2(wire.Start.X, wire.Start.Y) : new Point2(wire.X1, wire.Y1);
-            var b = wire.End != null ?
-                new Point2(wire.End.X, wire.End.Y) : new Point2(wire.X2, wire.Y2);
-            var nearest = NearestPointOnLine(a, b, p);
-            double distance = Distance(p.X, p.Y, nearest.X, nearest.Y);
-            return distance < treshold;
-        }
-
-        public IShape HitTest(IEnumerable<XPin> pins, Point2 p)
-        {
-            foreach (var pin in pins)
-            {
-                if (GetPinBounds(pin.X, pin.Y).Contains(p))
-                {
-                    return pin;
-                }
-                continue;
-            }
-
-            return null;
-        }
-
-        public IShape HitTest(IEnumerable<XWire> wires, Point2 p)
-        {
-            foreach (var wire in wires)
-            {
-                var start = wire.Start;
-                if (start != null)
-                {
-                    if (GetPinBounds(start.X, start.Y).Contains(p))
-                    {
-                        return start;
-                    }
-                }
-                else
-                {
-                    if (GetPinBounds(wire.X1, wire.Y1).Contains(p))
-                    {
-                        return wire;
-                    }
-                }
-
-                var end = wire.End;
-                if (end != null)
-                {
-                    if (GetPinBounds(end.X, end.Y).Contains(p))
-                    {
-                        return end;
-                    }
-                }
-                else
-                {
-                    if (GetPinBounds(wire.X2, wire.Y2).Contains(p))
-                    {
-                        return wire;
-                    }
-                }
-
-                if (HitTest(wire, p, Renderer.HitTreshold))
-                {
-                    return wire;
-                }
-            }
-
-            return null;
-        }
-
-        public IShape HitTest(IEnumerable<XBlock> blocks, Point2 p)
-        {
-            foreach (var block in blocks)
-            {
-                var pin = HitTest(block.Pins, p);
-                if (pin != null)
-                {
-                    return pin;
-                }
-
-                var shape = HitTest(block.Shapes, p);
-                if (shape != null)
-                {
-                    return block;
-                }
-            }
-
-            return null;
-        }
-
-        public IShape HitTest(IEnumerable<IShape> shapes, Point2 p)
-        {
-            foreach (var shape in shapes)
-            {
-                if (shape is XLine)
-                {
-                    var line = shape as XLine;
-
-                    if (GetPinBounds(line.X1, line.Y1).Contains(p))
-                    {
-                        _lineHit = LineHit.Start;
-                        return line;
-                    }
-
-                    if (GetPinBounds(line.X2, line.Y2).Contains(p))
-                    {
-                        _lineHit = LineHit.End;
-                        return line;
-                    }
-
-                    if (HitTest(line, p, Renderer.HitTreshold))
-                    {
-                        _lineHit = LineHit.Line;
-                        return line;
-                    }
-
-                    continue;
-                }
-                else if (shape is XEllipse)
-                {
-                    if (GetEllipseBounds(shape as XEllipse).Contains(p))
-                    {
-                        return shape;
-                    }
-                    continue;
-                }
-                else if (shape is XRectangle)
-                {
-                    if (GetRectangleBounds(shape as XRectangle).Contains(p))
-                    {
-                        return shape;
-                    }
-                    continue;
-                }
-                else if (shape is XText)
-                {
-                    if (GetTextBounds(shape as XText).Contains(p))
-                    {
-                        return shape;
-                    }
-                    continue;
-                }
-            }
-
-            return null;
-        }
-
-        public IShape HitTest(Point2 p)
-        {
-            var pin = HitTest(Layers.Pins.Shapes.Cast<XPin>(), p);
-            if (pin != null)
-            {
-                return pin;
-            }
-
-            var wire = HitTest(Layers.Wires.Shapes.Cast<XWire>(), p);
-            if (wire != null)
-            {
-                return wire;
-            }
-
-            var block = HitTest(Layers.Blocks.Shapes.Cast<XBlock>(), p);
-            if (block != null)
-            {
-                if (block is XPin)
-                {
-                    return null;
-                }
-                else
-                {
-                    return block;
-                }
-            }
-
-            var template = HitTest(Layers.Shapes.Shapes, p);
-            if (template != null)
-            {
-                return template;
-            }
-
-            return null;
-        }
-
-        public bool HitTest(IEnumerable<XPin> pins, Rect2 rect, ICollection<IShape> hs)
-        {
-            foreach (var pin in pins)
-            {
-                if (GetPinBounds(pin.X, pin.Y).IntersectsWith(rect))
-                {
-                    if (hs != null)
-                    {
-                        hs.Add(pin);
-                    }
-                    else
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        public bool HitTest(IEnumerable<XWire> wires, Rect2 rect, ICollection<IShape> hs)
-        {
-            foreach (var wire in wires)
-            {
-                double sx, sy, ex, ey;
-                if (wire.Start != null)
-                {
-                    sx = wire.Start.X;
-                    sy = wire.Start.Y;
-                }
-                else
-                {
-                    sx = wire.X1;
-                    sy = wire.Y1;
-                }
-
-                if (wire.End != null)
-                {
-                    ex = wire.End.X;
-                    ey = wire.End.Y;
-                }
-                else
-                {
-                    ex = wire.X2;
-                    ey = wire.Y2;
-                }
-
-                if (GetPinBounds(sx, sy).IntersectsWith(rect)
-                    || GetPinBounds(ex, ey).IntersectsWith(rect)
-                    || LineIntersectsWithRect(rect.Left, rect.Right, rect.Bottom, rect.Top, sx, sy, ex, ey))
-                {
-                    if (hs != null)
-                    {
-                        hs.Add(wire);
-                        continue;
-                    }
-                    else
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        public bool HitTest(IEnumerable<XBlock> blocks, Rect2 rect, ICollection<IShape> hs)
-        {
-            foreach (var block in blocks)
-            {
-                bool pinHitResults = HitTest(block.Pins, rect, null);
-                if (pinHitResults == true)
-                {
-                    if (hs != null)
-                    {
-                        hs.Add(block);
-                    }
-                    else
-                    {
-                        return true;
-                    }
-                }
-
-                bool shapeHitResult = HitTest(block.Shapes, rect, null);
-                if (shapeHitResult == true)
-                {
-                    if (hs != null)
-                    {
-                        hs.Add(block);
-                    }
-                    else
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        public bool HitTest(IEnumerable<IShape> shapes, Rect2 rect, ICollection<IShape> hs)
-        {
-            foreach (var shape in shapes)
-            {
-                if (shape is XLine)
-                {
-                    var line = shape as XLine;
-                    if (GetPinBounds(line.X1, line.Y1).IntersectsWith(rect)
-                        || GetPinBounds(line.X2, line.Y2).IntersectsWith(rect)
-                        || LineIntersectsWithRect(rect.Left, rect.Right, rect.Bottom, rect.Top, line.X1, line.Y1, line.X2, line.Y2))
-                    {
-                        if (hs != null)
-                        {
-                            hs.Add(line);
-                            continue;
-                        }
-                        else
-                        {
-                            return true;
-                        }
-                    }
-                    continue;
-                }
-                else if (shape is XEllipse)
-                {
-                    if (GetEllipseBounds(shape as XEllipse).IntersectsWith(rect))
-                    {
-                        if (hs != null)
-                        {
-                            hs.Add(shape);
-                            continue;
-                        }
-                        else
-                        {
-                            return true;
-                        }
-                    }
-                    continue;
-                }
-                else if (shape is XRectangle)
-                {
-                    if (GetRectangleBounds(shape as XRectangle).IntersectsWith(rect))
-                    {
-                        if (hs != null)
-                        {
-                            hs.Add(shape);
-                            continue;
-                        }
-                        else
-                        {
-                            return true;
-                        }
-                    }
-                    continue;
-                }
-                else if (shape is XText)
-                {
-                    if (GetTextBounds(shape as XText).IntersectsWith(rect))
-                    {
-                        if (hs != null)
-                        {
-                            hs.Add(shape);
-                            continue;
-                        }
-                        else
-                        {
-                            return true;
-                        }
-                    }
-                    continue;
-                }
-            }
-
-            return false;
-        }
-
-        public ICollection<IShape> HitTest(Rect2 rect)
-        {
-            var hs = new HashSet<IShape>();
-
-            HitTest(Layers.Pins.Shapes.Cast<XPin>(), rect, hs);
-
-            HitTest(Layers.Wires.Shapes.Cast<XWire>(), rect, hs);
-
-            HitTest(Layers.Blocks.Shapes.Cast<XBlock>(), rect, hs);
-
-            HitTest(Layers.Shapes.Shapes, rect, hs);
-
-            return hs;
-        }
-
-        #endregion
-
-        #region Shapes
-
-        public void Add(IEnumerable<IShape> shapes)
-        {
-            foreach (var shape in shapes)
-            {
-                if (shape is XLine)
-                {
-                    Layers.Shapes.Shapes.Add(shape);
-                }
-                else if (shape is XEllipse)
-                {
-                    Layers.Shapes.Shapes.Add(shape);
-                }
-                else if (shape is XRectangle)
-                {
-                    Layers.Shapes.Shapes.Add(shape);
-                }
-                else if (shape is XText)
-                {
-                    Layers.Shapes.Shapes.Add(shape);
-                }
-                else if (shape is XWire)
-                {
-                    Layers.Wires.Shapes.Add(shape);
-                }
-                else if (shape is XPin)
-                {
-                    Layers.Pins.Shapes.Add(shape);
-                }
-                else if (shape is XBlock)
-                {
-                    Layers.Blocks.Shapes.Add(shape);
-                }
-            }
-        }
+        #region Insert
 
         public void Insert(IEnumerable<IShape> shapes)
         {
@@ -2317,44 +1741,9 @@ namespace Logic.Page
                     Layers.ToPage(DefaultPageName, null));
             }
             SelectionReset();
-            Add(shapes);
+            Layers.Add(shapes);
             Renderer.Selected = new HashSet<IShape>(shapes);
-            InvalidatePage();
-        }
-
-        public void Delete(IEnumerable<IShape> shapes)
-        {
-            foreach (var shape in shapes)
-            {
-                if (shape is XLine)
-                {
-                    Layers.Shapes.Shapes.Remove(shape);
-                }
-                else if (shape is XEllipse)
-                {
-                    Layers.Shapes.Shapes.Remove(shape);
-                }
-                else if (shape is XRectangle)
-                {
-                    Layers.Shapes.Shapes.Remove(shape);
-                }
-                else if (shape is XText)
-                {
-                    Layers.Shapes.Shapes.Remove(shape);
-                }
-                else if (shape is XWire)
-                {
-                    Layers.Wires.Shapes.Remove(shape);
-                }
-                else if (shape is XPin)
-                {
-                    Layers.Pins.Shapes.Remove(shape);
-                }
-                else if (shape is XBlock)
-                {
-                    Layers.Blocks.Shapes.Remove(shape);
-                }
-            }
+            Layers.Invalidate();
         }
 
         #endregion
@@ -2419,7 +1808,7 @@ namespace Logic.Page
 
         #endregion
 
-        #region Blocks
+        #region Block
 
         private XBlock Clone(XBlock source)
         {
@@ -2525,7 +1914,7 @@ namespace Logic.Page
                 // find connections
                 foreach (var pin in block.Pins)
                 {
-                    IShape hit = HitTest(wires, new Point2(pin.X, pin.Y));
+                    IShape hit = Layers.HitTest(wires, new Point2(pin.X, pin.Y));
                     if (hit != null && hit is XWire)
                     {
                         var wire = hit as XWire;
@@ -2557,16 +1946,6 @@ namespace Logic.Page
 
         #region Page
 
-        public void Load(XPage page)
-        {
-            Layers.Shapes.Shapes = page.Shapes;
-            Layers.Blocks.Shapes = page.Blocks;
-            Layers.Wires.Shapes = page.Wires;
-            Layers.Pins.Shapes = page.Pins;
-
-            InvalidatePage();
-        }
-
         public void New()
         {
             var page = new XPage()
@@ -2579,7 +1958,7 @@ namespace Logic.Page
                 Template = null
             };
             History.Snapshot(Layers.ToPage(DefaultPageName, null));
-            Load(page);
+            Layers.Load(page);
         }
 
         public XPage Open(string path)
@@ -2629,7 +2008,7 @@ namespace Logic.Page
             {
                 SelectionReset();
                 History.Snapshot(Layers.ToPage(DefaultPageName, null));
-                Load(page);
+                Layers.Load(page);
             }
         }
 
@@ -2671,7 +2050,7 @@ namespace Logic.Page
             if (page != null)
             {
                 SelectionReset();
-                Load(page);
+                Layers.Load(page);
             }
         }
 
@@ -2681,7 +2060,7 @@ namespace Logic.Page
             if (page != null)
             {
                 SelectionReset();
-                Load(page);
+                Layers.Load(page);
             }
         }
 
@@ -2826,7 +2205,7 @@ namespace Logic.Page
 
         private void ChangeBlockState(Point2 p)
         {
-            IShape shape = Layers != null ? HitTest(p) : null;
+            IShape shape = Layers != null ? Layers.HitTest(p) : null;
             if (shape is XBlock)
             {
                 var block = shape as XBlock;
@@ -2920,22 +2299,6 @@ namespace Logic.Page
                         }
                     }
                 }
-            }
-        }
-
-        #endregion
-
-        #region Invalidate
-
-        public void InvalidatePage()
-        {
-            if (Layers != null)
-            {
-                Layers.Shapes.InvalidateVisual();
-                Layers.Blocks.InvalidateVisual();
-                Layers.Pins.InvalidateVisual();
-                Layers.Wires.InvalidateVisual();
-                Layers.Overlay.InvalidateVisual();
             }
         }
 

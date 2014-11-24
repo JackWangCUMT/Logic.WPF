@@ -530,6 +530,8 @@ namespace Logic.WPF.Views
                 HitTreshold = 6.0
             };
 
+            Model.Layers.Renderer = _renderer;
+
             Model.Layers.Shapes.Renderer = _renderer;
             Model.Layers.Blocks.Renderer = _renderer;
             Model.Layers.Wires.Renderer = _renderer;
@@ -645,7 +647,7 @@ namespace Logic.WPF.Views
                         Point2 point = new Point2(
                             Model.Layers.Editor.RightX,
                             Model.Layers.Editor.RightY);
-                        IShape shape = Model.Layers.Editor.HitTest(point);
+                        IShape shape = Model.Layers.HitTest(point);
                         if (shape != null)
                         {
                             Model.Selected = shape;
@@ -671,7 +673,7 @@ namespace Logic.WPF.Views
             {
                 if (Model.Selected != null)
                 {
-                    Model.Layers.Editor.InvalidatePage();
+                    Model.Layers.Invalidate();
                 }
 
                 _isContextMenu = false;
@@ -825,7 +827,7 @@ namespace Logic.WPF.Views
         private void InsertBlock(XBlock block, double x, double y)
         {
             Model.Layers.Editor.History.Snapshot(
-                Model.Layers.Editor.Layers.ToPage(XLayer.DefaultPageName, null));
+                Model.Layers.ToPage(XLayer.DefaultPageName, null));
             XBlock copy = Model.Layers.Editor.Insert(block, x, y);
             if (copy != null)
             {
@@ -1242,7 +1244,7 @@ namespace Logic.WPF.Views
         {
             try
             {
-                XPage temp = Model.Layers.Editor.Layers.ToPage(XLayer.DefaultPageName, null);
+                XPage temp = Model.Layers.ToPage(XLayer.DefaultPageName, null);
                 if (temp != null)
                 {
                     var context = PageGraph.Create(temp);
@@ -1344,7 +1346,7 @@ namespace Logic.WPF.Views
                     return;
                 }
 
-                XPage temp = Model.Layers.Editor.Layers.ToPage(XLayer.DefaultPageName, null);
+                XPage temp = Model.Layers.ToPage(XLayer.DefaultPageName, null);
                 if (temp != null)
                 {
                     var context = PageGraph.Create(temp);
