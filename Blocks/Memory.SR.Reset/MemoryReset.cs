@@ -10,10 +10,17 @@ namespace Memory.SR.Reset
     {
         public MemoryReset()
         {
+            base.Database = new List<KeyValuePair<string, XProperty>>();
             base.Shapes = new List<IShape>();
             base.Pins = new List<XPin>();
 
             base.Name = "SR-RESET";
+
+            XProperty setProperty = new XProperty("S");
+            base.Database.Add(new KeyValuePair<string, XProperty>("Set", setProperty));
+
+            XProperty resetProperty = new XProperty("R");
+            base.Database.Add(new KeyValuePair<string, XProperty>("Reset", resetProperty));
 
             base.Shapes.Add(
                 new XText()
@@ -26,7 +33,8 @@ namespace Memory.SR.Reset
                     VAlignment = VAlignment.Center,
                     FontName = "Consolas",
                     FontSize = 14.0,
-                    Text = "S"
+                    Text = "{0}",
+                    Properties = new[] { setProperty }
                 });
             base.Shapes.Add(
                 new XText()
@@ -39,7 +47,8 @@ namespace Memory.SR.Reset
                     VAlignment = VAlignment.Center,
                     FontName = "Consolas",
                     FontSize = 14.0,
-                    Text = "R"
+                    Text = "{0}",
+                    Properties = new[] { resetProperty }
                 });
             base.Shapes.Add(new XRectangle() { X = 0.0, Y = 0.0, Width = 60.0, Height = 30.0, IsFilled = false });
             base.Shapes.Add(new XLine() { X1 = 30.0, Y1 = 0.0, X2 = 30.0, Y2 = 30.0 });

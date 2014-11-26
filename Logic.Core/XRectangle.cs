@@ -7,6 +7,7 @@ namespace Logic.Core
 {
     public class XRectangle : IShape
     {
+        public XProperty[] Properties { get; set; }
         public IStyle Style { get; set; }
         public double X { get; set; }
         public double Y { get; set; }

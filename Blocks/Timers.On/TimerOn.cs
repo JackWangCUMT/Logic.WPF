@@ -10,14 +10,20 @@ namespace Timers.On
     {
         public TimerOn()
         {
-            base.Properties = new List<KeyValuePair<string, XProperty>>();
+            base.Database = new List<KeyValuePair<string, XProperty>>();
             base.Shapes = new List<IShape>();
             base.Pins = new List<XPin>();
 
             base.Name = "TIMER-ON";
 
-            XProperty delayProperty = new XProperty("1");
-            base.Properties.Add(new KeyValuePair<string, XProperty>("Delay", delayProperty));
+            var prefixProperty = new XProperty("T=");
+            base.Database.Add(new KeyValuePair<string, XProperty>("Prefix", prefixProperty));
+
+            var delayProperty = new XProperty("1");
+            base.Database.Add(new KeyValuePair<string, XProperty>("Delay", delayProperty));
+
+            var unitProperty = new XProperty("s");
+            base.Database.Add(new KeyValuePair<string, XProperty>("Unit", unitProperty));
 
             base.Shapes.Add(
                 new XText()
@@ -30,8 +36,8 @@ namespace Timers.On
                     VAlignment = VAlignment.Center,
                     FontName = "Consolas",
                     FontSize = 11.0,
-                    Text = "T={0}s",
-                    TextProperty = delayProperty
+                    Text = "{0}{1}{2}",
+                    Properties = new[] { prefixProperty, delayProperty, unitProperty }
                 });
             base.Shapes.Add(
                 new XText()

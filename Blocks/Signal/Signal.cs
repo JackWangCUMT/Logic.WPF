@@ -10,23 +10,23 @@ namespace Signal
     {
         public Signal()
         {
-            base.Properties = new List<KeyValuePair<string, XProperty>>();
+            base.Database = new List<KeyValuePair<string, XProperty>>();
             base.Shapes = new List<IShape>();
             base.Pins = new List<XPin>();
 
             base.Name = "SIGNAL";
 
             XProperty designationProperty = new XProperty("Designation");
-            base.Properties.Add(new KeyValuePair<string, XProperty>("Designation", designationProperty));
+            base.Database.Add(new KeyValuePair<string, XProperty>("Designation", designationProperty));
 
             XProperty descriptionProperty = new XProperty("Description");
-            base.Properties.Add(new KeyValuePair<string, XProperty>("Description", descriptionProperty));
+            base.Database.Add(new KeyValuePair<string, XProperty>("Description", descriptionProperty));
 
             XProperty signalProperty = new XProperty("Signal");
-            base.Properties.Add(new KeyValuePair<string, XProperty>("Signal", signalProperty));
+            base.Database.Add(new KeyValuePair<string, XProperty>("Signal", signalProperty));
 
             XProperty conditionProperty = new XProperty("Condition");
-            base.Properties.Add(new KeyValuePair<string, XProperty>("Condition", conditionProperty));
+            base.Database.Add(new KeyValuePair<string, XProperty>("Condition", conditionProperty));
 
             base.Shapes.Add(
                 new XText()
@@ -40,7 +40,7 @@ namespace Signal
                     FontName = "Consolas",
                     FontSize = 11.0,
                     Text = "{0}",
-                    TextProperty = designationProperty
+                    Properties = new[] { designationProperty }
                 });
             base.Shapes.Add(
                 new XText()
@@ -54,7 +54,7 @@ namespace Signal
                     FontName = "Consolas",
                     FontSize = 11.0,
                     Text = "{0}",
-                    TextProperty = descriptionProperty
+                    Properties = new[] { descriptionProperty }
                 });
             base.Shapes.Add(
                 new XText()
@@ -68,7 +68,7 @@ namespace Signal
                     FontName = "Consolas",
                     FontSize = 11.0,
                     Text = "{0}",
-                    TextProperty = signalProperty
+                    Properties = new[] { signalProperty }
                 });
             base.Shapes.Add(
                 new XText()
@@ -82,7 +82,7 @@ namespace Signal
                     FontName = "Consolas",
                     FontSize = 11.0,
                     Text = "{0}",
-                    TextProperty = conditionProperty
+                    Properties = new[] { conditionProperty }
                 });
             base.Shapes.Add(new XRectangle() { X = 0.0, Y = 0.0, Width = 300.0, Height = 30.0, IsFilled = false });
             base.Shapes.Add(new XLine() { X1 = 210.0, Y1 = 0.0, X2 = 210.0, Y2 = 30.0 });

@@ -64,7 +64,7 @@
     </Window.InputBindings>
     <Window.Resources>
         <ControlTemplate x:Key="PropertiesControlTemplateKey">
-            <ItemsControl VerticalContentAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding Properties, UpdateSourceTrigger=PropertyChanged}">
+            <ItemsControl VerticalContentAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding Database, UpdateSourceTrigger=PropertyChanged}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Grid Height="Auto" VerticalAlignment="Top">
@@ -85,7 +85,7 @@
             </ItemsControl>
         </ControlTemplate>
         <ControlTemplate x:Key="BlockContextMenuControlTemplateKey">
-            <Border BorderThickness="1" BorderBrush="Black" Background="White" Padding="20">
+            <Border BorderThickness="1" BorderBrush="Black" Background="WhiteSmoke" Padding="20">
                 <Grid Width="300" Height="Auto" VerticalAlignment="Top">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -98,7 +98,7 @@
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center" Text="Name"/>
                     <TextBox Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Margin="4,2,2,2" Padding="2" Text="{Binding Path=Selected.Name}" IsReadOnly="True"/>
-                    <Control DataContext="{Binding Selected}" Grid.Column="1" Grid.ColumnSpan="1" Grid.Row="1" Template="{StaticResource PropertiesControlTemplateKey}"/>
+                    <Control DataContext="{Binding Selected}" Grid.Column="1" Grid.ColumnSpan="1" Grid.Row="1" Template="{DynamicResource PropertiesControlTemplateKey}"/>
                 </Grid>
             </Border>
         </ControlTemplate>

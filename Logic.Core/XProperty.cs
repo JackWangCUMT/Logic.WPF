@@ -14,5 +14,6 @@ namespace Logic.Core
             this.Data = data;
         }
         public object Data { get; set; }
-    } 
+        public override string ToString() { return Data.ToString(); }
+    }
 }

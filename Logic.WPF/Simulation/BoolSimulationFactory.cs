@@ -38,15 +38,30 @@ namespace Logic.Simulation
             { "TIMER-PULSE", (block) => { return new TimerPulseSimulation(false, GetDoublePropertyValue(block, "Delay")); } }
         };
 
+        private static string GetStringPropertyValue(XBlock block, string key)
+        {
+            XProperty property = block.Database.Where(p => p.Key == key).FirstOrDefault().Value;
+            if (property != null
+                && property.Data != null
+                && property.Data is string)
+            {
+                return property.Data as string;
+            }
+            else
+            {
+                throw new Exception(string.Format("Can not find {0} property.", key));
+            }
+        }
+
         private static int GetIntPropertyValue(XBlock block, string key)
         {
-            XProperty delayProperty = block.Properties.Where(p => p.Key == key).FirstOrDefault().Value;
+            XProperty property = block.Database.Where(p => p.Key == key).FirstOrDefault().Value;
             int value;
-            if (delayProperty != null
-                && delayProperty.Data != null
-                && delayProperty.Data is string)
+            if (property != null
+                && property.Data != null
+                && property.Data is string)
             {
-                if (!int.TryParse(delayProperty.Data as string, out value))
+                if (!int.TryParse(property.Data as string, out value))
                 {
                     throw new Exception(string.Format("Invalid format of {0} property.", key));
                 }
@@ -60,13 +75,13 @@ namespace Logic.Simulation
 
         private static double GetDoublePropertyValue(XBlock block, string key)
         {
-            XProperty delayProperty = block.Properties.Where(p => p.Key == key).FirstOrDefault().Value;
+            XProperty property = block.Database.Where(p => p.Key == key).FirstOrDefault().Value;
             double value;
-            if (delayProperty != null
-                && delayProperty.Data != null
-                && delayProperty.Data is string)
+            if (property != null
+                && property.Data != null
+                && property.Data is string)
             {
-                if (!double.TryParse(delayProperty.Data as string, out value))
+                if (!double.TryParse(property.Data as string, out value))
                 {
                     throw new Exception(string.Format("Invalid format of {0} property.", key));
                 }

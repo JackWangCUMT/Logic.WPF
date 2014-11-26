@@ -103,8 +103,33 @@ namespace Logic.ViewModels
             }
         }
 
-        public IShape Selected { get; set; }
-        public bool HaveSelected { get; set; }
+        private IShape _selected;
+        public IShape Selected
+        {
+            get { return _selected; }
+            set
+            {
+                if (value != _selected)
+                {
+                    _selected = value;
+                    Notify("Selected");
+                }
+            }
+        }
+
+        private bool _haveSelected;
+        public bool HaveSelected
+        {
+            get { return _haveSelected; }
+            set
+            {
+                if (value != _haveSelected)
+                {
+                    _haveSelected = value;
+                    Notify("HaveSelected");
+                }
+            }
+        }
 
         #endregion
 

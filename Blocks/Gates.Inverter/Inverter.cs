@@ -10,10 +10,14 @@ namespace Gates.Inverter
     {
         public Inverter()
         {
+            base.Database = new List<KeyValuePair<string, XProperty>>();
             base.Shapes = new List<IShape>();
             base.Pins = new List<XPin>();
 
             base.Name = "INVERTER";
+
+            XProperty labelProperty = new XProperty("1");
+            base.Database.Add(new KeyValuePair<string, XProperty>("Label", labelProperty));
 
             base.Shapes.Add(
                 new XText()
@@ -26,7 +30,8 @@ namespace Gates.Inverter
                     VAlignment = VAlignment.Center,
                     FontName = "Consolas",
                     FontSize = 14.0,
-                    Text = "1"
+                    Text = "{0}",
+                    Properties = new[] { labelProperty }
                 });
             base.Shapes.Add(new XRectangle() { X = 0.0, Y = 0.0, Width = 30.0, Height = 30.0, IsFilled = false });
             base.Pins.Add(new XPin() { Name = "L", X = 0.0, Y = 15.0, PinType = PinType.None, Owner = null });

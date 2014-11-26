@@ -10,14 +10,14 @@ namespace Signal.Output
     {
         public Output()
         {
-            base.Properties = new List<KeyValuePair<string, XProperty>>();
+            base.Database = new List<KeyValuePair<string, XProperty>>();
             base.Shapes = new List<IShape>();
             base.Pins = new List<XPin>();
 
             base.Name = "OUTPUT";
 
             XProperty labelProperty = new XProperty("OUT");
-            base.Properties.Add(new KeyValuePair<string, XProperty>("Label", labelProperty));
+            base.Database.Add(new KeyValuePair<string, XProperty>("Label", labelProperty));
 
             base.Shapes.Add(
                 new XText()
@@ -31,7 +31,7 @@ namespace Signal.Output
                     FontName = "Consolas",
                     FontSize = 14,
                     Text = "{0}",
-                    TextProperty = labelProperty
+                    Properties = new[] { labelProperty }
                 });
             base.Shapes.Add(new XRectangle() { X = 0, Y = 0, Width = 30, Height = 30, IsFilled = false });
             base.Pins.Add(new XPin() { Name = "I", X = 0, Y = 15, PinType = PinType.Input, Owner = null });

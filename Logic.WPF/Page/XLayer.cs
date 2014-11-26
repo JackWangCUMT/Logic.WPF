@@ -1772,9 +1772,10 @@ namespace Logic.Page
             {
                 var block = new XBlock()
                 {
+                    Properties = source.Properties,
+                    Database = source.Database,
                     Name = source.Name,
                     Style = source.Style,
-                    Properties = source.Properties,
                     Shapes = source.Shapes,
                     Pins = source.Pins
                 };
