@@ -136,7 +136,7 @@
                 <MenuItem Header="_Text" InputGestureText="T" Command="{Binding ToolTextCommand}" IsChecked="{Binding Tool.IsTextChecked, Mode=OneWay}"/>
             </MenuItem>
             <Separator/>
-            <MenuItem Header="_Properties">
+            <MenuItem Header="_Edit">
                 <MenuItem Header="Toggle Invert Wire _Start" InputGestureText="[" Command="{Binding EditToggleInvertStartCommand}"/>
                 <MenuItem Header="Toggle Invert Wire _End" InputGestureText="]" Command="{Binding EditToggleInvertEndCommand}"/>
                 <Separator/>
