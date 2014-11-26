@@ -139,6 +139,7 @@ namespace Logic.ViewModels
         public ICommand FileOpenCommand { get; set; }
         public ICommand FileSaveCommand { get; set; }
         public ICommand FileSaveAsCommand { get; set; }
+        public ICommand FileSaveAsPDFCommand { get; set; }
         public ICommand FileExitCommand { get; set; }
 
         public ICommand EditUndoCommand { get; set; }

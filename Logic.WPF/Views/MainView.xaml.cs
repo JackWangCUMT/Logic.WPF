@@ -97,6 +97,10 @@ namespace Logic.WPF.Views
                 (parameter) => this.FileSaveAs(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
+            Model.FileSaveAsPDFCommand = new NativeCommand(
+                (parameter) => this.FileSaveAsPDF(), 
+                (parameter) => IsSimulationRunning() ? false : true);
+ 
             Model.FileExitCommand = new NativeCommand(
                 (parameter) => 
                 {
@@ -803,6 +807,51 @@ namespace Logic.WPF.Views
                 Model.Layers.Editor.Save(dlg.FileName);
                 Model.FileName = System.IO.Path.GetFileNameWithoutExtension(dlg.FileName);
                 Model.FilePath = dlg.FileName;
+            }
+        }
+
+        private void FileSaveAsPDF()
+        {
+            string fileName = string.IsNullOrEmpty(Model.FilePath) ?
+                "shapes" : System.IO.Path.GetFileNameWithoutExtension(Model.FilePath);
+
+            var dlg = new Microsoft.Win32.SaveFileDialog()
+            {
+                Filter = "PDF (*.pdf)|*.pdf",
+                FileName = fileName
+            };
+
+            if (dlg.ShowDialog(this) == true)
+            {
+                try
+                {
+                    var path = dlg.FileName;
+
+                    var writer = new PdfWriter()
+                    {
+                        Selected = null,
+                        InvertSize = _renderer.InvertSize,
+                        PinRadius = _renderer.PinRadius,
+                        HitTreshold = _renderer.HitTreshold,
+                        EnablePinRendering = false,
+                        EnableGridRendering = false
+                    };
+
+                    var page = Model.Layers.ToPage(
+                        XLayer.DefaultPageName,
+                        _template);
+
+                    writer.Create(path, page);
+
+                    System.Diagnostics.Process.Start(path);
+                }
+                catch (Exception ex)
+                {
+                    Log.LogError("{0}{1}{2}",
+                        ex.Message,
+                        Environment.NewLine,
+                        ex.StackTrace);
+                }
             }
         }
 

@@ -142,107 +142,16 @@ namespace Logic.Page
 
         public void DrawWire(object dc, IStyle style, XWire wire)
         {
-            double x1, y1, x2, y2;
-
-            if (wire.Start != null)
-            {
-                x1 = wire.Start.X;
-                y1 = wire.Start.Y;
-            }
-            else
-            {
-                x1 = wire.X1;
-                y1 = wire.Y1;
-            }
-
-            if (wire.End != null)
-            {
-                x2 = wire.End.X;
-                y2 = wire.End.Y;
-            }
-            else
-            {
-                x2 = wire.X2;
-                y2 = wire.Y2;
-            }
-
-            double ix1 = x1;
-            double iy1 = y1;
-            double ix2 = x2;
-            double iy2 = y2;
-
-            // vertical wire
-            if (x1 == x2 && y1 != y2)
-            {
-                if (y1 < y2)
-                {
-                    if (wire.InvertStart)
-                    {
-                        y1 += 2 * InvertSize;
-                        iy1 += InvertSize;
-                    }
-
-                    if (wire.InvertEnd)
-                    {
-                        y2 -= 2 * InvertSize;
-                        iy2 -= InvertSize;
-                    }
-                }
-                else
-                {
-                    if (wire.InvertStart)
-                    {
-                        y1 -= 2 * InvertSize;
-                        iy1 -= InvertSize;
-                    }
-
-                    if (wire.InvertEnd)
-                    {
-                        y2 += 2 * InvertSize;
-                        iy2 += InvertSize;
-                    }
-                }
-            }
-
-            // horizontal wire
-            if (x1 != x2 && y1 == y2)
-            {
-                if (x1 < x2)
-                {
-                    if (wire.InvertStart)
-                    {
-                        x1 += 2 * InvertSize;
-                        ix1 += InvertSize;
-                    }
-
-                    if (wire.InvertEnd)
-                    {
-                        x2 -= 2 * InvertSize;
-                        ix2 -= InvertSize;
-                    }
-                }
-                else
-                {
-                    if (wire.InvertStart)
-                    {
-                        x1 -= 2 * InvertSize;
-                        ix1 -= InvertSize;
-                    }
-
-                    if (wire.InvertEnd)
-                    {
-                        x2 += 2 * InvertSize;
-                        ix2 += InvertSize;
-                    }
-                }
-            }
+            var position = XWirePosition.Calculate(wire, InvertSize);
 
             if (wire.InvertStart)
             {
                 (dc as DrawingContext).DrawEllipse(
                     null,
                     (Pen)style.NativeStroke(),
-                    new Point(ix1, iy1),
+                    new Point(
+                        position.InvertX1, 
+                        position.InvertY1),
                     InvertSize,
                     InvertSize);
             }
@@ -252,7 +161,9 @@ namespace Logic.Page
                 (dc as DrawingContext).DrawEllipse(
                     null,
                     (Pen)style.NativeStroke(),
-                    new Point(ix2, iy2),
+                    new Point(
+                        position.InvertX2,
+                        position.InvertY2),
                     InvertSize,
                     InvertSize);
             }
@@ -266,8 +177,12 @@ namespace Logic.Page
 
             (dc as DrawingContext).DrawLine(
                 (Pen)style.NativeStroke(),
-                new Point(x1, y1),
-                new Point(x2, y2));
+                new Point(
+                    position.StartX,
+                    position.StartY),
+                new Point(
+                    position.EndX,
+                    position.EndY));
 
             (dc as DrawingContext).Pop();
         }

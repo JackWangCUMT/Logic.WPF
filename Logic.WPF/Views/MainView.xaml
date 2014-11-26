@@ -17,6 +17,7 @@
         <KeyBinding Command="{Binding FileOpenCommand}" Gesture="Ctrl+O"/>
         <KeyBinding Command="{Binding FileSaveCommand}" Gesture="Ctrl+S"/>
         <KeyBinding Command="{Binding FileSaveAsCommand}" Gesture=""/>
+        <KeyBinding Command="{Binding FileSaveAsPDFCommand}" Gesture="Ctrl+E"/>
         <KeyBinding Command="{Binding FileExitCommand}" Gesture="Alt+F4"/>
         <KeyBinding Command="{Binding EditUndoCommand}" Gesture="Ctrl+Z"/>
         <KeyBinding Command="{Binding EditRedoCommand}" Gesture="Ctrl+Y"/>
@@ -202,6 +203,8 @@
                 <MenuItem Header="_Open..." InputGestureText="Ctrl+O" Command="{Binding FileOpenCommand}"/>
                 <MenuItem Header="_Save..." InputGestureText="Ctrl+S" Command="{Binding FileSaveCommand}"/>
                 <MenuItem Header="Save _As..." InputGestureText="" Command="{Binding FileSaveAsCommand}"/>
+                <Separator/>
+                <MenuItem Header="Save As _PDF..." InputGestureText="Ctrl+E" Command="{Binding FileSaveAsPDFCommand}"/>
                 <Separator/>
                 <MenuItem Header="E_xit" InputGestureText="Alt+F4" Command="{Binding FileExitCommand}"/>
             </MenuItem>
