@@ -122,20 +122,6 @@
                 </MenuItem.ItemContainerStyle>
             </MenuItem>
             <Separator/>
-            <MenuItem Header="_Tool">
-                <MenuItem Header="_None" InputGestureText="N" Command="{Binding ToolNoneCommand}" IsChecked="{Binding Tool.IsNoneChecked, Mode=OneWay}"/>
-                <Separator/>
-                <MenuItem Header="_Selection" InputGestureText="S" Command="{Binding ToolSelectionCommand}" IsChecked="{Binding Tool.IsSelectionChecked, Mode=OneWay}"/>
-                <Separator/>
-                <MenuItem Header="_Wire" InputGestureText="W" Command="{Binding ToolWireCommand}" IsChecked="{Binding Tool.IsWireChecked, Mode=OneWay}"/>
-                <MenuItem Header="_Pin" InputGestureText="P" Command="{Binding ToolPinCommand}" IsChecked="{Binding Tool.IsPinChecked, Mode=OneWay}"/>
-                <Separator/>
-                <MenuItem Header="_Line" InputGestureText="L" Command="{Binding ToolLineCommand}" IsChecked="{Binding Tool.IsLineChecked, Mode=OneWay}"/>
-                <MenuItem Header="_Ellipse" InputGestureText="E" Command="{Binding ToolEllipseCommand}" IsChecked="{Binding Tool.IsEllipseChecked, Mode=OneWay}"/>
-                <MenuItem Header="_Rectangle" InputGestureText="R" Command="{Binding ToolRectangleCommand}" IsChecked="{Binding Tool.IsRectangleChecked, Mode=OneWay}"/>
-                <MenuItem Header="_Text" InputGestureText="T" Command="{Binding ToolTextCommand}" IsChecked="{Binding Tool.IsTextChecked, Mode=OneWay}"/>
-            </MenuItem>
-            <Separator/>
             <MenuItem Header="_Edit">
                 <MenuItem Header="Toggle Invert Wire _Start" InputGestureText="[" Command="{Binding EditToggleInvertStartCommand}"/>
                 <MenuItem Header="Toggle Invert Wire _End" InputGestureText="]" Command="{Binding EditToggleInvertEndCommand}"/>
@@ -156,6 +142,20 @@
                     <MenuItem Header="_Top" InputGestureText="Ctrl+8" Command="{Binding EditAlignTopCommand}"/>
                     <MenuItem Header="Rig_ht-Top" InputGestureText="Ctrl+9" Command="{Binding EditAlignRightTopCommand}"/>
                 </MenuItem>
+            </MenuItem>
+            <Separator/>
+            <MenuItem Header="_Tool">
+                <MenuItem Header="_None" InputGestureText="N" Command="{Binding ToolNoneCommand}" IsChecked="{Binding Tool.IsNoneChecked, Mode=OneWay}"/>
+                <Separator/>
+                <MenuItem Header="_Selection" InputGestureText="S" Command="{Binding ToolSelectionCommand}" IsChecked="{Binding Tool.IsSelectionChecked, Mode=OneWay}"/>
+                <Separator/>
+                <MenuItem Header="_Wire" InputGestureText="W" Command="{Binding ToolWireCommand}" IsChecked="{Binding Tool.IsWireChecked, Mode=OneWay}"/>
+                <MenuItem Header="_Pin" InputGestureText="P" Command="{Binding ToolPinCommand}" IsChecked="{Binding Tool.IsPinChecked, Mode=OneWay}"/>
+                <Separator/>
+                <MenuItem Header="_Line" InputGestureText="L" Command="{Binding ToolLineCommand}" IsChecked="{Binding Tool.IsLineChecked, Mode=OneWay}"/>
+                <MenuItem Header="_Ellipse" InputGestureText="E" Command="{Binding ToolEllipseCommand}" IsChecked="{Binding Tool.IsEllipseChecked, Mode=OneWay}"/>
+                <MenuItem Header="_Rectangle" InputGestureText="R" Command="{Binding ToolRectangleCommand}" IsChecked="{Binding Tool.IsRectangleChecked, Mode=OneWay}"/>
+                <MenuItem Header="_Text" InputGestureText="T" Command="{Binding ToolTextCommand}" IsChecked="{Binding Tool.IsTextChecked, Mode=OneWay}"/>
             </MenuItem>
             <Separator/>
             <MenuItem Header="Te_mplate" ItemsSource="{Binding Templates}">
