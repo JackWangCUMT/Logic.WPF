@@ -32,10 +32,36 @@ namespace Logic.Simulation
             { "INPUT", (block) => { return new InputSimulation(false); } },
             { "OUTPUT", (block) => { return new OutputSimulation(false); } },
             // Timers
-            { "TIMER-OFF", (block) => { return new TimerOffSimulation(false, GetDoublePropertyValue(block, "Delay")); } 
+            { 
+                "TIMER-OFF", 
+                (block) => 
+                {
+                    double delay = GetDoublePropertyValue(block, "Delay");
+                    string unit = GetStringPropertyValue(block, "Unit");
+                    double seconds = ConvertToSeconds(delay, unit);
+                    return new TimerOffSimulation(false, seconds); 
+                } 
             },
-            { "TIMER-ON", (block) => { return new TimerOnSimulation(false, GetDoublePropertyValue(block, "Delay")); } },
-            { "TIMER-PULSE", (block) => { return new TimerPulseSimulation(false, GetDoublePropertyValue(block, "Delay")); } }
+            { 
+                "TIMER-ON", 
+                (block) => 
+                { 
+                    double delay = GetDoublePropertyValue(block, "Delay");
+                    string unit = GetStringPropertyValue(block, "Unit");
+                    double seconds = ConvertToSeconds(delay, unit);
+                    return new TimerOnSimulation(false, seconds); 
+                } 
+            },
+            { 
+                "TIMER-PULSE", 
+                (block) => 
+                { 
+                    double delay = GetDoublePropertyValue(block, "Delay");
+                    string unit = GetStringPropertyValue(block, "Unit");
+                    double seconds = ConvertToSeconds(delay, unit);
+                    return new TimerPulseSimulation(false, seconds); 
+                } 
+            }
         };
 
         private static string GetStringPropertyValue(XBlock block, string key)
@@ -91,6 +117,35 @@ namespace Logic.Simulation
                 throw new Exception(string.Format("Can not find {0} property.", key));
             }
             return value;
+        }
+
+        private static double ConvertToSeconds(double delay, string unit)
+        {
+            switch (unit)
+            {
+                // seconds
+                case "s":
+                    // delay is by default in seconds
+                    return delay;
+                // milliseconds
+                case "ms":
+                    // convert milliseconds to seconds
+                    return delay / 1000.0;
+                // minutes
+                case "m":
+                    // convert minutes to seconds
+                    return delay * 60.0;
+                // hours
+                case "h":
+                    // convert hours to seconds
+                    return delay * 60.0 * 60.0;
+                // days
+                case "d":
+                    // convert hours to seconds
+                    return delay * 60.0 * 60.0 * 24.0;
+                default:
+                    throw new Exception("Invalid delay Unit property format.");
+            };
         }
 
         public static IDictionary<XBlock, BoolSimulation> Create(PageGraphContext context)
