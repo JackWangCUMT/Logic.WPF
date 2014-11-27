@@ -825,25 +825,7 @@ namespace Logic.WPF.Views
             {
                 try
                 {
-                    var path = dlg.FileName;
-
-                    var writer = new PdfWriter()
-                    {
-                        Selected = null,
-                        InvertSize = _renderer.InvertSize,
-                        PinRadius = _renderer.PinRadius,
-                        HitTreshold = _renderer.HitTreshold,
-                        EnablePinRendering = false,
-                        EnableGridRendering = false
-                    };
-
-                    var page = Model.Layers.ToPage(
-                        XLayer.DefaultPageName,
-                        _template);
-
-                    writer.Create(path, page);
-
-                    System.Diagnostics.Process.Start(path);
+                    FileSaveAsPDF(dlg.FileName);
                 }
                 catch (Exception ex)
                 {
@@ -853,6 +835,27 @@ namespace Logic.WPF.Views
                         ex.StackTrace);
                 }
             }
+        }
+
+        private void FileSaveAsPDF(string path)
+        {
+            var writer = new PdfWriter()
+            {
+                Selected = null,
+                InvertSize = _renderer.InvertSize,
+                PinRadius = _renderer.PinRadius,
+                HitTreshold = _renderer.HitTreshold,
+                EnablePinRendering = false,
+                EnableGridRendering = false
+            };
+
+            var page = Model.Layers.ToPage(
+                XLayer.DefaultPageName,
+                _template);
+
+            writer.Create(path, page);
+
+            System.Diagnostics.Process.Start(path);
         }
 
         #endregion
