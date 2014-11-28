@@ -3,6 +3,7 @@ using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,11 +50,7 @@ namespace Logic.Util
 
         #region Fields
 
-        // convert user X coordinates to PDF coordinates in 72 dpi
-        private Func<double, double> ConvertXtoDpi;
-
-        // convert user Y coordinates to PDF coordinates in 72 dpi
-        private Func<double, double> ConvertYtoDpi;
+        private Func<double, double> ScaleToPage;
 
         #endregion
 
@@ -92,8 +89,9 @@ namespace Logic.Util
                 // calculate x and y page scale factors
                 double scaleX = pdfPage.Width.Value / page.Template.Width;
                 double scaleY = pdfPage.Height.Value / page.Template.Height;
-                ConvertXtoDpi = (x) => x * scaleX;
-                ConvertYtoDpi = (y) => y * scaleY;
+                double scale = Math.Min(scaleX, scaleY);
+
+                ScaleToPage = (value) => value * scale;
 
                 // draw block contents to pdf graphics
                 RenderPage(gfx, page);
@@ -187,7 +185,7 @@ namespace Logic.Util
         {
             return new XPen(
                 ToXColor(style.Stroke), 
-                ConvertXtoDpi(XUnit.FromMillimeter(style.Thickness).Value))
+                ScaleToPage(XUnit.FromMillimeter(style.Thickness).Value))
             {
                 LineCap = XLineCap.Round
             };
@@ -211,10 +209,10 @@ namespace Logic.Util
         {
             (gfx as XGraphics).DrawLine(
                 ToXPen(style), 
-                ConvertXtoDpi(line.X1), 
-                ConvertYtoDpi(line.Y1), 
-                ConvertXtoDpi(line.X2), 
-                ConvertYtoDpi(line.Y2));
+                ScaleToPage(line.X1), 
+                ScaleToPage(line.Y1), 
+                ScaleToPage(line.X2), 
+                ScaleToPage(line.Y2));
         }
 
         public void DrawEllipse(object gfx, CORE.IStyle style, CORE.XEllipse ellipse)
@@ -229,19 +227,19 @@ namespace Logic.Util
                 (gfx as XGraphics).DrawEllipse(
                     ToXPen(style), 
                     ToXSolidBrush(style.Fill), 
-                    ConvertXtoDpi(x), 
-                    ConvertYtoDpi(y), 
-                    ConvertXtoDpi(width), 
-                    ConvertYtoDpi(height));
+                    ScaleToPage(x), 
+                    ScaleToPage(y), 
+                    ScaleToPage(width), 
+                    ScaleToPage(height));
             }
             else
             {
                 (gfx as XGraphics).DrawEllipse(
                     ToXPen(style),
-                    ConvertXtoDpi(x),
-                    ConvertYtoDpi(y),
-                    ConvertXtoDpi(width),
-                    ConvertYtoDpi(height));
+                    ScaleToPage(x),
+                    ScaleToPage(y),
+                    ScaleToPage(width),
+                    ScaleToPage(height));
             }
         }
 
@@ -252,19 +250,19 @@ namespace Logic.Util
                 (gfx as XGraphics).DrawRectangle(
                     ToXPen(style),
                     ToXSolidBrush(style.Fill),
-                    ConvertXtoDpi(rectangle.X),
-                    ConvertYtoDpi(rectangle.Y),
-                    ConvertXtoDpi(rectangle.Width),
-                    ConvertYtoDpi(rectangle.Height));
+                    ScaleToPage(rectangle.X),
+                    ScaleToPage(rectangle.Y),
+                    ScaleToPage(rectangle.Width),
+                    ScaleToPage(rectangle.Height));
             }
             else
             {
                 (gfx as XGraphics).DrawRectangle(
                     ToXPen(style),
-                    ConvertXtoDpi(rectangle.X),
-                    ConvertYtoDpi(rectangle.Y),
-                    ConvertXtoDpi(rectangle.Width),
-                    ConvertYtoDpi(rectangle.Height));
+                    ScaleToPage(rectangle.X),
+                    ScaleToPage(rectangle.Y),
+                    ScaleToPage(rectangle.Width),
+                    ScaleToPage(rectangle.Height));
             }
         }
 
@@ -276,15 +274,15 @@ namespace Logic.Util
 
             XFont font = new XFont(
                 text.FontName, 
-                ConvertYtoDpi(text.FontSize), 
+                ScaleToPage(text.FontSize), 
                 XFontStyle.Regular,
                 options);
 
             XRect rect = new XRect(
-                ConvertXtoDpi(text.X), 
-                ConvertYtoDpi(text.Y), 
-                ConvertXtoDpi(text.Width), 
-                ConvertYtoDpi(text.Height));
+                ScaleToPage(text.X), 
+                ScaleToPage(text.Y), 
+                ScaleToPage(text.Width), 
+                ScaleToPage(text.Height));
 
             XStringFormat format = new XStringFormat();
             switch (text.HAlignment)
@@ -336,10 +334,10 @@ namespace Logic.Util
             (gfx as XGraphics).DrawEllipse(
                 ToXPen(style), 
                 ToXSolidBrush(style.Fill), 
-                ConvertXtoDpi(x), 
-                ConvertYtoDpi(y), 
-                ConvertXtoDpi(width), 
-                ConvertYtoDpi(height));
+                ScaleToPage(x), 
+                ScaleToPage(y), 
+                ScaleToPage(width), 
+                ScaleToPage(height));
         }
 
         public void DrawWire(object gfx, CORE.IStyle style, CORE.XWire wire)
@@ -355,10 +353,10 @@ namespace Logic.Util
 
                 (gfx as XGraphics).DrawEllipse(
                     ToXPen(style),
-                    ConvertXtoDpi(x),
-                    ConvertYtoDpi(y),
-                    ConvertXtoDpi(width),
-                    ConvertYtoDpi(height));
+                    ScaleToPage(x),
+                    ScaleToPage(y),
+                    ScaleToPage(width),
+                    ScaleToPage(height));
             }
 
             if (wire.InvertEnd)
@@ -370,18 +368,18 @@ namespace Logic.Util
 
                 (gfx as XGraphics).DrawEllipse(
                     ToXPen(style),
-                    ConvertXtoDpi(x),
-                    ConvertYtoDpi(y),
-                    ConvertXtoDpi(width),
-                    ConvertYtoDpi(height));
+                    ScaleToPage(x),
+                    ScaleToPage(y),
+                    ScaleToPage(width),
+                    ScaleToPage(height));
             }
 
             (gfx as XGraphics).DrawLine(
                 ToXPen(style),
-                ConvertXtoDpi(position.StartX),
-                ConvertYtoDpi(position.StartY),
-                ConvertXtoDpi(position.EndX),
-                ConvertYtoDpi(position.EndY));
+                ScaleToPage(position.StartX),
+                ScaleToPage(position.StartY),
+                ScaleToPage(position.EndX),
+                ScaleToPage(position.EndY));
         } 
 
         #endregion
