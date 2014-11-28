@@ -23,7 +23,11 @@ namespace Logic.Util
 
         public XPdfStyle() { }
 
-        public XPdfStyle(string name, CORE.XColor fill, CORE.XColor stroke, double thickness)
+        public XPdfStyle(
+            string name, 
+            CORE.XColor fill, 
+            CORE.XColor stroke, 
+            double thickness)
         {
             Name = name;
             Fill = fill;
@@ -38,16 +42,18 @@ namespace Logic.Util
 
         public bool EnablePinRendering { get; set; }
         public bool EnableGridRendering { get; set; }
+        public CORE.IStyle TemplateStyleOverride { get; set; }
+        public CORE.IStyle LayerStyleOverride { get; set; }
 
         #endregion
 
         #region Fields
 
         // convert user X coordinates to PDF coordinates in 72 dpi
-        private Func<double, double> X;
+        private Func<double, double> ConvertXtoDpi;
 
         // convert user Y coordinates to PDF coordinates in 72 dpi
-        private Func<double, double> Y;
+        private Func<double, double> ConvertYtoDpi;
 
         #endregion
 
@@ -86,18 +92,11 @@ namespace Logic.Util
                 // calculate x and y page scale factors
                 double scaleX = pdfPage.Width.Value / page.Template.Width;
                 double scaleY = pdfPage.Height.Value / page.Template.Height;
-                X = (x) => x * scaleX;
-                Y = (y) => y * scaleY;
-
-                // normal shape style
-                var style = new XPdfStyle(
-                    name: "Shape",
-                    fill: new CORE.XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
-                    stroke: new CORE.XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
-                    thickness: 1.60);
+                ConvertXtoDpi = (x) => x * scaleX;
+                ConvertYtoDpi = (y) => y * scaleY;
 
                 // draw block contents to pdf graphics
-                RenderPage(gfx, style, page);
+                RenderPage(gfx, page);
             }
         }
 
@@ -105,19 +104,19 @@ namespace Logic.Util
 
         #region Render
 
-        private void RenderPage(object gfx, CORE.IStyle style, CORE.XPage page)
+        private void RenderPage(object gfx, CORE.XPage page)
         {
             RenderTemplate(gfx, page.Template);
 
-            RenderLayer(gfx, style, page.Shapes);
-            RenderLayer(gfx, style, page.Blocks);
+            RenderLayer(gfx, page.Shapes);
+            RenderLayer(gfx, page.Blocks);
 
             if (EnablePinRendering)
             {
-                RenderLayer(gfx, style, page.Pins);
+                RenderLayer(gfx, page.Pins);
             }
 
-            RenderLayer(gfx, style, page.Wires);
+            RenderLayer(gfx, page.Wires);
         }
 
         private void RenderTemplate(object gfx, CORE.ITemplate template)
@@ -133,17 +132,27 @@ namespace Logic.Util
 
         private void RenderConatiner(object gfx, CORE.XContainer container)
         {
+            CORE.IStyle overrideStyle = TemplateStyleOverride;
+
             foreach (var shape in container.Shapes)
             {
-                shape.Render(gfx, this, shape.Style);
+                shape.Render(
+                    gfx, 
+                    this, 
+                    overrideStyle == null ? shape.Style : overrideStyle);
             }
         }
 
-        private void RenderLayer(object gfx, CORE.IStyle style, IEnumerable<CORE.IShape> shapes)
+        private void RenderLayer(object gfx, IEnumerable<CORE.IShape> shapes)
         {
+            CORE.IStyle overrideStyle = LayerStyleOverride;
+
             foreach (var shape in shapes)
             {
-                shape.Render(gfx, this, style);
+                shape.Render(
+                    gfx, 
+                    this, 
+                    overrideStyle == null ? shape.Style : overrideStyle);
 
                 if (EnablePinRendering)
                 {
@@ -151,7 +160,10 @@ namespace Logic.Util
                     {
                         foreach (var pin in (shape as CORE.XBlock).Pins)
                         {
-                            pin.Render(gfx, this, style);
+                            pin.Render(
+                                gfx, 
+                                this, 
+                                overrideStyle == null ? pin.Style : overrideStyle);
                         }
                     }
                 }
@@ -164,12 +176,18 @@ namespace Logic.Util
 
         private XColor ToXColor(CORE.IColor color)
         {
-            return XColor.FromArgb(color.A, color.R, color.G, color.B);
+            return XColor.FromArgb(
+                color.A, 
+                color.R, 
+                color.G, 
+                color.B);
         }
 
         private XPen ToXPen(CORE.IStyle style)
         {
-            return new XPen(ToXColor(style.Stroke), X(XUnit.FromMillimeter(style.Thickness).Value))
+            return new XPen(
+                ToXColor(style.Stroke), 
+                ConvertXtoDpi(XUnit.FromMillimeter(style.Thickness).Value))
             {
                 LineCap = XLineCap.Round
             };
@@ -177,7 +195,7 @@ namespace Logic.Util
 
         private XSolidBrush ToXSolidBrush(CORE.IColor color)
         {
-            return new XSolidBrush(XColor.FromArgb(color.A, color.R, color.G, color.B));
+            return new XSolidBrush(ToXColor(color));
         } 
 
         #endregion
@@ -193,10 +211,10 @@ namespace Logic.Util
         {
             (gfx as XGraphics).DrawLine(
                 ToXPen(style), 
-                X(line.X1), 
-                Y(line.Y1), 
-                X(line.X2), 
-                Y(line.Y2));
+                ConvertXtoDpi(line.X1), 
+                ConvertYtoDpi(line.Y1), 
+                ConvertXtoDpi(line.X2), 
+                ConvertYtoDpi(line.Y2));
         }
 
         public void DrawEllipse(object gfx, CORE.IStyle style, CORE.XEllipse ellipse)
@@ -211,19 +229,19 @@ namespace Logic.Util
                 (gfx as XGraphics).DrawEllipse(
                     ToXPen(style), 
                     ToXSolidBrush(style.Fill), 
-                    X(x), 
-                    Y(y), 
-                    X(width), 
-                    Y(height));
+                    ConvertXtoDpi(x), 
+                    ConvertYtoDpi(y), 
+                    ConvertXtoDpi(width), 
+                    ConvertYtoDpi(height));
             }
             else
             {
                 (gfx as XGraphics).DrawEllipse(
                     ToXPen(style),
-                    X(x),
-                    Y(y),
-                    X(width),
-                    Y(height));
+                    ConvertXtoDpi(x),
+                    ConvertYtoDpi(y),
+                    ConvertXtoDpi(width),
+                    ConvertYtoDpi(height));
             }
         }
 
@@ -234,42 +252,65 @@ namespace Logic.Util
                 (gfx as XGraphics).DrawRectangle(
                     ToXPen(style),
                     ToXSolidBrush(style.Fill),
-                    X(rectangle.X),
-                    Y(rectangle.Y),
-                    X(rectangle.Width),
-                    Y(rectangle.Height));
+                    ConvertXtoDpi(rectangle.X),
+                    ConvertYtoDpi(rectangle.Y),
+                    ConvertXtoDpi(rectangle.Width),
+                    ConvertYtoDpi(rectangle.Height));
             }
             else
             {
                 (gfx as XGraphics).DrawRectangle(
                     ToXPen(style),
-                    X(rectangle.X),
-                    Y(rectangle.Y),
-                    X(rectangle.Width),
-                    Y(rectangle.Height));
+                    ConvertXtoDpi(rectangle.X),
+                    ConvertYtoDpi(rectangle.Y),
+                    ConvertXtoDpi(rectangle.Width),
+                    ConvertYtoDpi(rectangle.Height));
             }
         }
 
         public void DrawText(object gfx, CORE.IStyle style, CORE.XText text)
         {
-            XPdfFontOptions options = new XPdfFontOptions(PdfFontEncoding.Unicode, PdfFontEmbedding.Always);
-            XFont font = new XFont(text.FontName, Y(text.FontSize), XFontStyle.Regular, options);
+            XPdfFontOptions options = new XPdfFontOptions(
+                PdfFontEncoding.Unicode, 
+                PdfFontEmbedding.Always);
+
+            XFont font = new XFont(
+                text.FontName, 
+                ConvertYtoDpi(text.FontSize), 
+                XFontStyle.Regular,
+                options);
+
+            XRect rect = new XRect(
+                ConvertXtoDpi(text.X), 
+                ConvertYtoDpi(text.Y), 
+                ConvertXtoDpi(text.Width), 
+                ConvertYtoDpi(text.Height));
 
             XStringFormat format = new XStringFormat();
-            XRect rect = new XRect(X(text.X), Y(text.Y), X(text.Width), Y(text.Height));
-
             switch (text.HAlignment)
             {
-                case CORE.HAlignment.Left: format.Alignment = XStringAlignment.Near; break;
-                case CORE.HAlignment.Center: format.Alignment = XStringAlignment.Center; break;
-                case CORE.HAlignment.Right: format.Alignment = XStringAlignment.Far; break;
+                case CORE.HAlignment.Left: 
+                    format.Alignment = XStringAlignment.Near; 
+                    break;
+                case CORE.HAlignment.Center: 
+                    format.Alignment = XStringAlignment.Center; 
+                    break;
+                case CORE.HAlignment.Right: 
+                    format.Alignment = XStringAlignment.Far; 
+                    break;
             }
 
             switch (text.VAlignment)
             {
-                case CORE.VAlignment.Top: format.LineAlignment = XLineAlignment.Near; break;
-                case CORE.VAlignment.Center: format.LineAlignment = XLineAlignment.Center; break;
-                case CORE.VAlignment.Bottom: format.LineAlignment = XLineAlignment.Far; break;
+                case CORE.VAlignment.Top: 
+                    format.LineAlignment = XLineAlignment.Near; 
+                    break;
+                case CORE.VAlignment.Center: 
+                    format.LineAlignment = XLineAlignment.Center; 
+                    break;
+                case CORE.VAlignment.Bottom: 
+                    format.LineAlignment = XLineAlignment.Far; 
+                    break;
             }
 
             if (text.IsFilled)
@@ -295,10 +336,10 @@ namespace Logic.Util
             (gfx as XGraphics).DrawEllipse(
                 ToXPen(style), 
                 ToXSolidBrush(style.Fill), 
-                X(x), 
-                Y(y), 
-                X(width), 
-                Y(height));
+                ConvertXtoDpi(x), 
+                ConvertYtoDpi(y), 
+                ConvertXtoDpi(width), 
+                ConvertYtoDpi(height));
         }
 
         public void DrawWire(object gfx, CORE.IStyle style, CORE.XWire wire)
@@ -314,10 +355,10 @@ namespace Logic.Util
 
                 (gfx as XGraphics).DrawEllipse(
                     ToXPen(style),
-                    X(x),
-                    Y(y),
-                    X(width),
-                    Y(height));
+                    ConvertXtoDpi(x),
+                    ConvertYtoDpi(y),
+                    ConvertXtoDpi(width),
+                    ConvertYtoDpi(height));
             }
 
             if (wire.InvertEnd)
@@ -329,18 +370,18 @@ namespace Logic.Util
 
                 (gfx as XGraphics).DrawEllipse(
                     ToXPen(style),
-                    X(x),
-                    Y(y),
-                    X(width),
-                    Y(height));
+                    ConvertXtoDpi(x),
+                    ConvertYtoDpi(y),
+                    ConvertXtoDpi(width),
+                    ConvertYtoDpi(height));
             }
 
             (gfx as XGraphics).DrawLine(
                 ToXPen(style),
-                X(position.StartX),
-                Y(position.StartY),
-                X(position.EndX),
-                Y(position.EndY));
+                ConvertXtoDpi(position.StartX),
+                ConvertYtoDpi(position.StartY),
+                ConvertXtoDpi(position.EndX),
+                ConvertYtoDpi(position.EndY));
         } 
 
         #endregion

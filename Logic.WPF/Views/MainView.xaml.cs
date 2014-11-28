@@ -839,6 +839,20 @@ namespace Logic.WPF.Views
 
         private void FileSaveAsPDF(string path)
         {
+            // template shapes style override
+            var templateStyle = new XPdfStyle(
+                name: "Template",
+                fill: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
+                stroke: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
+                thickness: 0.80);
+
+            // layer shapes style override
+            var layerStyle = new XPdfStyle(
+                name: "Layer",
+                fill: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
+                stroke: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
+                thickness: 1.50);
+
             var writer = new PdfWriter()
             {
                 Selected = null,
@@ -846,11 +860,13 @@ namespace Logic.WPF.Views
                 PinRadius = _renderer.PinRadius,
                 HitTreshold = _renderer.HitTreshold,
                 EnablePinRendering = false,
-                EnableGridRendering = false
+                EnableGridRendering = false,
+                TemplateStyleOverride = templateStyle,
+                LayerStyleOverride = layerStyle
             };
 
             var page = Model.Layers.ToPage(
-                XLayer.DefaultPageName,
+                XLayer.DefaultPageName, 
                 _template);
 
             writer.Create(path, page);
