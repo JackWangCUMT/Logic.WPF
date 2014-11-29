@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Logic.Core
 {
-    public class XContainer
+    public class XContainer : IContainer
     {
         public IList<IStyle> Styles { get; set; }
         public IList<IShape> Shapes { get; set; }

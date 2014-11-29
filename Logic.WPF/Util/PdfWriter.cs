@@ -56,16 +56,16 @@ namespace Logic.Util
 
         #region Create
 
-        public void Create(string path, CORE.XPage page)
+        public void Create(string path, CORE.IPage page)
         {
-            using (var document = new PdfDocument())
+            using (var pdfDocument = new PdfDocument())
             {
-                Add(document, page);
-                document.Save(path);
+                Add(pdfDocument, page);
+                pdfDocument.Save(path);
             }
         }
 
-        public void Create(string path, IEnumerable<CORE.XPage> pages)
+        public void Create(string path, IEnumerable<CORE.IPage> pages)
         {
             using (var pdfDocument = new PdfDocument())
             {
@@ -77,7 +77,7 @@ namespace Logic.Util
             }
         }
 
-        private void Add(PdfDocument pdfDocument, CORE.XPage page)
+        private void Add(PdfDocument pdfDocument, CORE.IPage page)
         {
             // create A4 page with landscape orientation
             PdfPage pdfPage = pdfDocument.AddPage();
@@ -102,7 +102,7 @@ namespace Logic.Util
 
         #region Render
 
-        private void RenderPage(object gfx, CORE.XPage page)
+        private void RenderPage(object gfx, CORE.IPage page)
         {
             RenderTemplate(gfx, page.Template);
 
@@ -128,7 +128,7 @@ namespace Logic.Util
             RenderConatiner(gfx, template.Frame);
         }
 
-        private void RenderConatiner(object gfx, CORE.XContainer container)
+        private void RenderConatiner(object gfx, CORE.IContainer container)
         {
             CORE.IStyle overrideStyle = TemplateStyleOverride;
 

@@ -68,6 +68,7 @@
     <Reference Include="System.Reflection.Metadata">
       <HintPath>..\packages\System.Reflection.Metadata.1.0.17-beta\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -85,8 +86,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Page\Defaults.cs" />
     <Compile Include="Page\XLayer.cs" />
     <Compile Include="Page\XWirePosition.cs" />
+    <Compile Include="Serialization\LogicContractResolver.cs" />
     <Compile Include="Simulation\BoolSimulationCacheRenderer.cs" />
     <Compile Include="Simulation\BoolSimulationFactory.cs" />
     <Compile Include="Serialization\Bson.cs" />
@@ -96,11 +99,9 @@
     <Compile Include="Templates\LogicPageTemplate.cs" />
     <Compile Include="Templates\ScratchpadPageTemplate.cs" />
     <Compile Include="Util\CSharpProjectCreator.cs" />
-    <Compile Include="Util\ITextClipboard.cs" />
     <Compile Include="Util\NativeTextClipboard.cs" />
     <Compile Include="Util\Parts\BlockPart.cs" />
     <Compile Include="Util\Parts\TemplatePart.cs" />
-    <Compile Include="Util\NotifyObject.cs" />
     <Compile Include="Util\NativePointExtensions.cs" />
     <Compile Include="Util\PdfWriter.cs" />
     <Compile Include="ViewModels\CodeViewModel.cs" />

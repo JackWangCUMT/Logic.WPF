@@ -10,8 +10,8 @@ namespace Logic.Core
         public string Name { get; set; }
         public double Width { get; set; }
         public double Height { get; set; }
-        public XContainer Grid { get; set; }
-        public XContainer Table { get; set; }
-        public XContainer Frame { get; set; }
+        public IContainer Grid { get; set; }
+        public IContainer Table { get; set; }
+        public IContainer Frame { get; set; }
     }
 }

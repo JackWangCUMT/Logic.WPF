@@ -3,6 +3,7 @@ using Logic.Page;
 using Logic.Util;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,9 +15,9 @@ namespace Logic.Templates
         public string Name { get; set; }
         public double Width { get; set; }
         public double Height { get; set; }
-        public XContainer Grid { get; set; }
-        public XContainer Table { get; set; }
-        public XContainer Frame { get; set; }
+        public IContainer Grid { get; set; }
+        public IContainer Table { get; set; }
+        public IContainer Frame { get; set; }
 
         public ScratchpadPageTemplate()
         {
@@ -27,21 +28,21 @@ namespace Logic.Templates
 
             // containers
             this.Grid = new XContainer() 
-            { 
-                Styles = new List<IStyle>(),
-                Shapes = new List<IShape>() 
+            {
+                Styles = new ObservableCollection<IStyle>(),
+                Shapes = new ObservableCollection<IShape>() 
             };
 
             this.Table = new XContainer()
             {
-                Styles = new List<IStyle>(),
-                Shapes = new List<IShape>()
+                Styles = new ObservableCollection<IStyle>(),
+                Shapes = new ObservableCollection<IShape>()
             };
 
             this.Frame = new XContainer()
             {
-                Styles = new List<IStyle>(),
-                Shapes = new List<IShape>()
+                Styles = new ObservableCollection<IStyle>(),
+                Shapes = new ObservableCollection<IShape>()
             };
 
             // styles

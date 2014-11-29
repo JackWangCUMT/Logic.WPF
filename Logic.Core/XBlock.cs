@@ -7,8 +7,8 @@ namespace Logic.Core
 {
     public class XBlock : IShape
     {
-        public XProperty[] Properties { get; set; }
-        public IList<KeyValuePair<string, XProperty>> Database { get; set; }
+        public IProperty[] Properties { get; set; }
+        public IList<KeyValuePair<string, IProperty>> Database { get; set; }
         public IStyle Style { get; set; }
         public string Name { get; set; }
         public IList<IShape> Shapes { get; set; }

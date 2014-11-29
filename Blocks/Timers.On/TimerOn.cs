@@ -10,20 +10,20 @@ namespace Timers.On
     {
         public TimerOn()
         {
-            base.Database = new List<KeyValuePair<string, XProperty>>();
+            base.Database = new List<KeyValuePair<string, IProperty>>();
             base.Shapes = new List<IShape>();
             base.Pins = new List<XPin>();
 
             base.Name = "TIMER-ON";
 
-            var prefixProperty = new XProperty("T=");
-            base.Database.Add(new KeyValuePair<string, XProperty>("Prefix", prefixProperty));
+            IProperty prefixProperty = new XProperty("T=");
+            base.Database.Add(new KeyValuePair<string, IProperty>("Prefix", prefixProperty));
 
-            var delayProperty = new XProperty("1");
-            base.Database.Add(new KeyValuePair<string, XProperty>("Delay", delayProperty));
+            IProperty delayProperty = new XProperty("1");
+            base.Database.Add(new KeyValuePair<string, IProperty>("Delay", delayProperty));
 
-            var unitProperty = new XProperty("s");
-            base.Database.Add(new KeyValuePair<string, XProperty>("Unit", unitProperty));
+            IProperty unitProperty = new XProperty("s");
+            base.Database.Add(new KeyValuePair<string, IProperty>("Unit", unitProperty));
 
             base.Shapes.Add(
                 new XText()

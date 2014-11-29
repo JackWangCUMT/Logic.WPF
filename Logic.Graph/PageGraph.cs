@@ -9,7 +9,7 @@ namespace Logic.Graph
 {
     public static class PageGraph
     {
-        public static PageGraphContext Create(XPage page)
+        public static PageGraphContext Create(IPage page)
         {
             return Create(
                 page.Blocks.Cast<XBlock>(),

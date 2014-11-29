@@ -15,6 +15,34 @@ namespace Logic.ViewModels
     {
         #region Properties
 
+        private IProject _project;
+        public IProject Project
+        {
+            get { return _project; }
+            set
+            {
+                if (value != _project)
+                {
+                    _project = value;
+                    Notify("Project");
+                }
+            }
+        }
+
+        private IPage _page;
+        public IPage Page
+        {
+            get { return _page; }
+            set
+            {
+                if (value != _page)
+                {
+                    _page = value;
+                    Notify("Page");
+                }
+            }
+        }
+
         private XLayers _layers;
         public XLayers Layers
         {
@@ -134,6 +162,24 @@ namespace Logic.ViewModels
         #endregion
 
         #region Commands
+
+        public ICommand SelectedItemChangedCommand { get; set; }
+
+        public ICommand PageAddCommand { get; set; }
+        public ICommand PageInsertBeforeCommand { get; set; }
+        public ICommand PageInsertAfterCommand { get; set; }
+        public ICommand PageCutCommand { get; set; }
+        public ICommand PageCopyCommand { get; set; }
+        public ICommand PagePasteCommand { get; set; }
+        public ICommand PageDeleteCommand { get; set; }
+
+        public ICommand DocumentAddCommand { get; set; }
+        public ICommand DocumentInsertBeforeCommand { get; set; }
+        public ICommand DocumentInsertAfterCommand { get; set; }
+        public ICommand DocumentCutCommand { get; set; }
+        public ICommand DocumentCopyCommand { get; set; }
+        public ICommand DocumentPasteCommand { get; set; }
+        public ICommand DocumentDeleteCommand { get; set; }
 
         public ICommand FileNewCommand { get; set; }
         public ICommand FileOpenCommand { get; set; }

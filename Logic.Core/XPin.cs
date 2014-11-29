@@ -7,7 +7,7 @@ namespace Logic.Core
 {
     public class XPin : IShape
     {
-        public XProperty[] Properties { get; set; }
+        public IProperty[] Properties { get; set; }
         public IStyle Style { get; set; }
         public string Name { get; set; }
         public double X { get; set; }

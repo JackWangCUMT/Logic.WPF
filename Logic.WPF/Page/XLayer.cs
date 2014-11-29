@@ -4,6 +4,7 @@ using Logic.Util;
 using Logic.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -13,12 +14,6 @@ namespace Logic.Page
 {
     public class XLayer : ILayer
     {
-        #region Constants
-
-        public const string DefaultPageName = "Page";
-
-        #endregion
-
         #region Enums
 
         public enum Mode
@@ -50,11 +45,10 @@ namespace Logic.Page
         public IList<IShape> Shapes { get; set; }
         public ICollection<IShape> Hidden { get; set; }
         public IDictionary<XBlock, BoolSimulation> Simulations { get; set; }
-        public ToolMenuModel Tool { get; set; }
         public bool EnableSnap { get; set; }
         public double SnapSize { get; set; }
         public IRenderer Renderer { get; set; }
-        public History<XPage> History { get; set; }
+        public History<IPage> History { get; set; }
         public ITextClipboard Clipboard { get; set; }
         public bool IsOverlay { get; set; }
         public Mode CurrentMode { get { return _mode; } }
@@ -95,7 +89,7 @@ namespace Logic.Page
 
         public XLayer()
         {
-            Shapes = new List<IShape>();
+            Shapes = new ObservableCollection<IShape>();
             Hidden = new HashSet<IShape>();
             EnableSnap = true;
             SnapSize = 15.0;
@@ -109,7 +103,15 @@ namespace Logic.Page
         {
             if (History != null && Layers != null)
             {
-                History.Snapshot(Layers.ToPage(DefaultPageName, null));
+                History.Snapshot(Layers.ToPage(Defaults.PageName, null));
+            }
+        }
+
+        public void Reset()
+        {
+            if (History != null && Layers != null)
+            {
+                History.Reset();
             }
         }
 
@@ -138,7 +140,7 @@ namespace Logic.Page
                             return;
                         }
 
-                        switch (Tool.CurrentTool)
+                        switch (Layers.Tool.CurrentTool)
                         {
                             case ToolMenuModel.Tool.None:
                                 SelectionReset();
@@ -166,7 +168,7 @@ namespace Logic.Page
                 case Mode.Create:
                     if (IsMouseCaptured())
                     {
-                        switch (Tool.CurrentTool)
+                        switch (Layers.Tool.CurrentTool)
                         {
                             case ToolMenuModel.Tool.None:
                                 break;
@@ -218,7 +220,7 @@ namespace Logic.Page
 
             if (_mode != Mode.Move
                 && _mode != Mode.Selection
-                && Tool.CurrentTool != ToolMenuModel.Tool.None
+                && Layers.Tool.CurrentTool != ToolMenuModel.Tool.None
                 && Renderer != null
                 && Renderer.Selected == null
                 && Simulations == null)
@@ -471,7 +473,7 @@ namespace Logic.Page
         {
             if (History != null && Layers != null)
             {
-                History.Hold(Layers.ToPage(DefaultPageName, null));
+                History.Hold(Layers.ToPage(Defaults.PageName, null));
             }
 
             _startx = EnableSnap ? Snap(p.X, SnapSize) : p.X;
@@ -803,7 +805,7 @@ namespace Logic.Page
                 else if (shapeHitResult is XPin)
                 {
                     XPin pin = shapeHitResult as XPin;
-                    if (Tool.CurrentTool == ToolMenuModel.Tool.Wire)
+                    if (Layers.Tool.CurrentTool == ToolMenuModel.Tool.Wire)
                     {
                         Layers.Blocks.Hidden.Add(pin);
                         Layers.Pins.Hidden.Add(pin);
@@ -816,7 +818,7 @@ namespace Logic.Page
                 }
                 else if (shapeHitResult is XWire)
                 {
-                    if (Tool.CurrentTool == ToolMenuModel.Tool.Wire || Tool.CurrentTool == ToolMenuModel.Tool.Pin)
+                    if (Layers.Tool.CurrentTool == ToolMenuModel.Tool.Wire || Layers.Tool.CurrentTool == ToolMenuModel.Tool.Pin)
                     {
                         Layers.Wires.Hidden.Add(wireHitResult);
                         Layers.Wires.InvalidateVisual();
@@ -827,7 +829,7 @@ namespace Logic.Page
                 }
                 else
                 {
-                    if (Tool.CurrentTool == ToolMenuModel.Tool.Wire)
+                    if (Layers.Tool.CurrentTool == ToolMenuModel.Tool.Wire)
                     {
                         Layers.Shapes.Hidden.Add(shapeHitResult);
                         Layers.Shapes.InvalidateVisual();
@@ -841,7 +843,7 @@ namespace Logic.Page
             if (pinHitResult != null)
             {
                 XPin pin = pinHitResult as XPin;
-                if (Tool.CurrentTool == ToolMenuModel.Tool.Wire)
+                if (Layers.Tool.CurrentTool == ToolMenuModel.Tool.Wire)
                 {
                     Layers.Pins.Hidden.Add(pin);
                     Layers.Blocks.Hidden.Add(pin);
@@ -856,7 +858,7 @@ namespace Logic.Page
             {
                 if (wireHitResult is XWire)
                 {
-                    if (Tool.CurrentTool == ToolMenuModel.Tool.Wire || Tool.CurrentTool == ToolMenuModel.Tool.Pin)
+                    if (Layers.Tool.CurrentTool == ToolMenuModel.Tool.Wire || Layers.Tool.CurrentTool == ToolMenuModel.Tool.Pin)
                     {
                         Layers.Wires.Hidden.Add(wireHitResult);
                         Layers.Wires.InvalidateVisual();
@@ -868,7 +870,7 @@ namespace Logic.Page
                 else if (wireHitResult is XPin)
                 {
                     XPin pin = wireHitResult as XPin;
-                    if (Tool.CurrentTool == ToolMenuModel.Tool.Wire)
+                    if (Layers.Tool.CurrentTool == ToolMenuModel.Tool.Wire)
                     {
                         if (pin.Owner == null)
                         {
@@ -891,7 +893,7 @@ namespace Logic.Page
                 if (blockHitResult is XBlock)
                 {
                     XBlock block = shapeHitResult as XBlock;
-                    if (Tool.CurrentTool == ToolMenuModel.Tool.Wire)
+                    if (Layers.Tool.CurrentTool == ToolMenuModel.Tool.Wire)
                     {
                         Layers.Blocks.Hidden.Add(block);
                         Layers.Blocks.InvalidateVisual();
@@ -903,7 +905,7 @@ namespace Logic.Page
                 else if (blockHitResult is XPin)
                 {
                     XPin pin = blockHitResult as XPin;
-                    if (Tool.CurrentTool == ToolMenuModel.Tool.Wire)
+                    if (Layers.Tool.CurrentTool == ToolMenuModel.Tool.Wire)
                     {
                         Layers.Blocks.Hidden.Add(pin);
                         Layers.Blocks.InvalidateVisual();
@@ -1093,7 +1095,7 @@ namespace Logic.Page
             double x = EnableSnap ? Snap(p.X, SnapSize) : p.X;
             double y = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
 
-            switch (Tool.CurrentTool)
+            switch (Layers.Tool.CurrentTool)
             {
                 case ToolMenuModel.Tool.Line:
                     {
@@ -1205,7 +1207,7 @@ namespace Logic.Page
             double x = EnableSnap ? Snap(p.X, SnapSize) : p.X;
             double y = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
 
-            switch (Tool.CurrentTool)
+            switch (Layers.Tool.CurrentTool)
             {
                 case ToolMenuModel.Tool.Line:
                     {
@@ -1263,7 +1265,7 @@ namespace Logic.Page
             double x = EnableSnap ? Snap(p.X, SnapSize) : p.X;
             double y = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
 
-            switch (Tool.CurrentTool)
+            switch (Layers.Tool.CurrentTool)
             {
                 case ToolMenuModel.Tool.Line:
                     {
@@ -1381,7 +1383,7 @@ namespace Logic.Page
 
         private void CreateCancel()
         {
-            switch (Tool.CurrentTool)
+            switch (Layers.Tool.CurrentTool)
             {
                 case ToolMenuModel.Tool.Line:
                     {
@@ -1440,17 +1442,17 @@ namespace Logic.Page
 
         public void ShapeToggleFill()
         {
-            if (IsMouseCaptured() && Tool.CurrentTool == ToolMenuModel.Tool.Rectangle)
+            if (IsMouseCaptured() && Layers.Tool.CurrentTool == ToolMenuModel.Tool.Rectangle)
             {
                 _rectangle.IsFilled = !_rectangle.IsFilled;
                 InvalidateVisual();
             }
-            else if (IsMouseCaptured() && Tool.CurrentTool == ToolMenuModel.Tool.Ellipse)
+            else if (IsMouseCaptured() && Layers.Tool.CurrentTool == ToolMenuModel.Tool.Ellipse)
             {
                 _ellipse.IsFilled = !_ellipse.IsFilled;
                 InvalidateVisual();
             }
-            else if (IsMouseCaptured() && Tool.CurrentTool == ToolMenuModel.Tool.Text)
+            else if (IsMouseCaptured() && Layers.Tool.CurrentTool == ToolMenuModel.Tool.Text)
             {
                 _text.IsFilled = !_text.IsFilled;
                 InvalidateVisual();
@@ -1463,7 +1465,7 @@ namespace Logic.Page
 
         public void ShapeToggleInvertStart()
         {
-            if (IsMouseCaptured() && Tool.CurrentTool == ToolMenuModel.Tool.Wire)
+            if (IsMouseCaptured() && Layers.Tool.CurrentTool == ToolMenuModel.Tool.Wire)
             {
                 _wire.InvertStart = !_wire.InvertStart;
                 InvalidateVisual();
@@ -1476,7 +1478,7 @@ namespace Logic.Page
 
         public void ShapeToggleInvertEnd()
         {
-            if (IsMouseCaptured() && Tool.CurrentTool == ToolMenuModel.Tool.Wire)
+            if (IsMouseCaptured() && Layers.Tool.CurrentTool == ToolMenuModel.Tool.Wire)
             {
                 _wire.InvertEnd = !_wire.InvertEnd;
                 InvalidateVisual();
@@ -1489,7 +1491,7 @@ namespace Logic.Page
 
         public void ShapeSetTextSizeDelta(double delta)
         {
-            if (IsMouseCaptured() && Tool.CurrentTool == ToolMenuModel.Tool.Text)
+            if (IsMouseCaptured() && Layers.Tool.CurrentTool == ToolMenuModel.Tool.Text)
             {
                 double size = _text.FontSize + delta;
                 if (size > 0.0)
@@ -1506,7 +1508,7 @@ namespace Logic.Page
 
         public void ShapeSetTextHAlignment(HAlignment halignment)
         {
-            if (IsMouseCaptured() && Tool.CurrentTool == ToolMenuModel.Tool.Text)
+            if (IsMouseCaptured() && Layers.Tool.CurrentTool == ToolMenuModel.Tool.Text)
             {
                 _text.HAlignment = halignment;
                 InvalidateVisual();
@@ -1519,7 +1521,7 @@ namespace Logic.Page
 
         public void ShapeSetTextVAlignment(VAlignment valignment)
         {
-            if (IsMouseCaptured() && Tool.CurrentTool == ToolMenuModel.Tool.Text)
+            if (IsMouseCaptured() && Layers.Tool.CurrentTool == ToolMenuModel.Tool.Text)
             {
                 _text.VAlignment = valignment;
                 InvalidateVisual();
@@ -1903,31 +1905,15 @@ namespace Logic.Page
 
         #region Page
 
-        public void New()
-        {
-            var page = new XPage()
-            {
-                Name = DefaultPageName,
-                Shapes = new List<IShape>(),
-                Blocks = new List<IShape>(),
-                Pins = new List<IShape>(),
-                Wires = new List<IShape>(),
-                Template = null
-            };
-            Snapshot();
-            Layers.Load(page);
-            Layers.Invalidate();
-        }
-
-        public XPage Open(string path)
+        public IProject Open(string path)
         {
             try
             {
                 using (var fs = System.IO.File.OpenText(path))
                 {
                     var json = fs.ReadToEnd();
-                    var page = Serializer.Deserialize<XPage>(json);
-                    return page;
+                    var project = Serializer.Deserialize<XProject>(json);
+                    return project;
                 }
             }
             catch (Exception ex)
@@ -1940,11 +1926,11 @@ namespace Logic.Page
             return null;
         }
 
-        public void Save(string path, XPage page)
+        public void Save(string path, IProject project)
         {
             try
             {
-                var json = Serializer.Serialize(page);
+                var json = Serializer.Serialize(project);
                 using (var fs = System.IO.File.CreateText(path))
                 {
                     fs.Write(json);
@@ -1959,21 +1945,23 @@ namespace Logic.Page
             }
         }
 
-        public void Load(string path)
+        public IProject Load(string path)
         {
-            var page = Open(path);
-            if (page != null)
+            var project = Open(path);
+            if (project != null)
             {
                 SelectionReset();
-                Snapshot();
-                Layers.Load(page);
+                Reset();
+                //Layers.Load(page);
                 Layers.Invalidate();
             }
+            return project;
         }
 
-        public void Save(string path)
+        public void Load(IPage page)
         {
-            Save(path, Layers.ToPage(DefaultPageName, null));
+            SelectionReset();
+            Layers.Load(page);
         }
 
         #endregion
@@ -2007,11 +1995,12 @@ namespace Logic.Page
         {
             if (History != null && Layers != null)
             {
-                var page = History.Undo(Layers.ToPage(DefaultPageName, null));
+                var page = History.Undo(Layers.ToPage(Defaults.PageName, null));
                 if (page != null)
                 {
                     SelectionReset();
                     Layers.Load(page);
+                    Layers.Update(page);
                     Layers.Invalidate();
                 }
             }
@@ -2021,11 +2010,12 @@ namespace Logic.Page
         {
             if (History != null && Layers != null)
             {
-                var page = History.Redo(Layers.ToPage(DefaultPageName, null));
+                var page = History.Redo(Layers.ToPage(Defaults.PageName, null));
                 if (page != null)
                 {
                     SelectionReset();
                     Layers.Load(page);
+                    Layers.Update(page);
                     Layers.Invalidate();
                 }
             }
@@ -2137,8 +2127,8 @@ namespace Logic.Page
             var block = new XBlock()
             {
                 Name = name,
-                Shapes = new List<IShape>(),
-                Pins = new List<XPin>()
+                Shapes = new ObservableCollection<IShape>(),
+                Pins = new ObservableCollection<XPin>()
             };
 
             foreach (var shape in shapes)

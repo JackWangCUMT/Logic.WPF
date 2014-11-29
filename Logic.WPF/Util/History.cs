@@ -16,6 +16,19 @@ namespace Logic.Util
 
         private byte[] _hold = null;
 
+        public void Reset()
+        {
+            if (_undos.Count > 0)
+            {
+                _undos.Clear();
+            }
+
+            if (_redos.Count > 0)
+            {
+                _redos.Clear();
+            }
+        }
+
         public void Hold(T obj)
         {
             _hold = _bson.Serialize(obj);
