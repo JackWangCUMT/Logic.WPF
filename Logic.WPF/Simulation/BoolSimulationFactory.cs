@@ -25,7 +25,7 @@ namespace Logic.Simulation
             { "SR-RESET-V", (block) => { return new MemorySetResetSimulation(MemoryPriority.Reset); } },
             { "SR-SET", (block) => { return new MemorySetResetSimulation(MemoryPriority.Set); } },
             { "SR-SET-V", (block) => { return new MemorySetResetSimulation(MemoryPriority.Set); } },
-             // Shortcut
+            // Shortcut
             { "SHORTCUT", (block) => { return new ShortcutSimulation(); } },
             // Signal
             { "SIGNAL", (block) => { return new SignalSimulation(false); } },
