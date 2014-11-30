@@ -485,7 +485,7 @@ namespace Logic.WPF.Views
             Model.Layers.Editor.Clipboard = new NativeTextClipboard();
 
             // history
-            Model.Layers.Editor.History = new History<IPage>();
+            Model.Layers.Editor.History = new History<IPage>(new Bson());
 
             // tool
             Model.Layers.Tool = Model.Tool;
