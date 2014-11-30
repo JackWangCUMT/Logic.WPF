@@ -1952,7 +1952,6 @@ namespace Logic.Page
             {
                 SelectionReset();
                 Reset();
-                //Layers.Load(page);
                 Layers.Invalidate();
             }
             return project;
