@@ -46,12 +46,12 @@ namespace Logic.Page
         {
             return new XPage()
             {
-                Name = name,
+                Name = Model.Page.Name,
                 Shapes = Model.Page.Shapes,
                 Blocks = Model.Page.Blocks,
                 Pins = Model.Page.Pins,
                 Wires = Model.Page.Wires,
-                Template = template
+                Template = null
             };
         } 
 
