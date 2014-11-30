@@ -42,7 +42,7 @@ namespace Logic.Page
 
         #region Page
 
-        public IPage ToPage(string name, ITemplate template)
+        public IPage ToPage()
         {
             return new XPage()
             {

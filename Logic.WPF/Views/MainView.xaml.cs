@@ -1494,7 +1494,7 @@ namespace Logic.WPF.Views
         {
             try
             {
-                IPage temp = Model.Layers.ToPage(Defaults.PageName, null);
+                IPage temp = Model.Layers.ToPage();
                 if (temp != null)
                 {
                     var context = PageGraph.Create(temp);
@@ -1596,7 +1596,7 @@ namespace Logic.WPF.Views
                     return;
                 }
 
-                IPage temp = Model.Layers.ToPage(Defaults.PageName, null);
+                IPage temp = Model.Layers.ToPage();
                 if (temp != null)
                 {
                     var context = PageGraph.Create(temp);

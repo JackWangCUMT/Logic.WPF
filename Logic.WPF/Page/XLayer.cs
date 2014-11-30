@@ -103,7 +103,7 @@ namespace Logic.Page
         {
             if (History != null && Layers != null)
             {
-                History.Snapshot(Layers.ToPage(Defaults.PageName, null));
+                History.Snapshot(Layers.ToPage());
             }
         }
 
@@ -473,7 +473,7 @@ namespace Logic.Page
         {
             if (History != null && Layers != null)
             {
-                History.Hold(Layers.ToPage(Defaults.PageName, null));
+                History.Hold(Layers.ToPage());
             }
 
             _startx = EnableSnap ? Snap(p.X, SnapSize) : p.X;
@@ -1995,7 +1995,7 @@ namespace Logic.Page
         {
             if (History != null && Layers != null)
             {
-                var page = History.Undo(Layers.ToPage(Defaults.PageName, null));
+                var page = History.Undo(Layers.ToPage());
                 if (page != null)
                 {
                     SelectionReset();
@@ -2010,7 +2010,7 @@ namespace Logic.Page
         {
             if (History != null && Layers != null)
             {
-                var page = History.Redo(Layers.ToPage(Defaults.PageName, null));
+                var page = History.Redo(Layers.ToPage());
                 if (page != null)
                 {
                     SelectionReset();
