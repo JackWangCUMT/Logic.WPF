@@ -829,12 +829,6 @@ namespace Logic.WPF.Views
                     .FirstOrDefault();
             }
 
-            // page
-            //writer.Create(
-            //    path, 
-            //    Model.Layers.ToPage(Defaults.PageName, _template));
-
-            // project
             writer.Create(
                 path,
                 Model.Project.Documents.SelectMany(d => d.Pages));
