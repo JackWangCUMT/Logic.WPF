@@ -10,17 +10,17 @@ namespace Gates.Or
     {
         public Or()
         {
-            base.Database = new List<KeyValuePair<string, XProperty>>();
+            base.Database = new List<KeyValuePair<string, IProperty>>();
             base.Shapes = new List<IShape>();
             base.Pins = new List<XPin>();
 
             base.Name = "OR";
 
-            var prefixProperty = new XProperty("≥");
-            base.Database.Add(new KeyValuePair<string, XProperty>("Prefix", prefixProperty));
+            IProperty prefixProperty = new XProperty("≥");
+            base.Database.Add(new KeyValuePair<string, IProperty>("Prefix", prefixProperty));
 
-            XProperty counterProperty = new XProperty("1");
-            base.Database.Add(new KeyValuePair<string, XProperty>("Counter", counterProperty));
+            IProperty counterProperty = new XProperty("1");
+            base.Database.Add(new KeyValuePair<string, IProperty>("Counter", counterProperty));
 
             base.Shapes.Add(
                 new XText()

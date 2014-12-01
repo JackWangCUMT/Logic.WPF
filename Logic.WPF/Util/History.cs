@@ -1,24 +1,39 @@
 ﻿using Logic.Core;
-using Logic.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Logic.Util
 {
     public class History<T> where T : class
     {
-        private IBinarySerializer _bson = new Bson();
+        private IBinarySerializer _serializer;
         private Stack<byte[]> _undos = new Stack<byte[]>();
         private Stack<byte[]> _redos = new Stack<byte[]>();
-
         private byte[] _hold = null;
+
+        public History(IBinarySerializer serializer)
+        {
+            this._serializer = serializer;
+        }
+
+        public void Reset()
+        {
+            if (_undos.Count > 0)
+            {
+                _undos.Clear();
+            }
+
+            if (_redos.Count > 0)
+            {
+                _redos.Clear();
+            }
+        }
 
         public void Hold(T obj)
         {
-            _hold = _bson.Serialize(obj);
+            _hold = _serializer.Serialize(obj);
         }
 
         public void Commit()
@@ -33,7 +48,7 @@ namespace Logic.Util
 
         public void Snapshot(T obj)
         {
-            Snapshot(_bson.Serialize(obj));
+            Snapshot(_serializer.Serialize(obj));
         }
 
         private void Snapshot(byte[] bson)
@@ -52,11 +67,11 @@ namespace Logic.Util
         {
             if (CanUndo())
             {
-                var bson = _bson.Serialize(current);
+                var bson = _serializer.Serialize(current);
                 if (bson != null)
                 {
                     _redos.Push(bson);
-                    return _bson.Deserialize<T>(_undos.Pop());
+                    return _serializer.Deserialize<T>(_undos.Pop());
                 }
             }
             return null;
@@ -66,11 +81,11 @@ namespace Logic.Util
         {
             if (CanRedo())
             {
-                var bson = _bson.Serialize(current);
+                var bson = _serializer.Serialize(current);
                 if (bson != null)
                 {
                     _undos.Push(bson);
-                    return _bson.Deserialize<T>(_redos.Pop()); 
+                    return _serializer.Deserialize<T>(_redos.Pop()); 
                 }
             }
             return null;

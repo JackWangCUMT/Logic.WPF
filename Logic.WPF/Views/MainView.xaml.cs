@@ -36,8 +36,6 @@ namespace Logic.WPF.Views
         #region Properties
 
         public MainViewModel Model { get; set; }
-        public IProject Project { get; set; }
-        public IDocument Document { get; set; }
 
         #endregion
 
@@ -45,7 +43,6 @@ namespace Logic.WPF.Views
 
         private IStringSerializer _serializer = null;
         private IRenderer _renderer = null;
-        private ITemplate _template = null;
         private Point _dragStartPoint;
         private bool _isContextMenu = false;
         private System.Threading.Timer _timer = null;
@@ -60,9 +57,10 @@ namespace Logic.WPF.Views
             InitializeComponent();
 
             InitializeModel();
-            InitializePage();
+            InitializeView();
             InitializeBlocks();
             InitializeMEF();
+            InitializeProject();
         }
 
         #endregion
@@ -80,6 +78,66 @@ namespace Logic.WPF.Views
             Model.FilePath = null;
 
             Model.Tool = new ToolMenuModel();
+
+            Model.PageAddCommand = new NativeCommand(
+                (parameter) => this.PageAdd(parameter),
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.PageInsertBeforeCommand = new NativeCommand(
+                (parameter) => { throw new NotImplementedException(); },
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.PageInsertAfterCommand = new NativeCommand(
+                (parameter) => { throw new NotImplementedException(); },
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.PageCutCommand = new NativeCommand(
+                (parameter) => { throw new NotImplementedException(); },
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.PageCopyCommand = new NativeCommand(
+                (parameter) => { throw new NotImplementedException(); },
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.PagePasteCommand = new NativeCommand(
+                (parameter) => { throw new NotImplementedException(); },
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.PageDeleteCommand = new NativeCommand(
+                (parameter) => this.PageDelete(parameter),
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.DocumentAddCommand = new NativeCommand(
+                (parameter) => this.DocumentAdd(parameter),
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.DocumentInsertBeforeCommand = new NativeCommand(
+                (parameter) => { throw new NotImplementedException(); },
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.DocumentInsertAfterCommand = new NativeCommand(
+                (parameter) => { throw new NotImplementedException(); },
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.DocumentCutCommand = new NativeCommand(
+                (parameter) => { throw new NotImplementedException(); },
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.DocumentCopyCommand = new NativeCommand(
+                (parameter) => { throw new NotImplementedException(); },
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.DocumentPasteCommand = new NativeCommand(
+                (parameter) => { throw new NotImplementedException(); },
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.DocumentDeleteCommand = new NativeCommand(
+                (parameter) => this.DocumentDelete(parameter),
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            Model.SelectedItemChangedCommand = new NativeCommand(
+                (parameter) => this.PageUpdateView(parameter),
+                (parameter) => IsSimulationRunning() ? false : true);
 
             Model.FileNewCommand = new NativeCommand(
                 (parameter) => this.FileNew(),
@@ -377,113 +435,7 @@ namespace Logic.WPF.Views
                 (parameter) => IsSimulationRunning() ? false : true);
         }
 
-        private void InitializeProject()
-        {
-            // project
-            Project = new XProject()
-            {
-                Name = "Project",
-                Styles = new ObservableCollection<IStyle>(),
-                Templates = new ObservableCollection<ITemplate>(),
-                Documents = new ObservableCollection<IDocument>()
-            };
-
-            // styles
-            IStyle shapeStyle = new XStyle(
-                name: "Shape",
-                fill: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
-                stroke: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
-                thickness: 2.0);
-            Project.Styles.Add(shapeStyle);
-
-            IStyle selectedShapeStyle = new XStyle(
-                name: "Selected",
-                fill: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
-                stroke: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
-                thickness: 2.0);
-            Project.Styles.Add(selectedShapeStyle);
-
-            IStyle selectionStyle = new XStyle(
-                name: "Selection",
-                fill: new XColor() { A = 0x1F, R = 0x00, G = 0x00, B = 0xFF },
-                stroke: new XColor() { A = 0x9F, R = 0x00, G = 0x00, B = 0xFF },
-                thickness: 1.0);
-            Project.Styles.Add(selectionStyle);
-
-            IStyle hoverStyle = new XStyle(
-                name: "Overlay",
-                fill: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
-                stroke: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
-                thickness: 2.0);
-            Project.Styles.Add(hoverStyle);
-
-            IStyle nullStateStyle = new XStyle(
-                name: "NullState",
-                fill: new XColor() { A = 0xFF, R = 0x66, G = 0x66, B = 0x66 },
-                stroke: new XColor() { A = 0xFF, R = 0x66, G = 0x66, B = 0x66 },
-                thickness: 2.0);
-            Project.Styles.Add(nullStateStyle);
-
-            IStyle trueStateStyle = new XStyle(
-                name: "TrueState",
-                fill: new XColor() { A = 0xFF, R = 0xFF, G = 0x14, B = 0x93 },
-                stroke: new XColor() { A = 0xFF, R = 0xFF, G = 0x14, B = 0x93 },
-                thickness: 2.0);
-            Project.Styles.Add(trueStateStyle);
-
-            IStyle falseStateStyle = new XStyle(
-                name: "FalseState",
-                fill: new XColor() { A = 0xFF, R = 0x00, G = 0xBF, B = 0xFF },
-                stroke: new XColor() { A = 0xFF, R = 0x00, G = 0xBF, B = 0xFF },
-                thickness: 2.0);
-            Project.Styles.Add(falseStateStyle);
-
-            // templates
-            Project.Templates.Add(new LogicPageTemplate());
-            Project.Templates.Add(new ScratchpadPageTemplate());
-
-            // documents
-            Document = new XDocument()
-            {
-                Name = "Document",
-                Pages = new ObservableCollection<IPage>()
-            };
-            Project.Documents.Add(Document);
-
-            // pages
-            Document.Pages.Add(
-                new XPage()
-                {
-                    Name = XLayer.DefaultPageName,
-                    Shapes = new List<IShape>(),
-                    Blocks = new List<IShape>(),
-                    Pins = new List<IShape>(),
-                    Wires = new List<IShape>(),
-                    Template = null
-                });
-
-            // layers
-            var layers = new List<XLayer>();
-            layers.Add(Model.Layers.Shapes);
-            layers.Add(Model.Layers.Blocks);
-            layers.Add(Model.Layers.Wires);
-            layers.Add(Model.Layers.Pins);
-            layers.Add(Model.Layers.Editor);
-            layers.Add(Model.Layers.Overlay);
-
-            foreach (var layer in layers)
-            {
-                layer.ShapeStyle = shapeStyle;
-                layer.SelectedShapeStyle = selectedShapeStyle;
-                layer.SelectionStyle = selectionStyle;
-                layer.HoverStyle = hoverStyle;
-                layer.NullStateStyle = nullStateStyle;
-                layer.TrueStateStyle = trueStateStyle;
-                layer.FalseStateStyle = falseStateStyle;
-            }
-        }
-
-        private void InitializePage()
+        private void InitializeView()
         {
             // layers
             Model.Layers = new XLayers();
@@ -494,8 +446,7 @@ namespace Logic.WPF.Views
             Model.Layers.Editor = pageView.editorLayer.Layer;
             Model.Layers.Overlay = pageView.overlayLayer.Layer;
 
-            // project
-            InitializeProject();
+            Model.Layers.Model = Model;
 
             // editor
             Model.Layers.Editor.Layers = Model.Layers;
@@ -530,18 +481,15 @@ namespace Logic.WPF.Views
             Model.Layers.Editor.Renderer = _renderer;
             Model.Layers.Overlay.Renderer = _renderer;
 
-            // template
-            TemplateApply(new LogicPageTemplate(), _renderer);
-
             // clipboard
             Model.Layers.Editor.Clipboard = new NativeTextClipboard();
 
             // history
-            Model.Layers.Editor.History = new History<XPage>();
+            Model.Layers.Editor.History = new History<IPage>(new Bson());
 
             // tool
-            Model.Layers.Editor.Tool = Model.Tool;
-            Model.Layers.Editor.Tool.CurrentTool = ToolMenuModel.Tool.Selection;
+            Model.Layers.Tool = Model.Tool;
+            Model.Layers.Tool.CurrentTool = ToolMenuModel.Tool.Selection;
 
             // drag & drop
             pageView.editorLayer.AllowDrop = true;
@@ -598,9 +546,7 @@ namespace Logic.WPF.Views
                             string path = files[0];
                             if (!string.IsNullOrEmpty(path))
                             {
-                                Model.Layers.Editor.Load(path);
-                                Model.FileName = System.IO.Path.GetFileNameWithoutExtension(path);
-                                Model.FilePath = path;
+                                FileOpen(path);
                                 e.Handled = true;
                             }
                         }
@@ -618,11 +564,7 @@ namespace Logic.WPF.Views
             // context menu
             pageView.ContextMenuOpening += (s, e) =>
             {
-                if (IsSimulationRunning())
-                {
-                    e.Handled = true;
-                }
-                else if (Model.Layers.Editor.CurrentMode != XLayer.Mode.None)
+                if (Model.Layers.Editor.CurrentMode != XLayer.Mode.None)
                 {
                     e.Handled = true;
                 }
@@ -633,7 +575,8 @@ namespace Logic.WPF.Views
                 }
                 else
                 {
-                    if (_renderer.Selected == null)
+                    if (_renderer.Selected == null 
+                        && !IsSimulationRunning())
                     {
                         Point2 point = new Point2(
                             Model.Layers.Editor.RightX,
@@ -753,13 +696,26 @@ namespace Logic.WPF.Views
             this.DataContext = Model;
         }
 
+        private void InitializeProject()
+        {
+            Model.Project = NewProject();
+
+            Model.Project.Documents.Add(Defaults.EmptyDocument());
+            Model.Project.Documents[0].Pages.Add(Defaults.EmptyPage());
+
+            UpdateStyles(Model.Project);
+            SetDefaultTemplate(Model.Project);
+            LoadFirstPage(Model.Project);
+        }
+
         #endregion
 
         #region File
 
         private void FileNew()
         {
-            Model.Layers.Editor.New();
+            InitializeProject();
+
             Model.FileName = null;
             Model.FilePath = null;
         }
@@ -768,14 +724,25 @@ namespace Logic.WPF.Views
         {
             var dlg = new Microsoft.Win32.OpenFileDialog()
             {
-                Filter = "Json (*.json)|*.json"
+                Filter = "Logic Project (*.lproject)|*.lproject"
             };
 
             if (dlg.ShowDialog(this) == true)
             {
-                Model.Layers.Editor.Load(dlg.FileName);
-                Model.FileName = System.IO.Path.GetFileNameWithoutExtension(dlg.FileName);
-                Model.FilePath = dlg.FileName;
+                FileOpen(dlg.FileName);
+            }
+        }
+
+        private void FileOpen(string path)
+        {
+            var project = Model.Layers.Editor.Load(path);
+            if (project != null)
+            {
+                Model.Project = project;
+                Model.FileName = System.IO.Path.GetFileNameWithoutExtension(path);
+                Model.FilePath = path;
+                UpdateStyles(project);
+                LoadFirstPage(project);
             }
         }
 
@@ -783,7 +750,9 @@ namespace Logic.WPF.Views
         {
             if (!string.IsNullOrEmpty(Model.FilePath))
             {
-                Model.Layers.Editor.Save(Model.FilePath);
+                Model.Layers.Editor.Save(
+                    Model.FilePath, 
+                    Model.Project);
             }
             else
             {
@@ -794,17 +763,17 @@ namespace Logic.WPF.Views
         private void FileSaveAs()
         {
             string fileName = string.IsNullOrEmpty(Model.FilePath) ?
-                "shapes" : System.IO.Path.GetFileName(Model.FilePath);
+                "logic" : System.IO.Path.GetFileName(Model.FilePath);
 
             var dlg = new Microsoft.Win32.SaveFileDialog()
             {
-                Filter = "Json (*.json)|*.json",
+                Filter = "Logic Project (*.lproject)|*.lproject",
                 FileName = fileName
             };
 
             if (dlg.ShowDialog(this) == true)
             {
-                Model.Layers.Editor.Save(dlg.FileName);
+                Model.Layers.Editor.Save(dlg.FileName, Model.Project);
                 Model.FileName = System.IO.Path.GetFileNameWithoutExtension(dlg.FileName);
                 Model.FilePath = dlg.FileName;
             }
@@ -813,7 +782,7 @@ namespace Logic.WPF.Views
         private void FileSaveAsPDF()
         {
             string fileName = string.IsNullOrEmpty(Model.FilePath) ?
-                "shapes" : System.IO.Path.GetFileNameWithoutExtension(Model.FilePath);
+                "logic" : System.IO.Path.GetFileNameWithoutExtension(Model.FilePath);
 
             var dlg = new Microsoft.Win32.SaveFileDialog()
             {
@@ -851,31 +820,239 @@ namespace Logic.WPF.Views
 
             if (ignoreStyles)
             {
-                // template shapes style override
-                var templateStyle = new XPdfStyle(
-                    name: "Template",
-                    fill: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
-                    stroke: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
-                    thickness: 0.80);
+                writer.TemplateStyleOverride = Model.Project.Styles
+                    .Where(s => s.Name == "TemplateOverride")
+                    .FirstOrDefault();
 
-                // layer shapes style override
-                var layerStyle = new XPdfStyle(
-                    name: "Layer",
-                    fill: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
-                    stroke: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
-                    thickness: 1.50);
-
-                writer.TemplateStyleOverride = templateStyle;
-                writer.LayerStyleOverride = layerStyle;
+                writer.LayerStyleOverride = Model.Project.Styles
+                    .Where(s => s.Name == "LayerOverride")
+                    .FirstOrDefault();
             }
 
-            var page = Model.Layers.ToPage(
-                XLayer.DefaultPageName, 
-                _template);
-
-            writer.Create(path, page);
+            writer.Create(
+                path,
+                Model.Project.Documents.SelectMany(d => d.Pages));
 
             System.Diagnostics.Process.Start(path);
+        }
+
+        #endregion
+
+        #region Project
+
+        private IProject NewProject()
+        {
+            // project
+            var project = Defaults.EmptyProject();
+
+            // layer styles
+            IStyle shapeStyle = new XStyle(
+                name: "Shape",
+                fill: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
+                stroke: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
+                thickness: 2.0);
+            project.Styles.Add(shapeStyle);
+
+            IStyle selectedShapeStyle = new XStyle(
+                name: "Selected",
+                fill: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
+                stroke: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
+                thickness: 2.0);
+            project.Styles.Add(selectedShapeStyle);
+
+            IStyle selectionStyle = new XStyle(
+                name: "Selection",
+                fill: new XColor() { A = 0x1F, R = 0x00, G = 0x00, B = 0xFF },
+                stroke: new XColor() { A = 0x9F, R = 0x00, G = 0x00, B = 0xFF },
+                thickness: 1.0);
+            project.Styles.Add(selectionStyle);
+
+            IStyle hoverStyle = new XStyle(
+                name: "Overlay",
+                fill: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
+                stroke: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
+                thickness: 2.0);
+            project.Styles.Add(hoverStyle);
+
+            // simulation styles
+            IStyle nullStateStyle = new XStyle(
+                name: "NullState",
+                fill: new XColor() { A = 0xFF, R = 0x66, G = 0x66, B = 0x66 },
+                stroke: new XColor() { A = 0xFF, R = 0x66, G = 0x66, B = 0x66 },
+                thickness: 2.0);
+            project.Styles.Add(nullStateStyle);
+
+            IStyle trueStateStyle = new XStyle(
+                name: "TrueState",
+                fill: new XColor() { A = 0xFF, R = 0xFF, G = 0x14, B = 0x93 },
+                stroke: new XColor() { A = 0xFF, R = 0xFF, G = 0x14, B = 0x93 },
+                thickness: 2.0);
+            project.Styles.Add(trueStateStyle);
+
+            IStyle falseStateStyle = new XStyle(
+                name: "FalseState",
+                fill: new XColor() { A = 0xFF, R = 0x00, G = 0xBF, B = 0xFF },
+                stroke: new XColor() { A = 0xFF, R = 0x00, G = 0xBF, B = 0xFF },
+                thickness: 2.0);
+            project.Styles.Add(falseStateStyle);
+
+            // export override styles
+            IStyle templateStyle = new XPdfStyle(
+                name: "TemplateOverride",
+                fill: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
+                stroke: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
+                thickness: 0.80);
+            project.Styles.Add(templateStyle);
+
+            IStyle layerStyle = new XPdfStyle(
+                name: "LayerOverride",
+                fill: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
+                stroke: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
+                thickness: 1.50);
+            project.Styles.Add(layerStyle);
+            
+            // templates
+            project.Templates.Add(ToXTemplate(new LogicPageTemplate()));
+            project.Templates.Add(ToXTemplate(new ScratchpadPageTemplate()));
+
+            return project;
+        }
+
+        private void UpdateStyles(IProject project)
+        {
+            var layers = new List<XLayer>();
+            layers.Add(Model.Layers.Shapes);
+            layers.Add(Model.Layers.Blocks);
+            layers.Add(Model.Layers.Wires);
+            layers.Add(Model.Layers.Pins);
+            layers.Add(Model.Layers.Editor);
+            layers.Add(Model.Layers.Overlay);
+
+            foreach (var layer in layers)
+            {
+                layer.ShapeStyle = project.Styles.Where(s => s.Name == "Shape").FirstOrDefault();
+                layer.SelectedShapeStyle = project.Styles.Where(s => s.Name == "Selected").FirstOrDefault();
+                layer.SelectionStyle = project.Styles.Where(s => s.Name == "Selection").FirstOrDefault();
+                layer.HoverStyle = project.Styles.Where(s => s.Name == "Overlay").FirstOrDefault();
+                layer.NullStateStyle = project.Styles.Where(s => s.Name == "NullState").FirstOrDefault();
+                layer.TrueStateStyle = project.Styles.Where(s => s.Name == "TrueState").FirstOrDefault();
+                layer.FalseStateStyle = project.Styles.Where(s => s.Name == "FalseState").FirstOrDefault();
+            }
+        }
+
+        private void SetDefaultTemplate(IProject project)
+        {
+            foreach (var document in project.Documents)
+            {
+                foreach (var page in document.Pages)
+                {
+                    page.Template = project.Templates[0];
+                }
+            }
+        }
+
+        private void LoadFirstPage(IProject project)
+        {
+            if (project.Documents != null &&
+                project.Documents.Count > 0)
+            {
+                var document = project.Documents.FirstOrDefault();
+                if (document != null
+                    && document.Pages != null
+                    && document.Pages.Count > 0)
+                {
+                    PageLoad(document.Pages.First());
+                }
+            }
+        }
+
+        #endregion
+
+        #region Document
+
+        private void DocumentAdd(object parameter)
+        {
+            if (parameter is MainViewModel)
+            {
+                IDocument document = Defaults.EmptyDocument();
+                document.IsActive = true;
+                Model.Project.Documents.Add(document);
+            }
+        }
+
+        private void DocumentDelete(object parameter)
+        {
+            if (parameter is IDocument)
+            {
+                IDocument document = parameter as IDocument;
+                Model.Project.Documents.Remove(document);
+
+                Model.Page = null;
+                Model.Layers.Reset();
+                Model.Layers.Editor.Reset();
+                Model.Layers.Invalidate();
+                TemplateReset();
+                TemplateInvalidate();
+            }
+        }
+
+        #endregion
+
+        #region Page
+
+        private void PageUpdateView(object parameter)
+        {
+            if (parameter is IPage)
+            {
+                PageLoad(parameter as IPage);
+            }
+        }
+
+        private void PageLoad(IPage page)
+        {
+            page.IsActive = true;
+            Model.Layers.Editor.Reset();
+            Model.Layers.Editor.SelectionReset();
+            Model.Page = page;
+            Model.Layers.Load(page);
+            Model.Layers.Invalidate();
+            TemplateApply(page.Template, _renderer);
+        }
+
+        private void PageAdd(object parameter)
+        {
+            if (parameter is IDocument)
+            {
+                IDocument document = parameter as IDocument;
+                IPage page = Defaults.EmptyPage();
+                page.Template = Model.Project.Templates[0];
+                page.IsActive = true;
+                document.Pages.Add(page);
+                PageLoad(page);
+            }
+        }
+
+        private void PageDelete(object parameter)
+        {
+            if (parameter is IPage)
+            {
+                IPage page = parameter as IPage;
+                IDocument document = Model
+                    .Project
+                    .Documents
+                    .Where(d => d.Pages.Contains(page)).FirstOrDefault();
+                if (document != null && document.Pages != null)
+                {
+                    document.Pages.Remove(page);
+
+                    Model.Page = null;
+                    Model.Layers.Reset();
+                    Model.Layers.Editor.Reset();
+                    Model.Layers.Invalidate();
+                    TemplateReset();
+                    TemplateInvalidate();
+                }
+            }
         }
 
         #endregion
@@ -896,7 +1073,7 @@ namespace Logic.WPF.Views
         {
             var dlg = new Microsoft.Win32.OpenFileDialog()
             {
-                Filter = "Json (*.json)|*.json"
+                Filter = "Logic Block (*.lblock)|*.lblock"
             };
 
             if (dlg.ShowDialog(this) == true)
@@ -1011,7 +1188,7 @@ namespace Logic.WPF.Views
 
         private void BlocksImport(string csharp)
         {
-            var part = new BlockPart() { Blocks = new List<XBlock>() };
+            var part = new BlockPart() { Blocks = new ObservableCollection<XBlock>() };
             bool result = CSharpCodeImporter.Import<XBlock>(csharp, part);
             if (result == true)
             {
@@ -1050,7 +1227,7 @@ namespace Logic.WPF.Views
             {
                 var dlg = new Microsoft.Win32.SaveFileDialog()
                 {
-                    Filter = "Json (*.json)|*.json",
+                    Filter = "Logic Block (*.lblock)|*.lblock",
                     FileName = "block"
                 };
 
@@ -1099,8 +1276,18 @@ namespace Logic.WPF.Views
             pageView.tableView.Renderer = renderer;
             pageView.frameView.Renderer = renderer;
 
-            _template = template;
+            TemplateInvalidate();
+        }
 
+        private void TemplateReset()
+        {
+            pageView.gridView.Container = null;
+            pageView.tableView.Container = null;
+            pageView.frameView.Container = null;
+        }
+
+        private void TemplateInvalidate()
+        {
             pageView.gridView.InvalidateVisual();
             pageView.tableView.InvalidateVisual();
             pageView.frameView.InvalidateVisual();
@@ -1110,7 +1297,7 @@ namespace Logic.WPF.Views
         {
             var dlg = new Microsoft.Win32.OpenFileDialog()
             {
-                Filter = "Json (*.json)|*.json"
+                Filter = "Logic Template (*.ltemplate)|*.ltemplate"
             };
 
             if (dlg.ShowDialog(this) == true)
@@ -1164,7 +1351,7 @@ namespace Logic.WPF.Views
 
         private void TemplatesImport(string csharp)
         {
-            var part = new TemplatePart() { Templates = new List<ITemplate>() };
+            var part = new TemplatePart() { Templates = new ObservableCollection<ITemplate>() };
             bool result = CSharpCodeImporter.Import<ITemplate>(csharp, part);
             if (result == true)
             {
@@ -1200,20 +1387,20 @@ namespace Logic.WPF.Views
         {
             var dlg = new Microsoft.Win32.SaveFileDialog()
             {
-                Filter = "Json (*.json)|*.json",
-                FileName = _template.Name
+                Filter = "Logic Template (*.ltemplate)|*.ltemplate",
+                FileName = Model.Page.Template.Name
             };
 
             if (dlg.ShowDialog(this) == true)
             {
-                var template = TemplateCreate(_template);
+                var template = ToXTemplate(Model.Page.Template);
                 var path = dlg.FileName;
                 TemplateSave(path, template);
                 System.Diagnostics.Process.Start("notepad", path);
             }
         }
 
-        private XTemplate TemplateCreate(ITemplate template)
+        private XTemplate ToXTemplate(ITemplate template)
         {
             return new XTemplate()
             {
@@ -1222,18 +1409,18 @@ namespace Logic.WPF.Views
                 Name = template.Name,
                 Grid = new XContainer()
                 {
-                    Styles = new List<IStyle>(template.Grid.Styles),
-                    Shapes = new List<IShape>(template.Grid.Shapes)
+                    Styles = new ObservableCollection<IStyle>(template.Grid.Styles),
+                    Shapes = new ObservableCollection<IShape>(template.Grid.Shapes)
                 },
                 Table = new XContainer()
                 {
-                    Styles = new List<IStyle>(template.Table.Styles),
-                    Shapes = new List<IShape>(template.Table.Shapes)
+                    Styles = new ObservableCollection<IStyle>(template.Table.Styles),
+                    Shapes = new ObservableCollection<IShape>(template.Table.Shapes)
                 },
                 Frame = new XContainer()
                 {
-                    Styles = new List<IStyle>(template.Frame.Styles),
-                    Shapes = new List<IShape>(template.Frame.Shapes)
+                    Styles = new ObservableCollection<IStyle>(template.Frame.Styles),
+                    Shapes = new ObservableCollection<IShape>(template.Frame.Shapes)
                 }
             };
         }
@@ -1301,7 +1488,7 @@ namespace Logic.WPF.Views
         {
             try
             {
-                XPage temp = Model.Layers.ToPage(XLayer.DefaultPageName, null);
+                IPage temp = Model.Layers.ToPage();
                 if (temp != null)
                 {
                     var context = PageGraph.Create(temp);
@@ -1403,7 +1590,7 @@ namespace Logic.WPF.Views
                     return;
                 }
 
-                XPage temp = Model.Layers.ToPage(XLayer.DefaultPageName, null);
+                IPage temp = Model.Layers.ToPage();
                 if (temp != null)
                 {
                     var context = PageGraph.Create(temp);

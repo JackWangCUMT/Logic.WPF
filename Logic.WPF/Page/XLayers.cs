@@ -1,5 +1,6 @@
 ﻿using Logic.Core;
 using Logic.Util;
+using Logic.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,9 @@ namespace Logic.Page
 
         #region Properties
 
+        public MainViewModel Model { get; set; }
+        public ToolMenuModel Tool { get; set; }
+
         public XLayer Shapes { get; set; }
         public XLayer Blocks { get; set; }
         public XLayer Wires { get; set; }
@@ -36,26 +40,22 @@ namespace Logic.Page
 
         #endregion
 
-        #region ToPage
+        #region Page
 
-        public XPage ToPage(string name, ITemplate template)
+        public IPage ToPage()
         {
             return new XPage()
             {
-                Name = name,
-                Shapes = Shapes.Shapes,
-                Blocks = Blocks.Shapes,
-                Pins = Pins.Shapes,
-                Wires = Wires.Shapes,
-                Template = template
+                Name = Model.Page.Name,
+                Shapes = Model.Page.Shapes,
+                Blocks = Model.Page.Blocks,
+                Pins = Model.Page.Pins,
+                Wires = Model.Page.Wires,
+                Template = null
             };
         } 
 
-        #endregion
-
-        #region Load
-
-        public void Load(XPage page)
+        public void Load(IPage page)
         {
             Shapes.Shapes = page.Shapes;
             Blocks.Shapes = page.Blocks;
@@ -64,6 +64,22 @@ namespace Logic.Page
 
             Editor.Shapes.Clear();
             Overlay.Shapes.Clear();
+        }
+
+        public void Update(IPage page)
+        {
+            Model.Page.Shapes = page.Shapes;
+            Model.Page.Blocks = page.Blocks;
+            Model.Page.Wires = page.Wires;
+            Model.Page.Pins = page.Pins;
+        }
+
+        public void Reset()
+        {
+            Shapes.Shapes = Enumerable.Empty<IShape>().ToList();
+            Blocks.Shapes = Enumerable.Empty<IShape>().ToList();
+            Wires.Shapes = Enumerable.Empty<IShape>().ToList();
+            Pins.Shapes = Enumerable.Empty<IShape>().ToList();
         }
 
         #endregion

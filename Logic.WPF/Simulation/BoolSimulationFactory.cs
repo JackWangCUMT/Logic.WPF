@@ -25,7 +25,7 @@ namespace Logic.Simulation
             { "SR-RESET-V", (block) => { return new MemorySetResetSimulation(MemoryPriority.Reset); } },
             { "SR-SET", (block) => { return new MemorySetResetSimulation(MemoryPriority.Set); } },
             { "SR-SET-V", (block) => { return new MemorySetResetSimulation(MemoryPriority.Set); } },
-             // Shortcut
+            // Shortcut
             { "SHORTCUT", (block) => { return new ShortcutSimulation(); } },
             // Signal
             { "SIGNAL", (block) => { return new SignalSimulation(false); } },
@@ -66,7 +66,7 @@ namespace Logic.Simulation
 
         private static string GetStringPropertyValue(XBlock block, string key)
         {
-            XProperty property = block.Database.Where(p => p.Key == key).FirstOrDefault().Value;
+            IProperty property = block.Database.Where(p => p.Key == key).FirstOrDefault().Value;
             if (property != null
                 && property.Data != null
                 && property.Data is string)
@@ -81,7 +81,7 @@ namespace Logic.Simulation
 
         private static int GetIntPropertyValue(XBlock block, string key)
         {
-            XProperty property = block.Database.Where(p => p.Key == key).FirstOrDefault().Value;
+            IProperty property = block.Database.Where(p => p.Key == key).FirstOrDefault().Value;
             int value;
             if (property != null
                 && property.Data != null
@@ -101,7 +101,7 @@ namespace Logic.Simulation
 
         private static double GetDoublePropertyValue(XBlock block, string key)
         {
-            XProperty property = block.Database.Where(p => p.Key == key).FirstOrDefault().Value;
+            IProperty property = block.Database.Where(p => p.Key == key).FirstOrDefault().Value;
             double value;
             if (property != null
                 && property.Data != null

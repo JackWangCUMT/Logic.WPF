@@ -10,23 +10,23 @@ namespace Signal
     {
         public Signal()
         {
-            base.Database = new List<KeyValuePair<string, XProperty>>();
+            base.Database = new List<KeyValuePair<string, IProperty>>();
             base.Shapes = new List<IShape>();
             base.Pins = new List<XPin>();
 
             base.Name = "SIGNAL";
 
-            XProperty designationProperty = new XProperty("Designation");
-            base.Database.Add(new KeyValuePair<string, XProperty>("Designation", designationProperty));
+            IProperty designationProperty = new XProperty("Designation");
+            base.Database.Add(new KeyValuePair<string, IProperty>("Designation", designationProperty));
 
-            XProperty descriptionProperty = new XProperty("Description");
-            base.Database.Add(new KeyValuePair<string, XProperty>("Description", descriptionProperty));
+            IProperty descriptionProperty = new XProperty("Description");
+            base.Database.Add(new KeyValuePair<string, IProperty>("Description", descriptionProperty));
 
-            XProperty signalProperty = new XProperty("Signal");
-            base.Database.Add(new KeyValuePair<string, XProperty>("Signal", signalProperty));
+            IProperty signalProperty = new XProperty("Signal");
+            base.Database.Add(new KeyValuePair<string, IProperty>("Signal", signalProperty));
 
-            XProperty conditionProperty = new XProperty("Condition");
-            base.Database.Add(new KeyValuePair<string, XProperty>("Condition", conditionProperty));
+            IProperty conditionProperty = new XProperty("Condition");
+            base.Database.Add(new KeyValuePair<string, IProperty>("Condition", conditionProperty));
 
             base.Shapes.Add(
                 new XText()

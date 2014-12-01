@@ -7,7 +7,7 @@ namespace Logic.Core
 {
     public class XWire : IShape
     {
-        public XProperty[] Properties { get; set; }
+        public IProperty[] Properties { get; set; }
         public IStyle Style { get; set; }
         public double X1 { get; set; }
         public double Y1 { get; set; }

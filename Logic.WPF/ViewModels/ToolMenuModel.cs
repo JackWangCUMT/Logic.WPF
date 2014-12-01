@@ -1,4 +1,5 @@
-﻿using Logic.Util;
+﻿using Logic.Core;
+using Logic.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;

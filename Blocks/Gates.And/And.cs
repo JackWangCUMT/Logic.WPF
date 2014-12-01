@@ -10,14 +10,14 @@ namespace Gates.And
     {
         public And()
         {
-            base.Database = new List<KeyValuePair<string, XProperty>>();
+            base.Database = new List<KeyValuePair<string, IProperty>>();
             base.Shapes = new List<IShape>();
             base.Pins = new List<XPin>();
 
             base.Name = "AND";
 
-            XProperty labelProperty = new XProperty("&");
-            base.Database.Add(new KeyValuePair<string, XProperty>("Label", labelProperty));
+            IProperty labelProperty = new XProperty("&");
+            base.Database.Add(new KeyValuePair<string, IProperty>("Label", labelProperty));
 
             base.Shapes.Add(
                 new XText()

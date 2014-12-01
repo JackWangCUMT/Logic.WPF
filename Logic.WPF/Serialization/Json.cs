@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -46,7 +47,8 @@ namespace Logic.Serialization
                 {
                     TypeNameHandling = TypeNameHandling.Objects,
                     PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                    ReferenceLoopHandling = ReferenceLoopHandling.Serialize
+                    ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+                    ContractResolver = new LogicContractResolver()
                 };
                 settings.Converters.Add(new KeyValuePairConverter());
                 var page = JsonConvert.DeserializeObject<T>(json, settings);

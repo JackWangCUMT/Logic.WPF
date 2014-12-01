@@ -5,9 +5,48 @@ using System.Text;
 
 namespace Logic.Core
 {
-    public class XDocument : IDocument
+    public class XDocument : NotifyObject, IDocument
     {
-        public string Name { get; set; }
-        public IList<IPage> Pages { get; set; }
+        private string _name;
+        public string Name
+        {
+            get { return _name; }
+            set
+            {
+                if (value != _name)
+                {
+                    _name = value;
+                    Notify("Name");
+                }
+            }
+        }
+
+        private bool _isActive;
+        public bool IsActive
+        {
+            get { return _isActive; }
+            set
+            {
+                if (value != _isActive)
+                {
+                    _isActive = value;
+                    Notify("IsActive");
+                }
+            }
+        }
+
+        private IList<IPage> _pages;
+        public IList<IPage> Pages
+        {
+            get { return _pages; }
+            set
+            {
+                if (value != _pages)
+                {
+                    _pages = value;
+                    Notify("Pages");
+                }
+            }
+        }
     }
 }

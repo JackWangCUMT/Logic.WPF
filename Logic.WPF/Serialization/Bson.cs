@@ -54,7 +54,8 @@ namespace Logic.Serialization
                         {
                             TypeNameHandling = TypeNameHandling.Objects,
                             PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                            ReferenceLoopHandling = ReferenceLoopHandling.Serialize
+                            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+                            ContractResolver = new LogicContractResolver()
                         };
                         var page = serializer.Deserialize<T>(reader);
                         return page;

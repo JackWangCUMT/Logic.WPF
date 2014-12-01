@@ -5,13 +5,104 @@ using System.Text;
 
 namespace Logic.Core
 {
-    public class XPage : IPage
+    public class XPage : NotifyObject, IPage
     {
-        public string Name { get; set; }
-        public ITemplate Template { get; set; }
-        public IList<IShape> Shapes { get; set; }
-        public IList<IShape> Blocks { get; set; }
-        public IList<IShape> Pins { get; set; }
-        public IList<IShape> Wires { get; set; }
+        private string _name;
+        public string Name
+        {
+            get { return _name; }
+            set
+            {
+                if (value != _name)
+                {
+                    _name = value;
+                    Notify("Name");
+                }
+            }
+        }
+
+        private bool _isActive;
+        public bool IsActive
+        {
+            get { return _isActive; }
+            set
+            {
+                if (value != _isActive)
+                {
+                    _isActive = value;
+                    Notify("IsActive");
+                }
+            }
+        }
+
+        private ITemplate _template;
+        public ITemplate Template
+        {
+            get { return _template; }
+            set
+            {
+                if (value != _template)
+                {
+                    _template = value;
+                    Notify("Template");
+                }
+            }
+        }
+
+        private IList<IShape> _shapes;
+        public IList<IShape> Shapes
+        {
+            get { return _shapes; }
+            set
+            {
+                if (value != _shapes)
+                {
+                    _shapes = value;
+                    Notify("Shapes");
+                }
+            }
+        }
+
+        private IList<IShape> _blocks;
+        public IList<IShape> Blocks
+        {
+            get { return _blocks; }
+            set
+            {
+                if (value != _blocks)
+                {
+                    _blocks = value;
+                    Notify("Blocks");
+                }
+            }
+        }
+
+        private IList<IShape> _pins;
+        public IList<IShape> Pins
+        {
+            get { return _pins; }
+            set
+            {
+                if (value != _pins)
+                {
+                    _pins = value;
+                    Notify("Pins");
+                }
+            }
+        }
+
+        private IList<IShape> _wires;
+        public IList<IShape> Wires
+        {
+            get { return _wires; }
+            set
+            {
+                if (value != _wires)
+                {
+                    _wires = value;
+                    Notify("Wires");
+                }
+            }
+        }
     }
 }

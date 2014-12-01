@@ -10,17 +10,17 @@ namespace Memory.SR.ResetVertical
     {
         public MemoryResetVertical()
         {
-            base.Database = new List<KeyValuePair<string, XProperty>>();
+            base.Database = new List<KeyValuePair<string, IProperty>>();
             base.Shapes = new List<IShape>();
             base.Pins = new List<XPin>();
 
             base.Name = "SR-RESET-V";
 
-            XProperty setProperty = new XProperty("S");
-            base.Database.Add(new KeyValuePair<string, XProperty>("Set", setProperty));
+            IProperty setProperty = new XProperty("S");
+            base.Database.Add(new KeyValuePair<string, IProperty>("Set", setProperty));
 
-            XProperty resetProperty = new XProperty("R");
-            base.Database.Add(new KeyValuePair<string, XProperty>("Reset", resetProperty));
+            IProperty resetProperty = new XProperty("R");
+            base.Database.Add(new KeyValuePair<string, IProperty>("Reset", resetProperty));
 
             base.Shapes.Add(
                 new XText()

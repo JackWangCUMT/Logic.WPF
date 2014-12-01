@@ -14,7 +14,7 @@ namespace Logic.Controls
     public class NativeView : Canvas
     {
         public IRenderer Renderer { get; set; }
-        public XContainer Container { get; set; }
+        public IContainer Container { get; set; }
 
         protected override void OnRender(DrawingContext dc)
         {

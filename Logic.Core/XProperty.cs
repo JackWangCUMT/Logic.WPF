@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Logic.Core
 {
-    public class XProperty
+    public class XProperty : IProperty
     {
         public XProperty() { }
         public XProperty(object data)

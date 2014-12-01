@@ -8,6 +8,7 @@ namespace Logic.Core
     public interface IDocument
     {
         string Name { get; set; }
+        bool IsActive { get; set; }
         IList<IPage> Pages { get; set; }
     }
 }
