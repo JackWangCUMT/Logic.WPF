@@ -140,7 +140,7 @@
     <Compile Include="Controls\NativeZoom.cs" />
     <Compile Include="Controls\NativeCanvas.cs" />
     <Compile Include="Controls\NativeView.cs" />
-    <Compile Include="Page\XStyle.cs" />
+    <Compile Include="Page\NativeStyle.cs" />
     <Compile Include="Util\History.cs" />
     <Compile Include="Serialization\Json.cs" />
     <Compile Include="Page\NativeRenderer.cs" />

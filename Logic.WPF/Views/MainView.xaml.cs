@@ -830,28 +830,28 @@ namespace Logic.WPF.Views
             var project = Defaults.EmptyProject();
 
             // layer styles
-            IStyle shapeStyle = new XStyle(
+            IStyle shapeStyle = new NativeStyle(
                 name: "Shape",
                 fill: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
                 stroke: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
                 thickness: 2.0);
             project.Styles.Add(shapeStyle);
 
-            IStyle selectedShapeStyle = new XStyle(
+            IStyle selectedShapeStyle = new NativeStyle(
                 name: "Selected",
                 fill: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
                 stroke: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
                 thickness: 2.0);
             project.Styles.Add(selectedShapeStyle);
 
-            IStyle selectionStyle = new XStyle(
+            IStyle selectionStyle = new NativeStyle(
                 name: "Selection",
                 fill: new XColor() { A = 0x1F, R = 0x00, G = 0x00, B = 0xFF },
                 stroke: new XColor() { A = 0x9F, R = 0x00, G = 0x00, B = 0xFF },
                 thickness: 1.0);
             project.Styles.Add(selectionStyle);
 
-            IStyle hoverStyle = new XStyle(
+            IStyle hoverStyle = new NativeStyle(
                 name: "Overlay",
                 fill: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
                 stroke: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
@@ -859,21 +859,21 @@ namespace Logic.WPF.Views
             project.Styles.Add(hoverStyle);
 
             // simulation styles
-            IStyle nullStateStyle = new XStyle(
+            IStyle nullStateStyle = new NativeStyle(
                 name: "NullState",
                 fill: new XColor() { A = 0xFF, R = 0x66, G = 0x66, B = 0x66 },
                 stroke: new XColor() { A = 0xFF, R = 0x66, G = 0x66, B = 0x66 },
                 thickness: 2.0);
             project.Styles.Add(nullStateStyle);
 
-            IStyle trueStateStyle = new XStyle(
+            IStyle trueStateStyle = new NativeStyle(
                 name: "TrueState",
                 fill: new XColor() { A = 0xFF, R = 0xFF, G = 0x14, B = 0x93 },
                 stroke: new XColor() { A = 0xFF, R = 0xFF, G = 0x14, B = 0x93 },
                 thickness: 2.0);
             project.Styles.Add(trueStateStyle);
 
-            IStyle falseStateStyle = new XStyle(
+            IStyle falseStateStyle = new NativeStyle(
                 name: "FalseState",
                 fill: new XColor() { A = 0xFF, R = 0x00, G = 0xBF, B = 0xFF },
                 stroke: new XColor() { A = 0xFF, R = 0x00, G = 0xBF, B = 0xFF },
