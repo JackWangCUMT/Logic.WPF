@@ -1471,7 +1471,7 @@ namespace Logic.ViewModels
 
         public void ShapeToggleSelectedFill()
         {
-            if (Layers.HaveSelected())
+            if (Layers.HaveSelection())
             {
                 var rectangles = Renderer.Selected.Where(x => x is XRectangle).Cast<XRectangle>();
                 foreach (var rectangle in rectangles)
@@ -1497,7 +1497,7 @@ namespace Logic.ViewModels
 
         public void ShapeToggleSelectedInvertStart()
         {
-            if (Layers.HaveSelected())
+            if (Layers.HaveSelection())
             {
                 var wires = Renderer.Selected.Where(x => x is XWire).Cast<XWire>();
                 foreach (var wire in wires)
@@ -1510,7 +1510,7 @@ namespace Logic.ViewModels
 
         public void ShapeToggleSelectedInvertEnd()
         {
-            if (Layers.HaveSelected())
+            if (Layers.HaveSelection())
             {
                 var wires = Renderer.Selected.Where(x => x is XWire).Cast<XWire>();
                 foreach (var wire in wires)
@@ -1523,7 +1523,7 @@ namespace Logic.ViewModels
 
         public void ShapeSetSelectedTextSizeDelta(double delta)
         {
-            if (Layers.HaveSelected())
+            if (Layers.HaveSelection())
             {
                 var texts = Renderer.Selected.Where(x => x is XText).Cast<XText>();
                 foreach (var text in texts)
@@ -1540,7 +1540,7 @@ namespace Logic.ViewModels
 
         public void ShapeSetSelectedTextHAlignment(HAlignment halignment)
         {
-            if (Layers.HaveSelected())
+            if (Layers.HaveSelection())
             {
                 var texts = Renderer.Selected.Where(x => x is XText).Cast<XText>();
                 foreach (var text in texts)
@@ -1553,7 +1553,7 @@ namespace Logic.ViewModels
 
         public void ShapeSetSelectedTextVAlignment(VAlignment valignment)
         {
-            if (Layers.HaveSelected())
+            if (Layers.HaveSelection())
             {
                 var texts = Renderer.Selected.Where(x => x is XText).Cast<XText>();
                 foreach (var text in texts)
@@ -1813,7 +1813,7 @@ namespace Logic.ViewModels
 
         public XBlock BlockCreateFromSelected(string name)
         {
-            if (Layers.HaveSelected())
+            if (Layers.HaveSelection())
             {
                 return BlockCreate(name, Renderer.Selected);
             }

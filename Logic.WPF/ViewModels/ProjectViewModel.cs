@@ -131,6 +131,20 @@ namespace Logic.ViewModels
             }
         }
 
+        private bool _haveSelected;
+        public bool HaveSelected
+        {
+            get { return _haveSelected; }
+            set
+            {
+                if (value != _haveSelected)
+                {
+                    _haveSelected = value;
+                    Notify("HaveSelected");
+                }
+            }
+        }
+
         public LayerViewModel ShapeLayer { get; set; }
         public LayerViewModel BlockLayer { get; set; }
         public LayerViewModel WireLayer { get; set; }
@@ -380,7 +394,7 @@ namespace Logic.ViewModels
             }
         }
 
-        public bool HaveSelected()
+        public bool HaveSelection()
         {
             return Renderer != null
                 && Renderer.Selected != null
@@ -389,7 +403,7 @@ namespace Logic.ViewModels
 
         public void SelectionDelete()
         {
-            if (HaveSelected())
+            if (HaveSelection())
             {
                 Snapshot();
                 Delete(Renderer.Selected);
@@ -1020,7 +1034,7 @@ namespace Logic.ViewModels
 
         public bool CanCopy()
         {
-            return HaveSelected();
+            return HaveSelection();
         }
 
         public bool CanPaste()

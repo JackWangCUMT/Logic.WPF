@@ -226,7 +226,7 @@ namespace Logic.WPF.Views
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !Model.HaveSelected() ? false : true;
+                        || !Model.HaveSelection() ? false : true;
                 });
 
             Model.EditSelectAllCommand = new NativeCommand(
@@ -366,7 +366,7 @@ namespace Logic.WPF.Views
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !Model.HaveSelected() ? false : true;
+                        || !Model.HaveSelection() ? false : true;
                 });
 
             Model.BlockCreateProjectCommand = new NativeCommand(
@@ -374,7 +374,7 @@ namespace Logic.WPF.Views
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !Model.HaveSelected() ? false : true;
+                        || !Model.HaveSelection() ? false : true;
                 });
 
             Model.InsertBlockCommand = new NativeCommand(
@@ -571,18 +571,21 @@ namespace Logic.WPF.Views
                             Model.EditorLayer.RightX,
                             Model.EditorLayer.RightY);
                         IShape shape = Model.HitTest(point);
-                        if (shape != null)
+                        if (shape != null && shape is XBlock)
                         {
                             Model.Selected = shape;
+                            Model.HaveSelected = true;
                         }
                         else
                         {
                             Model.Selected = null;
+                            Model.HaveSelected = false;
                         }
                     }
                     else
                     {
                         Model.Selected = null;
+                        Model.HaveSelected = false;
                     }
 
                     _isContextMenu = true;
