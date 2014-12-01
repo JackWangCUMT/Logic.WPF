@@ -35,7 +35,7 @@ namespace Logic.WPF.Views
     {
         #region Properties
 
-        public MainViewModel Model { get; set; }
+        public ProjectViewModel Model { get; set; }
 
         #endregion
 
@@ -68,7 +68,7 @@ namespace Logic.WPF.Views
 
         private void InitializeModel()
         {
-            Model = new MainViewModel();
+            Model = new ProjectViewModel();
 
             Model.Blocks = new ObservableCollection<XBlock>();
             Model.Templates = new ObservableCollection<ITemplate>();
@@ -170,155 +170,155 @@ namespace Logic.WPF.Views
                 (parameter) => true);
 
             Model.EditUndoCommand = new NativeCommand(
-                (parameter) => Model.Layers.Undo(),
+                (parameter) => Model.Undo(),
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !Model.Layers.History.CanUndo() ? false : true;
+                        || !Model.History.CanUndo() ? false : true;
                 });
 
             Model.EditRedoCommand = new NativeCommand
-                ((parameter) => Model.Layers.Redo(),
+                ((parameter) => Model.Redo(),
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !Model.Layers.History.CanRedo() ? false : true;
+                        || !Model.History.CanRedo() ? false : true;
                 });
 
             Model.EditCutCommand = new NativeCommand(
-                (parameter) => Model.Layers.Cut(),
+                (parameter) => Model.Cut(),
                 (parameter) => 
                 {
                     return IsSimulationRunning()
-                        || !Model.Layers.CanCopy() ? false : true;
+                        || !Model.CanCopy() ? false : true;
                 });
 
             Model.EditCopyCommand = new NativeCommand(
-                (parameter) => Model.Layers.Copy(),
+                (parameter) => Model.Copy(),
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !Model.Layers.CanCopy() ? false : true;
+                        || !Model.CanCopy() ? false : true;
                 });
 
             Model.EditPasteCommand = new NativeCommand(
                 (parameter) =>
                 {
-                    Model.Layers.Paste();
+                    Model.Paste();
                     if (_isContextMenu && _renderer.Selected != null)
                     {
                         double minX = pageView.editorLayer.Width;
                         double minY = pageView.editorLayer.Height;
-                        Model.Layers.Editor.Min(_renderer.Selected, ref minX, ref minY);
-                        double x = Model.Layers.Editor.RightX - minX;
-                        double y = Model.Layers.Editor.RightY - minY;
-                        Model.Layers.Editor.Move(_renderer.Selected, x, y);
+                        Model.EditorLayer.Min(_renderer.Selected, ref minX, ref minY);
+                        double x = Model.EditorLayer.RightX - minX;
+                        double y = Model.EditorLayer.RightY - minY;
+                        Model.EditorLayer.Move(_renderer.Selected, x, y);
                     }
                 },
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !Model.Layers.CanPaste() ? false : true;
+                        || !Model.CanPaste() ? false : true;
                 });
 
             Model.EditDeleteCommand = new NativeCommand(
-                (parameter) => Model.Layers.SelectionDelete(),
+                (parameter) => Model.SelectionDelete(),
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !Model.Layers.HaveSelected() ? false : true;
+                        || !Model.HaveSelected() ? false : true;
                 });
 
             Model.EditSelectAllCommand = new NativeCommand(
                 (parameter) => 
                 {
-                    Model.Layers.SelectAll();
-                    Model.Layers.Invalidate();
+                    Model.SelectAll();
+                    Model.Invalidate();
                 }, 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignLeftBottomCommand = new NativeCommand(
                 (parameter) =>
                 {
-                    Model.Layers.Editor.ShapeSetTextHAlignment(HAlignment.Left);
-                    Model.Layers.Editor.ShapeSetTextVAlignment(VAlignment.Bottom);
+                    Model.EditorLayer.ShapeSetTextHAlignment(HAlignment.Left);
+                    Model.EditorLayer.ShapeSetTextVAlignment(VAlignment.Bottom);
                 },
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignBottomCommand = new NativeCommand(
-                (parameter) => Model.Layers.Editor.ShapeSetTextVAlignment(VAlignment.Bottom), 
+                (parameter) => Model.EditorLayer.ShapeSetTextVAlignment(VAlignment.Bottom), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignRightBottomCommand = new NativeCommand(
                 (parameter) =>
                 {
-                    Model.Layers.Editor.ShapeSetTextHAlignment(HAlignment.Right);
-                    Model.Layers.Editor.ShapeSetTextVAlignment(VAlignment.Bottom);
+                    Model.EditorLayer.ShapeSetTextHAlignment(HAlignment.Right);
+                    Model.EditorLayer.ShapeSetTextVAlignment(VAlignment.Bottom);
                 },
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignLeftCommand = new NativeCommand(
-                (parameter) => Model.Layers.Editor.ShapeSetTextHAlignment(HAlignment.Left), 
+                (parameter) => Model.EditorLayer.ShapeSetTextHAlignment(HAlignment.Left), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignCenterCenterCommand = new NativeCommand(
                 (parameter) =>
                 {
-                    Model.Layers.Editor.ShapeSetTextHAlignment(HAlignment.Center);
-                    Model.Layers.Editor.ShapeSetTextVAlignment(VAlignment.Center);
+                    Model.EditorLayer.ShapeSetTextHAlignment(HAlignment.Center);
+                    Model.EditorLayer.ShapeSetTextVAlignment(VAlignment.Center);
                 },
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignRightCommand = new NativeCommand(
-                (parameter) => Model.Layers.Editor.ShapeSetTextHAlignment(HAlignment.Right), 
+                (parameter) => Model.EditorLayer.ShapeSetTextHAlignment(HAlignment.Right), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignLeftTopCommand = new NativeCommand(
                 (parameter) =>
                 {
-                    Model.Layers.Editor.ShapeSetTextHAlignment(HAlignment.Left);
-                    Model.Layers.Editor.ShapeSetTextVAlignment(VAlignment.Top);
+                    Model.EditorLayer.ShapeSetTextHAlignment(HAlignment.Left);
+                    Model.EditorLayer.ShapeSetTextVAlignment(VAlignment.Top);
                 },
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignTopCommand = new NativeCommand(
-                (parameter) => Model.Layers.Editor.ShapeSetTextVAlignment(VAlignment.Top), 
+                (parameter) => Model.EditorLayer.ShapeSetTextVAlignment(VAlignment.Top), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditAlignRightTopCommand = new NativeCommand
                 ((parameter) =>
                 {
-                    Model.Layers.Editor.ShapeSetTextHAlignment(HAlignment.Right);
-                    Model.Layers.Editor.ShapeSetTextVAlignment(VAlignment.Top);
+                    Model.EditorLayer.ShapeSetTextHAlignment(HAlignment.Right);
+                    Model.EditorLayer.ShapeSetTextVAlignment(VAlignment.Top);
                 },
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditIncreaseTextSizeCommand = new NativeCommand(
-                (parameter) => Model.Layers.Editor.ShapeSetTextSizeDelta(+1.0), 
+                (parameter) => Model.EditorLayer.ShapeSetTextSizeDelta(+1.0), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditDecreaseTextSizeCommand = new NativeCommand(
-                (parameter) => Model.Layers.Editor.ShapeSetTextSizeDelta(-1.0), 
+                (parameter) => Model.EditorLayer.ShapeSetTextSizeDelta(-1.0), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditToggleFillCommand = new NativeCommand(
-                (parameter) => Model.Layers.Editor.ShapeToggleFill(), 
+                (parameter) => Model.EditorLayer.ShapeToggleFill(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditToggleSnapCommand = new NativeCommand(
-                (parameter) => Model.Layers.Editor.EnableSnap = !Model.Layers.Editor.EnableSnap, 
+                (parameter) => Model.EditorLayer.EnableSnap = !Model.EditorLayer.EnableSnap, 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditToggleInvertStartCommand = new NativeCommand(
-                (parameter) => Model.Layers.Editor.ShapeToggleInvertStart(), 
+                (parameter) => Model.EditorLayer.ShapeToggleInvertStart(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditToggleInvertEndCommand = new NativeCommand(
-                (parameter) => Model.Layers.Editor.ShapeToggleInvertEnd(), 
+                (parameter) => Model.EditorLayer.ShapeToggleInvertEnd(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.EditCancelCommand = new NativeCommand(
-                (parameter) => Model.Layers.Editor.MouseCancel(), 
+                (parameter) => Model.EditorLayer.MouseCancel(), 
                 (parameter) => IsSimulationRunning() ? false : true);
 
             Model.ToolNoneCommand = new NativeCommand(
@@ -366,7 +366,7 @@ namespace Logic.WPF.Views
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !Model.Layers.HaveSelected() ? false : true;
+                        || !Model.HaveSelected() ? false : true;
                 });
 
             Model.BlockCreateProjectCommand = new NativeCommand(
@@ -374,7 +374,7 @@ namespace Logic.WPF.Views
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !Model.Layers.HaveSelected() ? false : true;
+                        || !Model.HaveSelected() ? false : true;
                 });
 
             Model.InsertBlockCommand = new NativeCommand(
@@ -383,8 +383,8 @@ namespace Logic.WPF.Views
                     XBlock block = parameter as XBlock;
                     if (block != null)
                     {
-                        double x = _isContextMenu ? Model.Layers.Editor.RightX : 0.0;
-                        double y = _isContextMenu ? Model.Layers.Editor.RightY : 0.0;
+                        double x = _isContextMenu ? Model.EditorLayer.RightX : 0.0;
+                        double y = _isContextMenu ? Model.EditorLayer.RightY : 0.0;
                         BlockInsert(block, x, y);
                     }
                 },
@@ -437,51 +437,48 @@ namespace Logic.WPF.Views
         private void InitializeView()
         {
             // layers
-            Model.Layers = new XLayers();
-            Model.Layers.Shapes = pageView.shapeLayer.Layer;
-            Model.Layers.Blocks = pageView.blockLayer.Layer;
-            Model.Layers.Wires = pageView.wireLayer.Layer;
-            Model.Layers.Pins = pageView.pinLayer.Layer;
-            Model.Layers.Editor = pageView.editorLayer.Layer;
-            Model.Layers.Overlay = pageView.overlayLayer.Layer;
-
-            Model.Layers.Model = Model;
+            Model.ShapeLayer = pageView.shapeLayer.Model;
+            Model.BlockLayer = pageView.blockLayer.Model;
+            Model.WireLayer = pageView.wireLayer.Model;
+            Model.PinLayer = pageView.pinLayer.Model;
+            Model.EditorLayer = pageView.editorLayer.Model;
+            Model.OverlayLayer = pageView.overlayLayer.Model;
 
             // editor
-            Model.Layers.Editor.Layers = Model.Layers;
+            Model.EditorLayer.Layers = Model;
 
             // overlay
-            Model.Layers.Overlay.IsOverlay = true;
+            Model.OverlayLayer.IsOverlay = true;
 
             // serializer
-            Model.Layers.Serializer = new Json();
+            Model.Serializer = new Json();
 
             // renderer
-            _renderer = new XRenderer()
+            _renderer = new NativeRenderer()
             {
                 InvertSize = 6.0,
                 PinRadius = 4.0,
                 HitTreshold = 6.0
             };
 
-            Model.Layers.Renderer = _renderer;
+            Model.Renderer = _renderer;
 
-            Model.Layers.Shapes.Renderer = _renderer;
-            Model.Layers.Blocks.Renderer = _renderer;
-            Model.Layers.Wires.Renderer = _renderer;
-            Model.Layers.Pins.Renderer = _renderer;
-            Model.Layers.Editor.Renderer = _renderer;
-            Model.Layers.Overlay.Renderer = _renderer;
+            Model.ShapeLayer.Renderer = _renderer;
+            Model.BlockLayer.Renderer = _renderer;
+            Model.WireLayer.Renderer = _renderer;
+            Model.PinLayer.Renderer = _renderer;
+            Model.EditorLayer.Renderer = _renderer;
+            Model.OverlayLayer.Renderer = _renderer;
 
             // clipboard
-            Model.Layers.Clipboard = new NativeTextClipboard();
+            Model.Clipboard = new NativeTextClipboard();
 
             // history
-            Model.Layers.History = new History<IPage>(new Bson());
+            Model.History = new History<IPage>(new Bson());
 
             // tool
-            Model.Layers.Tool = Model.Tool;
-            Model.Layers.Tool.CurrentTool = ToolMenuModel.Tool.Selection;
+            Model.Tool = Model.Tool;
+            Model.Tool.CurrentTool = ToolMenuModel.Tool.Selection;
 
             // drag & drop
             pageView.editorLayer.AllowDrop = true;
@@ -556,13 +553,13 @@ namespace Logic.WPF.Views
             // context menu
             pageView.ContextMenuOpening += (s, e) =>
             {
-                if (Model.Layers.Editor.CurrentMode != XLayer.Mode.None)
+                if (Model.EditorLayer.CurrentMode != LayerViewModel.Mode.None)
                 {
                     e.Handled = true;
                 }
-                else if (Model.Layers.Editor.SkipContextMenu == true)
+                else if (Model.EditorLayer.SkipContextMenu == true)
                 {
-                    Model.Layers.Editor.SkipContextMenu = false;
+                    Model.EditorLayer.SkipContextMenu = false;
                     e.Handled = true;
                 }
                 else
@@ -571,24 +568,21 @@ namespace Logic.WPF.Views
                         && !IsSimulationRunning())
                     {
                         Point2 point = new Point2(
-                            Model.Layers.Editor.RightX,
-                            Model.Layers.Editor.RightY);
-                        IShape shape = Model.Layers.HitTest(point);
+                            Model.EditorLayer.RightX,
+                            Model.EditorLayer.RightY);
+                        IShape shape = Model.HitTest(point);
                         if (shape != null)
                         {
                             Model.Selected = shape;
-                            Model.HaveSelected = true;
                         }
                         else
                         {
                             Model.Selected = null;
-                            Model.HaveSelected = false;
                         }
                     }
                     else
                     {
                         Model.Selected = null;
-                        Model.HaveSelected = false;
                     }
 
                     _isContextMenu = true;
@@ -599,7 +593,7 @@ namespace Logic.WPF.Views
             {
                 if (Model.Selected != null)
                 {
-                    Model.Layers.Invalidate();
+                    Model.Invalidate();
                 }
 
                 _isContextMenu = false;
@@ -727,7 +721,7 @@ namespace Logic.WPF.Views
 
         private void FileOpen(string path)
         {
-            var project = Model.Layers.Load(path);
+            var project = Model.Load(path);
             if (project != null)
             {
                 Model.Project = project;
@@ -742,7 +736,7 @@ namespace Logic.WPF.Views
         {
             if (!string.IsNullOrEmpty(Model.FilePath))
             {
-                Model.Layers.Save(Model.FilePath, Model.Project);
+                Model.Save(Model.FilePath, Model.Project);
             }
             else
             {
@@ -763,7 +757,7 @@ namespace Logic.WPF.Views
 
             if (dlg.ShowDialog(this) == true)
             {
-                Model.Layers.Save(dlg.FileName, Model.Project);
+                Model.Save(dlg.FileName, Model.Project);
                 Model.FileName = System.IO.Path.GetFileNameWithoutExtension(dlg.FileName);
                 Model.FilePath = dlg.FileName;
             }
@@ -910,13 +904,13 @@ namespace Logic.WPF.Views
 
         private void UpdateStyles(IProject project)
         {
-            var layers = new List<XLayer>();
-            layers.Add(Model.Layers.Shapes);
-            layers.Add(Model.Layers.Blocks);
-            layers.Add(Model.Layers.Wires);
-            layers.Add(Model.Layers.Pins);
-            layers.Add(Model.Layers.Editor);
-            layers.Add(Model.Layers.Overlay);
+            var layers = new List<LayerViewModel>();
+            layers.Add(Model.ShapeLayer);
+            layers.Add(Model.BlockLayer);
+            layers.Add(Model.WireLayer);
+            layers.Add(Model.PinLayer);
+            layers.Add(Model.EditorLayer);
+            layers.Add(Model.OverlayLayer);
 
             foreach (var layer in layers)
             {
@@ -962,7 +956,7 @@ namespace Logic.WPF.Views
 
         private void DocumentAdd(object parameter)
         {
-            if (parameter is MainViewModel)
+            if (parameter is ProjectViewModel)
             {
                 IDocument document = Defaults.EmptyDocument();
                 document.IsActive = true;
@@ -978,9 +972,9 @@ namespace Logic.WPF.Views
                 Model.Project.Documents.Remove(document);
 
                 Model.Page = null;
-                Model.Layers.Clear();
-                Model.Layers.Reset();
-                Model.Layers.Invalidate();
+                Model.Clear();
+                Model.Reset();
+                Model.Invalidate();
                 TemplateReset();
                 TemplateInvalidate();
             }
@@ -1001,11 +995,11 @@ namespace Logic.WPF.Views
         private void PageLoad(IPage page)
         {
             page.IsActive = true;
-            Model.Layers.Reset();
-            Model.Layers.SelectionReset();
+            Model.Reset();
+            Model.SelectionReset();
             Model.Page = page;
-            Model.Layers.Load(page);
-            Model.Layers.Invalidate();
+            Model.Load(page);
+            Model.Invalidate();
             TemplateApply(page.Template, _renderer);
         }
 
@@ -1036,9 +1030,9 @@ namespace Logic.WPF.Views
                     document.Pages.Remove(page);
 
                     Model.Page = null;
-                    Model.Layers.Clear();
-                    Model.Layers.Reset();
-                    Model.Layers.Invalidate();
+                    Model.Clear();
+                    Model.Reset();
+                    Model.Invalidate();
                     TemplateReset();
                     TemplateInvalidate();
                 }
@@ -1051,11 +1045,11 @@ namespace Logic.WPF.Views
 
         private void BlockInsert(XBlock block, double x, double y)
         {
-            Model.Layers.Snapshot();
-            XBlock copy = Model.Layers.Editor.Insert(block, x, y);
+            Model.Snapshot();
+            XBlock copy = Model.EditorLayer.Insert(block, x, y);
             if (copy != null)
             {
-                Model.Layers.Editor.Connect(copy);
+                Model.EditorLayer.Connect(copy);
             }
         }
 
@@ -1068,7 +1062,7 @@ namespace Logic.WPF.Views
 
             if (dlg.ShowDialog(this) == true)
             {
-                var block = Model.Layers.Open<XBlock>(dlg.FileName);
+                var block = Model.Open<XBlock>(dlg.FileName);
                 if (block != null)
                 {
                     Model.Blocks.Add(block);
@@ -1078,7 +1072,7 @@ namespace Logic.WPF.Views
 
         private void BlockCreateProject()
         {
-            var block = Model.Layers.Editor.BlockCreateFromSelected("Block");
+            var block = Model.EditorLayer.BlockCreateFromSelected("Block");
             if (block == null)
                 return;
 
@@ -1191,7 +1185,7 @@ namespace Logic.WPF.Views
 
         private void BlockExport()
         {
-            var block = Model.Layers.Editor.BlockCreateFromSelected("Block");
+            var block = Model.EditorLayer.BlockCreateFromSelected("Block");
             if (block != null)
             {
                 var dlg = new Microsoft.Win32.SaveFileDialog()
@@ -1203,7 +1197,7 @@ namespace Logic.WPF.Views
                 if (dlg.ShowDialog(this) == true)
                 {
                     var path = dlg.FileName;
-                    Model.Layers.Save<XBlock>(path, block);
+                    Model.Save<XBlock>(path, block);
                     System.Diagnostics.Process.Start("notepad", path);
                 }
             }
@@ -1252,7 +1246,7 @@ namespace Logic.WPF.Views
 
             if (dlg.ShowDialog(this) == true)
             {
-                var template = Model.Layers.Open<XTemplate>(dlg.FileName);
+                var template = Model.Open<XTemplate>(dlg.FileName);
                 if (template != null)
                 {
                     Model.Templates.Add(template);
@@ -1324,7 +1318,7 @@ namespace Logic.WPF.Views
             {
                 var template = ToXTemplate(Model.Page.Template);
                 var path = dlg.FileName;
-                Model.Layers.Save<XTemplate>(path, template);
+                Model.Save<XTemplate>(path, template);
                 System.Diagnostics.Process.Start("notepad", path);
             }
         }
@@ -1360,34 +1354,34 @@ namespace Logic.WPF.Views
 
         private void OverlayInit(IDictionary<XBlock, BoolSimulation> simulations)
         {
-            Model.Layers.SelectionReset();
+            Model.SelectionReset();
 
-            Model.Layers.Overlay.EnableSimulationCache = true;
-            Model.Layers.Overlay.CacheRenderer = null;
+            Model.OverlayLayer.EnableSimulationCache = true;
+            Model.OverlayLayer.CacheRenderer = null;
 
             foreach (var simulation in simulations)
             {
-                Model.Layers.Blocks.Hidden.Add(simulation.Key);
-                Model.Layers.Overlay.Shapes.Add(simulation.Key);
+                Model.BlockLayer.Hidden.Add(simulation.Key);
+                Model.OverlayLayer.Shapes.Add(simulation.Key);
             }
 
-            Model.Layers.Editor.Simulations = simulations;
-            Model.Layers.Overlay.Simulations = simulations;
+            Model.EditorLayer.Simulations = simulations;
+            Model.OverlayLayer.Simulations = simulations;
 
-            Model.Layers.Blocks.InvalidateVisual();
-            Model.Layers.Overlay.InvalidateVisual();
+            Model.BlockLayer.InvalidateVisual();
+            Model.OverlayLayer.InvalidateVisual();
         }
 
         private void OverlayReset()
         {
-            Model.Layers.Editor.Simulations = null;
-            Model.Layers.Overlay.Simulations = null;
-            Model.Layers.Overlay.CacheRenderer = null;
+            Model.EditorLayer.Simulations = null;
+            Model.OverlayLayer.Simulations = null;
+            Model.OverlayLayer.CacheRenderer = null;
 
-            Model.Layers.Blocks.Hidden.Clear();
-            Model.Layers.Overlay.Shapes.Clear();
-            Model.Layers.Blocks.InvalidateVisual();
-            Model.Layers.Overlay.InvalidateVisual();
+            Model.BlockLayer.Hidden.Clear();
+            Model.OverlayLayer.Shapes.Clear();
+            Model.BlockLayer.InvalidateVisual();
+            Model.OverlayLayer.InvalidateVisual();
         }
 
         #endregion
@@ -1398,7 +1392,7 @@ namespace Logic.WPF.Views
         {
             try
             {
-                IPage temp = Model.Layers.ToPage();
+                IPage temp = Model.ToPage();
                 if (temp != null)
                 {
                     var context = PageGraph.Create(temp);
@@ -1470,7 +1464,7 @@ namespace Logic.WPF.Views
                     {
                         BoolSimulationFactory.Run(simulations, _clock);
                         _clock.Tick();
-                        Dispatcher.Invoke(() => Model.Layers.Overlay.InvalidateVisual());
+                        Dispatcher.Invoke(() => Model.OverlayLayer.InvalidateVisual());
                     }
                     catch (Exception ex)
                     {
@@ -1500,7 +1494,7 @@ namespace Logic.WPF.Views
                     return;
                 }
 
-                IPage temp = Model.Layers.ToPage();
+                IPage temp = Model.ToPage();
                 if (temp != null)
                 {
                     var context = PageGraph.Create(temp);

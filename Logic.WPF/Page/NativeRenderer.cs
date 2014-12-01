@@ -1,4 +1,5 @@
 ﻿using Logic.Core;
+using Logic.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ using System.Windows.Media;
 
 namespace Logic.Page
 {
-    public class XRenderer : IRenderer
+    public class NativeRenderer : IRenderer
     {
         public ICollection<IShape> Selected { get; set; }
         public double InvertSize { get; set; }
@@ -142,7 +143,7 @@ namespace Logic.Page
 
         public void DrawWire(object dc, IStyle style, XWire wire)
         {
-            var position = XWirePosition.Calculate(wire, InvertSize);
+            var position = WirePosition.Calculate(wire, InvertSize);
 
             if (wire.InvertStart)
             {

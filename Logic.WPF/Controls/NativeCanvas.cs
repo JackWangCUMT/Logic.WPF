@@ -1,5 +1,5 @@
-﻿using Logic.Page;
-using Logic.Util;
+﻿using Logic.Util;
+using Logic.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +13,7 @@ namespace Logic.Controls
 {
     public class NativeCanvas : Canvas
     {
-        public XLayer Layer { get; private set; }
+        public LayerViewModel Model { get; private set; }
 
         public NativeCanvas()
         {
@@ -22,7 +22,7 @@ namespace Logic.Controls
 
         private void InitializeLayer()
         {
-            Layer = new XLayer()
+            Model = new LayerViewModel()
             {
                 IsMouseCaptured = () => 
                 {
@@ -44,22 +44,22 @@ namespace Logic.Controls
 
             PreviewMouseLeftButtonDown += (s, e) =>
             {
-                Layer.MouseLeftButtonDown(e.GetPosition(this).ToPoint1());
+                Model.MouseLeftButtonDown(e.GetPosition(this).ToPoint1());
             };
 
             PreviewMouseLeftButtonUp += (s, e) =>
             {
-                Layer.MouseLeftButtonUp(e.GetPosition(this).ToPoint1());
+                Model.MouseLeftButtonUp(e.GetPosition(this).ToPoint1());
             };
 
             PreviewMouseMove += (s, e) =>
             {
-                Layer.MouseMove(e.GetPosition(this).ToPoint1());
+                Model.MouseMove(e.GetPosition(this).ToPoint1());
             };
 
             PreviewMouseRightButtonDown += (s, e) =>
             {
-                Layer.MouseRightButtonDown(e.GetPosition(this).ToPoint1());
+                Model.MouseRightButtonDown(e.GetPosition(this).ToPoint1());
             };
         }
 
@@ -67,7 +67,7 @@ namespace Logic.Controls
         {
             base.OnRender(dc);
 
-            Layer.OnRender(dc);
+            Model.OnRender(dc);
         }
     }
 }

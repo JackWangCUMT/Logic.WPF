@@ -87,8 +87,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Page\Defaults.cs" />
-    <Compile Include="Page\XLayer.cs" />
-    <Compile Include="Page\XWirePosition.cs" />
+    <Compile Include="ViewModels\LayerViewModel.cs" />
+    <Compile Include="Util\WirePosition.cs" />
     <Compile Include="Serialization\LogicContractResolver.cs" />
     <Compile Include="Simulation\BoolSimulationCacheRenderer.cs" />
     <Compile Include="Simulation\BoolSimulationFactory.cs" />
@@ -105,7 +105,7 @@
     <Compile Include="Util\NativePointExtensions.cs" />
     <Compile Include="Util\PdfWriter.cs" />
     <Compile Include="ViewModels\CodeViewModel.cs" />
-    <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\ProjectViewModel.cs" />
     <Page Include="Views\CodeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -143,8 +143,7 @@
     <Compile Include="Page\XStyle.cs" />
     <Compile Include="Util\History.cs" />
     <Compile Include="Serialization\Json.cs" />
-    <Compile Include="Page\XLayers.cs" />
-    <Compile Include="Page\XRenderer.cs" />
+    <Compile Include="Page\NativeRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

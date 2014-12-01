@@ -1,16 +1,234 @@
 ﻿using Logic.Core;
+using Logic.Page;
 using Logic.Util;
-using Logic.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
-namespace Logic.Page
+namespace Logic.ViewModels
 {
-    public class XLayers
+    public class ProjectViewModel : NotifyObject
     {
+        #region Properties
+
+        private IProject _project;
+        public IProject Project
+        {
+            get { return _project; }
+            set
+            {
+                if (value != _project)
+                {
+                    _project = value;
+                    Notify("Project");
+                }
+            }
+        }
+
+        private IPage _page;
+        public IPage Page
+        {
+            get { return _page; }
+            set
+            {
+                if (value != _page)
+                {
+                    _page = value;
+                    Notify("Page");
+                }
+            }
+        }
+
+        private IList<XBlock> _blocks;
+
+        [ImportMany(typeof(XBlock))]
+        public IList<XBlock> Blocks
+        {
+            get { return _blocks; }
+            set
+            {
+                if (value != _blocks)
+                {
+                    _blocks = value;
+                    Notify("Blocks");
+                }
+            }
+        }
+
+        private IList<ITemplate> _templates;
+
+        [ImportMany(typeof(ITemplate))]
+        public IList<ITemplate> Templates
+        {
+            get { return _templates; }
+            set
+            {
+                if (value != _templates)
+                {
+                    _templates = value;
+                    Notify("Templates");
+                }
+            }
+        }
+
+        private string _fileName;
+        public string FileName
+        {
+            get { return _fileName; }
+            set
+            {
+                if (value != _fileName)
+                {
+                    _fileName = value;
+                    Notify("FileName");
+                }
+            }
+        }
+
+        private string _filePath;
+        public string FilePath
+        {
+            get { return _filePath; }
+            set
+            {
+                if (value != _filePath)
+                {
+                    _filePath = value;
+                    Notify("FilePath");
+                }
+            }
+        }
+
+        private ToolMenuModel _tool;
+        public ToolMenuModel Tool
+        {
+            get { return _tool; }
+            set
+            {
+                if (value != _tool)
+                {
+                    _tool = value;
+                    Notify("Tool");
+                }
+            }
+        }
+
+        private IShape _selected;
+        public IShape Selected
+        {
+            get { return _selected; }
+            set
+            {
+                if (value != _selected)
+                {
+                    _selected = value;
+                    Notify("Selected");
+                }
+            }
+        }
+
+        public LayerViewModel ShapeLayer { get; set; }
+        public LayerViewModel BlockLayer { get; set; }
+        public LayerViewModel WireLayer { get; set; }
+        public LayerViewModel PinLayer { get; set; }
+        public LayerViewModel EditorLayer { get; set; }
+        public LayerViewModel OverlayLayer { get; set; }
+
+        public LineHit LineHitResult { get; set; }
+        public IRenderer Renderer { get; set; }
+
+        public History<IPage> History { get; set; }
+        public ITextClipboard Clipboard { get; set; }
+        public IStringSerializer Serializer { get; set; }
+
+        #endregion
+
+        #region Commands
+
+        public ICommand SelectedItemChangedCommand { get; set; }
+
+        public ICommand PageAddCommand { get; set; }
+        public ICommand PageInsertBeforeCommand { get; set; }
+        public ICommand PageInsertAfterCommand { get; set; }
+        public ICommand PageCutCommand { get; set; }
+        public ICommand PageCopyCommand { get; set; }
+        public ICommand PagePasteCommand { get; set; }
+        public ICommand PageDeleteCommand { get; set; }
+
+        public ICommand DocumentAddCommand { get; set; }
+        public ICommand DocumentInsertBeforeCommand { get; set; }
+        public ICommand DocumentInsertAfterCommand { get; set; }
+        public ICommand DocumentCutCommand { get; set; }
+        public ICommand DocumentCopyCommand { get; set; }
+        public ICommand DocumentPasteCommand { get; set; }
+        public ICommand DocumentDeleteCommand { get; set; }
+
+        public ICommand FileNewCommand { get; set; }
+        public ICommand FileOpenCommand { get; set; }
+        public ICommand FileSaveCommand { get; set; }
+        public ICommand FileSaveAsCommand { get; set; }
+        public ICommand FileSaveAsPDFCommand { get; set; }
+        public ICommand FileExitCommand { get; set; }
+
+        public ICommand EditUndoCommand { get; set; }
+        public ICommand EditRedoCommand { get; set; }
+        public ICommand EditCutCommand { get; set; }
+        public ICommand EditCopyCommand { get; set; }
+        public ICommand EditPasteCommand { get; set; }
+        public ICommand EditDeleteCommand { get; set; }
+        public ICommand EditSelectAllCommand { get; set; }
+
+        public ICommand EditAlignLeftBottomCommand { get; set; }
+        public ICommand EditAlignBottomCommand { get; set; }
+        public ICommand EditAlignRightBottomCommand { get; set; }
+        public ICommand EditAlignLeftCommand { get; set; }
+        public ICommand EditAlignCenterCenterCommand { get; set; }
+        public ICommand EditAlignRightCommand { get; set; }
+        public ICommand EditAlignLeftTopCommand { get; set; }
+        public ICommand EditAlignTopCommand { get; set; }
+        public ICommand EditAlignRightTopCommand { get; set; }
+
+        public ICommand EditIncreaseTextSizeCommand { get; set; }
+        public ICommand EditDecreaseTextSizeCommand { get; set; }
+        public ICommand EditToggleFillCommand { get; set; }
+        public ICommand EditToggleSnapCommand { get; set; }
+        public ICommand EditToggleInvertStartCommand { get; set; }
+        public ICommand EditToggleInvertEndCommand { get; set; }
+
+        public ICommand EditCancelCommand { get; set; }
+
+        public ICommand ToolNoneCommand { get; set; }
+        public ICommand ToolSelectionCommand { get; set; }
+        public ICommand ToolWireCommand { get; set; }
+        public ICommand ToolPinCommand { get; set; }
+        public ICommand ToolLineCommand { get; set; }
+        public ICommand ToolEllipseCommand { get; set; }
+        public ICommand ToolRectangleCommand { get; set; }
+        public ICommand ToolTextCommand { get; set; }
+
+        public ICommand BlockImportCommand { get; set; }
+        public ICommand BlockImportCodeCommand { get; set; }
+        public ICommand BlockExportCommand { get; set; }
+        public ICommand BlockCreateProjectCommand { get; set; }
+        public ICommand InsertBlockCommand { get; set; }
+
+        public ICommand TemplateImportCommand { get; set; }
+        public ICommand TemplateImportCodeCommand { get; set; }
+        public ICommand TemplateExportCommand { get; set; }
+        public ICommand ApplyTemplateCommand { get; set; }
+
+        public ICommand SimulationStartCommand { get; set; }
+        public ICommand SimulationStopCommand { get; set; }
+        public ICommand SimulationRestartCommand { get; set; }
+        public ICommand SimulationCreateGraphCommand { get; set; }
+        public ICommand SimulationOptionsCommand { get; set; }
+
+        #endregion
+
         #region Enums
 
         public enum LineHit
@@ -23,27 +241,6 @@ namespace Logic.Page
 
         #endregion
 
-        #region Properties
-
-        public MainViewModel Model { get; set; }
-        public ToolMenuModel Tool { get; set; }
-
-        public XLayer Shapes { get; set; }
-        public XLayer Blocks { get; set; }
-        public XLayer Wires { get; set; }
-        public XLayer Pins { get; set; }
-        public XLayer Editor { get; set; }
-        public XLayer Overlay { get; set; }
-
-        public LineHit LineHitResult { get; set; }
-        public IRenderer Renderer { get; set; }
-
-        public History<IPage> History { get; set; }
-        public ITextClipboard Clipboard { get; set; }
-        public IStringSerializer Serializer { get; set; }
-
-        #endregion
-
         #region Add
 
         public void Add(IEnumerable<IShape> shapes)
@@ -52,34 +249,34 @@ namespace Logic.Page
             {
                 if (shape is XLine)
                 {
-                    Shapes.Shapes.Add(shape);
+                    ShapeLayer.Shapes.Add(shape);
                 }
                 else if (shape is XEllipse)
                 {
-                    Shapes.Shapes.Add(shape);
+                    ShapeLayer.Shapes.Add(shape);
                 }
                 else if (shape is XRectangle)
                 {
-                    Shapes.Shapes.Add(shape);
+                    ShapeLayer.Shapes.Add(shape);
                 }
                 else if (shape is XText)
                 {
-                    Shapes.Shapes.Add(shape);
+                    ShapeLayer.Shapes.Add(shape);
                 }
                 else if (shape is XWire)
                 {
-                    Wires.Shapes.Add(shape);
+                    WireLayer.Shapes.Add(shape);
                 }
                 else if (shape is XPin)
                 {
-                    Pins.Shapes.Add(shape);
+                    PinLayer.Shapes.Add(shape);
                 }
                 else if (shape is XBlock)
                 {
-                    Blocks.Shapes.Add(shape);
+                    BlockLayer.Shapes.Add(shape);
                 }
             }
-        } 
+        }
 
         #endregion
 
@@ -91,35 +288,35 @@ namespace Logic.Page
             {
                 if (shape is XLine)
                 {
-                    Shapes.Shapes.Remove(shape);
+                    ShapeLayer.Shapes.Remove(shape);
                 }
                 else if (shape is XEllipse)
                 {
-                    Shapes.Shapes.Remove(shape);
+                    ShapeLayer.Shapes.Remove(shape);
                 }
                 else if (shape is XRectangle)
                 {
-                    Shapes.Shapes.Remove(shape);
+                    ShapeLayer.Shapes.Remove(shape);
                 }
                 else if (shape is XText)
                 {
-                    Shapes.Shapes.Remove(shape);
+                    ShapeLayer.Shapes.Remove(shape);
                 }
                 else if (shape is XWire)
                 {
-                    Wires.Shapes.Remove(shape);
+                    WireLayer.Shapes.Remove(shape);
                 }
                 else if (shape is XPin)
                 {
-                    Pins.Shapes.Remove(shape);
+                    PinLayer.Shapes.Remove(shape);
                 }
                 else if (shape is XBlock)
                 {
-                    Blocks.Shapes.Remove(shape);
+                    BlockLayer.Shapes.Remove(shape);
                 }
             }
-        } 
-        
+        }
+
         #endregion
 
         #region Clone
@@ -161,13 +358,13 @@ namespace Logic.Page
 
         public ICollection<IShape> GetAll()
         {
-            return 
+            return
                 new HashSet<IShape>(
                     Enumerable.Empty<IShape>()
-                              .Concat(Pins.Shapes)
-                              .Concat(Wires.Shapes)
-                              .Concat(Blocks.Shapes)
-                              .Concat(Shapes.Shapes));
+                              .Concat(PinLayer.Shapes)
+                              .Concat(WireLayer.Shapes)
+                              .Concat(BlockLayer.Shapes)
+                              .Concat(ShapeLayer.Shapes));
         }
 
         #endregion
@@ -526,19 +723,19 @@ namespace Logic.Page
 
         public IShape HitTest(Point2 p)
         {
-            var pin = HitTest(Pins.Shapes.Cast<XPin>(), p);
+            var pin = HitTest(PinLayer.Shapes.Cast<XPin>(), p);
             if (pin != null)
             {
                 return pin;
             }
 
-            var wire = HitTest(Wires.Shapes.Cast<XWire>(), p);
+            var wire = HitTest(WireLayer.Shapes.Cast<XWire>(), p);
             if (wire != null)
             {
                 return wire;
             }
 
-            var block = HitTest(Blocks.Shapes.Cast<XBlock>(), p);
+            var block = HitTest(BlockLayer.Shapes.Cast<XBlock>(), p);
             if (block != null)
             {
                 if (block is XPin)
@@ -551,7 +748,7 @@ namespace Logic.Page
                 }
             }
 
-            var template = HitTest(Shapes.Shapes, p);
+            var template = HitTest(ShapeLayer.Shapes, p);
             if (template != null)
             {
                 return template;
@@ -738,10 +935,10 @@ namespace Logic.Page
         public ICollection<IShape> HitTest(Rect2 rect)
         {
             var hs = new HashSet<IShape>();
-            HitTest(Pins.Shapes.Cast<XPin>(), rect, hs);
-            HitTest(Wires.Shapes.Cast<XWire>(), rect, hs);
-            HitTest(Blocks.Shapes.Cast<XBlock>(), rect, hs);
-            HitTest(Shapes.Shapes, rect, hs);
+            HitTest(PinLayer.Shapes.Cast<XPin>(), rect, hs);
+            HitTest(WireLayer.Shapes.Cast<XWire>(), rect, hs);
+            HitTest(BlockLayer.Shapes.Cast<XBlock>(), rect, hs);
+            HitTest(ShapeLayer.Shapes, rect, hs);
             return hs;
         }
 
@@ -961,40 +1158,40 @@ namespace Logic.Page
         {
             return new XPage()
             {
-                Name = Model.Page.Name,
-                Shapes = Model.Page.Shapes,
-                Blocks = Model.Page.Blocks,
-                Pins = Model.Page.Pins,
-                Wires = Model.Page.Wires,
+                Name = Page.Name,
+                Shapes = Page.Shapes,
+                Blocks = Page.Blocks,
+                Pins = Page.Pins,
+                Wires = Page.Wires,
                 Template = null
             };
         }
 
         public void Load(IPage page)
         {
-            Shapes.Shapes = page.Shapes;
-            Blocks.Shapes = page.Blocks;
-            Wires.Shapes = page.Wires;
-            Pins.Shapes = page.Pins;
+            ShapeLayer.Shapes = page.Shapes;
+            BlockLayer.Shapes = page.Blocks;
+            WireLayer.Shapes = page.Wires;
+            PinLayer.Shapes = page.Pins;
 
-            Editor.Shapes.Clear();
-            Overlay.Shapes.Clear();
+            EditorLayer.Shapes.Clear();
+            OverlayLayer.Shapes.Clear();
         }
 
         public void Update(IPage page)
         {
-            Model.Page.Shapes = page.Shapes;
-            Model.Page.Blocks = page.Blocks;
-            Model.Page.Wires = page.Wires;
-            Model.Page.Pins = page.Pins;
+            Page.Shapes = page.Shapes;
+            Page.Blocks = page.Blocks;
+            Page.Wires = page.Wires;
+            Page.Pins = page.Pins;
         }
 
         public void Clear()
         {
-            Shapes.Shapes = Enumerable.Empty<IShape>().ToList();
-            Blocks.Shapes = Enumerable.Empty<IShape>().ToList();
-            Wires.Shapes = Enumerable.Empty<IShape>().ToList();
-            Pins.Shapes = Enumerable.Empty<IShape>().ToList();
+            ShapeLayer.Shapes = Enumerable.Empty<IShape>().ToList();
+            BlockLayer.Shapes = Enumerable.Empty<IShape>().ToList();
+            WireLayer.Shapes = Enumerable.Empty<IShape>().ToList();
+            PinLayer.Shapes = Enumerable.Empty<IShape>().ToList();
         }
 
         #endregion
@@ -1019,11 +1216,11 @@ namespace Logic.Page
 
         public void Invalidate()
         {
-            Shapes.InvalidateVisual();
-            Blocks.InvalidateVisual();
-            Pins.InvalidateVisual();
-            Wires.InvalidateVisual();
-            Overlay.InvalidateVisual();
+            ShapeLayer.InvalidateVisual();
+            BlockLayer.InvalidateVisual();
+            PinLayer.InvalidateVisual();
+            WireLayer.InvalidateVisual();
+            OverlayLayer.InvalidateVisual();
         }
 
         #endregion

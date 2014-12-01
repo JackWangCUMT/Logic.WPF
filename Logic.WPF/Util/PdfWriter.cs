@@ -342,7 +342,7 @@ namespace Logic.Util
 
         public void DrawWire(object gfx, CORE.IStyle style, CORE.XWire wire)
         {
-            var position = PAGE.XWirePosition.Calculate(wire, InvertSize);
+            var position = WirePosition.Calculate(wire, InvertSize);
 
             if (wire.InvertStart)
             {

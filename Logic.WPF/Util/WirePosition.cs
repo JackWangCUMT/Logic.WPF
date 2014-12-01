@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Logic.Page
+namespace Logic.Util
 {
-    public struct XWirePosition
+    public struct WirePosition
     {
         // start location
         public double StartX;
@@ -25,9 +25,9 @@ namespace Logic.Page
         public double InvertX2;
         public double InvertY2;
 
-        public static XWirePosition Calculate(XWire wire, double invertSize)
+        public static WirePosition Calculate(XWire wire, double invertSize)
         {
-            var position = new XWirePosition();
+            var position = new WirePosition();
 
             // initialize start position
             if (wire.Start != null)

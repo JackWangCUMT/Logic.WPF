@@ -10,9 +10,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Logic.Page
+namespace Logic.ViewModels
 {
-    public class XLayer : ILayer
+    public class LayerViewModel : ILayer
     {
         #region Enums
 
@@ -52,7 +52,7 @@ namespace Logic.Page
         public IStyle TrueStateStyle { get; set; }
         public IStyle FalseStateStyle { get; set; }
 
-        public XLayers Layers { get; set; }
+        public ProjectViewModel Layers { get; set; }
         public IDictionary<XBlock, BoolSimulation> Simulations { get; set; }
         public bool EnableSnap { get; set; }
         public double SnapSize { get; set; }
@@ -85,7 +85,7 @@ namespace Logic.Page
 
         #region Constructor
 
-        public XLayer()
+        public LayerViewModel()
         {
             Shapes = new ObservableCollection<IShape>();
             Hidden = new HashSet<IShape>();
@@ -543,37 +543,37 @@ namespace Logic.Page
                 case Element.Line:
                     switch (Layers.LineHitResult)
                     {
-                        case XLayers.LineHit.Start:
+                        case ProjectViewModel.LineHit.Start:
                             _line.X1 += dx;
                             _line.Y1 += dy;
                             break;
-                        case XLayers.LineHit.End:
+                        case ProjectViewModel.LineHit.End:
                             _line.X2 += dx;
                             _line.Y2 += dy;
                             break;
-                        case XLayers.LineHit.Line:
+                        case ProjectViewModel.LineHit.Line:
                             _line.X1 += dx;
                             _line.Y1 += dy;
                             _line.X2 += dx;
                             _line.Y2 += dy;
                             break;
                     }
-                    Layers.Shapes.InvalidateVisual();
+                    Layers.ShapeLayer.InvalidateVisual();
                     break;
                 case Element.Ellipse:
                     _ellipse.X += dx;
                     _ellipse.Y += dy;
-                    Layers.Shapes.InvalidateVisual();
+                    Layers.ShapeLayer.InvalidateVisual();
                     break;
                 case Element.Rectangle:
                     _rectangle.X += dx;
                     _rectangle.Y += dy;
-                    Layers.Shapes.InvalidateVisual();
+                    Layers.ShapeLayer.InvalidateVisual();
                     break;
                 case Element.Text:
                     _text.X += dx;
                     _text.Y += dy;
-                    Layers.Shapes.InvalidateVisual();
+                    Layers.ShapeLayer.InvalidateVisual();
                     break;
                 case Element.Wire:
                     // TODO: Implement wire Move
@@ -581,14 +581,14 @@ namespace Logic.Page
                 case Element.Pin:
                     _pin.X += dx;
                     _pin.Y += dy;
-                    Layers.Wires.InvalidateVisual();
-                    Layers.Pins.InvalidateVisual();
+                    Layers.WireLayer.InvalidateVisual();
+                    Layers.PinLayer.InvalidateVisual();
                     break;
                 case Element.Block:
                     Move(_block, dx, dy);
-                    Layers.Blocks.InvalidateVisual();
-                    Layers.Wires.InvalidateVisual();
-                    Layers.Pins.InvalidateVisual();
+                    Layers.BlockLayer.InvalidateVisual();
+                    Layers.WireLayer.InvalidateVisual();
+                    Layers.PinLayer.InvalidateVisual();
                     break;
             }
         }
@@ -641,10 +641,10 @@ namespace Logic.Page
                 }
             }
 
-            Layers.Shapes.InvalidateVisual();
-            Layers.Blocks.InvalidateVisual();
-            Layers.Wires.InvalidateVisual();
-            Layers.Pins.InvalidateVisual();
+            Layers.ShapeLayer.InvalidateVisual();
+            Layers.BlockLayer.InvalidateVisual();
+            Layers.WireLayer.InvalidateVisual();
+            Layers.PinLayer.InvalidateVisual();
         }
 
         public void Move(XBlock block, double dx, double dy)
@@ -715,13 +715,13 @@ namespace Logic.Page
             IShape blockHitResult = null;
 
             shapeHitResult = Layers.HitTest(p);
-            pinHitResult = Layers.HitTest(Layers.Pins.Shapes.Cast<XPin>(), p);
+            pinHitResult = Layers.HitTest(Layers.PinLayer.Shapes.Cast<XPin>(), p);
             if (pinHitResult == null)
             {
-                wireHitResult = Layers.HitTest(Layers.Wires.Shapes.Cast<XWire>(), p);
+                wireHitResult = Layers.HitTest(Layers.WireLayer.Shapes.Cast<XWire>(), p);
                 if (wireHitResult == null)
                 {
-                    blockHitResult = Layers.HitTest(Layers.Blocks.Shapes.Cast<XBlock>(), p);
+                    blockHitResult = Layers.HitTest(Layers.BlockLayer.Shapes.Cast<XBlock>(), p);
                 }
             }
 
@@ -734,46 +734,46 @@ namespace Logic.Page
                 {
                     XBlock block = shapeHitResult as XBlock;
 
-                    Layers.Blocks.Hidden.Add(shapeHitResult);
-                    Layers.Blocks.InvalidateVisual();
+                    Layers.BlockLayer.Hidden.Add(shapeHitResult);
+                    Layers.BlockLayer.InvalidateVisual();
 
-                    Layers.Overlay.Shapes.Add(block);
-                    Layers.Overlay.InvalidateVisual();
+                    Layers.OverlayLayer.Shapes.Add(block);
+                    Layers.OverlayLayer.InvalidateVisual();
                 }
                 else if (shapeHitResult is XPin)
                 {
                     XPin pin = shapeHitResult as XPin;
                     if (Layers.Tool.CurrentTool == ToolMenuModel.Tool.Wire)
                     {
-                        Layers.Blocks.Hidden.Add(pin);
-                        Layers.Pins.Hidden.Add(pin);
-                        Layers.Blocks.InvalidateVisual();
-                        Layers.Pins.InvalidateVisual();
+                        Layers.BlockLayer.Hidden.Add(pin);
+                        Layers.PinLayer.Hidden.Add(pin);
+                        Layers.BlockLayer.InvalidateVisual();
+                        Layers.PinLayer.InvalidateVisual();
 
-                        Layers.Overlay.Shapes.Add(pin);
-                        Layers.Overlay.InvalidateVisual();
+                        Layers.OverlayLayer.Shapes.Add(pin);
+                        Layers.OverlayLayer.InvalidateVisual();
                     }
                 }
                 else if (shapeHitResult is XWire)
                 {
                     if (Layers.Tool.CurrentTool == ToolMenuModel.Tool.Wire || Layers.Tool.CurrentTool == ToolMenuModel.Tool.Pin)
                     {
-                        Layers.Wires.Hidden.Add(wireHitResult);
-                        Layers.Wires.InvalidateVisual();
+                        Layers.WireLayer.Hidden.Add(wireHitResult);
+                        Layers.WireLayer.InvalidateVisual();
 
-                        Layers.Overlay.Shapes.Add(wireHitResult);
-                        Layers.Overlay.InvalidateVisual();
+                        Layers.OverlayLayer.Shapes.Add(wireHitResult);
+                        Layers.OverlayLayer.InvalidateVisual();
                     }
                 }
                 else
                 {
                     if (Layers.Tool.CurrentTool == ToolMenuModel.Tool.Wire)
                     {
-                        Layers.Shapes.Hidden.Add(shapeHitResult);
-                        Layers.Shapes.InvalidateVisual();
+                        Layers.ShapeLayer.Hidden.Add(shapeHitResult);
+                        Layers.ShapeLayer.InvalidateVisual();
 
-                        Layers.Overlay.Shapes.Add(shapeHitResult);
-                        Layers.Overlay.InvalidateVisual();
+                        Layers.OverlayLayer.Shapes.Add(shapeHitResult);
+                        Layers.OverlayLayer.InvalidateVisual();
                     }
                 }
             }
@@ -783,13 +783,13 @@ namespace Logic.Page
                 XPin pin = pinHitResult as XPin;
                 if (Layers.Tool.CurrentTool == ToolMenuModel.Tool.Wire)
                 {
-                    Layers.Pins.Hidden.Add(pin);
-                    Layers.Blocks.Hidden.Add(pin);
-                    Layers.Pins.InvalidateVisual();
-                    Layers.Blocks.InvalidateVisual();
+                    Layers.PinLayer.Hidden.Add(pin);
+                    Layers.BlockLayer.Hidden.Add(pin);
+                    Layers.PinLayer.InvalidateVisual();
+                    Layers.BlockLayer.InvalidateVisual();
 
-                    Layers.Overlay.Shapes.Add(pin);
-                    Layers.Overlay.InvalidateVisual();
+                    Layers.OverlayLayer.Shapes.Add(pin);
+                    Layers.OverlayLayer.InvalidateVisual();
                 }
             }
             else if (wireHitResult != null)
@@ -798,11 +798,11 @@ namespace Logic.Page
                 {
                     if (Layers.Tool.CurrentTool == ToolMenuModel.Tool.Wire || Layers.Tool.CurrentTool == ToolMenuModel.Tool.Pin)
                     {
-                        Layers.Wires.Hidden.Add(wireHitResult);
-                        Layers.Wires.InvalidateVisual();
+                        Layers.WireLayer.Hidden.Add(wireHitResult);
+                        Layers.WireLayer.InvalidateVisual();
 
-                        Layers.Overlay.Shapes.Add(wireHitResult);
-                        Layers.Overlay.InvalidateVisual();
+                        Layers.OverlayLayer.Shapes.Add(wireHitResult);
+                        Layers.OverlayLayer.InvalidateVisual();
                     }
                 }
                 else if (wireHitResult is XPin)
@@ -812,17 +812,17 @@ namespace Logic.Page
                     {
                         if (pin.Owner == null)
                         {
-                            Layers.Pins.Hidden.Add(pin);
-                            Layers.Pins.InvalidateVisual();
+                            Layers.PinLayer.Hidden.Add(pin);
+                            Layers.PinLayer.InvalidateVisual();
                         }
                         else
                         {
-                            Layers.Blocks.Hidden.Add(pin);
-                            Layers.Blocks.InvalidateVisual();
+                            Layers.BlockLayer.Hidden.Add(pin);
+                            Layers.BlockLayer.InvalidateVisual();
                         }
 
-                        Layers.Overlay.Shapes.Add(pin);
-                        Layers.Overlay.InvalidateVisual();
+                        Layers.OverlayLayer.Shapes.Add(pin);
+                        Layers.OverlayLayer.InvalidateVisual();
                     }
                 }
             }
@@ -833,11 +833,11 @@ namespace Logic.Page
                     XBlock block = shapeHitResult as XBlock;
                     if (Layers.Tool.CurrentTool == ToolMenuModel.Tool.Wire)
                     {
-                        Layers.Blocks.Hidden.Add(block);
-                        Layers.Blocks.InvalidateVisual();
+                        Layers.BlockLayer.Hidden.Add(block);
+                        Layers.BlockLayer.InvalidateVisual();
 
-                        Layers.Overlay.Shapes.Add(block);
-                        Layers.Overlay.InvalidateVisual();
+                        Layers.OverlayLayer.Shapes.Add(block);
+                        Layers.OverlayLayer.InvalidateVisual();
                     }
                 }
                 else if (blockHitResult is XPin)
@@ -845,11 +845,11 @@ namespace Logic.Page
                     XPin pin = blockHitResult as XPin;
                     if (Layers.Tool.CurrentTool == ToolMenuModel.Tool.Wire)
                     {
-                        Layers.Blocks.Hidden.Add(pin);
-                        Layers.Blocks.InvalidateVisual();
+                        Layers.BlockLayer.Hidden.Add(pin);
+                        Layers.BlockLayer.InvalidateVisual();
 
-                        Layers.Overlay.Shapes.Add(pin);
-                        Layers.Overlay.InvalidateVisual();
+                        Layers.OverlayLayer.Shapes.Add(pin);
+                        Layers.OverlayLayer.InvalidateVisual();
                     }
                 }
             }
@@ -857,35 +857,35 @@ namespace Logic.Page
 
         private void OverlayReset()
         {
-            if (Layers.Overlay.Shapes.Count > 0)
+            if (Layers.OverlayLayer.Shapes.Count > 0)
             {
-                if (Layers.Shapes.Hidden != null && Layers.Shapes.Hidden.Count > 0)
+                if (Layers.ShapeLayer.Hidden != null && Layers.ShapeLayer.Hidden.Count > 0)
                 {
-                    Layers.Shapes.Hidden.Clear();
-                    Layers.Shapes.InvalidateVisual();
+                    Layers.ShapeLayer.Hidden.Clear();
+                    Layers.ShapeLayer.InvalidateVisual();
                 }
 
-                if (Layers.Blocks.Hidden != null && Layers.Blocks.Hidden.Count > 0)
+                if (Layers.BlockLayer.Hidden != null && Layers.BlockLayer.Hidden.Count > 0)
                 {
-                    Layers.Blocks.Hidden.Clear();
-                    Layers.Blocks.InvalidateVisual();
+                    Layers.BlockLayer.Hidden.Clear();
+                    Layers.BlockLayer.InvalidateVisual();
                 }
 
-                if (Layers.Wires.Hidden != null && Layers.Wires.Hidden.Count > 0)
+                if (Layers.WireLayer.Hidden != null && Layers.WireLayer.Hidden.Count > 0)
                 {
-                    Layers.Wires.Hidden.Clear();
-                    Layers.Wires.InvalidateVisual();
+                    Layers.WireLayer.Hidden.Clear();
+                    Layers.WireLayer.InvalidateVisual();
                 }
 
-                if (Layers.Pins.Hidden != null && Layers.Pins.Hidden.Count > 0)
+                if (Layers.PinLayer.Hidden != null && Layers.PinLayer.Hidden.Count > 0)
                 {
-                    Layers.Pins.Hidden.Clear();
-                    Layers.Pins.InvalidateVisual();
+                    Layers.PinLayer.Hidden.Clear();
+                    Layers.PinLayer.InvalidateVisual();
                 }
 
-                Layers.Pins.Hidden.Clear();
-                Layers.Overlay.Shapes.Clear();
-                Layers.Overlay.InvalidateVisual();
+                Layers.PinLayer.Hidden.Clear();
+                Layers.OverlayLayer.Shapes.Clear();
+                Layers.OverlayLayer.InvalidateVisual();
             }
         }
 
@@ -901,13 +901,13 @@ namespace Logic.Page
 
             if (Layers != null)
             {
-                pinHitResult = Layers.HitTest(Layers.Pins.Shapes.Cast<XPin>(), p);
+                pinHitResult = Layers.HitTest(Layers.PinLayer.Shapes.Cast<XPin>(), p);
                 if (pinHitResult == null)
                 {
-                    wireHitResult = Layers.HitTest(Layers.Wires.Shapes.Cast<XWire>(), p);
+                    wireHitResult = Layers.HitTest(Layers.WireLayer.Shapes.Cast<XWire>(), p);
                     if (wireHitResult == null)
                     {
-                        blockHitResult = Layers.HitTest(Layers.Blocks.Shapes.Cast<XBlock>(), p);
+                        blockHitResult = Layers.HitTest(Layers.BlockLayer.Shapes.Cast<XBlock>(), p);
                     }
                 }
             }
@@ -921,7 +921,7 @@ namespace Logic.Page
                 && wireHitResult == null
                 && (blockHitResult == null || (blockHitResult != null && !(blockHitResult is XPin))))
             {
-                if (Layers.Pins != null)
+                if (Layers.PinLayer != null)
                 {
                     // create new standalone pin
                     pinHitResult = new XPin()
@@ -952,7 +952,7 @@ namespace Logic.Page
                 else if (wireHitResult != null && wireHitResult is XWire)
                 {
                     // split wire
-                    if (Layers.Pins != null && Layers.Wires != null)
+                    if (Layers.PinLayer != null && Layers.WireLayer != null)
                     {
                         WireSplitStart(wireHitResult, x, y);
                     }
@@ -972,13 +972,13 @@ namespace Logic.Page
 
             if (Layers != null)
             {
-                pinHitResult = Layers.HitTest(Layers.Pins.Shapes.Cast<XPin>(), p);
+                pinHitResult = Layers.HitTest(Layers.PinLayer.Shapes.Cast<XPin>(), p);
                 if (pinHitResult == null)
                 {
-                    wireHitResult = Layers.HitTest(Layers.Wires.Shapes.Cast<XWire>(), p);
+                    wireHitResult = Layers.HitTest(Layers.WireLayer.Shapes.Cast<XWire>(), p);
                     if (wireHitResult == null)
                     {
-                        blockHitResult = Layers.HitTest(Layers.Blocks.Shapes.Cast<XBlock>(), p);
+                        blockHitResult = Layers.HitTest(Layers.BlockLayer.Shapes.Cast<XBlock>(), p);
                     }
                 }
             }
@@ -992,7 +992,7 @@ namespace Logic.Page
                 && wireHitResult == null
                 && (blockHitResult == null || (blockHitResult != null && !(blockHitResult is XPin))))
             {
-                if (Layers.Pins != null)
+                if (Layers.PinLayer != null)
                 {
                     // create new standalone pin
                     pinHitResult = new XPin()
@@ -1004,8 +1004,8 @@ namespace Logic.Page
                         Y = y
                     };
 
-                    Layers.Pins.Shapes.Add(pinHitResult);
-                    Layers.Pins.InvalidateVisual();
+                    Layers.PinLayer.Shapes.Add(pinHitResult);
+                    Layers.PinLayer.InvalidateVisual();
                 }
             }
 
@@ -1017,7 +1017,7 @@ namespace Logic.Page
             else if (wireHitResult != null && wireHitResult is XWire)
             {
                 // split wire
-                if (Layers.Pins != null && Layers.Wires != null)
+                if (Layers.PinLayer != null && Layers.WireLayer != null)
                 {
                     WireSplitEnd(wireHitResult, x, y);
                 }
@@ -1209,12 +1209,12 @@ namespace Logic.Page
                     {
                         _line.X2 = x;
                         _line.Y2 = y;
-                        if (Layers.Shapes != null)
+                        if (Layers.ShapeLayer != null)
                         {
                             Shapes.Remove(_line);
                             Layers.Snapshot();
-                            Layers.Shapes.Shapes.Add(_line);
-                            Layers.Shapes.InvalidateVisual();
+                            Layers.ShapeLayer.Shapes.Add(_line);
+                            Layers.ShapeLayer.InvalidateVisual();
                         }
                         ReleaseMouseCapture();
                         InvalidateVisual();
@@ -1226,12 +1226,12 @@ namespace Logic.Page
                         _ellipse.RadiusY = Math.Abs(y - _starty) / 2.0;
                         _ellipse.X = Math.Min(_startx, x) + _ellipse.RadiusX;
                         _ellipse.Y = Math.Min(_starty, y) + _ellipse.RadiusY;
-                        if (Layers.Shapes != null)
+                        if (Layers.ShapeLayer != null)
                         {
                             Shapes.Remove(_ellipse);
                             Layers.Snapshot();
-                            Layers.Shapes.Shapes.Add(_ellipse);
-                            Layers.Shapes.InvalidateVisual();
+                            Layers.ShapeLayer.Shapes.Add(_ellipse);
+                            Layers.ShapeLayer.InvalidateVisual();
                         }
                         ReleaseMouseCapture();
                         InvalidateVisual();
@@ -1243,12 +1243,12 @@ namespace Logic.Page
                         _rectangle.Y = Math.Min(_starty, y);
                         _rectangle.Width = Math.Abs(x - _startx);
                         _rectangle.Height = Math.Abs(y - _starty);
-                        if (Layers.Shapes != null)
+                        if (Layers.ShapeLayer != null)
                         {
                             Shapes.Remove(_rectangle);
                             Layers.Snapshot();
-                            Layers.Shapes.Shapes.Add(_rectangle);
-                            Layers.Shapes.InvalidateVisual();
+                            Layers.ShapeLayer.Shapes.Add(_rectangle);
+                            Layers.ShapeLayer.InvalidateVisual();
                         }
                         ReleaseMouseCapture();
                         InvalidateVisual();
@@ -1260,12 +1260,12 @@ namespace Logic.Page
                         _text.Y = Math.Min(_starty, y);
                         _text.Width = Math.Abs(x - _startx);
                         _text.Height = Math.Abs(y - _starty);
-                        if (Layers.Shapes != null)
+                        if (Layers.ShapeLayer != null)
                         {
                             Shapes.Remove(_text);
                             Layers.Snapshot();
-                            Layers.Shapes.Shapes.Add(_text);
-                            Layers.Shapes.InvalidateVisual();
+                            Layers.ShapeLayer.Shapes.Add(_text);
+                            Layers.ShapeLayer.InvalidateVisual();
                         }
                         ReleaseMouseCapture();
                         InvalidateVisual();
@@ -1275,7 +1275,7 @@ namespace Logic.Page
                     {
                         _wire.X2 = x;
                         _wire.Y2 = y;
-                        if (Layers.Wires != null)
+                        if (Layers.WireLayer != null)
                         {
                             Shapes.Remove(_wire);
 
@@ -1285,13 +1285,13 @@ namespace Logic.Page
                             }
 
                             Layers.Snapshot();
-                            Layers.Wires.Shapes.Add(_wire);
-                            Layers.Wires.InvalidateVisual();
+                            Layers.WireLayer.Shapes.Add(_wire);
+                            Layers.WireLayer.InvalidateVisual();
 
                             if (_pin != null)
                             {
-                                Layers.Pins.Shapes.Add(_pin);
-                                Layers.Pins.InvalidateVisual();
+                                Layers.PinLayer.Shapes.Add(_pin);
+                                Layers.PinLayer.InvalidateVisual();
                             }
                         }
                         ReleaseMouseCapture();
@@ -1302,12 +1302,12 @@ namespace Logic.Page
                     {
                         _pin.X = x;
                         _pin.Y = y;
-                        if (Layers.Pins != null)
+                        if (Layers.PinLayer != null)
                         {
                             Shapes.Remove(_pin);
                             Layers.Snapshot();
-                            Layers.Pins.Shapes.Add(_pin);
-                            Layers.Pins.InvalidateVisual();
+                            Layers.PinLayer.Shapes.Add(_pin);
+                            Layers.PinLayer.InvalidateVisual();
                         }
                         ReleaseMouseCapture();
                         InvalidateVisual();
@@ -1491,7 +1491,7 @@ namespace Logic.Page
                     text.IsFilled = !text.IsFilled;
                 }
 
-                Layers.Shapes.InvalidateVisual();
+                Layers.ShapeLayer.InvalidateVisual();
             }
         }
 
@@ -1504,7 +1504,7 @@ namespace Logic.Page
                 {
                     wire.InvertStart = !wire.InvertStart;
                 }
-                Layers.Wires.InvalidateVisual();
+                Layers.WireLayer.InvalidateVisual();
             }
         }
 
@@ -1517,7 +1517,7 @@ namespace Logic.Page
                 {
                     wire.InvertEnd = !wire.InvertEnd;
                 }
-                Layers.Wires.InvalidateVisual();
+                Layers.WireLayer.InvalidateVisual();
             }
         }
 
@@ -1534,7 +1534,7 @@ namespace Logic.Page
                         text.FontSize = size;
                     }
                 }
-                Layers.Shapes.InvalidateVisual();
+                Layers.ShapeLayer.InvalidateVisual();
             }
         }
 
@@ -1547,7 +1547,7 @@ namespace Logic.Page
                 {
                     text.HAlignment = halignment;
                 }
-                Layers.Shapes.InvalidateVisual();
+                Layers.ShapeLayer.InvalidateVisual();
             }
         }
 
@@ -1560,7 +1560,7 @@ namespace Logic.Page
                 {
                     text.VAlignment = valignment;
                 }
-                Layers.Shapes.InvalidateVisual();
+                Layers.ShapeLayer.InvalidateVisual();
             }
         }
 
@@ -1678,11 +1678,11 @@ namespace Logic.Page
 
             _wire.Start = pin;
 
-            Layers.Pins.Shapes.Add(pin);
-            Layers.Wires.Shapes.Add(split);
+            Layers.PinLayer.Shapes.Add(pin);
+            Layers.WireLayer.Shapes.Add(split);
 
-            Layers.Wires.InvalidateVisual();
-            Layers.Pins.InvalidateVisual();
+            Layers.WireLayer.InvalidateVisual();
+            Layers.PinLayer.InvalidateVisual();
         }
 
         private void WireSplitEnd(IShape wireHitResult, double x, double y)
@@ -1694,11 +1694,11 @@ namespace Logic.Page
 
             _wire.End = pin;
 
-            Layers.Pins.Shapes.Add(pin);
-            Layers.Wires.Shapes.Add(split);
+            Layers.PinLayer.Shapes.Add(pin);
+            Layers.WireLayer.Shapes.Add(split);
 
-            Layers.Wires.InvalidateVisual();
-            Layers.Pins.InvalidateVisual();
+            Layers.WireLayer.InvalidateVisual();
+            Layers.PinLayer.InvalidateVisual();
         }
 
         #endregion
@@ -1718,8 +1718,8 @@ namespace Logic.Page
                 Move(copy, dx, dy);
 
                 // add to collection
-                Layers.Blocks.Shapes.Add(copy);
-                Layers.Blocks.InvalidateVisual();
+                Layers.BlockLayer.Shapes.Add(copy);
+                Layers.BlockLayer.InvalidateVisual();
 
                 return copy;
             }
@@ -1762,9 +1762,9 @@ namespace Logic.Page
                 wire.InvertEnd = false;
                 wire.End = pin0;
             }
-            Layers.Wires.Shapes.Add(split);
-            Layers.Pins.InvalidateVisual();
-            Layers.Wires.InvalidateVisual();
+            Layers.WireLayer.Shapes.Add(split);
+            Layers.PinLayer.InvalidateVisual();
+            Layers.WireLayer.InvalidateVisual();
         }
 
         public void Connect(XBlock block)
@@ -1773,7 +1773,7 @@ namespace Logic.Page
             int count = block.Pins.Count();
             if (count > 0)
             {
-                var wires = Layers.Wires.Shapes.Cast<XWire>();
+                var wires = Layers.WireLayer.Shapes.Cast<XWire>();
                 var dict = new Dictionary<XWire, List<XPin>>();
 
                 // find connections
