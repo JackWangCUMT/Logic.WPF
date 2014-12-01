@@ -41,21 +41,9 @@ namespace Logic.Page
 
         #region Properties
 
-        public XLayers Layers { get; set; }
         public IList<IShape> Shapes { get; set; }
         public ICollection<IShape> Hidden { get; set; }
-        public IDictionary<XBlock, BoolSimulation> Simulations { get; set; }
-        public bool EnableSnap { get; set; }
-        public double SnapSize { get; set; }
         public IRenderer Renderer { get; set; }
-        public History<IPage> History { get; set; }
-        public ITextClipboard Clipboard { get; set; }
-        public bool IsOverlay { get; set; }
-        public Mode CurrentMode { get { return _mode; } }
-        public bool SkipContextMenu { get; set; }
-        public double RightX { get; set; }
-        public double RightY { get; set; }
-        public IStringSerializer Serializer { get; set; }
         public IStyle ShapeStyle { get; set; }
         public IStyle SelectedShapeStyle { get; set; }
         public IStyle SelectionStyle { get; set; }
@@ -63,6 +51,16 @@ namespace Logic.Page
         public IStyle NullStateStyle { get; set; }
         public IStyle TrueStateStyle { get; set; }
         public IStyle FalseStateStyle { get; set; }
+
+        public XLayers Layers { get; set; }
+        public IDictionary<XBlock, BoolSimulation> Simulations { get; set; }
+        public bool EnableSnap { get; set; }
+        public double SnapSize { get; set; }
+        public bool IsOverlay { get; set; }
+        public Mode CurrentMode { get { return _mode; } }
+        public bool SkipContextMenu { get; set; }
+        public double RightX { get; set; }
+        public double RightY { get; set; }
         public BoolSimulationCacheRenderer CacheRenderer { get; set; }
         public bool EnableSimulationCache { get; set; }
 
@@ -97,26 +95,6 @@ namespace Logic.Page
 
         #endregion
 
-        #region History
-
-        public void Snapshot()
-        {
-            if (History != null && Layers != null)
-            {
-                History.Snapshot(Layers.ToPage());
-            }
-        }
-
-        public void Reset()
-        {
-            if (History != null && Layers != null)
-            {
-                History.Reset();
-            }
-        }
-
-        #endregion
-
         #region ILayer
 
         public Func<bool> IsMouseCaptured { get; set; }
@@ -143,7 +121,7 @@ namespace Logic.Page
                         switch (Layers.Tool.CurrentTool)
                         {
                             case ToolMenuModel.Tool.None:
-                                SelectionReset();
+                                Layers.SelectionReset();
                                 break;
                             case ToolMenuModel.Tool.Selection:
                                 SelectionInit(point);
@@ -153,11 +131,11 @@ namespace Logic.Page
                             case ToolMenuModel.Tool.Rectangle:
                             case ToolMenuModel.Tool.Text:
                             case ToolMenuModel.Tool.Pin:
-                                SelectionReset();
+                                Layers.SelectionReset();
                                 CreateInit(point);
                                 break;
                             case ToolMenuModel.Tool.Wire:
-                                SelectionReset();
+                                Layers.SelectionReset();
                                 CreateWireInit(point);
                                 break;
                         }
@@ -364,33 +342,6 @@ namespace Logic.Page
 
         #region Selection Mode
 
-        public bool HaveSelected()
-        {
-            return Renderer != null
-                && Renderer.Selected != null
-                && Renderer.Selected.Count > 0;
-        }
-
-        public void SelectionDelete()
-        {
-            if (HaveSelected())
-            {
-                Snapshot();
-                Layers.Delete(Renderer.Selected);
-                SelectionReset();
-            }
-        }
-
-        public void SelectionReset()
-        {
-            if (Renderer != null
-                && Renderer.Selected != null)
-            {
-                Renderer.Selected = null;
-                Layers.Invalidate();
-            }
-        }
-
         private void SelectionInit(Point2 p)
         {
             IShape shape = Layers != null ? Layers.HitTest(p) : null;
@@ -400,7 +351,7 @@ namespace Logic.Page
             }
             else
             {
-                SelectionReset();
+                Layers.SelectionReset();
                 SelectionStart(p);
             }
         }
@@ -471,10 +422,7 @@ namespace Logic.Page
 
         private void MoveInit(IShape shape, Point2 p)
         {
-            if (History != null && Layers != null)
-            {
-                History.Hold(Layers.ToPage());
-            }
+            Layers.Hold();
 
             _startx = EnableSnap ? Snap(p.X, SnapSize) : p.X;
             _starty = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
@@ -541,17 +489,11 @@ namespace Logic.Page
             double y = EnableSnap ? Snap(p.Y, SnapSize) : p.Y;
             if (_hx != x || _hy != y)
             {
-                if (History != null)
-                {
-                    History.Commit();
-                }
+                Layers.Commit();
             }
             else
             {
-                if (History != null)
-                {
-                    History.Release();
-                }
+                Layers.Release();
             }
 
             ReleaseMouseCapture();
@@ -560,11 +502,7 @@ namespace Logic.Page
 
         private void MoveCancel()
         {
-            if (History != null && Layers != null)
-            {
-                History.Release();
-            }
-
+            Layers.Release();
             ReleaseMouseCapture();
             _mode = Mode.None;
         }
@@ -1274,7 +1212,7 @@ namespace Logic.Page
                         if (Layers.Shapes != null)
                         {
                             Shapes.Remove(_line);
-                            Snapshot();
+                            Layers.Snapshot();
                             Layers.Shapes.Shapes.Add(_line);
                             Layers.Shapes.InvalidateVisual();
                         }
@@ -1291,7 +1229,7 @@ namespace Logic.Page
                         if (Layers.Shapes != null)
                         {
                             Shapes.Remove(_ellipse);
-                            Snapshot();
+                            Layers.Snapshot();
                             Layers.Shapes.Shapes.Add(_ellipse);
                             Layers.Shapes.InvalidateVisual();
                         }
@@ -1308,7 +1246,7 @@ namespace Logic.Page
                         if (Layers.Shapes != null)
                         {
                             Shapes.Remove(_rectangle);
-                            Snapshot();
+                            Layers.Snapshot();
                             Layers.Shapes.Shapes.Add(_rectangle);
                             Layers.Shapes.InvalidateVisual();
                         }
@@ -1325,7 +1263,7 @@ namespace Logic.Page
                         if (Layers.Shapes != null)
                         {
                             Shapes.Remove(_text);
-                            Snapshot();
+                            Layers.Snapshot();
                             Layers.Shapes.Shapes.Add(_text);
                             Layers.Shapes.InvalidateVisual();
                         }
@@ -1346,8 +1284,7 @@ namespace Logic.Page
                                 Shapes.Remove(_pin);
                             }
 
-                            Snapshot();
-
+                            Layers.Snapshot();
                             Layers.Wires.Shapes.Add(_wire);
                             Layers.Wires.InvalidateVisual();
 
@@ -1368,7 +1305,7 @@ namespace Logic.Page
                         if (Layers.Pins != null)
                         {
                             Shapes.Remove(_pin);
-                            Snapshot();
+                            Layers.Snapshot();
                             Layers.Pins.Shapes.Add(_pin);
                             Layers.Pins.InvalidateVisual();
                         }
@@ -1534,7 +1471,7 @@ namespace Logic.Page
 
         public void ShapeToggleSelectedFill()
         {
-            if (HaveSelected())
+            if (Layers.HaveSelected())
             {
                 var rectangles = Renderer.Selected.Where(x => x is XRectangle).Cast<XRectangle>();
                 foreach (var rectangle in rectangles)
@@ -1560,7 +1497,7 @@ namespace Logic.Page
 
         public void ShapeToggleSelectedInvertStart()
         {
-            if (HaveSelected())
+            if (Layers.HaveSelected())
             {
                 var wires = Renderer.Selected.Where(x => x is XWire).Cast<XWire>();
                 foreach (var wire in wires)
@@ -1573,7 +1510,7 @@ namespace Logic.Page
 
         public void ShapeToggleSelectedInvertEnd()
         {
-            if (HaveSelected())
+            if (Layers.HaveSelected())
             {
                 var wires = Renderer.Selected.Where(x => x is XWire).Cast<XWire>();
                 foreach (var wire in wires)
@@ -1586,7 +1523,7 @@ namespace Logic.Page
 
         public void ShapeSetSelectedTextSizeDelta(double delta)
         {
-            if (HaveSelected())
+            if (Layers.HaveSelected())
             {
                 var texts = Renderer.Selected.Where(x => x is XText).Cast<XText>();
                 foreach (var text in texts)
@@ -1603,7 +1540,7 @@ namespace Logic.Page
 
         public void ShapeSetSelectedTextHAlignment(HAlignment halignment)
         {
-            if (HaveSelected())
+            if (Layers.HaveSelected())
             {
                 var texts = Renderer.Selected.Where(x => x is XText).Cast<XText>();
                 foreach (var text in texts)
@@ -1616,7 +1553,7 @@ namespace Logic.Page
 
         public void ShapeSetSelectedTextVAlignment(VAlignment valignment)
         {
-            if (HaveSelected())
+            if (Layers.HaveSelected())
             {
                 var texts = Renderer.Selected.Where(x => x is XText).Cast<XText>();
                 foreach (var text in texts)
@@ -1768,41 +1705,10 @@ namespace Logic.Page
 
         #region Block
 
-        private XBlock Clone(XBlock source)
-        {
-            try
-            {
-                var block = new XBlock()
-                {
-                    Properties = source.Properties,
-                    Database = source.Database,
-                    Name = source.Name,
-                    Style = source.Style,
-                    Shapes = source.Shapes,
-                    Pins = source.Pins
-                };
-                var json = Serializer.Serialize(block);
-                var copy = Serializer.Deserialize<XBlock>(json);
-                foreach (var pin in copy.Pins)
-                {
-                    pin.Owner = copy;
-                }
-                return copy;
-            }
-            catch (Exception ex)
-            {
-                Log.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
-            }
-            return null;
-        }
-
         public XBlock Insert(XBlock block, double x, double y)
         {
             // clone block
-            XBlock copy = Clone(block);
+            XBlock copy = Layers.Clone(block);
 
             if (copy != null)
             {
@@ -1903,218 +1809,11 @@ namespace Logic.Page
 
         #endregion
 
-        #region Page
-
-        public IProject Open(string path)
-        {
-            try
-            {
-                using (var fs = System.IO.File.OpenText(path))
-                {
-                    var json = fs.ReadToEnd();
-                    var project = Serializer.Deserialize<XProject>(json);
-                    return project;
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
-            }
-            return null;
-        }
-
-        public void Save(string path, IProject project)
-        {
-            try
-            {
-                var json = Serializer.Serialize(project);
-                using (var fs = System.IO.File.CreateText(path))
-                {
-                    fs.Write(json);
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
-            }
-        }
-
-        public IProject Load(string path)
-        {
-            var project = Open(path);
-            if (project != null)
-            {
-                SelectionReset();
-                Reset();
-                Layers.Invalidate();
-            }
-            return project;
-        }
-
-        public void Load(IPage page)
-        {
-            SelectionReset();
-            Layers.Load(page);
-        }
-
-        #endregion
-
-        #region Clipboard
-
-        private void CopyToClipboard(IList<IShape> shapes)
-        {
-            try
-            {
-                var json = Serializer.Serialize(shapes);
-                if (!string.IsNullOrEmpty(json))
-                {
-                    Clipboard.SetText(json);
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
-            }
-        }
-
-        #endregion
-
-        #region Edit
-
-        public void Undo()
-        {
-            if (History != null && Layers != null)
-            {
-                var page = History.Undo(Layers.ToPage());
-                if (page != null)
-                {
-                    SelectionReset();
-                    Layers.Load(page);
-                    Layers.Update(page);
-                    Layers.Invalidate();
-                }
-            }
-        }
-
-        public void Redo()
-        {
-            if (History != null && Layers != null)
-            {
-                var page = History.Redo(Layers.ToPage());
-                if (page != null)
-                {
-                    SelectionReset();
-                    Layers.Load(page);
-                    Layers.Update(page);
-                    Layers.Invalidate();
-                }
-            }
-        }
-
-        public bool CanCopy()
-        {
-            return HaveSelected();
-        }
-
-        public bool CanPaste()
-        {
-            try
-            {
-                return Clipboard.ContainsText();
-            }
-            catch (Exception ex)
-            {
-                Log.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
-            }
-            return false;
-        }
-
-        public void Cut()
-        {
-            if (CanCopy())
-            {
-                CopyToClipboard(Renderer.Selected.ToList());
-                SelectionDelete();
-            }
-        }
-
-        public void Copy()
-        {
-            if (CanCopy())
-            {
-                CopyToClipboard(Renderer.Selected.ToList());
-            }
-        }
-
-        public void Paste()
-        {
-            try
-            {
-                if (CanPaste())
-                {
-                    var json = Clipboard.GetText();
-                    if (!string.IsNullOrEmpty(json))
-                    {
-                        Paste(json);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
-            }
-        }
-
-        public void Paste(string json)
-        {
-            try
-            {
-                var shapes = Serializer.Deserialize<IList<IShape>>(json);
-                if (shapes != null && shapes.Count > 0)
-                {
-                    Paste(shapes);
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
-            }
-        }
-
-        public void Paste(IEnumerable<IShape> shapes)
-        {
-            Snapshot();
-            SelectionReset();
-            Layers.Add(shapes);
-            Renderer.Selected = new HashSet<IShape>(shapes);
-            Layers.Invalidate();
-        }
-
-        #endregion
-
         #region Block
 
         public XBlock BlockCreateFromSelected(string name)
         {
-            if (HaveSelected())
+            if (Layers.HaveSelected())
             {
                 return BlockCreate(name, Renderer.Selected);
             }

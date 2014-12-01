@@ -38,49 +38,9 @@ namespace Logic.Page
         public LineHit LineHitResult { get; set; }
         public IRenderer Renderer { get; set; }
 
-        #endregion
-
-        #region Page
-
-        public IPage ToPage()
-        {
-            return new XPage()
-            {
-                Name = Model.Page.Name,
-                Shapes = Model.Page.Shapes,
-                Blocks = Model.Page.Blocks,
-                Pins = Model.Page.Pins,
-                Wires = Model.Page.Wires,
-                Template = null
-            };
-        } 
-
-        public void Load(IPage page)
-        {
-            Shapes.Shapes = page.Shapes;
-            Blocks.Shapes = page.Blocks;
-            Wires.Shapes = page.Wires;
-            Pins.Shapes = page.Pins;
-
-            Editor.Shapes.Clear();
-            Overlay.Shapes.Clear();
-        }
-
-        public void Update(IPage page)
-        {
-            Model.Page.Shapes = page.Shapes;
-            Model.Page.Blocks = page.Blocks;
-            Model.Page.Wires = page.Wires;
-            Model.Page.Pins = page.Pins;
-        }
-
-        public void Reset()
-        {
-            Shapes.Shapes = Enumerable.Empty<IShape>().ToList();
-            Blocks.Shapes = Enumerable.Empty<IShape>().ToList();
-            Wires.Shapes = Enumerable.Empty<IShape>().ToList();
-            Pins.Shapes = Enumerable.Empty<IShape>().ToList();
-        }
+        public History<IPage> History { get; set; }
+        public ITextClipboard Clipboard { get; set; }
+        public IStringSerializer Serializer { get; set; }
 
         #endregion
 
@@ -162,6 +122,41 @@ namespace Logic.Page
         
         #endregion
 
+        #region Clone
+
+        public XBlock Clone(XBlock original)
+        {
+            try
+            {
+                var block = new XBlock()
+                {
+                    Properties = original.Properties,
+                    Database = original.Database,
+                    Name = original.Name,
+                    Style = original.Style,
+                    Shapes = original.Shapes,
+                    Pins = original.Pins
+                };
+                var json = Serializer.Serialize(block);
+                var copy = Serializer.Deserialize<XBlock>(json);
+                foreach (var pin in copy.Pins)
+                {
+                    pin.Owner = copy;
+                }
+                return copy;
+            }
+            catch (Exception ex)
+            {
+                Log.LogError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
+            }
+            return null;
+        }
+
+        #endregion
+
         #region GetAll
 
         public ICollection<IShape> GetAll()
@@ -177,7 +172,7 @@ namespace Logic.Page
 
         #endregion
 
-        #region SelectAll
+        #region Selection
 
         public void SelectAll()
         {
@@ -185,6 +180,33 @@ namespace Logic.Page
             if (shapes != null && shapes.Count > 0)
             {
                 Renderer.Selected = shapes;
+            }
+        }
+
+        public bool HaveSelected()
+        {
+            return Renderer != null
+                && Renderer.Selected != null
+                && Renderer.Selected.Count > 0;
+        }
+
+        public void SelectionDelete()
+        {
+            if (HaveSelected())
+            {
+                Snapshot();
+                Delete(Renderer.Selected);
+                SelectionReset();
+            }
+        }
+
+        public void SelectionReset()
+        {
+            if (Renderer != null
+                && Renderer.Selected != null)
+            {
+                Renderer.Selected = null;
+                Invalidate();
             }
         }
 
@@ -721,6 +743,274 @@ namespace Logic.Page
             HitTest(Blocks.Shapes.Cast<XBlock>(), rect, hs);
             HitTest(Shapes.Shapes, rect, hs);
             return hs;
+        }
+
+        #endregion
+
+        #region History
+
+        public void Snapshot()
+        {
+            History.Snapshot(ToPage());
+        }
+
+        public void Reset()
+        {
+            History.Reset();
+        }
+
+        public void Hold()
+        {
+            History.Hold(ToPage());
+        }
+
+        public void Commit()
+        {
+            History.Commit();
+        }
+
+        public void Release()
+        {
+            History.Release();
+        }
+
+        public void Undo()
+        {
+            var page = History.Undo(ToPage());
+            if (page != null)
+            {
+                SelectionReset();
+                Load(page);
+                Update(page);
+                Invalidate();
+            }
+        }
+
+        public void Redo()
+        {
+            var page = History.Redo(ToPage());
+            if (page != null)
+            {
+                SelectionReset();
+                Load(page);
+                Update(page);
+                Invalidate();
+            }
+        }
+
+        #endregion
+
+        #region Clipboard
+
+        private void CopyToClipboard(IList<IShape> shapes)
+        {
+            try
+            {
+                var json = Serializer.Serialize(shapes);
+                if (!string.IsNullOrEmpty(json))
+                {
+                    Clipboard.SetText(json);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.LogError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
+            }
+        }
+
+        public bool CanCopy()
+        {
+            return HaveSelected();
+        }
+
+        public bool CanPaste()
+        {
+            try
+            {
+                return Clipboard.ContainsText();
+            }
+            catch (Exception ex)
+            {
+                Log.LogError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
+            }
+            return false;
+        }
+
+        public void Cut()
+        {
+            if (CanCopy())
+            {
+                CopyToClipboard(Renderer.Selected.ToList());
+                SelectionDelete();
+            }
+        }
+
+        public void Copy()
+        {
+            if (CanCopy())
+            {
+                CopyToClipboard(Renderer.Selected.ToList());
+            }
+        }
+
+        public void Paste()
+        {
+            try
+            {
+                if (CanPaste())
+                {
+                    var json = Clipboard.GetText();
+                    if (!string.IsNullOrEmpty(json))
+                    {
+                        Paste(json);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.LogError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
+            }
+        }
+
+        public void Paste(string json)
+        {
+            try
+            {
+                var shapes = Serializer.Deserialize<IList<IShape>>(json);
+                if (shapes != null && shapes.Count > 0)
+                {
+                    Paste(shapes);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.LogError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
+            }
+        }
+
+        public void Paste(IEnumerable<IShape> shapes)
+        {
+            Snapshot();
+            SelectionReset();
+            Add(shapes);
+            Renderer.Selected = new HashSet<IShape>(shapes);
+            Invalidate();
+        }
+
+        #endregion
+
+        #region Serialization
+
+        public T Open<T>(string path) where T : class
+        {
+            try
+            {
+                using (var fs = System.IO.File.OpenText(path))
+                {
+                    var json = fs.ReadToEnd();
+                    var project = Serializer.Deserialize<T>(json);
+                    return project;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.LogError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
+            }
+            return null;
+        }
+
+        public void Save<T>(string path, T project) where T : class
+        {
+            try
+            {
+                var json = Serializer.Serialize<T>(project);
+                using (var fs = System.IO.File.CreateText(path))
+                {
+                    fs.Write(json);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.LogError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
+            }
+        }
+
+        #endregion
+
+        #region Page
+
+        public IPage ToPage()
+        {
+            return new XPage()
+            {
+                Name = Model.Page.Name,
+                Shapes = Model.Page.Shapes,
+                Blocks = Model.Page.Blocks,
+                Pins = Model.Page.Pins,
+                Wires = Model.Page.Wires,
+                Template = null
+            };
+        }
+
+        public void Load(IPage page)
+        {
+            Shapes.Shapes = page.Shapes;
+            Blocks.Shapes = page.Blocks;
+            Wires.Shapes = page.Wires;
+            Pins.Shapes = page.Pins;
+
+            Editor.Shapes.Clear();
+            Overlay.Shapes.Clear();
+        }
+
+        public void Update(IPage page)
+        {
+            Model.Page.Shapes = page.Shapes;
+            Model.Page.Blocks = page.Blocks;
+            Model.Page.Wires = page.Wires;
+            Model.Page.Pins = page.Pins;
+        }
+
+        public void Clear()
+        {
+            Shapes.Shapes = Enumerable.Empty<IShape>().ToList();
+            Blocks.Shapes = Enumerable.Empty<IShape>().ToList();
+            Wires.Shapes = Enumerable.Empty<IShape>().ToList();
+            Pins.Shapes = Enumerable.Empty<IShape>().ToList();
+        }
+
+        #endregion
+
+        #region Project
+
+        public IProject Load(string path)
+        {
+            var project = Open<XProject>(path);
+            if (project != null)
+            {
+                SelectionReset();
+                Reset();
+                Invalidate();
+            }
+            return project;
         }
 
         #endregion

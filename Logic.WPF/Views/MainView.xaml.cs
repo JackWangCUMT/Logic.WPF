@@ -41,7 +41,6 @@ namespace Logic.WPF.Views
 
         #region Fields
 
-        private IStringSerializer _serializer = null;
         private IRenderer _renderer = null;
         private Point _dragStartPoint;
         private bool _isContextMenu = false;
@@ -171,41 +170,41 @@ namespace Logic.WPF.Views
                 (parameter) => true);
 
             Model.EditUndoCommand = new NativeCommand(
-                (parameter) => Model.Layers.Editor.Undo(),
+                (parameter) => Model.Layers.Undo(),
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !Model.Layers.Editor.History.CanUndo() ? false : true;
+                        || !Model.Layers.History.CanUndo() ? false : true;
                 });
 
             Model.EditRedoCommand = new NativeCommand
-                ((parameter) => Model.Layers.Editor.Redo(),
+                ((parameter) => Model.Layers.Redo(),
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !Model.Layers.Editor.History.CanRedo() ? false : true;
+                        || !Model.Layers.History.CanRedo() ? false : true;
                 });
 
             Model.EditCutCommand = new NativeCommand(
-                (parameter) => Model.Layers.Editor.Cut(),
+                (parameter) => Model.Layers.Cut(),
                 (parameter) => 
                 {
                     return IsSimulationRunning()
-                        || !Model.Layers.Editor.CanCopy() ? false : true;
+                        || !Model.Layers.CanCopy() ? false : true;
                 });
 
             Model.EditCopyCommand = new NativeCommand(
-                (parameter) => Model.Layers.Editor.Copy(),
+                (parameter) => Model.Layers.Copy(),
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !Model.Layers.Editor.CanCopy() ? false : true;
+                        || !Model.Layers.CanCopy() ? false : true;
                 });
 
             Model.EditPasteCommand = new NativeCommand(
                 (parameter) =>
                 {
-                    Model.Layers.Editor.Paste();
+                    Model.Layers.Paste();
                     if (_isContextMenu && _renderer.Selected != null)
                     {
                         double minX = pageView.editorLayer.Width;
@@ -219,15 +218,15 @@ namespace Logic.WPF.Views
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !Model.Layers.Editor.CanPaste() ? false : true;
+                        || !Model.Layers.CanPaste() ? false : true;
                 });
 
             Model.EditDeleteCommand = new NativeCommand(
-                (parameter) => Model.Layers.Editor.SelectionDelete(),
+                (parameter) => Model.Layers.SelectionDelete(),
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !Model.Layers.Editor.HaveSelected() ? false : true;
+                        || !Model.Layers.HaveSelected() ? false : true;
                 });
 
             Model.EditSelectAllCommand = new NativeCommand(
@@ -367,7 +366,7 @@ namespace Logic.WPF.Views
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !Model.Layers.Editor.HaveSelected() ? false : true;
+                        || !Model.Layers.HaveSelected() ? false : true;
                 });
 
             Model.BlockCreateProjectCommand = new NativeCommand(
@@ -375,7 +374,7 @@ namespace Logic.WPF.Views
                 (parameter) =>
                 {
                     return IsSimulationRunning()
-                        || !Model.Layers.Editor.HaveSelected() ? false : true;
+                        || !Model.Layers.HaveSelected() ? false : true;
                 });
 
             Model.InsertBlockCommand = new NativeCommand(
@@ -455,14 +454,7 @@ namespace Logic.WPF.Views
             Model.Layers.Overlay.IsOverlay = true;
 
             // serializer
-            _serializer = new Json();
-
-            Model.Layers.Shapes.Serializer = _serializer;
-            Model.Layers.Blocks.Serializer = _serializer;
-            Model.Layers.Wires.Serializer = _serializer;
-            Model.Layers.Pins.Serializer = _serializer;
-            Model.Layers.Editor.Serializer = _serializer;
-            Model.Layers.Overlay.Serializer = _serializer;
+            Model.Layers.Serializer = new Json();
 
             // renderer
             _renderer = new XRenderer()
@@ -482,10 +474,10 @@ namespace Logic.WPF.Views
             Model.Layers.Overlay.Renderer = _renderer;
 
             // clipboard
-            Model.Layers.Editor.Clipboard = new NativeTextClipboard();
+            Model.Layers.Clipboard = new NativeTextClipboard();
 
             // history
-            Model.Layers.Editor.History = new History<IPage>(new Bson());
+            Model.Layers.History = new History<IPage>(new Bson());
 
             // tool
             Model.Layers.Tool = Model.Tool;
@@ -735,7 +727,7 @@ namespace Logic.WPF.Views
 
         private void FileOpen(string path)
         {
-            var project = Model.Layers.Editor.Load(path);
+            var project = Model.Layers.Load(path);
             if (project != null)
             {
                 Model.Project = project;
@@ -750,9 +742,7 @@ namespace Logic.WPF.Views
         {
             if (!string.IsNullOrEmpty(Model.FilePath))
             {
-                Model.Layers.Editor.Save(
-                    Model.FilePath, 
-                    Model.Project);
+                Model.Layers.Save(Model.FilePath, Model.Project);
             }
             else
             {
@@ -773,7 +763,7 @@ namespace Logic.WPF.Views
 
             if (dlg.ShowDialog(this) == true)
             {
-                Model.Layers.Editor.Save(dlg.FileName, Model.Project);
+                Model.Layers.Save(dlg.FileName, Model.Project);
                 Model.FileName = System.IO.Path.GetFileNameWithoutExtension(dlg.FileName);
                 Model.FilePath = dlg.FileName;
             }
@@ -988,8 +978,8 @@ namespace Logic.WPF.Views
                 Model.Project.Documents.Remove(document);
 
                 Model.Page = null;
+                Model.Layers.Clear();
                 Model.Layers.Reset();
-                Model.Layers.Editor.Reset();
                 Model.Layers.Invalidate();
                 TemplateReset();
                 TemplateInvalidate();
@@ -1011,8 +1001,8 @@ namespace Logic.WPF.Views
         private void PageLoad(IPage page)
         {
             page.IsActive = true;
-            Model.Layers.Editor.Reset();
-            Model.Layers.Editor.SelectionReset();
+            Model.Layers.Reset();
+            Model.Layers.SelectionReset();
             Model.Page = page;
             Model.Layers.Load(page);
             Model.Layers.Invalidate();
@@ -1046,8 +1036,8 @@ namespace Logic.WPF.Views
                     document.Pages.Remove(page);
 
                     Model.Page = null;
+                    Model.Layers.Clear();
                     Model.Layers.Reset();
-                    Model.Layers.Editor.Reset();
                     Model.Layers.Invalidate();
                     TemplateReset();
                     TemplateInvalidate();
@@ -1061,7 +1051,7 @@ namespace Logic.WPF.Views
 
         private void BlockInsert(XBlock block, double x, double y)
         {
-            Model.Layers.Editor.Snapshot();
+            Model.Layers.Snapshot();
             XBlock copy = Model.Layers.Editor.Insert(block, x, y);
             if (copy != null)
             {
@@ -1078,7 +1068,7 @@ namespace Logic.WPF.Views
 
             if (dlg.ShowDialog(this) == true)
             {
-                var block = BlockOpen(dlg.FileName);
+                var block = Model.Layers.Open<XBlock>(dlg.FileName);
                 if (block != null)
                 {
                     Model.Blocks.Add(block);
@@ -1199,27 +1189,6 @@ namespace Logic.WPF.Views
             }
         }
 
-        private XBlock BlockOpen(string path)
-        {
-            try
-            {
-                using (var fs = System.IO.File.OpenText(path))
-                {
-                    var json = fs.ReadToEnd();
-                    var block = _serializer.Deserialize<XBlock>(json);
-                    return block;
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
-            }
-            return null;
-        }
-
         private void BlockExport()
         {
             var block = Model.Layers.Editor.BlockCreateFromSelected("Block");
@@ -1234,28 +1203,9 @@ namespace Logic.WPF.Views
                 if (dlg.ShowDialog(this) == true)
                 {
                     var path = dlg.FileName;
-                    BlockSave(block, path);
+                    Model.Layers.Save<XBlock>(path, block);
                     System.Diagnostics.Process.Start("notepad", path);
                 }
-            }
-        }
-
-        private void BlockSave(XBlock block, string path)
-        {
-            try
-            {
-                var json = _serializer.Serialize(block);
-                using (var fs = System.IO.File.CreateText(path))
-                {
-                    fs.Write(json);
-                };
-            }
-            catch (Exception ex)
-            {
-                Log.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
             }
         }
 
@@ -1302,7 +1252,7 @@ namespace Logic.WPF.Views
 
             if (dlg.ShowDialog(this) == true)
             {
-                var template = TemplateOpen(dlg.FileName);
+                var template = Model.Layers.Open<XTemplate>(dlg.FileName);
                 if (template != null)
                 {
                     Model.Templates.Add(template);
@@ -1362,27 +1312,6 @@ namespace Logic.WPF.Views
             }
         }
 
-        private ITemplate TemplateOpen(string path)
-        {
-            try
-            {
-                using (var fs = System.IO.File.OpenText(path))
-                {
-                    var json = fs.ReadToEnd();
-                    var template = _serializer.Deserialize<XTemplate>(json);
-                    return template;
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
-            }
-            return null;
-        }
-
         private void TemplateExport()
         {
             var dlg = new Microsoft.Win32.SaveFileDialog()
@@ -1395,7 +1324,7 @@ namespace Logic.WPF.Views
             {
                 var template = ToXTemplate(Model.Page.Template);
                 var path = dlg.FileName;
-                TemplateSave(path, template);
+                Model.Layers.Save<XTemplate>(path, template);
                 System.Diagnostics.Process.Start("notepad", path);
             }
         }
@@ -1425,32 +1354,13 @@ namespace Logic.WPF.Views
             };
         }
 
-        private void TemplateSave(string path, ITemplate template)
-        {
-            try
-            {
-                var json = _serializer.Serialize(template);
-                using (var fs = System.IO.File.CreateText(path))
-                {
-                    fs.Write(json);
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
-            }
-        }
-
         #endregion
 
         #region Overlay
 
         private void OverlayInit(IDictionary<XBlock, BoolSimulation> simulations)
         {
-            Model.Layers.Editor.SelectionReset();
+            Model.Layers.SelectionReset();
 
             Model.Layers.Overlay.EnableSimulationCache = true;
             Model.Layers.Overlay.CacheRenderer = null;
