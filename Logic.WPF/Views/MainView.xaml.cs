@@ -207,8 +207,8 @@ namespace Logic.WPF.Views
                     Model.Paste();
                     if (_isContextMenu && _renderer.Selected != null)
                     {
-                        double minX = pageView.editorLayer.Width;
-                        double minY = pageView.editorLayer.Height;
+                        double minX = Model.Page.Template.Width;
+                        double minY = Model.Page.Template.Height;
                         Model.EditorLayer.Min(_renderer.Selected, ref minX, ref minY);
                         double x = Model.EditorLayer.RightX - minX;
                         double y = Model.EditorLayer.RightY - minY;
