@@ -227,6 +227,19 @@ namespace Logic.Util
                     sb.AppendLine(indent + "        Text = \"" + text.Text + "\"");
                     sb.AppendLine(indent + "    });");
                 }
+                else if (shape is XImage)
+                {
+                    var image = shape as XImage;
+                    var value = string.Format(
+                        "{0}base.Shapes.Add(new XImage() {{ X = {1}, Y = {2}, Width = {3}, Height = {4}, Path = {5} }});",
+                        indent,
+                        image.X,
+                        image.Y,
+                        image.Width,
+                        image.Height,
+                        image.Path);
+                    sb.AppendLine(value);
+                }
                 else if (shape is XWire)
                 {
                     // Not supported.
