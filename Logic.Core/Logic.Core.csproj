@@ -63,6 +63,7 @@
     <Compile Include="XContainer.cs" />
     <Compile Include="XDocument.cs" />
     <Compile Include="XEllipse.cs" />
+    <Compile Include="XImage.cs" />
     <Compile Include="XLine.cs" />
     <Compile Include="XPage.cs" />
     <Compile Include="XPin.cs" />

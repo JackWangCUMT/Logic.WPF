@@ -7,11 +7,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Logic.Page
 {
-    public class NativeRenderer : IRenderer
+    public class NativeRenderer : IRenderer, IDisposable
     {
+        #region IRenderer
+
         public ICollection<IShape> Selected { get; set; }
         public double InvertSize { get; set; }
         public double PinRadius { get; set; }
@@ -65,9 +68,9 @@ namespace Logic.Page
                 rectangle.IsFilled ? (SolidColorBrush)style.NativeFill() : null,
                 (Pen)style.NativeStroke(),
                 new Rect(
-                    rectangle.X, 
-                    rectangle.Y, 
-                    rectangle.Width, 
+                    rectangle.X,
+                    rectangle.Y,
+                    rectangle.Width,
                     rectangle.Height));
 
             (dc as DrawingContext).Pop();
@@ -120,15 +123,41 @@ namespace Logic.Page
                     (SolidColorBrush)style.NativeFill(),
                     null,
                     new Rect(
-                        text.X, 
-                        text.Y, 
-                        text.Width, 
+                        text.X,
+                        text.Y,
+                        text.Width,
                         text.Height));
             }
 
             (dc as DrawingContext).DrawText(
                 ft,
                 new Point(x, y));
+        }
+
+        public void DrawImage(object dc, IStyle style, XImage image)
+        {
+            if (image.Path == null)
+                return;
+
+            if (!_biCache.ContainsKey(image.Path))
+            {
+                byte[] buffer = System.IO.File.ReadAllBytes(image.Path.LocalPath);
+                var ms = new System.IO.MemoryStream(buffer);
+                var bi = new BitmapImage();
+                bi.BeginInit();
+                bi.StreamSource = ms;
+                bi.EndInit();
+                bi.Freeze();
+                _biCache[image.Path] = bi;
+            }
+
+            (dc as DrawingContext).DrawImage(
+                _biCache[image.Path],
+                new Rect(
+                    image.X,
+                    image.Y,
+                    image.Width,
+                    image.Height));
         }
 
         public void DrawPin(object dc, IStyle style, XPin pin)
@@ -151,7 +180,7 @@ namespace Logic.Page
                     null,
                     (Pen)style.NativeStroke(),
                     new Point(
-                        position.InvertX1, 
+                        position.InvertX1,
                         position.InvertY1),
                     InvertSize,
                     InvertSize);
@@ -186,6 +215,23 @@ namespace Logic.Page
                     position.EndY));
 
             (dc as DrawingContext).Pop();
+        } 
+
+        #endregion
+
+        #region IDisposable
+
+        private IDictionary<Uri, BitmapImage> _biCache = new Dictionary<Uri, BitmapImage>();
+
+        public void Dispose()
+        {
+            foreach (var kvp in _biCache)
+            {
+                kvp.Value.StreamSource.Dispose();
+            }
+            _biCache.Clear();
         }
+
+        #endregion
     }
 }

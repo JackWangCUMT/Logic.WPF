@@ -352,6 +352,10 @@ namespace Logic.WPF.Views
                 (parameter) => Model.Tool.CurrentTool = ToolMenuModel.Tool.Text, 
                 (parameter) => IsSimulationRunning() ? false : true);
 
+            Model.ToolImageCommand = new NativeCommand(
+                (parameter) => Model.Tool.CurrentTool = ToolMenuModel.Tool.Image,
+                (parameter) => IsSimulationRunning() ? false : true);
+
             Model.BlockImportCommand = new NativeCommand(
                 (parameter) => this.BlockImport(), 
                 (parameter) => IsSimulationRunning() ? false : true);
@@ -447,6 +451,7 @@ namespace Logic.WPF.Views
 
             // editor
             Model.EditorLayer.Layers = Model;
+            Model.EditorLayer.GetFilePath = this.GetFilePath;
 
             // overlay
             Model.OverlayLayer.IsOverlay = true;
@@ -1209,6 +1214,24 @@ namespace Logic.WPF.Views
                     System.Diagnostics.Process.Start("notepad", path);
                 }
             }
+        }
+
+        #endregion
+
+        #region Path
+
+        public string GetFilePath()
+        {
+            var dlg = new Microsoft.Win32.OpenFileDialog()
+            {
+                Filter = "All Files (*.*)|*.*"
+            };
+
+            if (dlg.ShowDialog(this) == true)
+            {
+                return dlg.FileName;
+            }
+            return null;
         }
 
         #endregion
