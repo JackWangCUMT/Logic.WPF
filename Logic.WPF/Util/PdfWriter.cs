@@ -324,6 +324,16 @@ namespace Logic.Util
                 format);
         }
 
+        public void DrawImage(object gfx, CORE.IStyle style, CORE.XImage image)
+        {
+            (gfx as XGraphics).DrawImage(
+                XImage.FromFile(image.Path.LocalPath),
+                ScaleToPage(image.X),
+                ScaleToPage(image.Y),
+                ScaleToPage(image.Width),
+                ScaleToPage(image.Height));
+        }
+
         public void DrawPin(object gfx, CORE.IStyle style, CORE.XPin pin)
         {
             double x = pin.X - PinRadius;
