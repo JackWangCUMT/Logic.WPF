@@ -160,7 +160,7 @@
                 <MenuItem Header="_Text" InputGestureText="T" Command="{Binding ToolTextCommand}" IsChecked="{Binding Tool.IsTextChecked, Mode=OneWay}"/>
             </MenuItem>
             <Separator/>
-            <MenuItem Header="Te_mplate" ItemsSource="{Binding Templates}">
+            <MenuItem Header="Te_mplate" ItemsSource="{Binding Path=Project.Templates, FallbackValue={x:Null}}">
                 <MenuItem.ItemContainerStyle>
                     <Style TargetType="MenuItem">
                         <Setter Property="Header" Value="{Binding Name}"/>
@@ -299,7 +299,7 @@
                 <MenuItem  Header="Create _Project..." InputGestureText="Ctrl+B" Command="{Binding BlockCreateProjectCommand}"/>
             </MenuItem>
             <MenuItem Header="Te_mplate">
-                <MenuItem Header="_Apply" ItemsSource="{Binding Templates}">
+                <MenuItem Header="_Apply" ItemsSource="{Binding Path=Project.Templates, FallbackValue={x:Null}}">
                     <MenuItem.ItemContainerStyle>
                         <Style TargetType="MenuItem">
                             <Setter Property="Header" Value="{Binding Name}"/>

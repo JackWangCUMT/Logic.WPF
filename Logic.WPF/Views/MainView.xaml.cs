@@ -408,6 +408,7 @@ namespace Logic.WPF.Views
                     ITemplate template = parameter as ITemplate;
                     if (template != null)
                     {
+                        Model.Page.Template = template;
                         TemplateApply(template, _renderer);
                     }
                 },
