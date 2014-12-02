@@ -51,6 +51,7 @@
         <KeyBinding Command="{Binding ToolEllipseCommand}" Key="E" Modifiers=""/>
         <KeyBinding Command="{Binding ToolRectangleCommand}" Key="R" Modifiers=""/>
         <KeyBinding Command="{Binding ToolTextCommand}" Key="T" Modifiers=""/>
+        <KeyBinding Command="{Binding ToolImageCommand}" Key="I" Modifiers=""/>
         <KeyBinding Command="{Binding BlockImportCommand}" Gesture="Ctrl+Shift+B"/>
         <KeyBinding Command="{Binding BlockImportCodeCommand}" Gesture="Shift+Alt+B"/>
         <KeyBinding Command="{Binding BlockExportCommand}" Key="B" Modifiers=""/>
@@ -158,6 +159,7 @@
                 <MenuItem Header="_Ellipse" InputGestureText="E" Command="{Binding ToolEllipseCommand}" IsChecked="{Binding Tool.IsEllipseChecked, Mode=OneWay}"/>
                 <MenuItem Header="_Rectangle" InputGestureText="R" Command="{Binding ToolRectangleCommand}" IsChecked="{Binding Tool.IsRectangleChecked, Mode=OneWay}"/>
                 <MenuItem Header="_Text" InputGestureText="T" Command="{Binding ToolTextCommand}" IsChecked="{Binding Tool.IsTextChecked, Mode=OneWay}"/>
+                <MenuItem Header="_Image" InputGestureText="I" Command="{Binding ToolImageCommand}" IsChecked="{Binding Tool.IsImageChecked, Mode=OneWay}"/>
             </MenuItem>
             <Separator/>
             <MenuItem Header="Te_mplate" ItemsSource="{Binding Path=Project.Templates, FallbackValue={x:Null}}">
@@ -279,6 +281,7 @@
                 <MenuItem Header="_Ellipse" InputGestureText="E" Command="{Binding ToolEllipseCommand}" IsChecked="{Binding Tool.IsEllipseChecked, Mode=OneWay}"/>
                 <MenuItem Header="_Rectangle" InputGestureText="R" Command="{Binding ToolRectangleCommand}" IsChecked="{Binding Tool.IsRectangleChecked, Mode=OneWay}"/>
                 <MenuItem Header="_Text" InputGestureText="T" Command="{Binding ToolTextCommand}" IsChecked="{Binding Tool.IsTextChecked, Mode=OneWay}"/>
+                <MenuItem Header="_Image" InputGestureText="I" Command="{Binding ToolImageCommand}" IsChecked="{Binding Tool.IsImageChecked, Mode=OneWay}"/>
             </MenuItem>
             <MenuItem Header="_Block">
                 <MenuItem Header="I_nsert" ItemsSource="{Binding Blocks}">

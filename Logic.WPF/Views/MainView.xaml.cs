@@ -352,6 +352,10 @@ namespace Logic.WPF.Views
                 (parameter) => Model.Tool.CurrentTool = ToolMenuModel.Tool.Text, 
                 (parameter) => IsSimulationRunning() ? false : true);
 
+            Model.ToolImageCommand = new NativeCommand(
+                (parameter) => Model.Tool.CurrentTool = ToolMenuModel.Tool.Image,
+                (parameter) => IsSimulationRunning() ? false : true);
+
             Model.BlockImportCommand = new NativeCommand(
                 (parameter) => this.BlockImport(), 
                 (parameter) => IsSimulationRunning() ? false : true);
