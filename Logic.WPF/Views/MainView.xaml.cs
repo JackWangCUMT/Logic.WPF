@@ -709,6 +709,8 @@ namespace Logic.WPF.Views
 
         private void FileNew()
         {
+            Model.Renderer.Dispose();
+
             InitializeProject();
 
             Model.FileName = null;
@@ -733,6 +735,7 @@ namespace Logic.WPF.Views
             var project = Model.Load(path);
             if (project != null)
             {
+                Model.Renderer.Dispose();
                 Model.Project = project;
                 Model.FileName = System.IO.Path.GetFileNameWithoutExtension(path);
                 Model.FilePath = path;

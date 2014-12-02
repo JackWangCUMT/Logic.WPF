@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Logic.Core
 {
-    public interface IRenderer
+    public interface IRenderer : IDisposable
     {
         ICollection<IShape> Selected { get; set; }
         double InvertSize { get; set; }

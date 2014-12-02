@@ -11,7 +11,7 @@ using System.Windows.Media.Imaging;
 
 namespace Logic.Page
 {
-    public class NativeRenderer : IRenderer, IDisposable
+    public class NativeRenderer : IRenderer
     {
         #region IRenderer
 

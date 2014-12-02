@@ -393,5 +393,11 @@ namespace Logic.Util
         } 
 
         #endregion
+
+        #region IDisposable
+
+        public void Dispose() { }
+
+        #endregion
     }
 }
