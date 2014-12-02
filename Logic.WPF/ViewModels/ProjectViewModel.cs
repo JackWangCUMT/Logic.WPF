@@ -223,6 +223,7 @@ namespace Logic.ViewModels
         public ICommand ToolEllipseCommand { get; set; }
         public ICommand ToolRectangleCommand { get; set; }
         public ICommand ToolTextCommand { get; set; }
+        public ICommand ToolImageCommand { get; set; }
 
         public ICommand BlockImportCommand { get; set; }
         public ICommand BlockImportCodeCommand { get; set; }
@@ -277,6 +278,10 @@ namespace Logic.ViewModels
                 {
                     ShapeLayer.Shapes.Add(shape);
                 }
+                else if (shape is XImage)
+                {
+                    ShapeLayer.Shapes.Add(shape);
+                }
                 else if (shape is XWire)
                 {
                     WireLayer.Shapes.Add(shape);
@@ -313,6 +318,10 @@ namespace Logic.ViewModels
                     ShapeLayer.Shapes.Remove(shape);
                 }
                 else if (shape is XText)
+                {
+                    ShapeLayer.Shapes.Remove(shape);
+                }
+                else if (shape is XImage)
                 {
                     ShapeLayer.Shapes.Remove(shape);
                 }
@@ -603,6 +612,16 @@ namespace Logic.ViewModels
             return bounds;
         }
 
+        private Rect2 GetImageBounds(XImage image)
+        {
+            var bounds = new Rect2(
+                image.X,
+                image.Y,
+                image.Width,
+                image.Height);
+            return bounds;
+        }
+
         #endregion
 
         #region HitTest
@@ -753,6 +772,14 @@ namespace Logic.ViewModels
                 else if (shape is XText)
                 {
                     if (GetTextBounds(shape as XText).Contains(p))
+                    {
+                        return shape;
+                    }
+                    continue;
+                }
+                else if (shape is XImage)
+                {
+                    if (GetImageBounds(shape as XImage).Contains(p))
                     {
                         return shape;
                     }
@@ -956,6 +983,22 @@ namespace Logic.ViewModels
                 else if (shape is XText)
                 {
                     if (GetTextBounds(shape as XText).IntersectsWith(rect))
+                    {
+                        if (hs != null)
+                        {
+                            hs.Add(shape);
+                            continue;
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
+                    continue;
+                }
+                else if (shape is XImage)
+                {
+                    if (GetImageBounds(shape as XImage).IntersectsWith(rect))
                     {
                         if (hs != null)
                         {
