@@ -41,6 +41,8 @@ namespace Logic.ViewModels
 
         #region Properties
 
+        public Func<string> GetFilePath { get; set; }
+
         public IList<IShape> Shapes { get; set; }
         public ICollection<IShape> Hidden { get; set; }
         public IRenderer Renderer { get; set; }
@@ -1130,6 +1132,10 @@ namespace Logic.ViewModels
                     break;
                 case ToolMenuModel.Tool.Image:
                     {
+                        string path = GetFilePath();
+                        if (path == null)
+                            return;
+
                         _startx = x;
                         _starty = y;
                         _image = new XImage()
@@ -1137,7 +1143,8 @@ namespace Logic.ViewModels
                             X = x,
                             Y = y,
                             Width = 0.0,
-                            Height = 0.0
+                            Height = 0.0,
+                            Path = new Uri(path)
                         };
                         Shapes.Add(_image);
                         CaptureMouse();
