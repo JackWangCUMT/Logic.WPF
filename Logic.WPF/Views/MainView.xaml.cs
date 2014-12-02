@@ -903,7 +903,7 @@ namespace Logic.WPF.Views
             // templates
             foreach (var template in Model.Templates)
             {
-                project.Templates.Add(ToXTemplate(template));
+                project.Templates.Add(Model.Clone(template));
             }
 
             return project;
@@ -1323,36 +1323,11 @@ namespace Logic.WPF.Views
 
             if (dlg.ShowDialog(this) == true)
             {
-                var template = ToXTemplate(Model.Page.Template);
+                var template = Model.Clone(Model.Page.Template);
                 var path = dlg.FileName;
                 Model.Save<XTemplate>(path, template);
                 System.Diagnostics.Process.Start("notepad", path);
             }
-        }
-
-        private XTemplate ToXTemplate(ITemplate template)
-        {
-            return new XTemplate()
-            {
-                Width = template.Width,
-                Height = template.Height,
-                Name = template.Name,
-                Grid = new XContainer()
-                {
-                    Styles = new ObservableCollection<IStyle>(template.Grid.Styles),
-                    Shapes = new ObservableCollection<IShape>(template.Grid.Shapes)
-                },
-                Table = new XContainer()
-                {
-                    Styles = new ObservableCollection<IStyle>(template.Table.Styles),
-                    Shapes = new ObservableCollection<IShape>(template.Table.Shapes)
-                },
-                Frame = new XContainer()
-                {
-                    Styles = new ObservableCollection<IStyle>(template.Frame.Styles),
-                    Shapes = new ObservableCollection<IShape>(template.Frame.Shapes)
-                }
-            };
         }
 
         #endregion

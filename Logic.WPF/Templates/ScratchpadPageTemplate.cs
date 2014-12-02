@@ -12,6 +12,7 @@ namespace Logic.Templates
 {
     public class ScratchpadPageTemplate : ITemplate
     {
+        public IList<KeyValuePair<string, IProperty>> Database { get; set; }
         public string Name { get; set; }
         public double Width { get; set; }
         public double Height { get; set; }
@@ -21,6 +22,7 @@ namespace Logic.Templates
 
         public ScratchpadPageTemplate()
         {
+            this.Database = new List<KeyValuePair<string, IProperty>>();
             this.Name = "Scratchpad";
 
             this.Width = 750;

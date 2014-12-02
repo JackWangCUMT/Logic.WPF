@@ -7,6 +7,7 @@ namespace Logic.Core
 {
     public interface ITemplate
     {
+        IList<KeyValuePair<string, IProperty>> Database { get; set; }
         string Name { get; set; }
         double Width { get; set; }
         double Height { get; set; }

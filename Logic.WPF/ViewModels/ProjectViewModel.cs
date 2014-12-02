@@ -366,6 +366,34 @@ namespace Logic.ViewModels
             return null;
         }
 
+        public XTemplate Clone(ITemplate original)
+        {
+            try
+            {
+                var template = new XTemplate()
+                {
+                    Database = original.Database,
+                    Width = original.Width,
+                    Height = original.Height,
+                    Name = original.Name,
+                    Grid = original.Grid,
+                    Table = original.Table,
+                    Frame = original.Frame
+                };
+                var json = Serializer.Serialize(template);
+                var copy = Serializer.Deserialize<XTemplate>(json);
+                return copy;
+            }
+            catch (Exception ex)
+            {
+                Log.LogError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
+            }
+            return null;
+        }
+
         #endregion
 
         #region GetAll
