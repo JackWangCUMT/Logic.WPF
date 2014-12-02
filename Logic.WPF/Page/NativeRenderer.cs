@@ -136,7 +136,7 @@ namespace Logic.Page
 
         public void DrawImage(object dc, IStyle style, XImage image)
         {
-            if (!_biCache.ContainsKey(image))
+            if (!_biCache.ContainsKey(image.Path))
             {
                 byte[] buffer = System.IO.File.ReadAllBytes(image.Path.LocalPath);
                 var ms = new System.IO.MemoryStream(buffer);
@@ -145,11 +145,11 @@ namespace Logic.Page
                 bi.StreamSource = ms;
                 bi.EndInit();
                 bi.Freeze();
-                _biCache[image] = bi;
+                _biCache[image.Path] = bi;
             }
 
             (dc as DrawingContext).DrawImage(
-                _biCache[image],
+                _biCache[image.Path],
                 new Rect(
                     image.X,
                     image.Y,
@@ -218,7 +218,7 @@ namespace Logic.Page
 
         #region IDisposable
 
-        private IDictionary<XImage, BitmapImage> _biCache = new Dictionary<XImage, BitmapImage>();
+        private IDictionary<Uri, BitmapImage> _biCache = new Dictionary<Uri, BitmapImage>();
 
         public void Dispose()
         {
