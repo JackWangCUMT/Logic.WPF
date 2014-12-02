@@ -1194,7 +1194,7 @@ namespace Logic.WPF.Views
             {
                 foreach (var block in part.Blocks)
                 {
-                    Model.Blocks.Add(block);
+                    Model.Blocks.Add(Model.Clone(block));
                 }
             }
         }
@@ -1333,7 +1333,7 @@ namespace Logic.WPF.Views
             {
                 foreach (var template in part.Templates)
                 {
-                    Model.Project.Templates.Add(template);
+                    Model.Project.Templates.Add(Model.Clone(template));
                 }
             }
         }
