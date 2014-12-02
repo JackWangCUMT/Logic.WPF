@@ -136,6 +136,9 @@ namespace Logic.Page
 
         public void DrawImage(object dc, IStyle style, XImage image)
         {
+            if (image.Path == null)
+                return;
+
             if (!_biCache.ContainsKey(image.Path))
             {
                 byte[] buffer = System.IO.File.ReadAllBytes(image.Path.LocalPath);
