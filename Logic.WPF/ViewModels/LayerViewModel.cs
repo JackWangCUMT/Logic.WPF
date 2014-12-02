@@ -1,7 +1,6 @@
 ﻿using Logic.Core;
 using Logic.Simulation;
 using Logic.Util;
-using Logic.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
