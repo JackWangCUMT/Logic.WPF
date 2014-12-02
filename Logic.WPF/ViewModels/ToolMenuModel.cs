@@ -18,6 +18,7 @@ namespace Logic.ViewModels
             Ellipse,
             Rectangle,
             Text,
+            Image,
             Wire,
             Pin
         }
@@ -38,6 +39,7 @@ namespace Logic.ViewModels
                     Notify("IsEllipseChecked");
                     Notify("IsRectangleChecked");
                     Notify("IsTextChecked");
+                    Notify("IsImageChecked");
                     Notify("IsWireChecked");
                     Notify("IsPinChecked");
                 }
@@ -72,6 +74,11 @@ namespace Logic.ViewModels
         public bool IsTextChecked
         {
             get { return _currentTool == Tool.Text; }
+        }
+
+        public bool IsImageChecked
+        {
+            get { return _currentTool == Tool.Image; }
         }
 
         public bool IsWireChecked
