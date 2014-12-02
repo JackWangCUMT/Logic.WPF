@@ -410,6 +410,7 @@ namespace Logic.WPF.Views
                     {
                         Model.Page.Template = template;
                         TemplateApply(template, _renderer);
+                        TemplateInvalidate();
                     }
                 },
                 (parameter) => IsSimulationRunning() ? false : true);
@@ -900,8 +901,10 @@ namespace Logic.WPF.Views
             project.Styles.Add(layerStyle);
             
             // templates
-            project.Templates.Add(ToXTemplate(new LogicPageTemplate()));
-            project.Templates.Add(ToXTemplate(new ScratchpadPageTemplate()));
+            foreach (var template in Model.Templates)
+            {
+                project.Templates.Add(ToXTemplate(template));
+            }
 
             return project;
         }
@@ -930,11 +933,12 @@ namespace Logic.WPF.Views
 
         private void SetDefaultTemplate(IProject project)
         {
+            ITemplate template = project.Templates.Where(t => t.Name == "Logic Page").First();
             foreach (var document in project.Documents)
             {
                 foreach (var page in document.Pages)
                 {
-                    page.Template = project.Templates[0];
+                    page.Template = template;
                 }
             }
         }
@@ -1005,6 +1009,7 @@ namespace Logic.WPF.Views
             Model.Load(page);
             Model.Invalidate();
             TemplateApply(page.Template, _renderer);
+            TemplateInvalidate();
         }
 
         private void PageAdd(object parameter)
@@ -1013,7 +1018,7 @@ namespace Logic.WPF.Views
             {
                 IDocument document = parameter as IDocument;
                 IPage page = Defaults.EmptyPage();
-                page.Template = Model.Project.Templates[0];
+                page.Template = Model.Project.Templates.Where(t => t.Name == "Logic Page").First();
                 page.IsActive = true;
                 document.Pages.Add(page);
                 PageLoad(page);
@@ -1223,8 +1228,6 @@ namespace Logic.WPF.Views
             pageView.gridView.Renderer = renderer;
             pageView.tableView.Renderer = renderer;
             pageView.frameView.Renderer = renderer;
-
-            TemplateInvalidate();
         }
 
         private void TemplateReset()
@@ -1253,7 +1256,7 @@ namespace Logic.WPF.Views
                 var template = Model.Open<XTemplate>(dlg.FileName);
                 if (template != null)
                 {
-                    Model.Templates.Add(template);
+                    Model.Project.Templates.Add(template);
                 }
             }
         }
@@ -1305,7 +1308,7 @@ namespace Logic.WPF.Views
             {
                 foreach (var template in part.Templates)
                 {
-                    Model.Templates.Add(template);
+                    Model.Project.Templates.Add(template);
                 }
             }
         }
