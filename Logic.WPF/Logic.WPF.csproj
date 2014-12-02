@@ -87,6 +87,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Page\Defaults.cs" />
+    <Compile Include="Templates\TitlePageTemplate.cs" />
     <Compile Include="ViewModels\LayerViewModel.cs" />
     <Compile Include="Util\WirePosition.cs" />
     <Compile Include="Serialization\LogicContractResolver.cs" />
