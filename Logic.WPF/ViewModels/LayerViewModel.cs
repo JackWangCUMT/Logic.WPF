@@ -31,6 +31,7 @@ namespace Logic.ViewModels
             Ellipse,
             Rectangle,
             Text,
+            Image,
             Wire,
             Pin,
             Block
@@ -74,6 +75,7 @@ namespace Logic.ViewModels
         private XEllipse _ellipse = null;
         private XRectangle _rectangle = null;
         private XText _text = null;
+        private XImage _image = null;
         private XWire _wire = null;
         private XPin _pin = null;
         private XRectangle _selection = null;
@@ -129,6 +131,7 @@ namespace Logic.ViewModels
                             case ToolMenuModel.Tool.Ellipse:
                             case ToolMenuModel.Tool.Rectangle:
                             case ToolMenuModel.Tool.Text:
+                            case ToolMenuModel.Tool.Image:
                             case ToolMenuModel.Tool.Pin:
                                 Layers.SelectionReset();
                                 CreateInit(point);
@@ -153,6 +156,7 @@ namespace Logic.ViewModels
                             case ToolMenuModel.Tool.Ellipse:
                             case ToolMenuModel.Tool.Rectangle:
                             case ToolMenuModel.Tool.Text:
+                            case ToolMenuModel.Tool.Image:
                             case ToolMenuModel.Tool.Pin:
                                 CreateFinish(point);
                                 break;
@@ -465,6 +469,11 @@ namespace Logic.ViewModels
                 _element = Element.Text;
                 _text = shape as XText;
             }
+            else if (shape is XImage)
+            {
+                _element = Element.Image;
+                _image = shape as XImage;
+            }
             else if (shape is XWire)
             {
                 _element = Element.Wire;
@@ -574,6 +583,11 @@ namespace Logic.ViewModels
                     _text.Y += dy;
                     Layers.ShapeLayer.InvalidateVisual();
                     break;
+                case Element.Image:
+                    _image.X += dx;
+                    _image.Y += dy;
+                    Layers.ShapeLayer.InvalidateVisual();
+                    break;
                 case Element.Wire:
                     // TODO: Implement wire Move
                     break;
@@ -621,6 +635,12 @@ namespace Logic.ViewModels
                     var text = shape as XText;
                     text.X += dx;
                     text.Y += dy;
+                }
+                else if (shape is XImage)
+                {
+                    var image = shape as XImage;
+                    image.X += dx;
+                    image.Y += dy;
                 }
                 else if (shape is XWire)
                 {
@@ -675,6 +695,12 @@ namespace Logic.ViewModels
                     var text = shape as XText;
                     text.X += dx;
                     text.Y += dy;
+                }
+                else if (shape is XImage)
+                {
+                    var image = shape as XImage;
+                    image.X += dx;
+                    image.Y += dy;
                 }
                 else if (shape is XWire)
                 {
@@ -1102,6 +1128,22 @@ namespace Logic.ViewModels
                         InvalidateVisual();
                     }
                     break;
+                case ToolMenuModel.Tool.Image:
+                    {
+                        _startx = x;
+                        _starty = y;
+                        _image = new XImage()
+                        {
+                            X = x,
+                            Y = y,
+                            Width = 0.0,
+                            Height = 0.0
+                        };
+                        Shapes.Add(_image);
+                        CaptureMouse();
+                        InvalidateVisual();
+                    }
+                    break;
                 case ToolMenuModel.Tool.Wire:
                     {
                         _pin = null;
@@ -1177,6 +1219,15 @@ namespace Logic.ViewModels
                         _text.Y = Math.Min(_starty, y);
                         _text.Width = Math.Abs(x - _startx);
                         _text.Height = Math.Abs(y - _starty);
+                        InvalidateVisual();
+                    }
+                    break;
+                case ToolMenuModel.Tool.Image:
+                    {
+                        _image.X = Math.Min(_startx, x);
+                        _image.Y = Math.Min(_starty, y);
+                        _image.Width = Math.Abs(x - _startx);
+                        _image.Height = Math.Abs(y - _starty);
                         InvalidateVisual();
                     }
                     break;
@@ -1270,6 +1321,23 @@ namespace Logic.ViewModels
                         InvalidateVisual();
                     }
                     break;
+                case ToolMenuModel.Tool.Image:
+                    {
+                        _image.X = Math.Min(_startx, x);
+                        _image.Y = Math.Min(_starty, y);
+                        _image.Width = Math.Abs(x - _startx);
+                        _image.Height = Math.Abs(y - _starty);
+                        if (Layers.ShapeLayer != null)
+                        {
+                            Shapes.Remove(_image);
+                            Layers.Snapshot();
+                            Layers.ShapeLayer.Shapes.Add(_image);
+                            Layers.ShapeLayer.InvalidateVisual();
+                        }
+                        ReleaseMouseCapture();
+                        InvalidateVisual();
+                    }
+                    break;
                 case ToolMenuModel.Tool.Wire:
                     {
                         _wire.X2 = x;
@@ -1346,6 +1414,13 @@ namespace Logic.ViewModels
                     {
                         ReleaseMouseCapture();
                         Shapes.Remove(_text);
+                        InvalidateVisual();
+                    }
+                    break;
+                case ToolMenuModel.Tool.Image:
+                    {
+                        ReleaseMouseCapture();
+                        Shapes.Remove(_image);
                         InvalidateVisual();
                     }
                     break;
@@ -1607,6 +1682,12 @@ namespace Logic.ViewModels
                     x = Math.Min(x, text.X);
                     y = Math.Min(y, text.Y);
                 }
+                else if (shape is XImage)
+                {
+                    var image = shape as XImage;
+                    x = Math.Min(x, image.X);
+                    y = Math.Min(y, image.Y);
+                }
                 else if (shape is XWire)
                 {
                     var wire = shape as XWire;
@@ -1843,6 +1924,10 @@ namespace Logic.ViewModels
                     block.Shapes.Add(shape);
                 }
                 else if (shape is XText)
+                {
+                    block.Shapes.Add(shape);
+                }
+                else if (shape is XImage)
                 {
                     block.Shapes.Add(shape);
                 }
