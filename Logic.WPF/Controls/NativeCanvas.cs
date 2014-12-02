@@ -61,6 +61,8 @@ namespace Logic.Controls
             {
                 Model.MouseRightButtonDown(e.GetPosition(this).ToPoint1());
             };
+
+            RenderOptions.SetBitmapScalingMode(this, BitmapScalingMode.HighQuality);
         }
 
         protected override void OnRender(DrawingContext dc)
