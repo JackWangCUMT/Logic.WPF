@@ -11,7 +11,7 @@ using System.Windows.Input;
 
 namespace Logic.ViewModels
 {
-    public class ProjectViewModel : NotifyObject
+    public class MainViewModel : NotifyObject
     {
         #region Properties
 
@@ -145,12 +145,12 @@ namespace Logic.ViewModels
             }
         }
 
-        public LayerViewModel ShapeLayer { get; set; }
-        public LayerViewModel BlockLayer { get; set; }
-        public LayerViewModel WireLayer { get; set; }
-        public LayerViewModel PinLayer { get; set; }
-        public LayerViewModel EditorLayer { get; set; }
-        public LayerViewModel OverlayLayer { get; set; }
+        public CanvasViewModel ShapeLayer { get; set; }
+        public CanvasViewModel BlockLayer { get; set; }
+        public CanvasViewModel WireLayer { get; set; }
+        public CanvasViewModel PinLayer { get; set; }
+        public CanvasViewModel EditorLayer { get; set; }
+        public CanvasViewModel OverlayLayer { get; set; }
 
         public LineHit LineHitResult { get; set; }
         public IRenderer Renderer { get; set; }

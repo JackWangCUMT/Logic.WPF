@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Logic.ViewModels
 {
-    public class LayerViewModel : ILayer
+    public class CanvasViewModel : ILayer
     {
         #region Enums
 
@@ -54,7 +54,7 @@ namespace Logic.ViewModels
         public IStyle TrueStateStyle { get; set; }
         public IStyle FalseStateStyle { get; set; }
 
-        public ProjectViewModel Layers { get; set; }
+        public MainViewModel Layers { get; set; }
         public IDictionary<XBlock, BoolSimulation> Simulations { get; set; }
         public bool EnableSnap { get; set; }
         public double SnapSize { get; set; }
@@ -88,7 +88,7 @@ namespace Logic.ViewModels
 
         #region Constructor
 
-        public LayerViewModel()
+        public CanvasViewModel()
         {
             Shapes = new ObservableCollection<IShape>();
             Hidden = new HashSet<IShape>();
@@ -553,15 +553,15 @@ namespace Logic.ViewModels
                 case Element.Line:
                     switch (Layers.LineHitResult)
                     {
-                        case ProjectViewModel.LineHit.Start:
+                        case MainViewModel.LineHit.Start:
                             _line.X1 += dx;
                             _line.Y1 += dy;
                             break;
-                        case ProjectViewModel.LineHit.End:
+                        case MainViewModel.LineHit.End:
                             _line.X2 += dx;
                             _line.Y2 += dy;
                             break;
-                        case ProjectViewModel.LineHit.Line:
+                        case MainViewModel.LineHit.Line:
                             _line.X1 += dx;
                             _line.Y1 += dy;
                             _line.X2 += dx;

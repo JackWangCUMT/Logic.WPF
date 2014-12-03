@@ -88,7 +88,7 @@
     </ApplicationDefinition>
     <Compile Include="Page\Defaults.cs" />
     <Compile Include="Templates\TitlePageTemplate.cs" />
-    <Compile Include="ViewModels\LayerViewModel.cs" />
+    <Compile Include="ViewModels\CanvasViewModel.cs" />
     <Compile Include="Util\WirePosition.cs" />
     <Compile Include="Serialization\LogicContractResolver.cs" />
     <Compile Include="Simulation\BoolSimulationCacheRenderer.cs" />
@@ -106,7 +106,7 @@
     <Compile Include="Util\NativePointExtensions.cs" />
     <Compile Include="Util\PdfWriter.cs" />
     <Compile Include="ViewModels\CodeViewModel.cs" />
-    <Compile Include="ViewModels\ProjectViewModel.cs" />
+    <Compile Include="ViewModels\MainViewModel.cs" />
     <Page Include="Views\CodeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -13,7 +13,7 @@ namespace Logic.Controls
 {
     public class NativeCanvas : Canvas
     {
-        public LayerViewModel Model { get; private set; }
+        public CanvasViewModel Model { get; private set; }
 
         public NativeCanvas()
         {
@@ -22,7 +22,7 @@ namespace Logic.Controls
 
         private void InitializeLayer()
         {
-            Model = new LayerViewModel()
+            Model = new CanvasViewModel()
             {
                 IsMouseCaptured = () => 
                 {
