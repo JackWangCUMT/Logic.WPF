@@ -18,6 +18,7 @@ namespace Logic.Page
         {
             return new XPage()
             {
+                Database = new ObservableCollection<KeyValuePair<string, IProperty>>(),
                 Name = Defaults.PageName,
                 Shapes = new ObservableCollection<IShape>(),
                 Blocks = new ObservableCollection<IShape>(),
@@ -45,6 +46,22 @@ namespace Logic.Page
                 Templates = new ObservableCollection<ITemplate>(),
                 Documents = new ObservableCollection<IDocument>()
             };
+        }
+
+        public static IPage EmptyTitlePage()
+        {
+            IPage page = Defaults.EmptyPage();
+
+            page.Database.Add(
+                new KeyValuePair<string, IProperty>(
+                    "MainTitle",
+                    new XProperty("MAIN TITLE 1")));
+            page.Database.Add(
+                new KeyValuePair<string, IProperty>(
+                    "SubTitle",
+                    new XProperty("SUB TITLE 1")));
+
+            return page;
         }
     }
 }

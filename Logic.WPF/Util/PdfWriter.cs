@@ -91,10 +91,17 @@ namespace Logic.Util
                 double scaleY = pdfPage.Height.Value / page.Template.Height;
                 double scale = Math.Min(scaleX, scaleY);
 
+                // set scaling function
                 ScaleToPage = (value) => value * scale;
+
+                // set renderer database
+                Database = page.Database;
 
                 // draw block contents to pdf graphics
                 RenderPage(gfx, page);
+
+                // reset renderer database
+                Database = null;
             }
         }
 
@@ -200,6 +207,7 @@ namespace Logic.Util
 
         #region IRenderer
 
+        public IList<KeyValuePair<string, CORE.IProperty>> Database { get; set; }
         public ICollection<CORE.IShape> Selected { get; set; }
         public double InvertSize { get; set; }
         public double PinRadius { get; set; }
@@ -317,7 +325,7 @@ namespace Logic.Util
             }
 
             (gfx as XGraphics).DrawString(
-                (text.Properties != null) ? string.Format(text.Text, text.Properties) : text.Text, 
+                text.Bind(Database), 
                 font, 
                 ToXSolidBrush(style.Stroke), 
                 rect, 

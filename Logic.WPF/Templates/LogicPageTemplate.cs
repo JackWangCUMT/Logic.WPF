@@ -12,7 +12,6 @@ namespace Logic.Templates
 {
     public class LogicPageTemplate : ITemplate
     {
-        public IList<KeyValuePair<string, IProperty>> Database { get; set; }
         public string Name { get; set; }
         public double Width { get; set; }
         public double Height { get; set; }
@@ -22,7 +21,6 @@ namespace Logic.Templates
 
         public LogicPageTemplate()
         {
-            this.Database = new List<KeyValuePair<string, IProperty>>();
             this.Name = "Logic Page";
 
             this.Width = 1260.0;

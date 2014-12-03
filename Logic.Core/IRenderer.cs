@@ -7,6 +7,7 @@ namespace Logic.Core
 {
     public interface IRenderer : IDisposable
     {
+        IList<KeyValuePair<string, IProperty>> Database { get; set; }
         ICollection<IShape> Selected { get; set; }
         double InvertSize { get; set; }
         double PinRadius { get; set; }

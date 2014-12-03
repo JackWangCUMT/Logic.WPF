@@ -40,7 +40,6 @@ namespace Logic.WPF.Views
 
         #region Fields
 
-        private IRenderer _renderer = null;
         private Point _dragStartPoint;
         private bool _isContextMenu = false;
         private System.Threading.Timer _timer = null;
@@ -204,14 +203,14 @@ namespace Logic.WPF.Views
                 (parameter) =>
                 {
                     Model.Paste();
-                    if (_isContextMenu && _renderer.Selected != null)
+                    if (_isContextMenu && Model.Renderer.Selected != null)
                     {
                         double minX = Model.Page.Template.Width;
                         double minY = Model.Page.Template.Height;
-                        Model.EditorLayer.Min(_renderer.Selected, ref minX, ref minY);
+                        Model.EditorLayer.Min(Model.Renderer.Selected, ref minX, ref minY);
                         double x = Model.EditorLayer.RightX - minX;
                         double y = Model.EditorLayer.RightY - minY;
-                        Model.EditorLayer.Move(_renderer.Selected, x, y);
+                        Model.EditorLayer.Move(Model.Renderer.Selected, x, y);
                     }
                 },
                 (parameter) =>
@@ -412,7 +411,7 @@ namespace Logic.WPF.Views
                     if (template != null)
                     {
                         Model.Page.Template = template;
-                        TemplateApply(template, _renderer);
+                        TemplateApply(template, Model.Renderer);
                         TemplateInvalidate();
                     }
                 },
@@ -460,21 +459,21 @@ namespace Logic.WPF.Views
             Model.Serializer = new Json();
 
             // renderer
-            _renderer = new NativeRenderer()
+            IRenderer renderer = new NativeRenderer()
             {
                 InvertSize = 6.0,
                 PinRadius = 4.0,
                 HitTreshold = 6.0
             };
 
-            Model.Renderer = _renderer;
+            Model.Renderer = renderer;
 
-            Model.ShapeLayer.Renderer = _renderer;
-            Model.BlockLayer.Renderer = _renderer;
-            Model.WireLayer.Renderer = _renderer;
-            Model.PinLayer.Renderer = _renderer;
-            Model.EditorLayer.Renderer = _renderer;
-            Model.OverlayLayer.Renderer = _renderer;
+            Model.ShapeLayer.Renderer = renderer;
+            Model.BlockLayer.Renderer = renderer;
+            Model.WireLayer.Renderer = renderer;
+            Model.PinLayer.Renderer = renderer;
+            Model.EditorLayer.Renderer = renderer;
+            Model.OverlayLayer.Renderer = renderer;
 
             // clipboard
             Model.Clipboard = new NativeTextClipboard();
@@ -570,7 +569,7 @@ namespace Logic.WPF.Views
                 }
                 else
                 {
-                    if (_renderer.Selected == null 
+                    if (Model.Renderer.Selected == null 
                         && !IsSimulationRunning())
                     {
                         Point2 point = new Point2(
@@ -694,9 +693,8 @@ namespace Logic.WPF.Views
         private void InitializeProject()
         {
             Model.Project = NewProject();
-
             Model.Project.Documents.Add(Defaults.EmptyDocument());
-            Model.Project.Documents[0].Pages.Add(Defaults.EmptyPage());
+            Model.Project.Documents[0].Pages.Add(Defaults.EmptyTitlePage());
 
             UpdateStyles(Model.Project);
             SetDefaultTemplate(Model.Project);
@@ -807,9 +805,9 @@ namespace Logic.WPF.Views
             var writer = new PdfWriter()
             {
                 Selected = null,
-                InvertSize = _renderer.InvertSize,
-                PinRadius = _renderer.PinRadius,
-                HitTreshold = _renderer.HitTreshold,
+                InvertSize = Model.Renderer.InvertSize,
+                PinRadius = Model.Renderer.PinRadius,
+                HitTreshold = Model.Renderer.HitTreshold,
                 EnablePinRendering = false,
                 EnableGridRendering = false
             };
@@ -1010,12 +1008,16 @@ namespace Logic.WPF.Views
         private void PageLoad(IPage page)
         {
             page.IsActive = true;
+
             Model.Reset();
             Model.SelectionReset();
             Model.Page = page;
             Model.Load(page);
             Model.Invalidate();
-            TemplateApply(page.Template, _renderer);
+
+            Model.Renderer.Database = page.Database;
+
+            TemplateApply(page.Template, Model.Renderer);
             TemplateInvalidate();
         }
 
@@ -1024,7 +1026,7 @@ namespace Logic.WPF.Views
             if (parameter is IDocument)
             {
                 IDocument document = parameter as IDocument;
-                IPage page = Defaults.EmptyPage();
+                IPage page = Defaults.EmptyTitlePage();
                 page.Template = Model.Project.Templates.Where(t => t.Name == "Logic Page").First();
                 page.IsActive = true;
                 document.Pages.Add(page);

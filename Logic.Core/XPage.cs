@@ -7,6 +7,20 @@ namespace Logic.Core
 {
     public class XPage : NotifyObject, IPage
     {
+        private IList<KeyValuePair<string, IProperty>> _database;
+        public IList<KeyValuePair<string, IProperty>> Database
+        {
+            get { return _database; }
+            set
+            {
+                if (value != _database)
+                {
+                    _database = value;
+                    Notify("Database");
+                }
+            }
+        }
+
         private string _name;
         public string Name
         {

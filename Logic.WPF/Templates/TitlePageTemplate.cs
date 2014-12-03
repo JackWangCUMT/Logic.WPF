@@ -12,7 +12,6 @@ namespace Logic.Templates
 {
     public class TitlePageTemplate : ITemplate
     {
-        public IList<KeyValuePair<string, IProperty>> Database { get; set; }
         public string Name { get; set; }
         public double Width { get; set; }
         public double Height { get; set; }
@@ -22,7 +21,6 @@ namespace Logic.Templates
 
         public TitlePageTemplate()
         {
-            this.Database = new List<KeyValuePair<string, IProperty>>();
             this.Name = "Title Page";
 
             this.Width = 1260.0;
@@ -102,12 +100,6 @@ namespace Logic.Templates
 
         private void CreateFrame(IList<IShape> shapes, IStyle style)
         {
-            IProperty mainTitleProperty = new XProperty("MAIN TITLE");
-            this.Database.Add(new KeyValuePair<string, IProperty>("MainTitle", mainTitleProperty));
-
-            IProperty subTitleProperty = new XProperty("SUB TITLE");
-            this.Database.Add(new KeyValuePair<string, IProperty>("SubTitle", subTitleProperty));
-
             // main title
             shapes.Add(
                 new XText()
@@ -120,8 +112,8 @@ namespace Logic.Templates
                     VAlignment = VAlignment.Center,
                     FontName = "Consolas",
                     FontSize = 24.0,
-                    Text = "{0}",
-                    Properties = new[] { mainTitleProperty },
+                    Text = "MAIN TITLE",
+                    TextBinding = "MainTitle",
                     Style = style
                 });
 
@@ -137,8 +129,8 @@ namespace Logic.Templates
                     VAlignment = VAlignment.Center,
                     FontName = "Consolas",
                     FontSize = 24.0,
-                    Text = "{0}",
-                    Properties = new[] { subTitleProperty },
+                    Text = "SUB TITLE",
+                    TextBinding = "SubTitle",
                     Style = style
                 });
 

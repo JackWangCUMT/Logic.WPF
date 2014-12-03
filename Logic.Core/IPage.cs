@@ -7,6 +7,7 @@ namespace Logic.Core
 {
     public interface IPage
     {
+        IList<KeyValuePair<string, IProperty>> Database { get; set; }
         string Name { get; set; }
         bool IsActive { get; set; }
         ITemplate Template { get; set; }

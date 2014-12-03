@@ -15,6 +15,7 @@ namespace Logic.Page
     {
         #region IRenderer
 
+        public IList<KeyValuePair<string, IProperty>> Database { get; set; }
         public ICollection<IShape> Selected { get; set; }
         public double InvertSize { get; set; }
         public double PinRadius { get; set; }
@@ -79,7 +80,7 @@ namespace Logic.Page
         public void DrawText(object dc, IStyle style, XText text)
         {
             var ft = new FormattedText(
-                (text.Properties != null) ? string.Format(text.Text, text.Properties) : text.Text,
+                text.Bind(Database),
                 System.Globalization.CultureInfo.CurrentCulture,
                 FlowDirection.LeftToRight,
                 new Typeface(text.FontName),

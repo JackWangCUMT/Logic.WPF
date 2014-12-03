@@ -381,7 +381,6 @@ namespace Logic.ViewModels
             {
                 var template = new XTemplate()
                 {
-                    Database = original.Database,
                     Width = original.Width,
                     Height = original.Height,
                     Name = original.Name,
