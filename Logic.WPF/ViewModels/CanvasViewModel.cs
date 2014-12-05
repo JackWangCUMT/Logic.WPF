@@ -338,7 +338,7 @@ namespace Logic.ViewModels
                 sw.Stop();
                 if (sw.Elapsed.TotalMilliseconds > (1000.0 / 60.0))
                 {
-                    Trace.TraceWarning("OnRender: " + sw.Elapsed.TotalMilliseconds + "ms");
+                    Trace.TraceWarning("Canvas OnRender: " + sw.Elapsed.TotalMilliseconds + "ms");
                 }
             }
         }

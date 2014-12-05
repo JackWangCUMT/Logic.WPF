@@ -120,6 +120,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ViewModels\ToolMenuModel.cs" />
+    <Compile Include="ViewModels\ViewViewModel.cs" />
     <Compile Include="Views\CodeView.xaml.cs">
       <DependentUpon>CodeView.xaml</DependentUpon>
     </Compile>
@@ -129,15 +130,8 @@
       <DependentUpon>MainView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\PageView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Views\PageView.xaml.cs">
-      <DependentUpon>PageView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\NativeZoom.cs" />
     <Compile Include="Controls\NativeCanvas.cs" />
     <Compile Include="Controls\NativeView.cs" />

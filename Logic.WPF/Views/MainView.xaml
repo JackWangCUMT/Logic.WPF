@@ -4,7 +4,7 @@
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:local="clr-namespace:Logic.WPF"
         xmlns:page="clr-namespace:Logic.Page"
-        xmlns:views="clr-namespace:Logic.WPF.Views"
+        xmlns:controls="clr-namespace:Logic.Controls"
         Title="{Binding FileName, StringFormat={}{0} - Logic, FallbackValue=Logic, TargetNullValue=Logic}" 
         Height="980" Width="1540"
         Background="White"
@@ -66,6 +66,98 @@
         <KeyBinding Command="{Binding SimulationOptionsCommand}" Gesture="F9"/>
     </Window.InputBindings>
     <Window.Resources>
+        <ControlTemplate x:Key="PageControlTemplateKey">
+            <Grid x:Name="layout"
+                  Width="{Binding Path=Page.Template.Width}"
+                  Height="{Binding Path=Page.Template.Height}" 
+                  SnapsToDevicePixels="True"
+                  UseLayoutRounding="False"
+                  TextOptions.TextFormattingMode="Display" 
+                  TextOptions.TextHintingMode="Auto" 
+                  TextOptions.TextRenderingMode="Auto">
+                <controls:NativeView x:Name="gridView" 
+                                     DataContext="{Binding Path=GridView}"
+                                     Background="Transparent" 
+                                     FocusVisualStyle="{x:Null}"
+                                     IsHitTestVisible="False"
+                                     Focusable="False"
+                                     VerticalAlignment="Center" HorizontalAlignment="Center"
+                                     Width="{Binding ElementName=layout, Path=Width}"
+                                     Height="{Binding ElementName=layout, Path=Height}"/>
+                <controls:NativeView x:Name="tableView" 
+                                     DataContext="{Binding Path=TableView}"
+                                     Background="Transparent" 
+                                     FocusVisualStyle="{x:Null}"
+                                     IsHitTestVisible="False"
+                                     Focusable="False"
+                                     VerticalAlignment="Center" HorizontalAlignment="Center"
+                                     Width="{Binding ElementName=layout, Path=Width}"
+                                     Height="{Binding ElementName=layout, Path=Height}"/>
+                <controls:NativeView x:Name="frameView" 
+                                     DataContext="{Binding Path=FrameView}"
+                                     Background="Transparent" 
+                                     FocusVisualStyle="{x:Null}"
+                                     IsHitTestVisible="False"
+                                     Focusable="False"
+                                     VerticalAlignment="Center" HorizontalAlignment="Center"
+                                     Width="{Binding ElementName=layout, Path=Width}"
+                                     Height="{Binding ElementName=layout, Path=Height}"/>
+                <controls:NativeCanvas x:Name="shapeLayer" 
+                                       DataContext="{Binding Path=ShapeLayer}"
+                                       Background="Transparent" 
+                                       FocusVisualStyle="{x:Null}"
+                                       IsHitTestVisible="False"
+                                       Focusable="False"
+                                       VerticalAlignment="Center" HorizontalAlignment="Center"
+                                       Width="{Binding ElementName=layout, Path=Width}"
+                                       Height="{Binding ElementName=layout, Path=Height}"/>
+                <controls:NativeCanvas x:Name="blockLayer" 
+                                       DataContext="{Binding Path=BlockLayer}"
+                                       Background="Transparent" 
+                                       FocusVisualStyle="{x:Null}"
+                                       IsHitTestVisible="False"
+                                       Focusable="False"
+                                       VerticalAlignment="Center" HorizontalAlignment="Center"
+                                       Width="{Binding ElementName=layout, Path=Width}"
+                                       Height="{Binding ElementName=layout, Path=Height}"/>
+                <controls:NativeCanvas x:Name="wireLayer" 
+                                       DataContext="{Binding Path=WireLayer}"
+                                       Background="Transparent" 
+                                       FocusVisualStyle="{x:Null}"
+                                       IsHitTestVisible="False"
+                                       Focusable="False"
+                                       VerticalAlignment="Center" HorizontalAlignment="Center"
+                                       Width="{Binding ElementName=layout, Path=Width}"
+                                       Height="{Binding ElementName=layout, Path=Height}"/>
+                <controls:NativeCanvas x:Name="pinLayer" 
+                                       DataContext="{Binding Path=PinLayer}"
+                                       Background="Transparent" 
+                                       FocusVisualStyle="{x:Null}"
+                                       IsHitTestVisible="False"
+                                       Focusable="False"
+                                       VerticalAlignment="Center" HorizontalAlignment="Center"
+                                       Width="{Binding ElementName=layout, Path=Width}"
+                                       Height="{Binding ElementName=layout, Path=Height}"/>
+                <controls:NativeCanvas x:Name="editorLayer" 
+                                       DataContext="{Binding Path=EditorLayer}"
+                                       Background="Transparent" 
+                                       FocusVisualStyle="{x:Null}"
+                                       IsHitTestVisible="True"
+                                       Focusable="True"
+                                       VerticalAlignment="Center" HorizontalAlignment="Center"
+                                       Width="{Binding ElementName=layout, Path=Width}"
+                                       Height="{Binding ElementName=layout, Path=Height}"/>
+                <controls:NativeCanvas x:Name="overlayLayer" 
+                                       DataContext="{Binding Path=OverlayLayer}"
+                                       Background="{x:Null}" 
+                                       FocusVisualStyle="{x:Null}"
+                                       IsHitTestVisible="False"
+                                       Focusable="False"
+                                       VerticalAlignment="Center" HorizontalAlignment="Center"
+                                       Width="{Binding ElementName=layout, Path=Width}"
+                                       Height="{Binding ElementName=layout, Path=Height}"/>
+            </Grid>
+        </ControlTemplate>
         <ControlTemplate x:Key="PropertiesControlTemplateKey">
             <ItemsControl VerticalContentAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding Database, UpdateSourceTrigger=PropertyChanged}">
                 <ItemsControl.ItemTemplate>
@@ -352,13 +444,18 @@
                       HorizontalScrollBarVisibility="Auto"
                       VerticalScrollBarVisibility="Auto"
                       FocusVisualStyle="{x:Null}">
-            <views:PageView x:Name="pageView" Margin="10">
-                <views:PageView.Style>
-                    <Style TargetType="UserControl">
+            <Control x:Name="pageView" 
+                     Margin="10"
+                     Background="{x:Null}"
+                     Template="{StaticResource PageControlTemplateKey}"
+                     Width="{Binding Path=Page.Template.Width}"
+                     Height="{Binding Path=Page.Template.Height}">
+                <Control.Style>
+                    <Style TargetType="Control">
                         <Setter Property="ContextMenu" Value="{StaticResource ResourceKey=PageContextMenuKey}"/>
                     </Style>
-                </views:PageView.Style>
-            </views:PageView>
+                </Control.Style>
+            </Control>
         </ScrollViewer>
         <GridSplitter x:Name="right"
                       Background="WhiteSmoke" 

@@ -2,6 +2,7 @@
 using Logic.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,65 +12,138 @@ using System.Windows.Media;
 
 namespace Logic.Controls
 {
-    public class NativeCanvas : Canvas
+    public class NativeCanvas : Canvas, INotifyPropertyChanged
     {
-        public CanvasViewModel Model { get; private set; }
+        #region INotifyPropertyChanged
 
-        public NativeCanvas()
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void Notify(string propertyName)
         {
-            InitializeLayer();
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
-        private void InitializeLayer()
+        #endregion
+
+        #region Properties
+
+        private CanvasViewModel _model;
+        public CanvasViewModel Model
         {
-            Model = new CanvasViewModel()
+            get { return _model; }
+            set
             {
-                IsMouseCaptured = () => 
+                if (value != _model)
                 {
-                    return this.IsMouseCaptured;
-                },
-                CaptureMouse = () =>
+                    _model = value;
+                    InitializeModel(_model);
+                    Notify("Model");
+                }
+            }
+        } 
+
+        #endregion
+
+        #region Constructor
+
+        public NativeCanvas()
+            : base()
+        {
+            InitializeEvents();
+            RenderOptions.SetBitmapScalingMode(
+                this, 
+                BitmapScalingMode.HighQuality);
+        }
+
+        #endregion
+
+        #region Initialize
+
+        private void InitializeEvents()
+        {
+            base.DataContextChanged += (s, e) =>
+            {
+                if (base.DataContext != null
+                    && base.DataContext is CanvasViewModel)
                 {
-                    this.CaptureMouse();
-                },
-                ReleaseMouseCapture = () => 
-                {
-                    this.ReleaseMouseCapture();
-                },
-                InvalidateVisual = () => 
-                {
-                    this.InvalidateVisual();
+                    Model = base.DataContext as CanvasViewModel;
                 }
             };
 
-            PreviewMouseLeftButtonDown += (s, e) =>
+            base.PreviewMouseLeftButtonDown += (s, e) =>
             {
-                Model.MouseLeftButtonDown(e.GetPosition(this).ToPoint1());
+                if (_model != null)
+                {
+                    _model.MouseLeftButtonDown(e.GetPosition(this).ToPoint1());
+                }
             };
 
-            PreviewMouseLeftButtonUp += (s, e) =>
+            base.PreviewMouseLeftButtonUp += (s, e) =>
             {
-                Model.MouseLeftButtonUp(e.GetPosition(this).ToPoint1());
+                if (_model != null)
+                {
+                    _model.MouseLeftButtonUp(e.GetPosition(this).ToPoint1());
+                }
             };
 
-            PreviewMouseMove += (s, e) =>
+            base.PreviewMouseMove += (s, e) =>
             {
-                Model.MouseMove(e.GetPosition(this).ToPoint1());
+                if (_model != null)
+                {
+                    _model.MouseMove(e.GetPosition(this).ToPoint1());
+                }
             };
 
-            PreviewMouseRightButtonDown += (s, e) =>
+            base.PreviewMouseRightButtonDown += (s, e) =>
             {
-                Model.MouseRightButtonDown(e.GetPosition(this).ToPoint1());
+                if (_model != null)
+                {
+                    _model.MouseRightButtonDown(e.GetPosition(this).ToPoint1());
+                }
             };
-
-            RenderOptions.SetBitmapScalingMode(this, BitmapScalingMode.HighQuality);
         }
+
+        public void InitializeModel(CanvasViewModel model)
+        {
+            model.IsMouseCaptured = () =>
+            {
+                return this.IsMouseCaptured;
+            };
+
+            model.CaptureMouse = () =>
+            {
+                this.CaptureMouse();
+            };
+
+            model.ReleaseMouseCapture = () =>
+            {
+                this.ReleaseMouseCapture();
+            };
+
+            model.InvalidateVisual = () =>
+            {
+                this.InvalidateVisual();
+            };
+        } 
+
+        #endregion
+
+        #region OnRender
 
         protected override void OnRender(DrawingContext dc)
         {
             base.OnRender(dc);
 
-            Model.OnRender(dc);
-        }
+            if (_model != null)
+            {
+                _model.OnRender(dc);
+            }
+        } 
+
+        #endregion
     }
 }

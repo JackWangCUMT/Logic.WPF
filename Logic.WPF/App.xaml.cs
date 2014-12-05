@@ -459,13 +459,18 @@ namespace Logic.WPF
 
         private void InitializeView()
         {
+            // view
+            _model.GridView = new ViewViewModel();
+            _model.TableView = new ViewViewModel();
+            _model.FrameView = new ViewViewModel();
+
             // layers
-            _model.ShapeLayer = _view.pageView.shapeLayer.Model;
-            _model.BlockLayer = _view.pageView.blockLayer.Model;
-            _model.WireLayer = _view.pageView.wireLayer.Model;
-            _model.PinLayer = _view.pageView.pinLayer.Model;
-            _model.EditorLayer = _view.pageView.editorLayer.Model;
-            _model.OverlayLayer = _view.pageView.overlayLayer.Model;
+            _model.ShapeLayer = new CanvasViewModel();
+            _model.BlockLayer = new CanvasViewModel();
+            _model.WireLayer = new CanvasViewModel();
+            _model.PinLayer = new CanvasViewModel();
+            _model.EditorLayer = new CanvasViewModel();
+            _model.OverlayLayer = new CanvasViewModel();
 
             // editor
             _model.EditorLayer.Layers = _model;
@@ -505,9 +510,9 @@ namespace Logic.WPF
             _model.Tool.CurrentTool = ToolMenuModel.Tool.Selection;
 
             // drag & drop
-            _view.pageView.editorLayer.AllowDrop = true;
+            _view.pageView.AllowDrop = true;
 
-            _view.pageView.editorLayer.DragEnter += (s, e) =>
+            _view.pageView.DragEnter += (s, e) =>
             {
                 if (IsSimulationRunning())
                 {
@@ -520,7 +525,7 @@ namespace Logic.WPF
                 }
             };
 
-            _view.pageView.editorLayer.Drop += (s, e) =>
+            _view.pageView.Drop += (s, e) =>
             {
                 if (IsSimulationRunning())
                 {
@@ -535,7 +540,7 @@ namespace Logic.WPF
                         XBlock block = e.Data.GetData("Block") as XBlock;
                         if (block != null)
                         {
-                            Point point = e.GetPosition(_view.pageView.editorLayer);
+                            Point point = e.GetPosition(_view.pageView);
                             BlockInsert(block, point.X, point.Y);
                             e.Handled = true;
                         }
@@ -1262,28 +1267,38 @@ namespace Logic.WPF
 
         private void TemplateApply(ITemplate template, IRenderer renderer)
         {
-            _view.pageView.Width = template.Width;
-            _view.pageView.Height = template.Height;
-            _view.pageView.gridView.Container = template.Grid;
-            _view.pageView.tableView.Container = template.Table;
-            _view.pageView.frameView.Container = template.Frame;
-            _view.pageView.gridView.Renderer = renderer;
-            _view.pageView.tableView.Renderer = renderer;
-            _view.pageView.frameView.Renderer = renderer;
+            _model.GridView.Container = template.Grid;
+            _model.TableView.Container = template.Table;
+            _model.FrameView.Container = template.Frame;
+
+            _model.GridView.Renderer = renderer;
+            _model.TableView.Renderer = renderer;
+            _model.FrameView.Renderer = renderer;
         }
 
         private void TemplateReset()
         {
-            _view.pageView.gridView.Container = null;
-            _view.pageView.tableView.Container = null;
-            _view.pageView.frameView.Container = null;
+            _model.GridView.Container = null;
+            _model.TableView.Container = null;
+            _model.FrameView.Container = null;
         }
 
         private void TemplateInvalidate()
         {
-            _view.pageView.gridView.InvalidateVisual();
-            _view.pageView.tableView.InvalidateVisual();
-            _view.pageView.frameView.InvalidateVisual();
+            if (_model.GridView.InvalidateVisual != null)
+            {
+                _model.GridView.InvalidateVisual(); 
+            }
+
+            if (_model.TableView.InvalidateVisual != null)
+            {
+                _model.TableView.InvalidateVisual(); 
+            }
+
+            if (_model.FrameView.InvalidateVisual != null)
+            {
+                _model.FrameView.InvalidateVisual(); 
+            }
         }
 
         private void TemplateImport()

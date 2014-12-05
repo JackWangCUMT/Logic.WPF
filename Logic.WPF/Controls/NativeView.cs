@@ -1,7 +1,9 @@
-﻿using Logic.Core;
+﻿using Logic.Util;
+using Logic.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,24 +13,138 @@ using System.Windows.Media;
 
 namespace Logic.Controls
 {
-    public class NativeView : Canvas
+    public class NativeView : Canvas, INotifyPropertyChanged
     {
-        public IRenderer Renderer { get; set; }
-        public IContainer Container { get; set; }
+        #region INotifyPropertyChanged
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void Notify(string propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        #endregion
+
+        #region Properties
+
+        private ViewViewModel _model;
+        public ViewViewModel Model
+        {
+            get { return _model; }
+            set
+            {
+                if (value != _model)
+                {
+                    _model = value;
+                    InitializeModel(_model);
+                    Notify("Model");
+                }
+            }
+        }
+
+        #endregion
+
+        #region Constructor
+
+        public NativeView()
+            : base()
+        {
+            InitializeEvents();
+            RenderOptions.SetBitmapScalingMode(
+                this,
+                BitmapScalingMode.HighQuality);
+        } 
+
+        #endregion
+
+        #region Initialize
+
+        private void InitializeEvents()
+        {
+            base.DataContextChanged += (s, e) =>
+            {
+                if (base.DataContext != null
+                    && base.DataContext is ViewViewModel)
+                {
+                    Model = base.DataContext as ViewViewModel;
+                }
+            };
+
+            base.PreviewMouseLeftButtonDown += (s, e) =>
+            {
+                if (_model != null)
+                {
+                    _model.MouseLeftButtonDown(e.GetPosition(this).ToPoint1());
+                }
+            };
+
+            base.PreviewMouseLeftButtonUp += (s, e) =>
+            {
+                if (_model != null)
+                {
+                    _model.MouseLeftButtonUp(e.GetPosition(this).ToPoint1());
+                }
+            };
+
+            base.PreviewMouseMove += (s, e) =>
+            {
+                if (_model != null)
+                {
+                    _model.MouseMove(e.GetPosition(this).ToPoint1());
+                }
+            };
+
+            base.PreviewMouseRightButtonDown += (s, e) =>
+            {
+                if (_model != null)
+                {
+                    _model.MouseRightButtonDown(e.GetPosition(this).ToPoint1());
+                }
+            };
+        }
+
+        public void InitializeModel(ViewViewModel model)
+        {
+            model.IsMouseCaptured = () =>
+            {
+                return this.IsMouseCaptured;
+            };
+
+            model.CaptureMouse = () =>
+            {
+                this.CaptureMouse();
+            };
+
+            model.ReleaseMouseCapture = () =>
+            {
+                this.ReleaseMouseCapture();
+            };
+
+            model.InvalidateVisual = () =>
+            {
+                this.InvalidateVisual();
+            };
+        }
+
+        #endregion
+
+        #region OnRender
 
         protected override void OnRender(DrawingContext dc)
         {
             base.OnRender(dc);
 
-            if (Renderer != null 
-                && Container != null 
-                && Container.Shapes != null)
+            if (_model != null)
             {
-                foreach (var shape in Container.Shapes)
-                {
-                    shape.Render(dc, Renderer, shape.Style);
-                }
+                _model.OnRender(dc);
             }
-        }
+        } 
+
+        #endregion
     }
 }

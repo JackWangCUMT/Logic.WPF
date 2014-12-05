@@ -145,6 +145,48 @@ namespace Logic.ViewModels
             }
         }
 
+        private ViewViewModel _gridView;
+        public ViewViewModel GridView
+        {
+            get { return _gridView; }
+            set
+            {
+                if (value != _gridView)
+                {
+                    _gridView = value;
+                    Notify("GridView");
+                }
+            }
+        }
+
+        private ViewViewModel _tableView;
+        public ViewViewModel TableView
+        {
+            get { return _tableView; }
+            set
+            {
+                if (value != _tableView)
+                {
+                    _tableView = value;
+                    Notify("TableView");
+                }
+            }
+        }
+
+        private ViewViewModel _frameView;
+        public ViewViewModel FrameView
+        {
+            get { return _frameView; }
+            set
+            {
+                if (value != _frameView)
+                {
+                    _frameView = value;
+                    Notify("FrameView");
+                }
+            }
+        }
+
         public CanvasViewModel ShapeLayer { get; set; }
         public CanvasViewModel BlockLayer { get; set; }
         public CanvasViewModel WireLayer { get; set; }
@@ -1300,11 +1342,30 @@ namespace Logic.ViewModels
 
         public void Invalidate()
         {
-            ShapeLayer.InvalidateVisual();
-            BlockLayer.InvalidateVisual();
-            PinLayer.InvalidateVisual();
-            WireLayer.InvalidateVisual();
-            OverlayLayer.InvalidateVisual();
+            if (ShapeLayer.InvalidateVisual != null)
+            {
+                ShapeLayer.InvalidateVisual();
+            }
+
+            if (BlockLayer.InvalidateVisual != null)
+            {
+                BlockLayer.InvalidateVisual(); 
+            }
+
+            if (PinLayer.InvalidateVisual != null)
+            {
+                PinLayer.InvalidateVisual(); 
+            }
+
+            if (WireLayer.InvalidateVisual != null)
+            {
+                WireLayer.InvalidateVisual(); 
+            }
+
+            if (OverlayLayer.InvalidateVisual != null)
+            {
+                OverlayLayer.InvalidateVisual(); 
+            }
         }
 
         #endregion
