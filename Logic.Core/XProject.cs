@@ -21,6 +21,20 @@ namespace Logic.Core
             }
         }
 
+        private string _defaultTemplate;
+        public string DefaultTemplate
+        {
+            get { return _defaultTemplate; }
+            set
+            {
+                if (value != _defaultTemplate)
+                {
+                    _defaultTemplate = value;
+                    Notify("DefaultTemplate");
+                }
+            }
+        }
+
         private IList<IStyle> _styles;
         public IList<IStyle> Styles
         {
