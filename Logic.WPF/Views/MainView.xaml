@@ -5,7 +5,7 @@
         xmlns:local="clr-namespace:Logic.WPF"
         xmlns:native="clr-namespace:Logic.Native"
         Title="{Binding FileName, StringFormat={}{0} - Logic, FallbackValue=Logic, TargetNullValue=Logic}" 
-        Height="980" Width="1540"
+        Height="710" Width="1060"
         Background="White"
         WindowStartupLocation="CenterScreen" WindowState="Maximized"
         SnapsToDevicePixels="True" UseLayoutRounding="False"
@@ -476,16 +476,16 @@
                   BorderBrush="{x:Null}"
                   BorderThickness="0,0,0,0"
                   Grid.Column="4" Grid.Row="1">
-            <TreeView.Style>
-                <Style TargetType="TreeView">
-                    <Setter Property="ContextMenu" Value="{StaticResource PojectItemContextMenuKey}"/>
-                </Style>
-            </TreeView.Style>
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectedItemChanged">
                     <i:InvokeCommandAction Command="{Binding SelectedItemChangedCommand}" CommandParameter="{Binding ElementName=tree, Path=SelectedItem}"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
+            <TreeView.Style>
+                <Style TargetType="TreeView">
+                    <Setter Property="ContextMenu" Value="{StaticResource PojectItemContextMenuKey}"/>
+                </Style>
+            </TreeView.Style>
             <TreeView.ItemContainerStyle>
                 <Style TargetType="TreeViewItem">
                     <Setter Property="IsExpanded" Value="True"/>
