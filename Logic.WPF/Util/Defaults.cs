@@ -8,18 +8,44 @@ using System.Threading.Tasks;
 
 namespace Logic.Util
 {
-    public static class Defaults
+    public class Defaults
     {
-        public static string PageName = "Page";
-        public static string DocumentName = "Document";
-        public static string ProjectName = "Project";
+        public string PageName { get; set; }
+        public string DocumentName { get; set; }
+        public string ProjectName { get; set; }
+        public string TemplateName { get; set; }
 
-        public static IPage EmptyPage()
+        public double InvertSize { get; set; }
+        public double PinRadius { get; set; }
+        public double HitTreshold { get; set; }
+
+        public bool EnableSnap { get; set; }
+        public double SnapSize { get; set; }
+
+        public Defaults()
+        {
+            // project
+            PageName = "Page";
+            DocumentName = "Document";
+            ProjectName = "Project";
+            TemplateName = "Scratchpad";
+
+            // renderer
+            InvertSize = 6.0;
+            PinRadius = 4.0;
+            HitTreshold = 6.0;
+
+            // layer
+            EnableSnap = true;
+            SnapSize = 15.0;
+        }
+
+        public IPage EmptyPage()
         {
             return new XPage()
             {
                 Database = new ObservableCollection<KeyValuePair<string, IProperty>>(),
-                Name = Defaults.PageName,
+                Name = PageName,
                 Shapes = new ObservableCollection<IShape>(),
                 Blocks = new ObservableCollection<IShape>(),
                 Pins = new ObservableCollection<IShape>(),
@@ -28,29 +54,30 @@ namespace Logic.Util
             };
         }
 
-        public static IDocument EmptyDocument()
+        public IDocument EmptyDocument()
         {
             return new XDocument()
             {
-                Name = Defaults.DocumentName,
+                Name = DocumentName,
                 Pages = new ObservableCollection<IPage>()
             };
         }
 
-        public static IProject EmptyProject()
+        public IProject EmptyProject()
         {
             return new XProject()
             {
-                Name = Defaults.ProjectName,
+                Name = ProjectName,
+                DefaultTemplate = TemplateName,
                 Styles = new ObservableCollection<IStyle>(),
                 Templates = new ObservableCollection<ITemplate>(),
                 Documents = new ObservableCollection<IDocument>()
             };
         }
 
-        public static IPage EmptyTitlePage()
+        public IPage EmptyTitlePage()
         {
-            IPage page = Defaults.EmptyPage();
+            IPage page = EmptyPage();
 
             page.Database.Add(
                 new KeyValuePair<string, IProperty>(

@@ -31,6 +31,7 @@ namespace Logic.WPF
         private ILog _log = null;
         private MainViewModel _model = null;
         private MainView _view = null;
+        private Defaults _defaults = null;
         private IStringSerializer _serializer = null;
         private System.Threading.Timer _timer = null;
         private Clock _clock = null;
@@ -48,6 +49,8 @@ namespace Logic.WPF
             _log = new Log();
             _log.IsEnabled = true;
             _log.Initialize();
+
+            _defaults = new Defaults();
 
             try
             {
@@ -327,7 +330,15 @@ namespace Logic.WPF
                 (parameter) => IsSimulationRunning() ? false : true);
 
             _model.EditToggleSnapCommand = new NativeCommand(
-                (parameter) => _model.EditorLayer.EnableSnap = !_model.EditorLayer.EnableSnap,
+                (parameter) => 
+                {
+                    _model.ShapeLayer.EnableSnap = !_model.ShapeLayer.EnableSnap;
+                    _model.BlockLayer.EnableSnap = !_model.BlockLayer.EnableSnap;
+                    _model.WireLayer.EnableSnap = !_model.WireLayer.EnableSnap;
+                    _model.PinLayer.EnableSnap = !_model.PinLayer.EnableSnap;
+                    _model.EditorLayer.EnableSnap = !_model.EditorLayer.EnableSnap;
+                    _model.OverlayLayer.EnableSnap = !_model.OverlayLayer.EnableSnap;
+                },
                 (parameter) => IsSimulationRunning() ? false : true);
 
             _model.EditToggleInvertStartCommand = new NativeCommand(
@@ -480,12 +491,48 @@ namespace Logic.WPF
             _model.FrameView = new ViewViewModel();
 
             // layers
-            _model.ShapeLayer = new CanvasViewModel();
-            _model.BlockLayer = new CanvasViewModel();
-            _model.WireLayer = new CanvasViewModel();
-            _model.PinLayer = new CanvasViewModel();
-            _model.EditorLayer = new CanvasViewModel();
-            _model.OverlayLayer = new CanvasViewModel();
+            _model.ShapeLayer = new CanvasViewModel()
+            {
+                Shapes = new ObservableCollection<IShape>(),
+                Hidden = new HashSet<IShape>(),
+                EnableSnap = _defaults.EnableSnap,
+                SnapSize = _defaults.SnapSize
+            };
+            _model.BlockLayer = new CanvasViewModel()
+            {
+                Shapes = new ObservableCollection<IShape>(),
+                Hidden = new HashSet<IShape>(),
+                EnableSnap = _defaults.EnableSnap,
+                SnapSize = _defaults.SnapSize
+            };
+            _model.WireLayer = new CanvasViewModel()
+            {
+                Shapes = new ObservableCollection<IShape>(),
+                Hidden = new HashSet<IShape>(),
+                EnableSnap = _defaults.EnableSnap,
+                SnapSize = _defaults.SnapSize
+            };
+            _model.PinLayer = new CanvasViewModel()
+            {
+                Shapes = new ObservableCollection<IShape>(),
+                Hidden = new HashSet<IShape>(),
+                EnableSnap = _defaults.EnableSnap,
+                SnapSize = _defaults.SnapSize
+            };
+            _model.EditorLayer = new CanvasViewModel()
+            {
+                Shapes = new ObservableCollection<IShape>(),
+                Hidden = new HashSet<IShape>(),
+                EnableSnap = _defaults.EnableSnap,
+                SnapSize = _defaults.SnapSize
+            };
+            _model.OverlayLayer = new CanvasViewModel()
+            {
+                Shapes = new ObservableCollection<IShape>(),
+                Hidden = new HashSet<IShape>(),
+                EnableSnap = _defaults.EnableSnap,
+                SnapSize = _defaults.SnapSize
+            };
 
             // log
             _model.GridView.Log = _log;
@@ -513,9 +560,9 @@ namespace Logic.WPF
             // renderer
             IRenderer renderer = new NativeRenderer()
             {
-                InvertSize = 6.0,
-                PinRadius = 4.0,
-                HitTreshold = 6.0
+                InvertSize = _defaults.InvertSize,
+                PinRadius = _defaults.PinRadius,
+                HitTreshold = _defaults.HitTreshold
             };
 
             _model.Renderer = renderer;
@@ -735,8 +782,8 @@ namespace Logic.WPF
         private void InitializeProject()
         {
             _model.Project = NewProject();
-            _model.Project.Documents.Add(Defaults.EmptyDocument());
-            _model.Project.Documents[0].Pages.Add(Defaults.EmptyTitlePage());
+            _model.Project.Documents.Add(_defaults.EmptyDocument());
+            _model.Project.Documents[0].Pages.Add(_defaults.EmptyTitlePage());
 
             UpdateStyles(_model.Project);
             SetDefaultTemplate(_model.Project);
@@ -926,7 +973,7 @@ namespace Logic.WPF
         private IProject NewProject()
         {
             // project
-            var project = Defaults.EmptyProject();
+            var project = _defaults.EmptyProject();
 
             // layer styles
             IStyle shapeStyle = new NativeStyle(
@@ -1027,7 +1074,11 @@ namespace Logic.WPF
 
         private void SetDefaultTemplate(IProject project)
         {
-            ITemplate template = project.Templates.Where(t => t.Name == "Logic Page").First();
+            ITemplate template = project
+                .Templates
+                .Where(t => t.Name == project.DefaultTemplate)
+                .First();
+
             foreach (var document in project.Documents)
             {
                 foreach (var page in document.Pages)
@@ -1060,7 +1111,7 @@ namespace Logic.WPF
         {
             if (parameter is MainViewModel)
             {
-                IDocument document = Defaults.EmptyDocument();
+                IDocument document = _defaults.EmptyDocument();
                 document.IsActive = true;
                 _model.Project.Documents.Add(document);
             }
@@ -1115,8 +1166,12 @@ namespace Logic.WPF
             if (parameter is IDocument)
             {
                 IDocument document = parameter as IDocument;
-                IPage page = Defaults.EmptyTitlePage();
-                page.Template = _model.Project.Templates.Where(t => t.Name == "Logic Page").First();
+                IPage page = _defaults.EmptyTitlePage();
+                page.Template = _model
+                    .Project
+                    .Templates
+                    .Where(t => t.Name == _model.Project.DefaultTemplate)
+                    .First();
                 page.IsActive = true;
                 document.Pages.Add(page);
                 PageLoad(page);
