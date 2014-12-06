@@ -402,7 +402,7 @@ namespace Logic.WPF
                         || !_model.HaveSelection() ? false : true;
                 });
 
-            _model.InsertBlockCommand = new NativeCommand(
+            _model.BlockInsertCommand = new NativeCommand(
                 (parameter) =>
                 {
                     XBlock block = parameter as XBlock;
@@ -411,6 +411,17 @@ namespace Logic.WPF
                         double x = _isContextMenu ? _model.EditorLayer.RightX : 0.0;
                         double y = _isContextMenu ? _model.EditorLayer.RightY : 0.0;
                         BlockInsert(block, x, y);
+                    }
+                },
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            _model.BlockDeleteCommand = new NativeCommand(
+                (parameter) =>
+                {
+                    XBlock block = parameter as XBlock;
+                    if (block != null)
+                    {
+                        _model.Blocks.Remove(block);
                     }
                 },
                 (parameter) => IsSimulationRunning() ? false : true);

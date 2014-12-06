@@ -266,7 +266,8 @@ namespace Logic.ViewModels
         public ICommand BlockImportCodeCommand { get; set; }
         public ICommand BlockExportCommand { get; set; }
         public ICommand BlockExportAsCodeCommand { get; set; }
-        public ICommand InsertBlockCommand { get; set; }
+        public ICommand BlockInsertCommand { get; set; }
+        public ICommand BlockDeleteCommand { get; set; }
 
         public ICommand TemplateImportCommand { get; set; }
         public ICommand TemplateImportCodeCommand { get; set; }

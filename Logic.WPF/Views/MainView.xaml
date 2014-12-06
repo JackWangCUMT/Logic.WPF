@@ -210,7 +210,7 @@
                 <MenuItem.ItemContainerStyle>
                     <Style TargetType="MenuItem">
                         <Setter Property="Header" Value="{Binding Name}"/>
-                        <Setter Property="Command" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=DataContext.InsertBlockCommand}"/>
+                        <Setter Property="Command" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=DataContext.BlockInsertCommand}"/>
                         <Setter Property="CommandParameter" Value="{Binding}"/>
                     </Style>
                 </MenuItem.ItemContainerStyle>
@@ -298,6 +298,9 @@
         <ContextMenu x:Key="PojectItemContextMenuKey" DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
             <MenuItem Header="_Add Document" InputGestureText="Ctrl+Shift+N" Command="{Binding DataContext.DocumentAddCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TreeView}}}" CommandParameter="{Binding}"/>
         </ContextMenu>
+        <ContextMenu x:Key="BlockContextMenuKey" DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+            <MenuItem Header="_Delete" InputGestureText="" Command="{Binding DataContext.BlockDeleteCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBox}}}" CommandParameter="{Binding}"/>
+        </ContextMenu>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -379,7 +382,7 @@
                     <MenuItem.ItemContainerStyle>
                         <Style TargetType="MenuItem">
                             <Setter Property="Header" Value="{Binding Name}"/>
-                            <Setter Property="Command" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=DataContext.InsertBlockCommand}"/>
+                            <Setter Property="Command" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=DataContext.BlockInsertCommand}"/>
                             <Setter Property="CommandParameter" Value="{Binding}"/>
                         </Style>
                     </MenuItem.ItemContainerStyle>
@@ -427,6 +430,11 @@
                  BorderThickness="0,0,0,0"
                  HorizontalContentAlignment="Stretch"
                  Grid.Column="0" Grid.Row="1">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="ContextMenu" Value="{StaticResource ResourceKey=BlockContextMenuKey}"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Name}" TextAlignment="Left" Padding="0,4,4,4"/>
