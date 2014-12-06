@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Logic.Core;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -7,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace Logic.Util
 {
-    public static class Log
+    public class Log : ILog
     {
-        public static bool IsEnabled { get; set; }
+        public bool IsEnabled { get; set; }
 
-        public static void Initialize()
+        public void Initialize()
         {
             if (IsEnabled)
             {
@@ -22,7 +23,7 @@ namespace Logic.Util
             }
         }
 
-        public static void Close()
+        public void Close()
         {
             if (IsEnabled)
             {
@@ -30,7 +31,7 @@ namespace Logic.Util
             }
         }
 
-        public static void LogInformation(string message)
+        public void LogInformation(string message)
         {
             if (IsEnabled)
             {
@@ -38,7 +39,7 @@ namespace Logic.Util
             }
         }
 
-        public static void LogInformation(string format, params object[] args)
+        public void LogInformation(string format, params object[] args)
         {
             if (IsEnabled)
             {
@@ -46,7 +47,7 @@ namespace Logic.Util
             }
         }
 
-        public static void LogWarning(string message)
+        public void LogWarning(string message)
         {
             if (IsEnabled)
             {
@@ -54,7 +55,7 @@ namespace Logic.Util
             }
         }
 
-        public static void LogWarning(string format, params object[] args)
+        public void LogWarning(string format, params object[] args)
         {
             if (IsEnabled)
             {
@@ -62,7 +63,7 @@ namespace Logic.Util
             }
         }
 
-        public static void LogError(string message)
+        public void LogError(string message)
         {
             if (IsEnabled)
             {
@@ -70,7 +71,7 @@ namespace Logic.Util
             }
         }
 
-        public static void LogError(string format, params object[] args)
+        public void LogError(string format, params object[] args)
         {
             if (IsEnabled)
             {

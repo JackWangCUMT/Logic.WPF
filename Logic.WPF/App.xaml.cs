@@ -4,15 +4,14 @@ using Logic.Page;
 using Logic.Serialization;
 using Logic.Simulation;
 using Logic.Util;
-using Logic.Util.Parts;
 using Logic.ViewModels;
 using Logic.WPF.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.ComponentModel.Composition.Registration;
+using System.Composition;
+using System.Composition.Convention;
+using System.Composition.Hosting;
 using System.Configuration;
 using System.Data;
 using System.Diagnostics;
@@ -29,8 +28,10 @@ namespace Logic.WPF
     {
         #region Fields
 
+        private ILog _log = null;
         private MainViewModel _model = null;
         private MainView _view = null;
+        private IStringSerializer _serializer = null;
         private System.Threading.Timer _timer = null;
         private Clock _clock = null;
         private Point _dragStartPoint;
@@ -43,13 +44,14 @@ namespace Logic.WPF
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            Log.IsEnabled = true;
-            Log.Initialize();
+
+            _log = new Log();
+            _log.IsEnabled = true;
+            _log.Initialize();
 
             try
             {
                 _view = new MainView();
-                _model = new MainViewModel();
 
                 InitializeModel();
                 InitializeView();
@@ -62,7 +64,7 @@ namespace Logic.WPF
             }
             catch (Exception ex)
             {
-                Log.LogError("{0}{1}{2}",
+                _log.LogError("{0}{1}{2}",
                     ex.Message,
                     Environment.NewLine,
                     ex.StackTrace);
@@ -76,7 +78,7 @@ namespace Logic.WPF
         protected override void OnExit(ExitEventArgs e)
         {
             base.OnExit(e);
-            Log.Close();
+            _log.Close();
         } 
 
         #endregion
@@ -86,6 +88,8 @@ namespace Logic.WPF
         private void InitializeModel()
         {
             _model = new MainViewModel();
+
+            _model.Log = _log;
 
             _model.Blocks = new ObservableCollection<XBlock>();
             _model.Templates = new ObservableCollection<ITemplate>();
@@ -194,8 +198,8 @@ namespace Logic.WPF
                         || !_model.History.CanUndo() ? false : true;
                 });
 
-            _model.EditRedoCommand = new NativeCommand
-                ((parameter) => _model.Redo(),
+            _model.EditRedoCommand = new NativeCommand(
+                (parameter) => _model.Redo(),
                 (parameter) =>
                 {
                     return IsSimulationRunning()
@@ -472,6 +476,18 @@ namespace Logic.WPF
             _model.EditorLayer = new CanvasViewModel();
             _model.OverlayLayer = new CanvasViewModel();
 
+            // log
+            _model.GridView.Log = _log;
+            _model.TableView.Log = _log;
+            _model.FrameView.Log = _log;
+
+            _model.ShapeLayer.Log = _log;
+            _model.BlockLayer.Log = _log;
+            _model.WireLayer.Log = _log;
+            _model.PinLayer.Log = _log;
+            _model.EditorLayer.Log = _log;
+            _model.OverlayLayer.Log = _log;
+
             // editor
             _model.EditorLayer.Layers = _model;
             _model.EditorLayer.GetFilePath = this.GetFilePath;
@@ -480,7 +496,8 @@ namespace Logic.WPF
             _model.OverlayLayer.IsOverlay = true;
 
             // serializer
-            _model.Serializer = new Json();
+            _serializer = new Json(_log);
+            _model.Serializer = _serializer;
 
             // renderer
             IRenderer renderer = new NativeRenderer()
@@ -503,7 +520,7 @@ namespace Logic.WPF
             _model.Clipboard = new NativeTextClipboard();
 
             // history
-            _model.History = new History<IPage>(new Bson());
+            _model.History = new History<IPage>(new Bson(_log));
 
             // tool
             _model.Tool = _model.Tool;
@@ -547,7 +564,7 @@ namespace Logic.WPF
                     }
                     catch (Exception ex)
                     {
-                        Log.LogError("{0}{1}{2}",
+                        _log.LogError("{0}{1}{2}",
                             ex.Message,
                             Environment.NewLine,
                             ex.StackTrace);
@@ -571,7 +588,7 @@ namespace Logic.WPF
                     }
                     catch (Exception ex)
                     {
-                        Log.LogError("{0}{1}{2}",
+                        _log.LogError("{0}{1}{2}",
                             ex.Message,
                             Environment.NewLine,
                             ex.StackTrace);
@@ -678,34 +695,26 @@ namespace Logic.WPF
         {
             try
             {
-                var builder = new RegistrationBuilder();
+                var builder = new ConventionBuilder();
                 builder.ForTypesDerivedFrom<XBlock>().Export<XBlock>();
                 builder.ForTypesDerivedFrom<ITemplate>().Export<ITemplate>();
 
-                var catalog = new AggregateCatalog();
+                var configuration = new ContainerConfiguration()
+                        .WithAssembly(Assembly.GetExecutingAssembly())
+                        .WithDefaultConventions(builder);
 
-                catalog.Catalogs.Add(
-                    new AssemblyCatalog(
-                        Assembly.GetExecutingAssembly(), builder));
-
-                if (System.IO.Directory.Exists("./Blocks"))
+                using (var container = configuration.CreateContainer())
                 {
-                    catalog.Catalogs.Add(
-                        new DirectoryCatalog("./Blocks", builder));
-                }
+                    var blocks = container.GetExports<XBlock>();
+                    _model.Blocks = new ObservableCollection<XBlock>(blocks);
 
-                if (System.IO.Directory.Exists("./Templates"))
-                {
-                    catalog.Catalogs.Add(
-                        new DirectoryCatalog("./Templates", builder));
+                    var templates = container.GetExports<ITemplate>();
+                    _model.Templates = new ObservableCollection<ITemplate>(templates);
                 }
-
-                var container = new CompositionContainer(catalog);
-                container.ComposeParts(_model);
             }
-            catch (CompositionException ex)
+            catch (Exception ex)
             {
-                Log.LogError("{0}{1}{2}",
+                _log.LogError("{0}{1}{2}",
                     ex.Message,
                     Environment.NewLine,
                     ex.StackTrace);
@@ -721,6 +730,50 @@ namespace Logic.WPF
             UpdateStyles(_model.Project);
             SetDefaultTemplate(_model.Project);
             LoadFirstPage(_model.Project);
+        }
+
+        #endregion
+
+        #region Serialization
+
+        public T Open<T>(string path) where T : class
+        {
+            try
+            {
+                using (var fs = System.IO.File.OpenText(path))
+                {
+                    var json = fs.ReadToEnd();
+                    var project = _serializer.Deserialize<T>(json);
+                    return project;
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
+            }
+            return null;
+        }
+
+        public void Save<T>(string path, T project) where T : class
+        {
+            try
+            {
+                var json = _serializer.Serialize<T>(project);
+                using (var fs = System.IO.File.CreateText(path))
+                {
+                    fs.Write(json);
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
+            }
         }
 
         #endregion
@@ -752,9 +805,12 @@ namespace Logic.WPF
 
         private void FileOpen(string path)
         {
-            var project = _model.Load(path);
+            var project = Open<XProject>(path);
             if (project != null)
             {
+                _model.SelectionReset();
+                _model.Reset();
+                _model.Invalidate();
                 _model.Renderer.Dispose();
                 _model.Project = project;
                 _model.FileName = System.IO.Path.GetFileNameWithoutExtension(path);
@@ -768,7 +824,7 @@ namespace Logic.WPF
         {
             if (!string.IsNullOrEmpty(_model.FilePath))
             {
-                _model.Save(_model.FilePath, _model.Project);
+                Save(_model.FilePath, _model.Project);
             }
             else
             {
@@ -789,7 +845,7 @@ namespace Logic.WPF
 
             if (dlg.ShowDialog(_view) == true)
             {
-                _model.Save(dlg.FileName, _model.Project);
+                Save(dlg.FileName, _model.Project);
                 _model.FileName = System.IO.Path.GetFileNameWithoutExtension(dlg.FileName);
                 _model.FilePath = dlg.FileName;
             }
@@ -814,7 +870,7 @@ namespace Logic.WPF
                 }
                 catch (Exception ex)
                 {
-                    Log.LogError("{0}{1}{2}",
+                    _log.LogError("{0}{1}{2}",
                         ex.Message,
                         Environment.NewLine,
                         ex.StackTrace);
@@ -1102,7 +1158,7 @@ namespace Logic.WPF
 
             if (dlg.ShowDialog(_view) == true)
             {
-                var block = _model.Open<XBlock>(dlg.FileName);
+                var block = Open<XBlock>(dlg.FileName);
                 if (block != null)
                 {
                     _model.Blocks.Add(block);
@@ -1151,7 +1207,7 @@ namespace Logic.WPF
                 }
                 catch (Exception ex)
                 {
-                    Log.LogError("{0}{1}{2}",
+                    _log.LogError("{0}{1}{2}",
                         ex.Message,
                         Environment.NewLine,
                         ex.StackTrace);
@@ -1203,7 +1259,7 @@ namespace Logic.WPF
             }
             catch (Exception ex)
             {
-                Log.LogError("{0}{1}{2}",
+                _log.LogError("{0}{1}{2}",
                     ex.Message,
                     Environment.NewLine,
                     ex.StackTrace);
@@ -1212,13 +1268,12 @@ namespace Logic.WPF
 
         private void BlocksImport(string csharp)
         {
-            var part = new BlockPart() { Blocks = new ObservableCollection<XBlock>() };
-            bool result = CSharpCodeImporter.Import<XBlock>(csharp, part);
-            if (result == true)
+            IEnumerable<XBlock> exports = CSharpCodeImporter.Import<XBlock>(csharp, _log);
+            if (exports != null)
             {
-                foreach (var block in part.Blocks)
+                foreach (var block in exports)
                 {
-                    _model.Blocks.Add(_model.Clone(block));
+                    _model.Blocks.Add(block);
                 }
             }
         }
@@ -1237,7 +1292,7 @@ namespace Logic.WPF
                 if (dlg.ShowDialog(_view) == true)
                 {
                     var path = dlg.FileName;
-                    _model.Save<XBlock>(path, block);
+                    Save<XBlock>(path, block);
                     System.Diagnostics.Process.Start("notepad", path);
                 }
             }
@@ -1310,7 +1365,7 @@ namespace Logic.WPF
 
             if (dlg.ShowDialog(_view) == true)
             {
-                var template = _model.Open<XTemplate>(dlg.FileName);
+                var template = Open<XTemplate>(dlg.FileName);
                 if (template != null)
                 {
                     _model.Project.Templates.Add(template);
@@ -1350,7 +1405,7 @@ namespace Logic.WPF
             }
             catch (Exception ex)
             {
-                Log.LogError("{0}{1}{2}",
+                _log.LogError("{0}{1}{2}",
                     ex.Message,
                     Environment.NewLine,
                     ex.StackTrace);
@@ -1359,11 +1414,10 @@ namespace Logic.WPF
 
         private void TemplatesImport(string csharp)
         {
-            var part = new TemplatePart() { Templates = new ObservableCollection<ITemplate>() };
-            bool result = CSharpCodeImporter.Import<ITemplate>(csharp, part);
-            if (result == true)
+            IEnumerable<ITemplate> exports = CSharpCodeImporter.Import<ITemplate>(csharp, _log);
+            if (exports != null)
             {
-                foreach (var template in part.Templates)
+                foreach (var template in exports)
                 {
                     _model.Project.Templates.Add(_model.Clone(template));
                 }
@@ -1382,7 +1436,7 @@ namespace Logic.WPF
             {
                 var template = _model.Clone(_model.Page.Template);
                 var path = dlg.FileName;
-                _model.Save<XTemplate>(path, template);
+                Save<XTemplate>(path, template);
                 System.Diagnostics.Process.Start("notepad", path);
             }
         }
@@ -1453,7 +1507,7 @@ namespace Logic.WPF
             }
             catch (Exception ex)
             {
-                Log.LogError("{0}{1}{2}",
+                _log.LogError("{0}{1}{2}",
                     ex.Message,
                     Environment.NewLine,
                     ex.StackTrace);
@@ -1517,7 +1571,7 @@ namespace Logic.WPF
                     }
                     catch (Exception ex)
                     {
-                        Log.LogError("{0}{1}{2}",
+                        _log.LogError("{0}{1}{2}",
                             ex.Message,
                             Environment.NewLine,
                             ex.StackTrace);
@@ -1561,7 +1615,7 @@ namespace Logic.WPF
             }
             catch (Exception ex)
             {
-                Log.LogError("{0}{1}{2}",
+                _log.LogError("{0}{1}{2}",
                     ex.Message,
                     Environment.NewLine,
                     ex.StackTrace);
@@ -1588,7 +1642,7 @@ namespace Logic.WPF
             }
             catch (Exception ex)
             {
-                Log.LogError("{0}{1}{2}",
+                _log.LogError("{0}{1}{2}",
                     ex.Message,
                     Environment.NewLine,
                     ex.StackTrace);

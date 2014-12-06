@@ -14,6 +14,13 @@ namespace Logic.Serialization
 {
     public class Json : IStringSerializer
     {
+        private ILog _log;
+
+        public Json(ILog log)
+        {
+            _log = log;
+        }
+
         public string Serialize<T>(T obj) where T : class
         {
             try
@@ -31,7 +38,7 @@ namespace Logic.Serialization
             }
             catch (Exception ex)
             {
-                Log.LogError("{0}{1}{2}",
+                _log.LogError("{0}{1}{2}",
                     ex.Message,
                     Environment.NewLine,
                     ex.StackTrace);
@@ -56,7 +63,7 @@ namespace Logic.Serialization
             }
             catch (Exception ex)
             {
-                Log.LogError("{0}{1}{2}",
+                _log.LogError("{0}{1}{2}",
                     ex.Message,
                     Environment.NewLine,
                     ex.StackTrace);

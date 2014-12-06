@@ -60,8 +60,22 @@
     <Reference Include="System.Collections.Immutable">
       <HintPath>..\packages\System.Collections.Immutable.1.1.32-beta\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
     </Reference>
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.ComponentModel.Composition.Registration" />
+    <Reference Include="System.Composition.AttributedModel, Version=1.0.27.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.AttributedModel.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Composition.Convention">
+      <HintPath>..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Convention.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Composition.Hosting">
+      <HintPath>..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Hosting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Composition.Runtime">
+      <HintPath>..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Composition.TypedParts">
+      <HintPath>..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.TypedParts.dll</HintPath>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Reflection.Context" />
@@ -86,9 +100,22 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Blocks\Gates\And.cs" />
+    <Compile Include="Blocks\Gates\Inverter.cs" />
+    <Compile Include="Blocks\Gates\Or.cs" />
+    <Compile Include="Blocks\Memory\MemoryReset.cs" />
+    <Compile Include="Blocks\Memory\MemoryResetVertical.cs" />
+    <Compile Include="Blocks\Memory\MemorySet.cs" />
+    <Compile Include="Blocks\Memory\MemorySetVertical.cs" />
+    <Compile Include="Blocks\Shortcut\Shortcut.cs" />
+    <Compile Include="Blocks\Signal\Input.cs" />
+    <Compile Include="Blocks\Signal\Output.cs" />
+    <Compile Include="Blocks\Signal\Signal.cs" />
+    <Compile Include="Blocks\Timers\TimerOff.cs" />
+    <Compile Include="Blocks\Timers\TimerOn.cs" />
+    <Compile Include="Blocks\Timers\TimerPulse.cs" />
     <Compile Include="Page\Defaults.cs" />
     <Compile Include="Templates\TitlePageTemplate.cs" />
-    <Compile Include="ViewModels\CanvasViewModel.cs" />
     <Compile Include="Util\WirePosition.cs" />
     <Compile Include="Serialization\LogicContractResolver.cs" />
     <Compile Include="Simulation\BoolSimulationCacheRenderer.cs" />
@@ -101,12 +128,8 @@
     <Compile Include="Templates\ScratchpadPageTemplate.cs" />
     <Compile Include="Util\CSharpProjectCreator.cs" />
     <Compile Include="Util\NativeTextClipboard.cs" />
-    <Compile Include="Util\Parts\BlockPart.cs" />
-    <Compile Include="Util\Parts\TemplatePart.cs" />
     <Compile Include="Util\NativePointExtensions.cs" />
     <Compile Include="Util\PdfWriter.cs" />
-    <Compile Include="ViewModels\CodeViewModel.cs" />
-    <Compile Include="ViewModels\MainViewModel.cs" />
     <Page Include="Views\CodeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -119,8 +142,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ViewModels\ToolMenuModel.cs" />
-    <Compile Include="ViewModels\ViewViewModel.cs" />
     <Compile Include="Views\CodeView.xaml.cs">
       <DependentUpon>CodeView.xaml</DependentUpon>
     </Compile>
@@ -175,11 +196,20 @@
       <Project>{aa8c3513-6fc1-46a4-9db7-16d4563da912}</Project>
       <Name>Logic.Graph</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Logic.Simulation.Blocks\Logic.Simulation.Blocks.csproj">
+      <Project>{5f8c1001-8d43-4d42-b806-4feacc7885ce}</Project>
+      <Name>Logic.Simulation.Blocks</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Logic.Simulation\Logic.Simulation.csproj">
       <Project>{65628359-e4d7-4031-95c8-760ae5ceed5f}</Project>
       <Name>Logic.Simulation</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Logic.ViewModels\Logic.ViewModels.csproj">
+      <Project>{e1184566-6dcf-40de-a873-d5b9e3c101a3}</Project>
+      <Name>Logic.ViewModels</Name>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -4,9 +4,9 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.ComponentModel.Composition.Registration;
+using System.Composition;
+using System.Composition.Convention;
+using System.Composition.Hosting;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -31,19 +31,22 @@ namespace Logic.Util
             };
         }
 
-        public static void Compose<T>(Assembly assembly, object part)
+        public static IEnumerable<T> Compose<T>(Assembly assembly)
         {
-            var builder = new RegistrationBuilder();
+            var builder = new ConventionBuilder();
             builder.ForTypesDerivedFrom<T>().Export<T>();
 
-            var catalog = new AggregateCatalog();
-            catalog.Catalogs.Add(new AssemblyCatalog(assembly, builder));
+            var configuration = new ContainerConfiguration()
+                .WithAssembly(assembly)
+                .WithDefaultConventions(builder);
 
-            var container = new CompositionContainer(catalog);
-            container.ComposeParts(part);
+            using (var container = configuration.CreateContainer())
+            {
+                return container.GetExports<T>();
+            }
         }
 
-        public static bool Import<T>(string csharp, object part)
+        public static IEnumerable<T> Import<T>(string csharp, ILog log)
         {
             var sw = Stopwatch.StartNew();
 
@@ -65,24 +68,24 @@ namespace Logic.Util
                     Assembly assembly = Assembly.Load(ms.GetBuffer());
                     if (assembly != null)
                     {
-                        Compose<T>(assembly, part);
+                        var exports = Compose<T>(assembly);
 
                         sw.Stop();
-                        Log.LogInformation("Roslyn code import: " + sw.Elapsed.TotalMilliseconds + "ms");
+                        log.LogInformation("Roslyn code import: " + sw.Elapsed.TotalMilliseconds + "ms");
 
-                        return true;
+                        return exports;
                     }
                 }
                 else
                 {
-                    Log.LogError("Failed to compile code using Roslyn.");
+                    log.LogError("Failed to compile code using Roslyn.");
                     foreach (var diagnostic in result.Diagnostics)
                     {
-                        Log.LogError(diagnostic.Description);
+                        log.LogError(diagnostic.Description);
                     }
                 }
             }
-            return false;
+            return null;
         }
     }
 }

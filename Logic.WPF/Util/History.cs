@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Logic.Util
 {
-    public class History<T> where T : class
+    public class History<T> : IHistory<T> where T : class
     {
         private IBinarySerializer _serializer;
         private Stack<byte[]> _undos = new Stack<byte[]>();
