@@ -63,7 +63,7 @@ namespace Logic.ViewModels
         public bool SkipContextMenu { get; set; }
         public double RightX { get; set; }
         public double RightY { get; set; }
-        public BoolSimulationCacheRenderer CacheRenderer { get; set; }
+        public IBoolSimulationRenderer CacheRenderer { get; set; }
         public bool EnableSimulationCache { get; set; }
 
         #endregion
@@ -281,20 +281,9 @@ namespace Logic.ViewModels
                 }
                 else if (IsOverlay && Simulations != null)
                 {
-                    if (EnableSimulationCache)
+                    if (EnableSimulationCache 
+                        && CacheRenderer != null)
                     {
-                        if (CacheRenderer == null)
-                        {
-                            CacheRenderer = new BoolSimulationCacheRenderer()
-                            {
-                                Renderer = this.Renderer,
-                                NullStateStyle = this.NullStateStyle,
-                                TrueStateStyle = this.TrueStateStyle,
-                                FalseStateStyle = this.FalseStateStyle,
-                                Shapes = this.Shapes,
-                                Simulations = this.Simulations
-                            };
-                        }
                         CacheRenderer.Render(dc);
                     }
                     else

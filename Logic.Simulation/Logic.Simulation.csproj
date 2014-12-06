@@ -48,6 +48,7 @@
     <Compile Include="BoolInput.cs" />
     <Compile Include="BoolSimulation.cs" />
     <Compile Include="Clock.cs" />
+    <Compile Include="IBoolSimulationRenderer.cs" />
     <Compile Include="IClock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

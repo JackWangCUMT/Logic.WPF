@@ -8,7 +8,7 @@ using System.Windows.Media;
 
 namespace Logic.Simulation
 {
-    public class BoolSimulationCacheRenderer
+    public class BoolSimulationCacheRenderer : IBoolSimulationRenderer
     {
         public IRenderer Renderer { get; set; }
         public IStyle NullStateStyle { get; set; }

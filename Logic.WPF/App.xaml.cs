@@ -1407,6 +1407,16 @@ namespace Logic.WPF
             _model.EditorLayer.Simulations = simulations;
             _model.OverlayLayer.Simulations = simulations;
 
+            _model.OverlayLayer.CacheRenderer = new BoolSimulationCacheRenderer()
+            {
+                Renderer = _model.OverlayLayer.Renderer,
+                NullStateStyle = _model.OverlayLayer.NullStateStyle,
+                TrueStateStyle = _model.OverlayLayer.TrueStateStyle,
+                FalseStateStyle = _model.OverlayLayer.FalseStateStyle,
+                Shapes = _model.OverlayLayer.Shapes,
+                Simulations = _model.OverlayLayer.Simulations
+            };
+
             _model.BlockLayer.InvalidateVisual();
             _model.OverlayLayer.InvalidateVisual();
         }
