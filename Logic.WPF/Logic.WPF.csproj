@@ -126,7 +126,7 @@
     <Compile Include="Util\GridFactory.cs" />
     <Compile Include="Templates\LogicPageTemplate.cs" />
     <Compile Include="Templates\ScratchpadPageTemplate.cs" />
-    <Compile Include="Util\CSharpProjectCreator.cs" />
+    <Compile Include="Util\CSharpCodeCreator.cs" />
     <Compile Include="Native\NativeTextClipboard.cs" />
     <Compile Include="Native\NativePointExtensions.cs" />
     <Compile Include="Util\PdfWriter.cs" />
