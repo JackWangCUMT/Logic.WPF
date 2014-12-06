@@ -1,5 +1,5 @@
 ﻿using Logic.Core;
-using Logic.Page;
+using Logic.Native;
 using Logic.Util;
 using System;
 using System.Collections.Generic;

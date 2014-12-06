@@ -7,16 +7,15 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CORE = Logic.Core;
-using PAGE = Logic.Page;
+using Core = Logic.Core;
 
 namespace Logic.Util
 {
-    internal class XPdfStyle : CORE.IStyle
+    internal class XPdfStyle : Core.IStyle
     {
         public string Name { get; set; }
-        public CORE.IColor Fill { get; set; }
-        public CORE.IColor Stroke { get; set; }
+        public Core.IColor Fill { get; set; }
+        public Core.IColor Stroke { get; set; }
         public double Thickness { get; set; }
 
         public object NativeFill() { return null; }
@@ -26,8 +25,8 @@ namespace Logic.Util
 
         public XPdfStyle(
             string name, 
-            CORE.XColor fill, 
-            CORE.XColor stroke, 
+            Core.XColor fill, 
+            Core.XColor stroke, 
             double thickness)
         {
             Name = name;
@@ -37,14 +36,14 @@ namespace Logic.Util
         }
     }
 
-    public class PdfWriter : CORE.IRenderer
+    public class PdfWriter : Core.IRenderer
     {
         #region Properties
 
         public bool EnablePinRendering { get; set; }
         public bool EnableGridRendering { get; set; }
-        public CORE.IStyle TemplateStyleOverride { get; set; }
-        public CORE.IStyle LayerStyleOverride { get; set; }
+        public Core.IStyle TemplateStyleOverride { get; set; }
+        public Core.IStyle LayerStyleOverride { get; set; }
 
         #endregion
 
@@ -56,7 +55,7 @@ namespace Logic.Util
 
         #region Create
 
-        public void Create(string path, CORE.IPage page)
+        public void Create(string path, Core.IPage page)
         {
             using (var pdfDocument = new PdfDocument())
             {
@@ -65,7 +64,7 @@ namespace Logic.Util
             }
         }
 
-        public void Create(string path, IEnumerable<CORE.IPage> pages)
+        public void Create(string path, IEnumerable<Core.IPage> pages)
         {
             using (var pdfDocument = new PdfDocument())
             {
@@ -77,7 +76,7 @@ namespace Logic.Util
             }
         }
 
-        private void Add(PdfDocument pdfDocument, CORE.IPage page)
+        private void Add(PdfDocument pdfDocument, Core.IPage page)
         {
             // create A4 page with landscape orientation
             PdfPage pdfPage = pdfDocument.AddPage();
@@ -109,7 +108,7 @@ namespace Logic.Util
 
         #region Render
 
-        private void RenderPage(object gfx, CORE.IPage page)
+        private void RenderPage(object gfx, Core.IPage page)
         {
             RenderTemplate(gfx, page.Template);
 
@@ -124,7 +123,7 @@ namespace Logic.Util
             RenderLayer(gfx, page.Wires);
         }
 
-        private void RenderTemplate(object gfx, CORE.ITemplate template)
+        private void RenderTemplate(object gfx, Core.ITemplate template)
         {
             if (EnableGridRendering)
             {
@@ -135,9 +134,9 @@ namespace Logic.Util
             RenderConatiner(gfx, template.Frame);
         }
 
-        private void RenderConatiner(object gfx, CORE.IContainer container)
+        private void RenderConatiner(object gfx, Core.IContainer container)
         {
-            CORE.IStyle overrideStyle = TemplateStyleOverride;
+            Core.IStyle overrideStyle = TemplateStyleOverride;
 
             foreach (var shape in container.Shapes)
             {
@@ -148,9 +147,9 @@ namespace Logic.Util
             }
         }
 
-        private void RenderLayer(object gfx, IEnumerable<CORE.IShape> shapes)
+        private void RenderLayer(object gfx, IEnumerable<Core.IShape> shapes)
         {
-            CORE.IStyle overrideStyle = LayerStyleOverride;
+            Core.IStyle overrideStyle = LayerStyleOverride;
 
             foreach (var shape in shapes)
             {
@@ -161,9 +160,9 @@ namespace Logic.Util
 
                 if (EnablePinRendering)
                 {
-                    if (shape is CORE.XBlock)
+                    if (shape is Core.XBlock)
                     {
-                        foreach (var pin in (shape as CORE.XBlock).Pins)
+                        foreach (var pin in (shape as Core.XBlock).Pins)
                         {
                             pin.Render(
                                 gfx, 
@@ -179,7 +178,7 @@ namespace Logic.Util
 
         #region Helpers
 
-        private XColor ToXColor(CORE.IColor color)
+        private XColor ToXColor(Core.IColor color)
         {
             return XColor.FromArgb(
                 color.A, 
@@ -188,7 +187,7 @@ namespace Logic.Util
                 color.B);
         }
 
-        private XPen ToXPen(CORE.IStyle style)
+        private XPen ToXPen(Core.IStyle style)
         {
             return new XPen(
                 ToXColor(style.Stroke), 
@@ -198,7 +197,7 @@ namespace Logic.Util
             };
         }
 
-        private XSolidBrush ToXSolidBrush(CORE.IColor color)
+        private XSolidBrush ToXSolidBrush(Core.IColor color)
         {
             return new XSolidBrush(ToXColor(color));
         } 
@@ -207,13 +206,13 @@ namespace Logic.Util
 
         #region IRenderer
 
-        public IList<KeyValuePair<string, CORE.IProperty>> Database { get; set; }
-        public ICollection<CORE.IShape> Selected { get; set; }
+        public IList<KeyValuePair<string, Core.IProperty>> Database { get; set; }
+        public ICollection<Core.IShape> Selected { get; set; }
         public double InvertSize { get; set; }
         public double PinRadius { get; set; }
         public double HitTreshold { get; set; }
 
-        public void DrawLine(object gfx, CORE.IStyle style, CORE.XLine line)
+        public void DrawLine(object gfx, Core.IStyle style, Core.XLine line)
         {
             (gfx as XGraphics).DrawLine(
                 ToXPen(style), 
@@ -223,7 +222,7 @@ namespace Logic.Util
                 ScaleToPage(line.Y2));
         }
 
-        public void DrawEllipse(object gfx, CORE.IStyle style, CORE.XEllipse ellipse)
+        public void DrawEllipse(object gfx, Core.IStyle style, Core.XEllipse ellipse)
         {
             double x = ellipse.X - ellipse.RadiusX;
             double y = ellipse.Y - ellipse.RadiusY;
@@ -251,7 +250,7 @@ namespace Logic.Util
             }
         }
 
-        public void DrawRectangle(object gfx, CORE.IStyle style, CORE.XRectangle rectangle)
+        public void DrawRectangle(object gfx, Core.IStyle style, Core.XRectangle rectangle)
         {
             if (rectangle.IsFilled)
             {
@@ -274,7 +273,7 @@ namespace Logic.Util
             }
         }
 
-        public void DrawText(object gfx, CORE.IStyle style, CORE.XText text)
+        public void DrawText(object gfx, Core.IStyle style, Core.XText text)
         {
             XPdfFontOptions options = new XPdfFontOptions(
                 PdfFontEncoding.Unicode, 
@@ -295,26 +294,26 @@ namespace Logic.Util
             XStringFormat format = new XStringFormat();
             switch (text.HAlignment)
             {
-                case CORE.HAlignment.Left: 
+                case Core.HAlignment.Left: 
                     format.Alignment = XStringAlignment.Near; 
                     break;
-                case CORE.HAlignment.Center: 
+                case Core.HAlignment.Center: 
                     format.Alignment = XStringAlignment.Center; 
                     break;
-                case CORE.HAlignment.Right: 
+                case Core.HAlignment.Right: 
                     format.Alignment = XStringAlignment.Far; 
                     break;
             }
 
             switch (text.VAlignment)
             {
-                case CORE.VAlignment.Top: 
+                case Core.VAlignment.Top: 
                     format.LineAlignment = XLineAlignment.Near; 
                     break;
-                case CORE.VAlignment.Center: 
+                case Core.VAlignment.Center: 
                     format.LineAlignment = XLineAlignment.Center; 
                     break;
-                case CORE.VAlignment.Bottom: 
+                case Core.VAlignment.Bottom: 
                     format.LineAlignment = XLineAlignment.Far; 
                     break;
             }
@@ -332,7 +331,7 @@ namespace Logic.Util
                 format);
         }
 
-        public void DrawImage(object gfx, CORE.IStyle style, CORE.XImage image)
+        public void DrawImage(object gfx, Core.IStyle style, Core.XImage image)
         {
             (gfx as XGraphics).DrawImage(
                 XImage.FromFile(image.Path.LocalPath),
@@ -342,7 +341,7 @@ namespace Logic.Util
                 ScaleToPage(image.Height));
         }
 
-        public void DrawPin(object gfx, CORE.IStyle style, CORE.XPin pin)
+        public void DrawPin(object gfx, Core.IStyle style, Core.XPin pin)
         {
             double x = pin.X - PinRadius;
             double y = pin.Y - PinRadius;
@@ -358,7 +357,7 @@ namespace Logic.Util
                 ScaleToPage(height));
         }
 
-        public void DrawWire(object gfx, CORE.IStyle style, CORE.XWire wire)
+        public void DrawWire(object gfx, Core.IStyle style, Core.XWire wire)
         {
             var position = WirePosition.Calculate(wire, InvertSize);
 

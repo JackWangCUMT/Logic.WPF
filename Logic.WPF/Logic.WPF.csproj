@@ -114,11 +114,11 @@
     <Compile Include="Blocks\Timers\TimerOff.cs" />
     <Compile Include="Blocks\Timers\TimerOn.cs" />
     <Compile Include="Blocks\Timers\TimerPulse.cs" />
-    <Compile Include="Page\Defaults.cs" />
+    <Compile Include="Util\Defaults.cs" />
     <Compile Include="Templates\TitlePageTemplate.cs" />
     <Compile Include="Util\WirePosition.cs" />
     <Compile Include="Serialization\LogicContractResolver.cs" />
-    <Compile Include="Simulation\BoolSimulationCacheRenderer.cs" />
+    <Compile Include="Native\NativeBoolSimulationRenderer.cs" />
     <Compile Include="Simulation\BoolSimulationFactory.cs" />
     <Compile Include="Serialization\Bson.cs" />
     <Compile Include="Util\CSharpCodeImporter.cs" />
@@ -127,8 +127,8 @@
     <Compile Include="Templates\LogicPageTemplate.cs" />
     <Compile Include="Templates\ScratchpadPageTemplate.cs" />
     <Compile Include="Util\CSharpProjectCreator.cs" />
-    <Compile Include="Util\NativeTextClipboard.cs" />
-    <Compile Include="Util\NativePointExtensions.cs" />
+    <Compile Include="Native\NativeTextClipboard.cs" />
+    <Compile Include="Native\NativePointExtensions.cs" />
     <Compile Include="Util\PdfWriter.cs" />
     <Page Include="Views\MainView.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -138,7 +138,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Util\NativeCommand.cs" />
+    <Compile Include="Native\NativeCommand.cs" />
     <Compile Include="Util\Log.cs" />
     <Compile Include="Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
@@ -146,13 +146,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controls\NativeZoom.cs" />
-    <Compile Include="Controls\NativeCanvas.cs" />
-    <Compile Include="Controls\NativeView.cs" />
-    <Compile Include="Page\NativeStyle.cs" />
+    <Compile Include="Native\NativeZoom.cs" />
+    <Compile Include="Native\NativeCanvas.cs" />
+    <Compile Include="Native\NativeView.cs" />
+    <Compile Include="Native\NativeStyle.cs" />
     <Compile Include="Util\History.cs" />
     <Compile Include="Serialization\Json.cs" />
-    <Compile Include="Page\NativeRenderer.cs" />
+    <Compile Include="Native\NativeRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -1,6 +1,6 @@
 ﻿using Logic.Core;
 using Logic.Graph;
-using Logic.Page;
+using Logic.Native;
 using Logic.Serialization;
 using Logic.Simulation;
 using Logic.Util;
@@ -1447,7 +1447,7 @@ namespace Logic.WPF
             _model.EditorLayer.Simulations = simulations;
             _model.OverlayLayer.Simulations = simulations;
 
-            _model.OverlayLayer.CacheRenderer = new BoolSimulationCacheRenderer()
+            _model.OverlayLayer.CacheRenderer = new NativeBoolSimulationRenderer()
             {
                 Renderer = _model.OverlayLayer.Renderer,
                 NullStateStyle = _model.OverlayLayer.NullStateStyle,

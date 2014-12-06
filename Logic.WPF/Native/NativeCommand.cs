@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace Logic.Util
+namespace Logic.Native
 {
     public class NativeCommand : ICommand
     {

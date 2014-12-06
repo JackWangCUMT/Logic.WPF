@@ -3,8 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:local="clr-namespace:Logic.WPF"
-        xmlns:page="clr-namespace:Logic.Page"
-        xmlns:controls="clr-namespace:Logic.Controls"
+        xmlns:native="clr-namespace:Logic.Native"
         Title="{Binding FileName, StringFormat={}{0} - Logic, FallbackValue=Logic, TargetNullValue=Logic}" 
         Height="980" Width="1540"
         Background="White"
@@ -75,7 +74,7 @@
                   TextOptions.TextFormattingMode="Display" 
                   TextOptions.TextHintingMode="Auto" 
                   TextOptions.TextRenderingMode="Auto">
-                <controls:NativeView x:Name="gridView" 
+                <native:NativeView x:Name="gridView" 
                                      DataContext="{Binding Path=GridView}"
                                      Background="Transparent" 
                                      FocusVisualStyle="{x:Null}"
@@ -84,7 +83,7 @@
                                      VerticalAlignment="Center" HorizontalAlignment="Center"
                                      Width="{Binding ElementName=layout, Path=Width}"
                                      Height="{Binding ElementName=layout, Path=Height}"/>
-                <controls:NativeView x:Name="tableView" 
+                <native:NativeView x:Name="tableView" 
                                      DataContext="{Binding Path=TableView}"
                                      Background="Transparent" 
                                      FocusVisualStyle="{x:Null}"
@@ -93,7 +92,7 @@
                                      VerticalAlignment="Center" HorizontalAlignment="Center"
                                      Width="{Binding ElementName=layout, Path=Width}"
                                      Height="{Binding ElementName=layout, Path=Height}"/>
-                <controls:NativeView x:Name="frameView" 
+                <native:NativeView x:Name="frameView" 
                                      DataContext="{Binding Path=FrameView}"
                                      Background="Transparent" 
                                      FocusVisualStyle="{x:Null}"
@@ -102,7 +101,7 @@
                                      VerticalAlignment="Center" HorizontalAlignment="Center"
                                      Width="{Binding ElementName=layout, Path=Width}"
                                      Height="{Binding ElementName=layout, Path=Height}"/>
-                <controls:NativeCanvas x:Name="shapeLayer" 
+                <native:NativeCanvas x:Name="shapeLayer" 
                                        DataContext="{Binding Path=ShapeLayer}"
                                        Background="Transparent" 
                                        FocusVisualStyle="{x:Null}"
@@ -111,7 +110,7 @@
                                        VerticalAlignment="Center" HorizontalAlignment="Center"
                                        Width="{Binding ElementName=layout, Path=Width}"
                                        Height="{Binding ElementName=layout, Path=Height}"/>
-                <controls:NativeCanvas x:Name="blockLayer" 
+                <native:NativeCanvas x:Name="blockLayer" 
                                        DataContext="{Binding Path=BlockLayer}"
                                        Background="Transparent" 
                                        FocusVisualStyle="{x:Null}"
@@ -120,7 +119,7 @@
                                        VerticalAlignment="Center" HorizontalAlignment="Center"
                                        Width="{Binding ElementName=layout, Path=Width}"
                                        Height="{Binding ElementName=layout, Path=Height}"/>
-                <controls:NativeCanvas x:Name="wireLayer" 
+                <native:NativeCanvas x:Name="wireLayer" 
                                        DataContext="{Binding Path=WireLayer}"
                                        Background="Transparent" 
                                        FocusVisualStyle="{x:Null}"
@@ -129,7 +128,7 @@
                                        VerticalAlignment="Center" HorizontalAlignment="Center"
                                        Width="{Binding ElementName=layout, Path=Width}"
                                        Height="{Binding ElementName=layout, Path=Height}"/>
-                <controls:NativeCanvas x:Name="pinLayer" 
+                <native:NativeCanvas x:Name="pinLayer" 
                                        DataContext="{Binding Path=PinLayer}"
                                        Background="Transparent" 
                                        FocusVisualStyle="{x:Null}"
@@ -138,7 +137,7 @@
                                        VerticalAlignment="Center" HorizontalAlignment="Center"
                                        Width="{Binding ElementName=layout, Path=Width}"
                                        Height="{Binding ElementName=layout, Path=Height}"/>
-                <controls:NativeCanvas x:Name="editorLayer" 
+                <native:NativeCanvas x:Name="editorLayer" 
                                        DataContext="{Binding Path=EditorLayer}"
                                        Background="Transparent" 
                                        FocusVisualStyle="{x:Null}"
@@ -147,7 +146,7 @@
                                        VerticalAlignment="Center" HorizontalAlignment="Center"
                                        Width="{Binding ElementName=layout, Path=Width}"
                                        Height="{Binding ElementName=layout, Path=Height}"/>
-                <controls:NativeCanvas x:Name="overlayLayer" 
+                <native:NativeCanvas x:Name="overlayLayer" 
                                        DataContext="{Binding Path=OverlayLayer}"
                                        Background="{x:Null}" 
                                        FocusVisualStyle="{x:Null}"

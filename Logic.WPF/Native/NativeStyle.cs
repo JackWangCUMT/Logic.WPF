@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
-namespace Logic.Page
+namespace Logic.Native
 {
     public class NativeStyle : IStyle
     {

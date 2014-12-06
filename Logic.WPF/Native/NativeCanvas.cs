@@ -2,7 +2,6 @@
 using Logic.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -11,9 +10,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace Logic.Controls
+namespace Logic.Native
 {
-    public class NativeView : Canvas, INotifyPropertyChanged
+    public class NativeCanvas : Canvas, INotifyPropertyChanged
     {
         #region INotifyPropertyChanged
 
@@ -32,8 +31,8 @@ namespace Logic.Controls
 
         #region Properties
 
-        private ViewViewModel _model;
-        public ViewViewModel Model
+        private CanvasViewModel _model;
+        public CanvasViewModel Model
         {
             get { return _model; }
             set
@@ -45,20 +44,20 @@ namespace Logic.Controls
                     Notify("Model");
                 }
             }
-        }
+        } 
 
         #endregion
 
         #region Constructor
 
-        public NativeView()
+        public NativeCanvas()
             : base()
         {
             InitializeEvents();
             RenderOptions.SetBitmapScalingMode(
-                this,
+                this, 
                 BitmapScalingMode.HighQuality);
-        } 
+        }
 
         #endregion
 
@@ -69,9 +68,9 @@ namespace Logic.Controls
             base.DataContextChanged += (s, e) =>
             {
                 if (base.DataContext != null
-                    && base.DataContext is ViewViewModel)
+                    && base.DataContext is CanvasViewModel)
                 {
-                    Model = base.DataContext as ViewViewModel;
+                    Model = base.DataContext as CanvasViewModel;
                 }
             };
 
@@ -108,7 +107,7 @@ namespace Logic.Controls
             };
         }
 
-        public void InitializeModel(ViewViewModel model)
+        public void InitializeModel(CanvasViewModel model)
         {
             model.IsMouseCaptured = () =>
             {
@@ -129,7 +128,7 @@ namespace Logic.Controls
             {
                 this.InvalidateVisual();
             };
-        }
+        } 
 
         #endregion
 

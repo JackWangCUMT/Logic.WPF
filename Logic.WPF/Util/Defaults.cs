@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Logic.Page
+namespace Logic.Util
 {
     public static class Defaults
     {

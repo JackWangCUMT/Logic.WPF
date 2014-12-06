@@ -1,4 +1,5 @@
 ﻿using Logic.Core;
+using Logic.Simulation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,9 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
-namespace Logic.Simulation
+namespace Logic.Native
 {
-    public class BoolSimulationCacheRenderer : IBoolSimulationRenderer
+    public class NativeBoolSimulationRenderer : IBoolSimulationRenderer
     {
         public IRenderer Renderer { get; set; }
         public IStyle NullStateStyle { get; set; }
