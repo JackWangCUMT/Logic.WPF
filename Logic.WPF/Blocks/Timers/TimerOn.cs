@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Timers.On
+namespace Logic.Blocks
 {
     public class TimerOn : XBlock
     {

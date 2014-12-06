@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Gates.Inverter
+namespace Logic.Blocks
 {
     public class Inverter : XBlock
     {

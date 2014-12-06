@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Timers.Pulse
+namespace Logic.Blocks
 {
     public class TimerPulse : XBlock
     {

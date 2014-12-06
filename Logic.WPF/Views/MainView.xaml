@@ -55,7 +55,7 @@
         <KeyBinding Command="{Binding BlockImportCommand}" Gesture="Ctrl+Shift+B"/>
         <KeyBinding Command="{Binding BlockImportCodeCommand}" Gesture="Shift+Alt+B"/>
         <KeyBinding Command="{Binding BlockExportCommand}" Key="B" Modifiers=""/>
-        <KeyBinding Command="{Binding BlockCreateProjectCommand}" Gesture="Ctrl+B"/>
+        <KeyBinding Command="{Binding BlockExportAsCodeCommand}" Gesture="Ctrl+B"/>
         <KeyBinding Command="{Binding TemplateImportCommand}" Gesture="Ctrl+Shift+T"/>
         <KeyBinding Command="{Binding TemplateImportCodeCommand}" Gesture="Shift+Alt+T"/>
         <KeyBinding Command="{Binding TemplateExportCommand}" Gesture="Ctrl+T"/>
@@ -391,7 +391,7 @@
                 <Separator/>
                 <MenuItem Header="_Export..." InputGestureText="B" Command="{Binding BlockExportCommand}"/>
                 <Separator/>
-                <MenuItem  Header="Create _Project..." InputGestureText="Ctrl+B" Command="{Binding BlockCreateProjectCommand}"/>
+                <MenuItem  Header="Export _As Code..." InputGestureText="Ctrl+B" Command="{Binding BlockExportAsCodeCommand}"/>
             </MenuItem>
             <MenuItem Header="Te_mplate">
                 <MenuItem Header="_Apply" ItemsSource="{Binding Path=Project.Templates, FallbackValue={x:Null}}">

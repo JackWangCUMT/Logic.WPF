@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Memory.SR.ResetVertical
+namespace Logic.Blocks
 {
     public class MemoryResetVertical : XBlock
     {

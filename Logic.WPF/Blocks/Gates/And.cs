@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Gates.And
+namespace Logic.Blocks
 {
     public class And : XBlock
     {

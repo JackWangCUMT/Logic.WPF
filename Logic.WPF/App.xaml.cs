@@ -394,8 +394,8 @@ namespace Logic.WPF
                         || !_model.HaveSelection() ? false : true;
                 });
 
-            _model.BlockCreateProjectCommand = new NativeCommand(
-                (parameter) => this.BlockCreateProject(),
+            _model.BlockExportAsCodeCommand = new NativeCommand(
+                (parameter) => this.BlockExportAsCode(),
                 (parameter) =>
                 {
                     return IsSimulationRunning()
@@ -1166,65 +1166,51 @@ namespace Logic.WPF
             }
         }
 
-        private void BlockCreateProject()
+        private void BlockExportAsCode()
         {
-            var block = _model.EditorLayer.BlockCreateFromSelected("Block");
-            if (block == null)
-                return;
-
-            var view = new CodeView();
-            view.Owner = _view;
-            view.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-
-            var vm = new CodeViewModel()
+            try
             {
-                NamespaceName = "Blocks.Name",
-                ClassName = "Name",
-                BlockName = "NAME",
-                ProjectPath = "Blocks.Name.csproj"
-            };
+                var block = _model.EditorLayer.BlockCreateFromSelected("BLOCK");
+                if (block == null)
+                    return;
 
-            vm.BrowseCommand = new NativeCommand((parameter) =>
-            {
+                // block name
+                string blockName = block.Name.ToUpper();
+
+                // class name
+                char[] a = block.Name.ToLower().ToCharArray();
+                a[0] = char.ToUpper(a[0]);
+                string className = new string(a);
+
                 var dlg = new Microsoft.Win32.SaveFileDialog()
                 {
-                    Filter = "C# Project (*.csproj)|*.csproj",
-                    FileName = vm.ProjectPath
+                    Filter = "C# (*.cs)|*.cs",
+                    FileName = className
                 };
 
-                if (dlg.ShowDialog(view) == true)
+                if (dlg.ShowDialog(_view) == true)
                 {
-                    vm.ProjectPath = dlg.FileName;
-                }
-            },
-            (parameter) => true);
+                    string path = dlg.FileName;
 
-            vm.CreateCommand = new NativeCommand((parameter) =>
+                    string code = new CSharpCodeCreator().Generate(
+                        block,
+                        "Logic.Blocks",
+                        className,
+                        blockName);
+
+                    using (var fs = System.IO.File.CreateText(path))
+                    {
+                        fs.Write(code);
+                    };
+                }
+            }
+            catch (Exception ex)
             {
-                try
-                {
-                    new CSharpProjectCreator().Create(block, vm);
-                }
-                catch (Exception ex)
-                {
-                    _log.LogError("{0}{1}{2}",
-                        ex.Message,
-                        Environment.NewLine,
-                        ex.StackTrace);
-                }
-
-                view.Close();
-            },
-            (parameter) => true);
-
-            vm.CancelCommand = new NativeCommand((parameter) =>
-            {
-                view.Close();
-            },
-            (parameter) => true);
-
-            view.DataContext = vm;
-            view.ShowDialog();
+                _log.LogError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
+            }
         }
 
         private void BlocksImportFromCode()
@@ -1280,7 +1266,7 @@ namespace Logic.WPF
 
         private void BlockExport()
         {
-            var block = _model.EditorLayer.BlockCreateFromSelected("Block");
+            var block = _model.EditorLayer.BlockCreateFromSelected("BLOCK");
             if (block != null)
             {
                 var dlg = new Microsoft.Win32.SaveFileDialog()

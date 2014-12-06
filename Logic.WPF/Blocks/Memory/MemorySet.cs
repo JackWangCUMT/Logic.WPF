@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Memory.SR.Set
+namespace Logic.Blocks
 {
     public class MemorySet : XBlock
     {

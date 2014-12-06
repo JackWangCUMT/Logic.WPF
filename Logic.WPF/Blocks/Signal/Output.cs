@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Signal.Output
+namespace Logic.Blocks
 {
     public class Output : XBlock
     {

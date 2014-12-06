@@ -265,7 +265,7 @@ namespace Logic.ViewModels
         public ICommand BlockImportCommand { get; set; }
         public ICommand BlockImportCodeCommand { get; set; }
         public ICommand BlockExportCommand { get; set; }
-        public ICommand BlockCreateProjectCommand { get; set; }
+        public ICommand BlockExportAsCodeCommand { get; set; }
         public ICommand InsertBlockCommand { get; set; }
 
         public ICommand TemplateImportCommand { get; set; }
