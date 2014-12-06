@@ -72,6 +72,7 @@
     <Compile Include="XProject.cs" />
     <Compile Include="XProperty.cs" />
     <Compile Include="XRectangle.cs" />
+    <Compile Include="XStyle.cs" />
     <Compile Include="XTemplate.cs" />
     <Compile Include="XText.cs" />
     <Compile Include="XWire.cs" />
