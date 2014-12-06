@@ -87,18 +87,6 @@ namespace Logic.ViewModels
 
         #endregion
 
-        #region Constructor
-
-        public CanvasViewModel()
-        {
-            Shapes = new ObservableCollection<IShape>();
-            Hidden = new HashSet<IShape>();
-            EnableSnap = true;
-            SnapSize = 15.0;
-        }
-
-        #endregion
-
         #region ILayer
 
         public Func<bool> IsMouseCaptured { get; set; }
