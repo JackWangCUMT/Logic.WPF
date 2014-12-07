@@ -47,21 +47,32 @@ namespace Logic.WPF
         {
             base.OnStartup(e);
 
-            var defaults = Open<Defaults>(_defaultsPath);
-            if (defaults != null)
+            // serializer
+            _serializer = new Json();
+
+            // defaults
+            if (System.IO.File.Exists(_defaultsPath))
             {
-                _defaults = defaults;
+                var defaults = Open<Defaults>(_defaultsPath);
+                if (defaults != null)
+                {
+                    _defaults = defaults;
+                }
             }
-            else
+
+            if (_defaults == null)
             {
                 _defaults = new Defaults();
                 _defaults.Reset();
             }
 
-            if (_defaults.EnableLog)
+            // log
+            if (_defaults.EnableLog && !string.IsNullOrEmpty(_defaults.LogPath))
             {
                 _log = new TraceLog();
                 _log.Initialize(_defaults.LogPath);
+
+                _serializer.Log = _log;
             }
 
             try
@@ -97,11 +108,13 @@ namespace Logic.WPF
         {
             base.OnExit(e);
 
+            // log
             if (_log != null)
             {
                 _log.Close();
             }
 
+            // defaults
             if (_defaults != null)
             {
                 Save<Defaults>(_defaultsPath, _defaults);
@@ -131,23 +144,23 @@ namespace Logic.WPF
                 (parameter) => IsSimulationRunning() ? false : true);
 
             _model.PageInsertBeforeCommand = new NativeCommand(
-                (parameter) => { throw new NotImplementedException(); },
+                (parameter) => { this.PageInsertBefore(parameter); },
                 (parameter) => IsSimulationRunning() ? false : true);
 
             _model.PageInsertAfterCommand = new NativeCommand(
-                (parameter) => { throw new NotImplementedException(); },
+                (parameter) => { this.PageInsertAfter(parameter); },
                 (parameter) => IsSimulationRunning() ? false : true);
 
             _model.PageCutCommand = new NativeCommand(
-                (parameter) => { throw new NotImplementedException(); },
+                (parameter) => { this.PageCut(parameter); },
                 (parameter) => IsSimulationRunning() ? false : true);
 
             _model.PageCopyCommand = new NativeCommand(
-                (parameter) => { throw new NotImplementedException(); },
+                (parameter) => { this.PageCopy(parameter); },
                 (parameter) => IsSimulationRunning() ? false : true);
 
             _model.PagePasteCommand = new NativeCommand(
-                (parameter) => { throw new NotImplementedException(); },
+                (parameter) => { this.PagePaste(parameter); },
                 (parameter) => IsSimulationRunning() ? false : true);
 
             _model.PageDeleteCommand = new NativeCommand(
@@ -159,27 +172,47 @@ namespace Logic.WPF
                 (parameter) => IsSimulationRunning() ? false : true);
 
             _model.DocumentInsertBeforeCommand = new NativeCommand(
-                (parameter) => { throw new NotImplementedException(); },
+                (parameter) => { this.DocumentInsertBefore(parameter); },
                 (parameter) => IsSimulationRunning() ? false : true);
 
             _model.DocumentInsertAfterCommand = new NativeCommand(
-                (parameter) => { throw new NotImplementedException(); },
+                (parameter) => { this.DocumentInsertAfter(parameter); },
                 (parameter) => IsSimulationRunning() ? false : true);
 
             _model.DocumentCutCommand = new NativeCommand(
-                (parameter) => { throw new NotImplementedException(); },
+                (parameter) => { this.DocumentCut(parameter); },
                 (parameter) => IsSimulationRunning() ? false : true);
 
             _model.DocumentCopyCommand = new NativeCommand(
-                (parameter) => { throw new NotImplementedException(); },
+                (parameter) => { this.DocumentCopy(parameter); },
                 (parameter) => IsSimulationRunning() ? false : true);
 
             _model.DocumentPasteCommand = new NativeCommand(
-                (parameter) => { throw new NotImplementedException(); },
+                (parameter) => { this.DocumentPaste(parameter); },
                 (parameter) => IsSimulationRunning() ? false : true);
 
             _model.DocumentDeleteCommand = new NativeCommand(
                 (parameter) => this.DocumentDelete(parameter),
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            _model.ProjectAddCommand = new NativeCommand(
+                (parameter) => this.ProjectAdd(parameter),
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            _model.ProjectCutCommand = new NativeCommand(
+                (parameter) => this.ProjectCut(parameter),
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            _model.ProjectCopyCommand = new NativeCommand(
+                (parameter) => this.ProjectCopy(parameter),
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            _model.ProjectPasteCommand = new NativeCommand(
+                (parameter) => this.ProjectPaste(parameter),
+                (parameter) => IsSimulationRunning() ? false : true);
+
+            _model.ProjectDeleteCommand = new NativeCommand(
+                (parameter) => this.ProjectDelete(parameter),
                 (parameter) => IsSimulationRunning() ? false : true);
 
             _model.SelectedItemChangedCommand = new NativeCommand(
@@ -578,7 +611,6 @@ namespace Logic.WPF
             _model.OverlayLayer.IsOverlay = true;
 
             // serializer
-            _serializer = new Json(_log);
             _model.Serializer = _serializer;
 
             // renderer
@@ -602,7 +634,7 @@ namespace Logic.WPF
             _model.Clipboard = new NativeTextClipboard();
 
             // history
-            _model.History = new History<IPage>(new Bson(_log));
+            _model.History = new History<IPage>(new Bson() { Log = _log });
 
             // tool
             _model.Tool = _model.Tool;
@@ -814,13 +846,13 @@ namespace Logic.WPF
 
         private void InitializeProject()
         {
-            _model.Project = NewProject();
+            _model.Project = ProjectNew();
             _model.Project.Documents.Add(_defaults.EmptyDocument());
             _model.Project.Documents[0].Pages.Add(_defaults.EmptyTitlePage());
 
-            UpdateStyles(_model.Project);
-            SetDefaultTemplate(_model.Project);
-            LoadFirstPage(_model.Project);
+            ProjectUpdateStyles(_model.Project);
+            ProjectSetDefaultTemplate(_model.Project);
+            ProjectLoadFirstPage(_model.Project);
         }
 
         #endregion
@@ -912,8 +944,8 @@ namespace Logic.WPF
                 _model.Project = project;
                 _model.FileName = System.IO.Path.GetFileNameWithoutExtension(path);
                 _model.FilePath = path;
-                UpdateStyles(project);
-                LoadFirstPage(project);
+                ProjectUpdateStyles(project);
+                ProjectLoadFirstPage(project);
             }
         }
 
@@ -1012,7 +1044,7 @@ namespace Logic.WPF
 
         #region Project
 
-        private IProject NewProject()
+        private IProject ProjectNew()
         {
             // project
             var project = _defaults.EmptyProject();
@@ -1092,7 +1124,7 @@ namespace Logic.WPF
             return project;
         }
 
-        private void UpdateStyles(IProject project)
+        private void ProjectUpdateStyles(IProject project)
         {
             var layers = new List<CanvasViewModel>();
             layers.Add(_model.ShapeLayer);
@@ -1114,7 +1146,7 @@ namespace Logic.WPF
             }
         }
 
-        private void SetDefaultTemplate(IProject project)
+        private void ProjectSetDefaultTemplate(IProject project)
         {
             ITemplate template = project
                 .Templates
@@ -1130,7 +1162,7 @@ namespace Logic.WPF
             }
         }
 
-        private void LoadFirstPage(IProject project)
+        private void ProjectLoadFirstPage(IProject project)
         {
             if (project.Documents != null &&
                 project.Documents.Count > 0)
@@ -1140,8 +1172,72 @@ namespace Logic.WPF
                     && document.Pages != null
                     && document.Pages.Count > 0)
                 {
-                    PageLoad(document.Pages.First());
+                    PageLoad(document.Pages.First(), true);
                 }
+            }
+        }
+
+        private void ProjectAdd(object parameter)
+        {
+            if (parameter is MainViewModel)
+            {
+                DocumentAdd(parameter);
+            }
+            else if (parameter is IDocument)
+            {
+                PageAdd(parameter);
+            }
+            else if (parameter is IPage)
+            {
+                PageInsertAfter(parameter);
+            }
+        }
+
+        private void ProjectCut(object parameter)
+        {
+            if (parameter is IDocument)
+            {
+                DocumentCut(parameter);
+            }
+            else if (parameter is IPage)
+            {
+                PageCut(parameter);
+            }
+        }
+
+        private void ProjectCopy(object parameter)
+        {
+            if (parameter is IDocument)
+            {
+                DocumentCopy(parameter);
+            }
+            else if (parameter is IPage)
+            {
+                PageCopy(parameter);
+            }
+        }
+
+        private void ProjectPaste(object parameter)
+        {
+            if (parameter is IDocument)
+            {
+                DocumentPaste(parameter);
+            }
+            else if (parameter is IPage)
+            {
+                PagePaste(parameter);
+            }
+        }
+
+        private void ProjectDelete(object parameter)
+        {
+            if (parameter is IDocument)
+            {
+                DocumentDelete(parameter);
+            }
+            else if (parameter is IPage)
+            {
+                PageDelete(parameter);
             }
         }
 
@@ -1154,9 +1250,34 @@ namespace Logic.WPF
             if (parameter is MainViewModel)
             {
                 IDocument document = _defaults.EmptyDocument();
-                document.IsActive = true;
+                //document.IsActive = true;
                 _model.Project.Documents.Add(document);
             }
+        }
+
+        private void DocumentInsertBefore(object parameter)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DocumentInsertAfter(object parameter)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DocumentCut(object parameter)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DocumentCopy(object parameter)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DocumentPaste(object parameter)
+        {
+            throw new NotImplementedException();
         }
 
         private void DocumentDelete(object parameter)
@@ -1183,13 +1304,13 @@ namespace Logic.WPF
         {
             if (parameter is IPage)
             {
-                PageLoad(parameter as IPage);
+                PageLoad(parameter as IPage, true);
             }
         }
 
-        private void PageLoad(IPage page)
+        private void PageLoad(IPage page, bool activate)
         {
-            page.IsActive = true;
+            page.IsActive = activate;
 
             _model.Reset();
             _model.SelectionReset();
@@ -1214,10 +1335,35 @@ namespace Logic.WPF
                     .Templates
                     .Where(t => t.Name == _model.Project.DefaultTemplate)
                     .First();
-                page.IsActive = true;
+                //page.IsActive = true;
                 document.Pages.Add(page);
-                PageLoad(page);
+                PageLoad(page, false);
             }
+        }
+
+        private void PageInsertBefore(object parameter)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void PageInsertAfter(object parameter)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void PageCut(object parameter)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void PageCopy(object parameter)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void PagePaste(object parameter)
+        {
+            throw new NotImplementedException();
         }
 
         private void PageDelete(object parameter)
