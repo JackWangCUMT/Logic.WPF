@@ -29,9 +29,10 @@ namespace Logic.WPF
         #region Fields
 
         private ILog _log = null;
+        private Defaults _defaults = null;
+        private string _defaultsPath = "Logic.WPF.lconfig";
         private MainViewModel _model = null;
         private MainView _view = null;
-        private Defaults _defaults = null;
         private IStringSerializer _serializer = null;
         private System.Threading.Timer _timer = null;
         private Clock _clock = null;
@@ -46,11 +47,22 @@ namespace Logic.WPF
         {
             base.OnStartup(e);
 
-            _log = new Log();
-            _log.IsEnabled = true;
-            _log.Initialize();
+            var defaults = Open<Defaults>(_defaultsPath);
+            if (defaults != null)
+            {
+                _defaults = defaults;
+            }
+            else
+            {
+                _defaults = new Defaults();
+                _defaults.Reset();
+            }
 
-            _defaults = new Defaults();
+            if (_defaults.EnableLog)
+            {
+                _log = new TraceLog();
+                _log.Initialize(_defaults.LogPath);
+            }
 
             try
             {
@@ -67,10 +79,13 @@ namespace Logic.WPF
             }
             catch (Exception ex)
             {
-                _log.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
+                if (_log != null)
+                {
+                    _log.LogError("{0}{1}{2}",
+                        ex.Message,
+                        Environment.NewLine,
+                        ex.StackTrace);
+                }
             }
         } 
 
@@ -81,7 +96,16 @@ namespace Logic.WPF
         protected override void OnExit(ExitEventArgs e)
         {
             base.OnExit(e);
-            _log.Close();
+
+            if (_log != null)
+            {
+                _log.Close();
+            }
+
+            if (_defaults != null)
+            {
+                Save<Defaults>(_defaultsPath, _defaults);
+            }
         } 
 
         #endregion
@@ -622,10 +646,13 @@ namespace Logic.WPF
                     }
                     catch (Exception ex)
                     {
-                        _log.LogError("{0}{1}{2}",
-                            ex.Message,
-                            Environment.NewLine,
-                            ex.StackTrace);
+                        if (_log != null)
+                        {
+                            _log.LogError("{0}{1}{2}",
+                                ex.Message,
+                                Environment.NewLine,
+                                ex.StackTrace);
+                        }
                     }
                 }
                 // files
@@ -646,10 +673,13 @@ namespace Logic.WPF
                     }
                     catch (Exception ex)
                     {
-                        _log.LogError("{0}{1}{2}",
-                            ex.Message,
-                            Environment.NewLine,
-                            ex.StackTrace);
+                        if (_log != null)
+                        {
+                            _log.LogError("{0}{1}{2}",
+                                ex.Message,
+                                Environment.NewLine,
+                                ex.StackTrace);
+                        }
                     }
                 }
             };
@@ -772,10 +802,13 @@ namespace Logic.WPF
             }
             catch (Exception ex)
             {
-                _log.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
+                if (_log != null)
+                {
+                    _log.LogError("{0}{1}{2}",
+                        ex.Message,
+                        Environment.NewLine,
+                        ex.StackTrace);
+                }
             }
         }
 
@@ -800,26 +833,29 @@ namespace Logic.WPF
             {
                 using (var fs = System.IO.File.OpenText(path))
                 {
-                    var json = fs.ReadToEnd();
-                    var project = _serializer.Deserialize<T>(json);
-                    return project;
+                    string json = fs.ReadToEnd();
+                    T item = _serializer.Deserialize<T>(json);
+                    return item;
                 }
             }
             catch (Exception ex)
             {
-                _log.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
+                if (_log != null)
+                {
+                    _log.LogError("{0}{1}{2}",
+                        ex.Message,
+                        Environment.NewLine,
+                        ex.StackTrace);
+                }
             }
             return null;
         }
 
-        public void Save<T>(string path, T project) where T : class
+        public void Save<T>(string path, T item) where T : class
         {
             try
             {
-                var json = _serializer.Serialize<T>(project);
+                string json = _serializer.Serialize<T>(item);
                 using (var fs = System.IO.File.CreateText(path))
                 {
                     fs.Write(json);
@@ -827,10 +863,13 @@ namespace Logic.WPF
             }
             catch (Exception ex)
             {
-                _log.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
+                if (_log != null)
+                {
+                    _log.LogError("{0}{1}{2}",
+                        ex.Message,
+                        Environment.NewLine,
+                        ex.StackTrace);
+                }
             }
         }
 
@@ -928,10 +967,13 @@ namespace Logic.WPF
                 }
                 catch (Exception ex)
                 {
-                    _log.LogError("{0}{1}{2}",
-                        ex.Message,
-                        Environment.NewLine,
-                        ex.StackTrace);
+                    if (_log != null)
+                    {
+                        _log.LogError("{0}{1}{2}",
+                            ex.Message,
+                            Environment.NewLine,
+                            ex.StackTrace);
+                    }
                 }
             }
         }
@@ -1272,10 +1314,13 @@ namespace Logic.WPF
             }
             catch (Exception ex)
             {
-                _log.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
+                if (_log != null)
+                {
+                    _log.LogError("{0}{1}{2}",
+                        ex.Message,
+                        Environment.NewLine,
+                        ex.StackTrace);
+                }
             }
         }
 
@@ -1311,10 +1356,13 @@ namespace Logic.WPF
             }
             catch (Exception ex)
             {
-                _log.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
+                if (_log != null)
+                {
+                    _log.LogError("{0}{1}{2}",
+                        ex.Message,
+                        Environment.NewLine,
+                        ex.StackTrace);
+                }
             }
         }
 
@@ -1457,10 +1505,13 @@ namespace Logic.WPF
             }
             catch (Exception ex)
             {
-                _log.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
+                if (_log != null)
+                {
+                    _log.LogError("{0}{1}{2}",
+                        ex.Message,
+                        Environment.NewLine,
+                        ex.StackTrace);
+                }
             }
         }
 
@@ -1559,10 +1610,13 @@ namespace Logic.WPF
             }
             catch (Exception ex)
             {
-                _log.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
+                if (_log != null)
+                {
+                    _log.LogError("{0}{1}{2}",
+                        ex.Message,
+                        Environment.NewLine,
+                        ex.StackTrace);
+                }
             }
         }
 
@@ -1623,10 +1677,13 @@ namespace Logic.WPF
                     }
                     catch (Exception ex)
                     {
-                        _log.LogError("{0}{1}{2}",
-                            ex.Message,
-                            Environment.NewLine,
-                            ex.StackTrace);
+                        if (_log != null)
+                        {
+                            _log.LogError("{0}{1}{2}",
+                                ex.Message,
+                                Environment.NewLine,
+                                ex.StackTrace);
+                        }
 
                         Dispatcher.Invoke(() =>
                         {
@@ -1667,10 +1724,13 @@ namespace Logic.WPF
             }
             catch (Exception ex)
             {
-                _log.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
+                if (_log != null)
+                {
+                    _log.LogError("{0}{1}{2}",
+                        ex.Message,
+                        Environment.NewLine,
+                        ex.StackTrace);
+                }
             }
         }
 

@@ -405,10 +405,13 @@ namespace Logic.ViewModels
             }
             catch (Exception ex)
             {
-                Log.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
+                if (Log != null)
+                {
+                    Log.LogError("{0}{1}{2}",
+                        ex.Message,
+                        Environment.NewLine,
+                        ex.StackTrace);
+                }
             }
             return null;
         }
@@ -432,10 +435,13 @@ namespace Logic.ViewModels
             }
             catch (Exception ex)
             {
-                Log.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
+                if (Log != null)
+                {
+                    Log.LogError("{0}{1}{2}",
+                        ex.Message,
+                        Environment.NewLine,
+                        ex.StackTrace);
+                }
             }
             return null;
         }
@@ -1133,10 +1139,16 @@ namespace Logic.ViewModels
             }
             catch (Exception ex)
             {
-                Log.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
+                if (Log != null)
+                {
+                    if (Log != null)
+                    {
+                        Log.LogError("{0}{1}{2}",
+                            ex.Message,
+                            Environment.NewLine,
+                            ex.StackTrace);
+                    }
+                }
             }
         }
 
@@ -1153,10 +1165,13 @@ namespace Logic.ViewModels
             }
             catch (Exception ex)
             {
-                Log.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
+                if (Log != null)
+                {
+                    Log.LogError("{0}{1}{2}",
+                        ex.Message,
+                        Environment.NewLine,
+                        ex.StackTrace);
+                }
             }
             return false;
         }
@@ -1193,10 +1208,13 @@ namespace Logic.ViewModels
             }
             catch (Exception ex)
             {
-                Log.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
+                if (Log != null)
+                {
+                    Log.LogError("{0}{1}{2}",
+                        ex.Message,
+                        Environment.NewLine,
+                        ex.StackTrace);
+                }
             }
         }
 
@@ -1212,10 +1230,13 @@ namespace Logic.ViewModels
             }
             catch (Exception ex)
             {
-                Log.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
+                if (Log != null)
+                {
+                    Log.LogError("{0}{1}{2}",
+                        ex.Message,
+                        Environment.NewLine,
+                        ex.StackTrace);
+                }
             }
         }
 

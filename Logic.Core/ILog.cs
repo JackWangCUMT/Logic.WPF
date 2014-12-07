@@ -7,8 +7,7 @@ namespace Logic.Core
 {
     public interface ILog
     {
-        bool IsEnabled { get; set; }
-        void Initialize();
+        void Initialize(string path);
         void Close();
         void LogInformation(string message);
         void LogInformation(string format, params object[] args);

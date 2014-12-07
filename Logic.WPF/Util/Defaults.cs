@@ -10,6 +10,9 @@ namespace Logic.Util
 {
     public class Defaults
     {
+        public bool EnableLog { get; set; }
+        public string LogPath { get; set; }
+
         public string PageName { get; set; }
         public string DocumentName { get; set; }
         public string ProjectName { get; set; }
@@ -22,8 +25,12 @@ namespace Logic.Util
         public bool EnableSnap { get; set; }
         public double SnapSize { get; set; }
 
-        public Defaults()
+        public void Reset()
         {
+            // log
+            EnableLog = true;
+            LogPath = "Logic.WPF.log";
+
             // project
             PageName = "Page";
             DocumentName = "Document";

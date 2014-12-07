@@ -139,7 +139,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Native\NativeCommand.cs" />
-    <Compile Include="Util\Log.cs" />
+    <Compile Include="Util\TraceLog.cs" />
     <Compile Include="Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
       <SubType>Code</SubType>

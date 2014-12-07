@@ -71,17 +71,24 @@ namespace Logic.Util
                         var exports = Compose<T>(assembly);
 
                         sw.Stop();
-                        log.LogInformation("Roslyn code import: " + sw.Elapsed.TotalMilliseconds + "ms");
+
+                        if (log != null)
+                        {
+                            log.LogInformation("Roslyn code import: " + sw.Elapsed.TotalMilliseconds + "ms");
+                        }
 
                         return exports;
                     }
                 }
                 else
                 {
-                    log.LogError("Failed to compile code using Roslyn.");
-                    foreach (var diagnostic in result.Diagnostics)
+                    if (log != null)
                     {
-                        log.LogError(diagnostic.Description);
+                        log.LogError("Failed to compile code using Roslyn.");
+                        foreach (var diagnostic in result.Diagnostics)
+                        {
+                            log.LogError(diagnostic.Description);
+                        }
                     }
                 }
             }

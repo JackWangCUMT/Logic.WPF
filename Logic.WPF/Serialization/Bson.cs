@@ -41,10 +41,13 @@ namespace Logic.Serialization
             }
             catch (Exception ex)
             {
-                _log.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
+                if (_log != null)
+                {
+                    _log.LogError("{0}{1}{2}",
+                        ex.Message,
+                        Environment.NewLine,
+                        ex.StackTrace);
+                }
             }
             return null;
         }
@@ -71,10 +74,13 @@ namespace Logic.Serialization
             }
             catch (Exception ex)
             {
-                _log.LogError("{0}{1}{2}",
-                    ex.Message,
-                    Environment.NewLine,
-                    ex.StackTrace);
+                if (_log != null)
+                {
+                    _log.LogError("{0}{1}{2}",
+                        ex.Message,
+                        Environment.NewLine,
+                        ex.StackTrace);
+                }
             }
             return null;
         }
