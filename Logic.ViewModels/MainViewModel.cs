@@ -255,6 +255,7 @@ namespace Logic.ViewModels
         public ICommand EditToggleSnapCommand { get; set; }
         public ICommand EditToggleInvertStartCommand { get; set; }
         public ICommand EditToggleInvertEndCommand { get; set; }
+        public ICommand EditToggleShortenWireCommand { get; set; }
 
         public ICommand EditCancelCommand { get; set; }
 

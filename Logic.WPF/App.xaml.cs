@@ -389,12 +389,13 @@ namespace Logic.WPF
             _model.EditToggleSnapCommand = new NativeCommand(
                 (parameter) => 
                 {
-                    _model.ShapeLayer.EnableSnap = !_model.ShapeLayer.EnableSnap;
-                    _model.BlockLayer.EnableSnap = !_model.BlockLayer.EnableSnap;
-                    _model.WireLayer.EnableSnap = !_model.WireLayer.EnableSnap;
-                    _model.PinLayer.EnableSnap = !_model.PinLayer.EnableSnap;
-                    _model.EditorLayer.EnableSnap = !_model.EditorLayer.EnableSnap;
-                    _model.OverlayLayer.EnableSnap = !_model.OverlayLayer.EnableSnap;
+                    _defaults.EnableSnap = !_defaults.EnableSnap;
+                    _model.ShapeLayer.EnableSnap = _defaults.EnableSnap;
+                    _model.BlockLayer.EnableSnap = _defaults.EnableSnap;
+                    _model.WireLayer.EnableSnap = _defaults.EnableSnap;
+                    _model.PinLayer.EnableSnap = _defaults.EnableSnap;
+                    _model.EditorLayer.EnableSnap = _defaults.EnableSnap;
+                    _model.OverlayLayer.EnableSnap = _defaults.EnableSnap;
                 },
                 (parameter) => IsSimulationRunning() ? false : true);
 
@@ -405,6 +406,16 @@ namespace Logic.WPF
             _model.EditToggleInvertEndCommand = new NativeCommand(
                 (parameter) => _model.EditorLayer.ShapeToggleInvertEnd(),
                 (parameter) => IsSimulationRunning() ? false : true);
+
+            _model.EditToggleShortenWireCommand = new NativeCommand(
+                (parameter) => 
+                    {
+                        _defaults.ShortenWire = !_defaults.ShortenWire;
+                        _model.Renderer.ShortenWire = _defaults.ShortenWire;
+                        _model.WireLayer.InvalidateVisual();
+                    },
+                (parameter) => IsSimulationRunning() ? false : true);
+            
 
             _model.EditCancelCommand = new NativeCommand(
                 (parameter) => _model.EditorLayer.MouseCancel(),
@@ -618,7 +629,9 @@ namespace Logic.WPF
             {
                 InvertSize = _defaults.InvertSize,
                 PinRadius = _defaults.PinRadius,
-                HitTreshold = _defaults.HitTreshold
+                HitTreshold = _defaults.HitTreshold,
+                ShortenWire = _defaults.ShortenWire,
+                ShortenSize = _defaults.ShortenSize
             };
 
             _model.Renderer = renderer;
@@ -1019,7 +1032,9 @@ namespace Logic.WPF
                 PinRadius = _model.Renderer.PinRadius,
                 HitTreshold = _model.Renderer.HitTreshold,
                 EnablePinRendering = false,
-                EnableGridRendering = false
+                EnableGridRendering = false,
+                ShortenWire = _model.Renderer.ShortenWire,
+                ShortenSize = _model.Renderer.ShortenSize
             };
 
             if (ignoreStyles)

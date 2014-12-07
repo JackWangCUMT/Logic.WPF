@@ -41,6 +41,7 @@
         <KeyBinding Command="{Binding EditToggleSnapCommand}" Key="G" Modifiers=""/>
         <KeyBinding Command="{Binding EditToggleInvertStartCommand}" Key="OemOpenBrackets" Modifiers=""/>
         <KeyBinding Command="{Binding EditToggleInvertEndCommand}" Key="OemCloseBrackets" Modifiers=""/>
+        <KeyBinding Command="{Binding EditToggleShortenWireCommand}" Key="H" Modifiers=""/>
         <KeyBinding Command="{Binding EditCancelCommand}" Key="Esc" Modifiers=""/>
         <KeyBinding Command="{Binding ToolNoneCommand}" Key="N" Modifiers=""/>
         <KeyBinding Command="{Binding ToolSelectionCommand}" Key="S" Modifiers=""/>
@@ -362,6 +363,8 @@
                 <Separator/>
                 <MenuItem Header="Toggle Invert Wire _Start" InputGestureText="[" Command="{Binding EditToggleInvertStartCommand}"/>
                 <MenuItem Header="Toggle Invert Wire _End" InputGestureText="]" Command="{Binding EditToggleInvertEndCommand}"/>
+                <Separator/>
+                <MenuItem Header="Toggle Shorte_n Wire" InputGestureText="H" Command="{Binding EditToggleShortenWireCommand}"/>
                 <Separator/>
                 <MenuItem Header="Ca_ncel" InputGestureText="Esc" Command="{Binding EditCancelCommand}"/>
             </MenuItem>

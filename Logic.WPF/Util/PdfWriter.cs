@@ -211,6 +211,8 @@ namespace Logic.Util
         public double InvertSize { get; set; }
         public double PinRadius { get; set; }
         public double HitTreshold { get; set; }
+        public bool ShortenWire { get; set; }
+        public double ShortenSize { get; set; }
 
         public void DrawLine(object gfx, Core.IStyle style, Core.XLine line)
         {
@@ -359,7 +361,11 @@ namespace Logic.Util
 
         public void DrawWire(object gfx, Core.IStyle style, Core.XWire wire)
         {
-            var position = WirePosition.Calculate(wire, InvertSize);
+            var position = WirePosition.Calculate(
+                wire, 
+                InvertSize,
+                ShortenWire,
+                ShortenSize);
 
             if (wire.InvertStart)
             {

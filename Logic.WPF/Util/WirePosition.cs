@@ -9,6 +9,15 @@ namespace Logic.Util
 {
     public struct WirePosition
     {
+        public static ICollection<string> SupportedOwners = 
+            new HashSet<string>(
+                new [] 
+                { 
+                    "SIGNAL", 
+                    "INPUT", 
+                    "OUTPUT" 
+                });
+
         // start location
         public double StartX;
         public double StartY;
@@ -25,7 +34,11 @@ namespace Logic.Util
         public double InvertX2;
         public double InvertY2;
 
-        public static WirePosition Calculate(XWire wire, double invertSize)
+        public static WirePosition Calculate(
+            XWire wire, 
+            double invertSize, 
+            bool shortenWire, 
+            double shortenSize)
         {
             var position = new WirePosition();
 
@@ -51,6 +64,35 @@ namespace Logic.Util
             {
                 position.EndX = wire.X2;
                 position.EndY = wire.Y2;
+            }
+
+            // shorten wire
+            if (shortenWire == true 
+                && wire.Start != null
+                && wire.End != null 
+                && (wire.Start.Owner != null || wire.End.Owner != null))
+            {
+                bool isHorizontal = Math.Round(position.StartY, 1) == Math.Round(position.EndY, 1);
+                if (isHorizontal == true)
+                {
+                    bool isStartSignal = wire.Start.Owner != null ? 
+                        SupportedOwners.Contains(wire.Start.Owner.Name) : false;
+
+                    bool isEndSignal = wire.End.Owner != null ? 
+                        SupportedOwners.Contains(wire.End.Owner.Name) : false;
+
+                    // shorten start
+                    if (isStartSignal == true && isEndSignal == false)
+                    {
+                        position.StartX = wire.End.X - shortenSize;
+                    }
+
+                    // shorten end
+                    if (isStartSignal == false && isEndSignal == true)
+                    {
+                        position.EndX = wire.Start.X + shortenSize;
+                    }
+                }
             }
 
             // initialize invert start position

@@ -12,6 +12,8 @@ namespace Logic.Core
         double InvertSize { get; set; }
         double PinRadius { get; set; }
         double HitTreshold { get; set; }
+        bool ShortenWire { get; set; }
+        double ShortenSize { get; set; }
         void DrawLine(object dc, IStyle style, XLine line);
         void DrawEllipse(object dc, IStyle style, XEllipse ellipse);
         void DrawRectangle(object dc, IStyle style, XRectangle rectangle);

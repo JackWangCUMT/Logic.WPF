@@ -21,6 +21,8 @@ namespace Logic.Util
         public double InvertSize { get; set; }
         public double PinRadius { get; set; }
         public double HitTreshold { get; set; }
+        public bool ShortenWire { get; set; }
+        public double ShortenSize { get; set; }
 
         public bool EnableSnap { get; set; }
         public double SnapSize { get; set; }
@@ -38,9 +40,11 @@ namespace Logic.Util
             TemplateName = "Scratchpad";
 
             // renderer
-            InvertSize = 6.0;
+            InvertSize = 5.0;
             PinRadius = 4.0;
             HitTreshold = 6.0;
+            ShortenWire = true;
+            ShortenSize = 15.0;
 
             // layer
             EnableSnap = true;
