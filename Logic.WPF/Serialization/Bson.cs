@@ -13,12 +13,7 @@ namespace Logic.Serialization
 {
     public class Bson : IBinarySerializer
     {
-        private ILog _log;
-
-        public Bson(ILog log)
-        {
-            _log = log;
-        }
+        public ILog Log { get; set; }
 
         public byte[] Serialize<T>(T obj) where T : class
         {
@@ -41,9 +36,9 @@ namespace Logic.Serialization
             }
             catch (Exception ex)
             {
-                if (_log != null)
+                if (Log != null)
                 {
-                    _log.LogError("{0}{1}{2}",
+                    Log.LogError("{0}{1}{2}",
                         ex.Message,
                         Environment.NewLine,
                         ex.StackTrace);
@@ -74,9 +69,9 @@ namespace Logic.Serialization
             }
             catch (Exception ex)
             {
-                if (_log != null)
+                if (Log != null)
                 {
-                    _log.LogError("{0}{1}{2}",
+                    Log.LogError("{0}{1}{2}",
                         ex.Message,
                         Environment.NewLine,
                         ex.StackTrace);
