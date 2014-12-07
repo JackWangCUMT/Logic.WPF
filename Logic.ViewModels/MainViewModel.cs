@@ -218,6 +218,12 @@ namespace Logic.ViewModels
         public ICommand DocumentPasteCommand { get; set; }
         public ICommand DocumentDeleteCommand { get; set; }
 
+        public ICommand ProjectAddCommand { get; set; }
+        public ICommand ProjectCutCommand { get; set; }
+        public ICommand ProjectCopyCommand { get; set; }
+        public ICommand ProjectPasteCommand { get; set; }
+        public ICommand ProjectDeleteCommand { get; set; }
+
         public ICommand FileNewCommand { get; set; }
         public ICommand FileOpenCommand { get; set; }
         public ICommand FileSaveCommand { get; set; }
