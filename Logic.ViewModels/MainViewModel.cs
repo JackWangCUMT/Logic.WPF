@@ -296,9 +296,10 @@ namespace Logic.ViewModels
         public ICommand ApplyTemplateCommand { get; set; }
 
         public ICommand SimulationStartCommand { get; set; }
-        public ICommand SimulationPauseCommand { get; set; }
         public ICommand SimulationStopCommand { get; set; }
         public ICommand SimulationRestartCommand { get; set; }
+        public ICommand SimulationPauseCommand { get; set; }
+        public ICommand SimulationTickCommand { get; set; }
         public ICommand SimulationCreateGraphCommand { get; set; }
         public ICommand SimulationOptionsCommand { get; set; }
 

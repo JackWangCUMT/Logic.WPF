@@ -103,12 +103,9 @@ namespace Logic.ViewModels
                     {
                         if (Simulations != null && !IsOverlay)
                         {
-                            if (Layers.IsSimulationPaused == false)
-                            {
-                                // toggle block state in simulation mode
-                                BlockToggleState(point);
-                            }
-                            // do not process other mouse events
+                            // toggle block state in simulation mode
+                            // and do not process other mouse events
+                            BlockToggleState(point);
                             return;
                         }
 
@@ -1944,8 +1941,14 @@ namespace Logic.ViewModels
             {
                 var block = shape as XBlock;
                 var simulation = Simulations[block];
+
                 bool? state = simulation.State;
                 simulation.State = !state;
+
+                if (Layers.IsSimulationPaused)
+                {
+                    Layers.OverlayLayer.InvalidateVisual();
+                }
             }
         }
 

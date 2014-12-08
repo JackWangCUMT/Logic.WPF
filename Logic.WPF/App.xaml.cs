@@ -534,10 +534,6 @@ namespace Logic.WPF
                 (parameter) => this.SimulationStart(),
                 (parameter) => IsSimulationRunning() ? false : true);
 
-            _model.SimulationPauseCommand = new NativeCommand(
-                (parameter) => this.SimulationPause(),
-                (parameter) => IsSimulationRunning() ? true : false);
-
             _model.SimulationStopCommand = new NativeCommand(
                 (parameter) => this.SimulationStop(),
                 (parameter) => IsSimulationRunning() ? true : false);
@@ -545,6 +541,14 @@ namespace Logic.WPF
             _model.SimulationRestartCommand = new NativeCommand(
                 (parameter) => this.SimulationRestart(),
                 (parameter) => IsSimulationRunning() ? true : false);
+
+            _model.SimulationPauseCommand = new NativeCommand(
+                (parameter) => this.SimulationPause(),
+                (parameter) => IsSimulationRunning() ? true : false);
+
+            _model.SimulationTickCommand = new NativeCommand(
+                (parameter) => this.SimulationTick(_model.OverlayLayer.Simulations),
+                (parameter) => IsSimulationRunning() && _model.IsSimulationPaused ? true : false);
 
             _model.SimulationCreateGraphCommand = new NativeCommand(
                 (parameter) => this.Graph(),
@@ -1838,9 +1842,7 @@ namespace Logic.WPF
                     {
                         if (!_model.IsSimulationPaused)
                         {
-                            BoolSimulationFactory.Run(simulations, _clock);
-                            _clock.Tick();
-                            Dispatcher.Invoke(() => _model.OverlayLayer.InvalidateVisual());
+                            SimulationTick(simulations);
                         }
                     }
                     catch (Exception ex)
@@ -1908,6 +1910,26 @@ namespace Logic.WPF
                 if (IsSimulationRunning())
                 {
                     _model.IsSimulationPaused = !_model.IsSimulationPaused;
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
+            }
+        }
+
+        private void SimulationTick(IDictionary<XBlock, BoolSimulation> simulations)
+        {
+            try
+            {
+                if (IsSimulationRunning())
+                {
+                    BoolSimulationFactory.Run(simulations, _clock);
+                    _clock.Tick();
+                    Dispatcher.Invoke(() => _model.OverlayLayer.InvalidateVisual());
                 }
             }
             catch (Exception ex)

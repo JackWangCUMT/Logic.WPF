@@ -61,8 +61,9 @@
         <KeyBinding Command="{Binding TemplateExportCommand}" Gesture="Ctrl+T"/>
         <KeyBinding Command="{Binding SimulationStartCommand}" Gesture="F5"/>
         <KeyBinding Command="{Binding SimulationStopCommand}" Gesture="F6"/>
-        <KeyBinding Command="{Binding SimulationPauseCommand}" Gesture="F7"/>
-        <KeyBinding Command="{Binding SimulationRestartCommand}" Gesture="F8"/>
+        <KeyBinding Command="{Binding SimulationRestartCommand}" Gesture="F7"/>
+        <KeyBinding Command="{Binding SimulationPauseCommand}" Gesture="F8"/>
+        <KeyBinding Command="{Binding SimulationTickCommand}" Gesture="F9"/>
         <KeyBinding Command="{Binding SimulationCreateGraphCommand}" Gesture=""/>
         <KeyBinding Command="{Binding SimulationOptionsCommand}" Gesture=""/>
     </Window.InputBindings>
@@ -275,7 +276,9 @@
                 <MenuItem Header="_Start" InputGestureText="F5" Command="{Binding SimulationStartCommand}"/>
                 <MenuItem Header="S_top" InputGestureText="F6" Command="{Binding SimulationStopCommand}"/>
                 <Separator/>
-                <MenuItem Header="_Pause" InputGestureText="F7" Command="{Binding SimulationPauseCommand}">
+                <MenuItem Header="_Restart" InputGestureText="F7" Command="{Binding SimulationRestartCommand}"/>
+                <Separator/>
+                <MenuItem Header="_Pause" InputGestureText="F8" Command="{Binding SimulationPauseCommand}">
                     <MenuItem.Style>
                         <Style TargetType="MenuItem">
                             <Setter Property="IsChecked" Value="False"/>
@@ -287,8 +290,7 @@
                         </Style>
                     </MenuItem.Style>
                 </MenuItem>
-                <Separator/>
-                <MenuItem Header="_Restart" InputGestureText="F8" Command="{Binding SimulationRestartCommand}"/>
+                <MenuItem Header="Ti_ck" InputGestureText="F9" Command="{Binding SimulationTickCommand}"/>
                 <Separator/>
                 <MenuItem Header="_Options..." InputGestureText="" Command="{Binding SimulationOptionsCommand}"/>
             </MenuItem>
@@ -434,7 +436,9 @@
                 <MenuItem Header="_Start" InputGestureText="F5" Command="{Binding SimulationStartCommand}"/>
                 <MenuItem Header="S_top" InputGestureText="F6" Command="{Binding SimulationStopCommand}"/>
                 <Separator/>
-                <MenuItem Header="_Pause" InputGestureText="F7" Command="{Binding SimulationPauseCommand}">
+                <MenuItem Header="_Restart" InputGestureText="F7" Command="{Binding SimulationRestartCommand}"/>
+                <Separator/>
+                <MenuItem Header="_Pause" InputGestureText="F8" Command="{Binding SimulationPauseCommand}">
                     <MenuItem.Style>
                         <Style TargetType="MenuItem">
                             <Setter Property="IsChecked" Value="False"/>
@@ -446,8 +450,7 @@
                         </Style>
                     </MenuItem.Style>
                 </MenuItem>
-                <Separator/>
-                <MenuItem Header="_Restart" InputGestureText="F8" Command="{Binding SimulationRestartCommand}"/>
+                <MenuItem Header="Ti_ck" InputGestureText="F9" Command="{Binding SimulationTickCommand}"/>
                 <Separator/>
                 <MenuItem Header="Create _Graph..." InputGestureText="" Command="{Binding SimulationCreateGraphCommand}"/>
                 <Separator/>
