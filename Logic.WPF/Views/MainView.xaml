@@ -61,9 +61,10 @@
         <KeyBinding Command="{Binding TemplateExportCommand}" Gesture="Ctrl+T"/>
         <KeyBinding Command="{Binding SimulationStartCommand}" Gesture="F5"/>
         <KeyBinding Command="{Binding SimulationStopCommand}" Gesture="F6"/>
-        <KeyBinding Command="{Binding SimulationRestartCommand}" Gesture="F7"/>
-        <KeyBinding Command="{Binding SimulationCreateGraphCommand}" Gesture="F8"/>
-        <KeyBinding Command="{Binding SimulationOptionsCommand}" Gesture="F9"/>
+        <KeyBinding Command="{Binding SimulationPauseCommand}" Gesture="F7"/>
+        <KeyBinding Command="{Binding SimulationRestartCommand}" Gesture="F8"/>
+        <KeyBinding Command="{Binding SimulationCreateGraphCommand}" Gesture=""/>
+        <KeyBinding Command="{Binding SimulationOptionsCommand}" Gesture=""/>
     </Window.InputBindings>
     <Window.Resources>
         <ControlTemplate x:Key="PageControlTemplateKey">
@@ -274,9 +275,22 @@
                 <MenuItem Header="_Start" InputGestureText="F5" Command="{Binding SimulationStartCommand}"/>
                 <MenuItem Header="S_top" InputGestureText="F6" Command="{Binding SimulationStopCommand}"/>
                 <Separator/>
-                <MenuItem Header="_Restart" InputGestureText="F7" Command="{Binding SimulationRestartCommand}"/>
+                <MenuItem Header="_Pause" InputGestureText="F7" Command="{Binding SimulationPauseCommand}">
+                    <MenuItem.Style>
+                        <Style TargetType="MenuItem">
+                            <Setter Property="IsChecked" Value="False"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsSimulationPaused}" Value="True">
+                                    <Setter Property="IsChecked" Value="True"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </MenuItem.Style>
+                </MenuItem>
                 <Separator/>
-                <MenuItem Header="_Options..." InputGestureText="F9" Command="{Binding SimulationOptionsCommand}"/>
+                <MenuItem Header="_Restart" InputGestureText="F8" Command="{Binding SimulationRestartCommand}"/>
+                <Separator/>
+                <MenuItem Header="_Options..." InputGestureText="" Command="{Binding SimulationOptionsCommand}"/>
             </MenuItem>
         </ContextMenu>
         <ContextMenu x:Key="BlockItemContextMenuKey" DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
@@ -420,11 +434,24 @@
                 <MenuItem Header="_Start" InputGestureText="F5" Command="{Binding SimulationStartCommand}"/>
                 <MenuItem Header="S_top" InputGestureText="F6" Command="{Binding SimulationStopCommand}"/>
                 <Separator/>
-                <MenuItem Header="_Restart" InputGestureText="F7" Command="{Binding SimulationRestartCommand}"/>
+                <MenuItem Header="_Pause" InputGestureText="F7" Command="{Binding SimulationPauseCommand}">
+                    <MenuItem.Style>
+                        <Style TargetType="MenuItem">
+                            <Setter Property="IsChecked" Value="False"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsSimulationPaused}" Value="True">
+                                    <Setter Property="IsChecked" Value="True"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </MenuItem.Style>
+                </MenuItem>
                 <Separator/>
-                <MenuItem Header="Create _Graph..." InputGestureText="F8" Command="{Binding SimulationCreateGraphCommand}"/>
+                <MenuItem Header="_Restart" InputGestureText="F8" Command="{Binding SimulationRestartCommand}"/>
                 <Separator/>
-                <MenuItem Header="_Options..." InputGestureText="F9" Command="{Binding SimulationOptionsCommand}"/>
+                <MenuItem Header="Create _Graph..." InputGestureText="" Command="{Binding SimulationCreateGraphCommand}"/>
+                <Separator/>
+                <MenuItem Header="_Options..." InputGestureText="" Command="{Binding SimulationOptionsCommand}"/>
             </MenuItem>
         </Menu>
         <ListBox x:Name="blocks" 

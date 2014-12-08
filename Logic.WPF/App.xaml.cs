@@ -534,6 +534,10 @@ namespace Logic.WPF
                 (parameter) => this.SimulationStart(),
                 (parameter) => IsSimulationRunning() ? false : true);
 
+            _model.SimulationPauseCommand = new NativeCommand(
+                (parameter) => this.SimulationPause(),
+                (parameter) => IsSimulationRunning() ? true : false);
+
             _model.SimulationStopCommand = new NativeCommand(
                 (parameter) => this.SimulationStop(),
                 (parameter) => IsSimulationRunning() ? true : false);
@@ -1826,15 +1830,18 @@ namespace Logic.WPF
         private void SimulationStart(IDictionary<XBlock, BoolSimulation> simulations)
         {
             _clock = new Clock(cycle: 0L, resolution: 100);
-
+            _model.IsSimulationPaused = false;
             _timer = new System.Threading.Timer(
                 (state) =>
                 {
                     try
                     {
-                        BoolSimulationFactory.Run(simulations, _clock);
-                        _clock.Tick();
-                        Dispatcher.Invoke(() => _model.OverlayLayer.InvalidateVisual());
+                        if (!_model.IsSimulationPaused)
+                        {
+                            BoolSimulationFactory.Run(simulations, _clock);
+                            _clock.Tick();
+                            Dispatcher.Invoke(() => _model.OverlayLayer.InvalidateVisual());
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -1876,7 +1883,6 @@ namespace Logic.WPF
                         var simulations = BoolSimulationFactory.Create(context);
                         if (simulations != null)
                         {
-
                             OverlayInit(simulations);
                             SimulationStart(simulations);
                         }
@@ -1892,6 +1898,24 @@ namespace Logic.WPF
                         Environment.NewLine,
                         ex.StackTrace);
                 }
+            }
+        }
+
+        private void SimulationPause()
+        {
+            try
+            {
+                if (IsSimulationRunning())
+                {
+                    _model.IsSimulationPaused = !_model.IsSimulationPaused;
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("{0}{1}{2}",
+                    ex.Message,
+                    Environment.NewLine,
+                    ex.StackTrace);
             }
         }
 
@@ -1911,6 +1935,7 @@ namespace Logic.WPF
                 {
                     _timer.Dispose();
                     _timer = null;
+                    _model.IsSimulationPaused = false;
                 }
             }
             catch (Exception ex)

@@ -103,9 +103,11 @@ namespace Logic.ViewModels
                     {
                         if (Simulations != null && !IsOverlay)
                         {
-                            // toggle block state in simulation mode
-                            BlockToggleState(point);
-
+                            if (Layers.IsSimulationPaused == false)
+                            {
+                                // toggle block state in simulation mode
+                                BlockToggleState(point);
+                            }
                             // do not process other mouse events
                             return;
                         }

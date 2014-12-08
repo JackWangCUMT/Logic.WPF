@@ -196,6 +196,20 @@ namespace Logic.ViewModels
         public ITextClipboard Clipboard { get; set; }
         public IStringSerializer Serializer { get; set; }
 
+        private bool _isSimulationPaused;
+        public bool IsSimulationPaused
+        {
+            get { return _isSimulationPaused; }
+            set
+            {
+                if (value != _isSimulationPaused)
+                {
+                    _isSimulationPaused = value;
+                    Notify("IsSimulationPaused");
+                }
+            }
+        }
+
         #endregion
 
         #region Commands
@@ -282,6 +296,7 @@ namespace Logic.ViewModels
         public ICommand ApplyTemplateCommand { get; set; }
 
         public ICommand SimulationStartCommand { get; set; }
+        public ICommand SimulationPauseCommand { get; set; }
         public ICommand SimulationStopCommand { get; set; }
         public ICommand SimulationRestartCommand { get; set; }
         public ICommand SimulationCreateGraphCommand { get; set; }
