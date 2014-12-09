@@ -46,11 +46,13 @@ namespace Logic.Templates
             };
 
             // styles
-            var gridStyle = new NativeStyle(
-                name: "Grid",
-                fill: new XColor() { A = 0x00, R = 0x00, G = 0x00, B = 0x00 },
-                stroke: new XColor() { A = 0xFF, R = 0xD3, G = 0xD3, B = 0xD3 },
-                thickness: 1.0);
+            var gridStyle = new XStyle()
+            {
+                Name = "Grid",
+                Fill = new XColor() { A = 0x00, R = 0x00, G = 0x00, B = 0x00 },
+                Stroke = new XColor() { A = 0xFF, R = 0xD3, G = 0xD3, B = 0xD3 },
+                Thickness = 1.0
+            };
             this.Grid.Styles.Add(gridStyle);
 
             // grid

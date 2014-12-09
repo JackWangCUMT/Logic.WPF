@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Logic.Core
 {
-    public class XStyle1 : IStyle
+    public class XStyle : IStyle
     {
         public string Name { get; set; }
         public IColor Fill { get; set; }
