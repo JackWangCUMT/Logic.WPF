@@ -11,7 +11,5 @@ namespace Logic.Core
         IColor Fill { get; set; }
         IColor Stroke { get; set; }
         double Thickness { get; set; }
-        object NativeFill();
-        object NativeStroke();
     }
 }

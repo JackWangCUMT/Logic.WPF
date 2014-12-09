@@ -9,6 +9,7 @@ namespace Logic.Core
     {
         IList<KeyValuePair<string, IProperty>> Database { get; set; }
         ICollection<IShape> Selected { get; set; }
+        double Zoom { get; set; }
         double InvertSize { get; set; }
         double PinRadius { get; set; }
         double HitTreshold { get; set; }

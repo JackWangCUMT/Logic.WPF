@@ -79,6 +79,14 @@ namespace Logic.WPF
             {
                 _view = new MainView();
 
+                _view.zoom.InvalidateChild = (zoom) =>
+                {
+                    _model.Renderer.Zoom = zoom;
+
+                    TemplateInvalidate();
+                    _model.Invalidate();
+                };
+
                 InitializeModel();
                 InitializeView();
                 InitializeBlocks();
@@ -635,6 +643,7 @@ namespace Logic.WPF
             // renderer
             IRenderer renderer = new NativeRenderer()
             {
+                Zoom = 1.0,
                 InvertSize = _defaults.InvertSize,
                 PinRadius = _defaults.PinRadius,
                 HitTreshold = _defaults.HitTreshold,

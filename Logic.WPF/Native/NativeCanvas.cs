@@ -78,6 +78,7 @@ namespace Logic.Native
             {
                 if (_model != null)
                 {
+                    Focus();
                     _model.MouseLeftButtonDown(e.GetPosition(this).ToPoint1());
                 }
             };
@@ -102,6 +103,7 @@ namespace Logic.Native
             {
                 if (_model != null)
                 {
+                    Focus();
                     _model.MouseRightButtonDown(e.GetPosition(this).ToPoint1());
                 }
             };

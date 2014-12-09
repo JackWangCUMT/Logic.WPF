@@ -12,6 +12,8 @@ namespace Logic.Native
 {
     public class NativeZoom : Border
     {
+        public Action<double> InvalidateChild { get; set; }
+
         public override UIElement Child
         {
             get { return base.Child; }
@@ -47,6 +49,11 @@ namespace Logic.Native
                             st.ScaleY += zoom;
                             tt.X = abosuluteX - relative.X * st.ScaleX;
                             tt.Y = abosuluteY - relative.Y * st.ScaleY;
+
+                            if (InvalidateChild != null)
+                            {
+                                InvalidateChild(st.ScaleX);
+                            }
                         }
                     };
 
@@ -81,6 +88,11 @@ namespace Logic.Native
                             st.ScaleY = 1.0;
                             tt.X = 0.0;
                             tt.Y = 0.0;
+
+                            if (InvalidateChild != null)
+                            {
+                                InvalidateChild(st.ScaleX);
+                            }
                         }
                     };
 
