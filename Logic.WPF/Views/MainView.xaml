@@ -305,6 +305,16 @@
             <MenuItem Header="_Properties" InputGestureText=""/>
         </ContextMenu>
         <ContextMenu x:Key="PageItemContextMenuKey" DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+            <MenuItem Header="Te_mplate" ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=DataContext.Project.Templates, FallbackValue={x:Null}}">
+                <MenuItem.ItemContainerStyle>
+                    <Style TargetType="MenuItem">
+                        <Setter Property="Header" Value="{Binding Name}"/>
+                        <Setter Property="Command" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=DataContext.ApplyTemplateCommand}"/>
+                        <Setter Property="CommandParameter" Value="{Binding}"/>
+                    </Style>
+                </MenuItem.ItemContainerStyle>
+            </MenuItem>
+            <Separator/>
             <MenuItem Header="Cu_t" InputGestureText="Ctrl+X" Command="{Binding DataContext.PageCutCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TreeView}}}" CommandParameter="{Binding}"/>
             <MenuItem Header="_Copy" InputGestureText="Ctrl+C" Command="{Binding DataContext.PageCopyCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TreeView}}}" CommandParameter="{Binding}"/>
             <MenuItem Header="_Paste" InputGestureText="Ctrl+V" Command="{Binding DataContext.PagePasteCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TreeView}}}" CommandParameter="{Binding}"/>
