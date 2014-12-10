@@ -567,6 +567,7 @@
                     <Setter Property="IsExpanded" Value="True"/>
                     <Setter Property="IsSelected" Value="{Binding IsActive}"/>
                     <Setter Property="ContextMenu" Value="{StaticResource DocumentItemContextMenuKey}"/>
+                    <EventSetter Event="TreeViewItem.MouseRightButtonDown" Handler="TreeViewItem_MouseRightButtonDown"/>
                 </Style>
             </TreeView.ItemContainerStyle>
             <TreeView.ItemTemplate>
@@ -576,6 +577,7 @@
                             <Setter Property="IsExpanded" Value="False"/>
                             <Setter Property="IsSelected" Value="{Binding IsActive}"/>
                             <Setter Property="ContextMenu" Value="{StaticResource PageItemContextMenuKey}"/>
+                            <EventSetter Event="TreeViewItem.MouseRightButtonDown" Handler="TreeViewItem_MouseRightButtonDown"/>
                         </Style>
                     </HierarchicalDataTemplate.ItemContainerStyle>
                     <HierarchicalDataTemplate.ItemTemplate>

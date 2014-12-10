@@ -21,5 +21,16 @@ namespace Logic.WPF.Views
         {
             InitializeComponent();
         }
+
+        private void TreeViewItem_MouseRightButtonDown(object sender, MouseEventArgs e)
+        {
+            var item = sender as TreeViewItem;
+            if (item != null)
+            {
+                item.IsSelected = true;
+                item.BringIntoView();
+                e.Handled = true;
+            }
+        }
     }
 }
