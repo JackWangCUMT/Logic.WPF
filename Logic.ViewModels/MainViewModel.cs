@@ -1099,7 +1099,7 @@ namespace Logic.ViewModels
 
         public void Snapshot()
         {
-            History.Snapshot(ToPage());
+            History.Snapshot(ToPageWithoutTemplate(Page));
         }
 
         public void Reset()
@@ -1109,7 +1109,7 @@ namespace Logic.ViewModels
 
         public void Hold()
         {
-            History.Hold(ToPage());
+            History.Hold(ToPageWithoutTemplate(Page));
         }
 
         public void Commit()
@@ -1124,7 +1124,7 @@ namespace Logic.ViewModels
 
         public void Undo()
         {
-            var page = History.Undo(ToPage());
+            var page = History.Undo(ToPageWithoutTemplate(Page));
             if (page != null)
             {
                 SelectionReset();
@@ -1136,7 +1136,7 @@ namespace Logic.ViewModels
 
         public void Redo()
         {
-            var page = History.Redo(ToPage());
+            var page = History.Redo(ToPageWithoutTemplate(Page));
             if (page != null)
             {
                 SelectionReset();
@@ -1276,15 +1276,16 @@ namespace Logic.ViewModels
 
         #region Page
 
-        public IPage ToPage()
+        public IPage ToPageWithoutTemplate(IPage page)
         {
             return new XPage()
             {
-                Name = Page.Name,
-                Shapes = Page.Shapes,
-                Blocks = Page.Blocks,
-                Pins = Page.Pins,
-                Wires = Page.Wires,
+                Name = page.Name,
+                Database = page.Database,
+                Shapes = page.Shapes,
+                Blocks = page.Blocks,
+                Pins = page.Pins,
+                Wires = page.Wires,
                 Template = null
             };
         }

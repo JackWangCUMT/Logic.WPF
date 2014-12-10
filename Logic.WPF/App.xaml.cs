@@ -38,6 +38,8 @@ namespace Logic.WPF
         private Clock _clock = null;
         private Point _dragStartPoint;
         private bool _isContextMenu = false;
+        private IPage _pageToPaste = null;
+        private IDocument _documentToPaste = null;
 
         #endregion
 
@@ -169,7 +171,11 @@ namespace Logic.WPF
 
             _model.PagePasteCommand = new NativeCommand(
                 (parameter) => { this.PagePaste(parameter); },
-                (parameter) => IsSimulationRunning() ? false : true);
+                (parameter) =>
+                {
+                    return IsSimulationRunning()
+                        || _pageToPaste == null ? false : true;
+                });
 
             _model.PageDeleteCommand = new NativeCommand(
                 (parameter) => this.PageDelete(parameter),
@@ -197,7 +203,11 @@ namespace Logic.WPF
 
             _model.DocumentPasteCommand = new NativeCommand(
                 (parameter) => { this.DocumentPaste(parameter); },
-                (parameter) => IsSimulationRunning() ? false : true);
+                (parameter) =>
+                {
+                    return IsSimulationRunning()
+                        || _documentToPaste == null ? false : true;
+                });
 
             _model.DocumentDeleteCommand = new NativeCommand(
                 (parameter) => this.DocumentDelete(parameter),
@@ -876,6 +886,9 @@ namespace Logic.WPF
 
         private void InitializeProject()
         {
+            _pageToPaste = null;
+            _documentToPaste = null;
+
             _model.Project = ProjectNew();
             _model.Project.Documents.Add(_defaults.EmptyDocument());
             _model.Project.Documents[0].Pages.Add(_defaults.EmptyTitlePage());
@@ -967,6 +980,9 @@ namespace Logic.WPF
             var project = Open<XProject>(path);
             if (project != null)
             {
+                _pageToPaste = null;
+                _documentToPaste = null;
+
                 _model.SelectionReset();
                 _model.Reset();
                 _model.Invalidate();
@@ -1300,34 +1316,88 @@ namespace Logic.WPF
             if (parameter is MainViewModel)
             {
                 IDocument document = _defaults.EmptyDocument();
-                //document.IsActive = true;
                 _model.Project.Documents.Add(document);
             }
         }
 
         private void DocumentInsertBefore(object parameter)
         {
-            throw new NotImplementedException();
+            if (parameter is IDocument)
+            {
+                IDocument before = parameter as IDocument;
+
+                IDocument document = _defaults.EmptyDocument();
+                int index = _model.Project.Documents.IndexOf(before);
+
+                _model.Project.Documents.Insert(index, document);
+            }
         }
 
         private void DocumentInsertAfter(object parameter)
         {
-            throw new NotImplementedException();
+            if (parameter is IDocument)
+            {
+                IDocument after = parameter as IDocument;
+
+                IDocument document = _defaults.EmptyDocument();
+                int index = _model.Project.Documents.IndexOf(after);
+
+                _model.Project.Documents.Insert(index + 1, document);
+            }
         }
 
         private void DocumentCut(object parameter)
         {
-            throw new NotImplementedException();
+            if (parameter is IDocument)
+            {
+                _documentToPaste = parameter as IDocument;
+
+                DocumentDelete(_documentToPaste);
+            }
         }
 
         private void DocumentCopy(object parameter)
         {
-            throw new NotImplementedException();
+            if (parameter is IDocument)
+            {
+                _documentToPaste = parameter as IDocument;
+            }
         }
 
         private void DocumentPaste(object parameter)
         {
-            throw new NotImplementedException();
+            if (parameter is IDocument && _documentToPaste != null)
+            {
+                IDocument document = parameter as IDocument;
+
+                document.Name = _documentToPaste.Name;
+                document.Pages.Clear();
+
+                bool haveFirstPage = false;
+
+                foreach (var original in _documentToPaste.Pages)
+                {
+                    ITemplate template = original.Template;
+                    IPage copy = _model.ToPageWithoutTemplate(original);
+                    string json = _serializer.Serialize(copy);
+                    IPage page = _serializer.Deserialize<XPage>(json);
+
+                    page.Template = template;
+
+                    document.Pages.Add(page);
+
+                    if (!haveFirstPage)
+                    {
+                        haveFirstPage = true;
+                        PageLoad(page, true);
+                    }
+                }
+
+                if (!haveFirstPage)
+                {
+                    PageEmptyView();
+                }
+            }
         }
 
         private void DocumentDelete(object parameter)
@@ -1337,18 +1407,23 @@ namespace Logic.WPF
                 IDocument document = parameter as IDocument;
                 _model.Project.Documents.Remove(document);
 
-                _model.Page = null;
-                _model.Clear();
-                _model.Reset();
-                _model.Invalidate();
-                TemplateReset();
-                TemplateInvalidate();
+                PageEmptyView();
             }
         }
 
         #endregion
 
         #region Page
+
+        private void PageEmptyView()
+        {
+            _model.Page = null;
+            _model.Clear();
+            _model.Reset();
+            _model.Invalidate();
+            TemplateReset();
+            TemplateInvalidate();
+        }
 
         private void PageUpdateView(object parameter)
         {
@@ -1385,7 +1460,6 @@ namespace Logic.WPF
                     .Templates
                     .Where(t => t.Name == _model.Project.DefaultTemplate)
                     .First();
-                //page.IsActive = true;
                 document.Pages.Add(page);
                 PageLoad(page, false);
             }
@@ -1393,27 +1467,91 @@ namespace Logic.WPF
 
         private void PageInsertBefore(object parameter)
         {
-            throw new NotImplementedException();
+            if (parameter is IPage)
+            {
+                IPage before = parameter as IPage;
+
+                IPage page = _defaults.EmptyTitlePage();
+                page.Template = _model
+                    .Project
+                    .Templates
+                    .Where(t => t.Name == _model.Project.DefaultTemplate)
+                    .First();
+
+                IDocument document = _model
+                    .Project
+                    .Documents
+                    .Where(d => d.Pages.Contains(before))
+                    .First();
+                int index = document.Pages.IndexOf(before);
+
+                document.Pages.Insert(index, page);
+                PageLoad(page, true);
+            }
         }
 
         private void PageInsertAfter(object parameter)
         {
-            throw new NotImplementedException();
+            IPage after = parameter as IPage;
+
+            IPage page = _defaults.EmptyTitlePage();
+            page.Template = _model
+                .Project
+                .Templates
+                .Where(t => t.Name == _model.Project.DefaultTemplate)
+                .First();
+
+            IDocument document = _model
+                .Project
+                .Documents
+                .Where(d => d.Pages.Contains(after))
+                .First();
+            int index = document.Pages.IndexOf(after);
+
+            document.Pages.Insert(index + 1, page);
+            PageLoad(page, true);
         }
 
         private void PageCut(object parameter)
         {
-            throw new NotImplementedException();
+            if (parameter is IPage)
+            {
+                _pageToPaste = parameter as IPage;
+
+                PageDelete(_pageToPaste);
+            }
         }
 
         private void PageCopy(object parameter)
         {
-            throw new NotImplementedException();
+            if (parameter is IPage)
+            {
+                _pageToPaste = parameter as IPage;
+            }
         }
 
         private void PagePaste(object parameter)
         {
-            throw new NotImplementedException();
+            if (parameter is IPage && _pageToPaste != null)
+            {
+                IPage destination = parameter as IPage;
+                ITemplate template = _pageToPaste.Template;
+                IPage copy = _model.ToPageWithoutTemplate(_pageToPaste);
+                string json = _serializer.Serialize(copy);
+                IPage page = _serializer.Deserialize<XPage>(json);
+
+                page.Template = template;
+
+                IDocument document = _model
+                    .Project
+                    .Documents
+                    .Where(d => d.Pages.Contains(destination))
+                    .First();
+                int index = document.Pages.IndexOf(destination);
+                document.Pages[index] = page;
+
+                PageLoad(page, true);
+            }
         }
 
         private void PageDelete(object parameter)
@@ -1429,12 +1567,7 @@ namespace Logic.WPF
                 {
                     document.Pages.Remove(page);
 
-                    _model.Page = null;
-                    _model.Clear();
-                    _model.Reset();
-                    _model.Invalidate();
-                    TemplateReset();
-                    TemplateInvalidate();
+                    PageEmptyView();
                 }
             }
         }
@@ -1794,7 +1927,7 @@ namespace Logic.WPF
         {
             try
             {
-                IPage temp = _model.ToPage();
+                IPage temp = _model.ToPageWithoutTemplate(_model.Page);
                 if (temp != null)
                 {
                     var context = PageGraph.Create(temp);
@@ -1903,7 +2036,7 @@ namespace Logic.WPF
                     return;
                 }
 
-                IPage temp = _model.ToPage();
+                IPage temp = _model.ToPageWithoutTemplate(_model.Page);
                 if (temp != null)
                 {
                     var context = PageGraph.Create(temp);
