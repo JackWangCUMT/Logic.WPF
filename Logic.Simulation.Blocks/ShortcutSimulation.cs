@@ -9,7 +9,7 @@ namespace Logic.Simulation.Blocks
     {
         public override void Run(IClock clock)
         {
-            // TODO: Implement simulation.
+            // TODO: Implement simulation
         }
     }
 }
