@@ -490,26 +490,6 @@
                       Grid.Column="1" Grid.Row="1" 
                       HorizontalAlignment="Stretch"
                       ShowsPreview="True"/>
-        <!--
-        <ScrollViewer x:Name="scroll"
-                      Grid.Column="2" Grid.Row="1" 
-                      HorizontalScrollBarVisibility="Auto"
-                      VerticalScrollBarVisibility="Auto"
-                      FocusVisualStyle="{x:Null}">
-            <Control x:Name="pageView" 
-                     Margin="10"
-                     Background="{x:Null}"
-                     Template="{StaticResource PageControlTemplateKey}"
-                     Width="{Binding Path=Page.Template.Width}"
-                     Height="{Binding Path=Page.Template.Height}">
-                <Control.Style>
-                    <Style TargetType="Control">
-                        <Setter Property="ContextMenu" Value="{StaticResource ResourceKey=PageContextMenuKey}"/>
-                    </Style>
-                </Control.Style>
-            </Control>
-        </ScrollViewer>
-        -->
         <Grid ClipToBounds="True"
               Grid.Column="2" Grid.Row="1" 
               Margin="10"
