@@ -17,6 +17,7 @@ namespace Logic.Native
 
         public IList<KeyValuePair<string, IProperty>> Database { get; set; }
         public ICollection<IShape> Selected { get; set; }
+        public double Zoom { get; set; }
         public double InvertSize { get; set; }
         public double PinRadius { get; set; }
         public double HitTreshold { get; set; }
@@ -25,15 +26,26 @@ namespace Logic.Native
 
         public void DrawLine(object dc, IStyle style, XLine line)
         {
-            double thickness = style.Thickness;
+            double thickness = style.Thickness / Zoom;
             double half = thickness / 2.0;
+
+            var pen = new Pen(
+                new SolidColorBrush(
+                    Color.FromArgb(
+                        (byte)style.Stroke.A,
+                        (byte)style.Stroke.R,
+                        (byte)style.Stroke.G,
+                        (byte)style.Stroke.B)),
+                    thickness);
+            pen.Freeze();
+
             var gs = new GuidelineSet(
-                new double[] { half, half },
-                new double[] { half, half });
+                new double[] { line.X1 + half, line.X2 + half },
+                new double[] { line.Y1 + half, line.Y2 + half });
             (dc as DrawingContext).PushGuidelineSet(gs);
 
             (dc as DrawingContext).DrawLine(
-                (Pen)style.NativeStroke(),
+                pen,
                 new Point(line.X1, line.Y1),
                 new Point(line.X2, line.Y2));
 
@@ -42,18 +54,61 @@ namespace Logic.Native
 
         public void DrawEllipse(object dc, IStyle style, XEllipse ellipse)
         {
-            (dc as DrawingContext).DrawEllipse(
-                ellipse.IsFilled ? (SolidColorBrush)style.NativeFill() : null,
-                (Pen)style.NativeStroke(),
-                new Point(ellipse.X, ellipse.Y),
-                ellipse.RadiusX,
-                ellipse.RadiusY);
+            double thickness = style.Thickness / Zoom;
+
+            var pen = new Pen(
+                new SolidColorBrush(
+                    Color.FromArgb(
+                        (byte)style.Stroke.A,
+                        (byte)style.Stroke.R,
+                        (byte)style.Stroke.G,
+                        (byte)style.Stroke.B)),
+                    thickness);
+            pen.Freeze();
+
+            if (ellipse.IsFilled)
+            {
+                var brush = new SolidColorBrush(
+                    Color.FromArgb(
+                        (byte)style.Fill.A,
+                        (byte)style.Fill.R,
+                        (byte)style.Fill.G,
+                        (byte)style.Fill.B));
+                brush.Freeze();
+
+                (dc as DrawingContext).DrawEllipse(
+                    brush,
+                    pen,
+                    new Point(ellipse.X, ellipse.Y),
+                    ellipse.RadiusX,
+                    ellipse.RadiusY);
+            }
+            else
+            {
+                (dc as DrawingContext).DrawEllipse(
+                    null,
+                    pen,
+                    new Point(ellipse.X, ellipse.Y),
+                    ellipse.RadiusX,
+                    ellipse.RadiusY);
+            }
         }
 
         public void DrawRectangle(object dc, IStyle style, XRectangle rectangle)
         {
-            double thickness = style.Thickness;
+            double thickness = style.Thickness / Zoom;
             double half = thickness / 2.0;
+
+            var pen = new Pen(
+                new SolidColorBrush(
+                    Color.FromArgb(
+                        (byte)style.Stroke.A,
+                        (byte)style.Stroke.R,
+                        (byte)style.Stroke.G,
+                        (byte)style.Stroke.B)),
+                    thickness);
+            pen.Freeze();
+
             var gs = new GuidelineSet(
                 new double[] 
                     { 
@@ -67,34 +122,64 @@ namespace Logic.Native
                     });
             (dc as DrawingContext).PushGuidelineSet(gs);
 
-            (dc as DrawingContext).DrawRectangle(
-                rectangle.IsFilled ? (SolidColorBrush)style.NativeFill() : null,
-                (Pen)style.NativeStroke(),
-                new Rect(
-                    rectangle.X,
-                    rectangle.Y,
-                    rectangle.Width,
-                    rectangle.Height));
+
+            if (rectangle.IsFilled)
+            {
+                var brush = new SolidColorBrush(
+                    Color.FromArgb(
+                        (byte)style.Fill.A,
+                        (byte)style.Fill.R,
+                        (byte)style.Fill.G,
+                        (byte)style.Fill.B));
+                brush.Freeze();
+
+                (dc as DrawingContext).DrawRectangle(
+                    brush,
+                    pen,
+                    new Rect(
+                        rectangle.X,
+                        rectangle.Y,
+                        rectangle.Width,
+                        rectangle.Height));
+            }
+            else
+            {
+                (dc as DrawingContext).DrawRectangle(
+                    null,
+                    pen,
+                    new Rect(
+                        rectangle.X,
+                        rectangle.Y,
+                        rectangle.Width,
+                        rectangle.Height));
+            }
 
             (dc as DrawingContext).Pop();
         }
 
         public void DrawText(object dc, IStyle style, XText text)
         {
+            var foreground = new SolidColorBrush(
+                Color.FromArgb(
+                    (byte)style.Stroke.A,
+                    (byte)style.Stroke.R,
+                    (byte)style.Stroke.G,
+                    (byte)style.Stroke.B));
+            foreground.Freeze();
+
             var ft = new FormattedText(
                 text.Bind(Database),
                 System.Globalization.CultureInfo.CurrentCulture,
                 FlowDirection.LeftToRight,
                 new Typeface(text.FontName),
                 text.FontSize,
-                ((Pen)style.NativeStroke()).Brush,
+                foreground,
                 null,
                 TextFormattingMode.Ideal);
 
             double x = text.X;
             double y = text.Y;
 
-            // horizontal alignment
             switch (text.HAlignment)
             {
                 case HAlignment.Left:
@@ -107,7 +192,6 @@ namespace Logic.Native
                     break;
             }
 
-            // vertical alignment
             switch (text.VAlignment)
             {
                 case VAlignment.Top:
@@ -122,8 +206,16 @@ namespace Logic.Native
 
             if (text.IsFilled)
             {
+                var background = new SolidColorBrush(
+                    Color.FromArgb(
+                        (byte)style.Fill.A,
+                        (byte)style.Fill.R,
+                        (byte)style.Fill.G,
+                        (byte)style.Fill.B));
+                background.Freeze();
+
                 (dc as DrawingContext).DrawRectangle(
-                    (SolidColorBrush)style.NativeFill(),
+                    background,
                     null,
                     new Rect(
                         text.X,
@@ -165,9 +257,30 @@ namespace Logic.Native
 
         public void DrawPin(object dc, IStyle style, XPin pin)
         {
+            double thickness = style.Thickness / Zoom;
+            double half = thickness / 2.0;
+
+            var pen = new Pen(
+                new SolidColorBrush(
+                    Color.FromArgb(
+                        (byte)style.Stroke.A,
+                        (byte)style.Stroke.R,
+                        (byte)style.Stroke.G,
+                        (byte)style.Stroke.B)),
+                    thickness);
+            pen.Freeze();
+
+            var brush = new SolidColorBrush(
+                Color.FromArgb(
+                    (byte)style.Fill.A,
+                    (byte)style.Fill.R,
+                    (byte)style.Fill.G,
+                    (byte)style.Fill.B));
+            brush.Freeze();
+
             (dc as DrawingContext).DrawEllipse(
-                (SolidColorBrush)style.NativeFill(),
-                (Pen)style.NativeStroke(),
+                brush,
+                pen,
                 new Point(pin.X, pin.Y),
                 PinRadius,
                 PinRadius);
@@ -175,6 +288,19 @@ namespace Logic.Native
 
         public void DrawWire(object dc, IStyle style, XWire wire)
         {
+            double thickness = style.Thickness / Zoom;
+            double half = thickness / 2.0;
+
+            var pen = new Pen(
+                new SolidColorBrush(
+                    Color.FromArgb(
+                        (byte)style.Stroke.A,
+                        (byte)style.Stroke.R,
+                        (byte)style.Stroke.G,
+                        (byte)style.Stroke.B)),
+                    thickness);
+            pen.Freeze();
+
             var position = WirePosition.Calculate(
                 wire, 
                 InvertSize,
@@ -185,7 +311,7 @@ namespace Logic.Native
             {
                 (dc as DrawingContext).DrawEllipse(
                     null,
-                    (Pen)style.NativeStroke(),
+                    pen,
                     new Point(
                         position.InvertX1,
                         position.InvertY1),
@@ -197,7 +323,7 @@ namespace Logic.Native
             {
                 (dc as DrawingContext).DrawEllipse(
                     null,
-                    (Pen)style.NativeStroke(),
+                    pen,
                     new Point(
                         position.InvertX2,
                         position.InvertY2),
@@ -205,15 +331,13 @@ namespace Logic.Native
                     InvertSize);
             }
 
-            double thickness = style.Thickness;
-            double half = thickness / 2.0;
             var gs = new GuidelineSet(
                 new double[] { half, half },
                 new double[] { half, half });
             (dc as DrawingContext).PushGuidelineSet(gs);
 
             (dc as DrawingContext).DrawLine(
-                (Pen)style.NativeStroke(),
+                pen,
                 new Point(
                     position.StartX,
                     position.StartY),

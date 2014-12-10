@@ -79,6 +79,14 @@ namespace Logic.WPF
             {
                 _view = new MainView();
 
+                _view.zoom.InvalidateChild = (zoom) =>
+                {
+                    _model.Renderer.Zoom = zoom;
+
+                    TemplateInvalidate();
+                    _model.Invalidate();
+                };
+
                 InitializeModel();
                 InitializeView();
                 InitializeBlocks();
@@ -635,6 +643,7 @@ namespace Logic.WPF
             // renderer
             IRenderer renderer = new NativeRenderer()
             {
+                Zoom = 1.0,
                 InvertSize = _defaults.InvertSize,
                 PinRadius = _defaults.PinRadius,
                 HitTreshold = _defaults.HitTreshold,
@@ -1073,69 +1082,87 @@ namespace Logic.WPF
             var project = _defaults.EmptyProject();
 
             // layer styles
-            IStyle shapeStyle = new NativeStyle(
-                name: "Shape",
-                fill: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
-                stroke: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
-                thickness: 2.0);
+            IStyle shapeStyle = new XStyle()
+            {
+                Name = "Shape",
+                Fill = new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
+                Stroke = new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
+                Thickness = 2.0
+            };
             project.Styles.Add(shapeStyle);
 
-            IStyle selectedShapeStyle = new NativeStyle(
-                name: "Selected",
-                fill: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
-                stroke: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
-                thickness: 2.0);
+            IStyle selectedShapeStyle = new XStyle()
+            {
+                Name = "Selected",
+                Fill = new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
+                Stroke = new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
+                Thickness = 2.0
+            };
             project.Styles.Add(selectedShapeStyle);
 
-            IStyle selectionStyle = new NativeStyle(
-                name: "Selection",
-                fill: new XColor() { A = 0x1F, R = 0x00, G = 0x00, B = 0xFF },
-                stroke: new XColor() { A = 0x9F, R = 0x00, G = 0x00, B = 0xFF },
-                thickness: 1.0);
+            IStyle selectionStyle = new XStyle()
+            {
+                Name = "Selection",
+                Fill = new XColor() { A = 0x1F, R = 0x00, G = 0x00, B = 0xFF },
+                Stroke = new XColor() { A = 0x9F, R = 0x00, G = 0x00, B = 0xFF },
+                Thickness = 1.0
+            };
             project.Styles.Add(selectionStyle);
 
-            IStyle hoverStyle = new NativeStyle(
-                name: "Overlay",
-                fill: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
-                stroke: new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
-                thickness: 2.0);
+            IStyle hoverStyle = new XStyle()
+            {
+                Name = "Overlay",
+                Fill = new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
+                Stroke = new XColor() { A = 0xFF, R = 0xFF, G = 0x00, B = 0x00 },
+                Thickness = 2.0
+            };
             project.Styles.Add(hoverStyle);
 
             // simulation styles
-            IStyle nullStateStyle = new NativeStyle(
-                name: "NullState",
-                fill: new XColor() { A = 0xFF, R = 0x66, G = 0x66, B = 0x66 },
-                stroke: new XColor() { A = 0xFF, R = 0x66, G = 0x66, B = 0x66 },
-                thickness: 2.0);
+            IStyle nullStateStyle = new XStyle()
+            {
+                Name = "NullState",
+                Fill = new XColor() { A = 0xFF, R = 0x66, G = 0x66, B = 0x66 },
+                Stroke = new XColor() { A = 0xFF, R = 0x66, G = 0x66, B = 0x66 },
+                Thickness = 2.0
+            };
             project.Styles.Add(nullStateStyle);
 
-            IStyle trueStateStyle = new NativeStyle(
-                name: "TrueState",
-                fill: new XColor() { A = 0xFF, R = 0xFF, G = 0x14, B = 0x93 },
-                stroke: new XColor() { A = 0xFF, R = 0xFF, G = 0x14, B = 0x93 },
-                thickness: 2.0);
+            IStyle trueStateStyle = new XStyle()
+            {
+                Name = "TrueState",
+                Fill = new XColor() { A = 0xFF, R = 0xFF, G = 0x14, B = 0x93 },
+                Stroke = new XColor() { A = 0xFF, R = 0xFF, G = 0x14, B = 0x93 },
+                Thickness = 2.0
+            };
             project.Styles.Add(trueStateStyle);
 
-            IStyle falseStateStyle = new NativeStyle(
-                name: "FalseState",
-                fill: new XColor() { A = 0xFF, R = 0x00, G = 0xBF, B = 0xFF },
-                stroke: new XColor() { A = 0xFF, R = 0x00, G = 0xBF, B = 0xFF },
-                thickness: 2.0);
+            IStyle falseStateStyle = new XStyle()
+            {
+                Name = "FalseState",
+                Fill = new XColor() { A = 0xFF, R = 0x00, G = 0xBF, B = 0xFF },
+                Stroke = new XColor() { A = 0xFF, R = 0x00, G = 0xBF, B = 0xFF },
+                Thickness = 2.0
+            };
             project.Styles.Add(falseStateStyle);
 
             // export override styles
-            IStyle templateStyle = new XPdfStyle(
-                name: "TemplateOverride",
-                fill: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
-                stroke: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
-                thickness: 0.80);
+            IStyle templateStyle = new XStyle()
+            {
+                Name = "TemplateOverride",
+                Fill = new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
+                Stroke = new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
+                Thickness = 0.80
+            };
             project.Styles.Add(templateStyle);
 
-            IStyle layerStyle = new XPdfStyle(
-                name: "LayerOverride",
-                fill: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
-                stroke: new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
-                thickness: 1.50);
+            IStyle layerStyle = new XStyle()
+            {
+                Name = "LayerOverride",
+                Fill = new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
+                Stroke = new XColor() { A = 0xFF, R = 0x00, G = 0x00, B = 0x00 },
+                Thickness = 1.50
+            };
             project.Styles.Add(layerStyle);
 
             // templates

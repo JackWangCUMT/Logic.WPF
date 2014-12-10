@@ -11,31 +11,6 @@ using Core = Logic.Core;
 
 namespace Logic.Util
 {
-    internal class XPdfStyle : Core.IStyle
-    {
-        public string Name { get; set; }
-        public Core.IColor Fill { get; set; }
-        public Core.IColor Stroke { get; set; }
-        public double Thickness { get; set; }
-
-        public object NativeFill() { return null; }
-        public object NativeStroke() { return null; }
-
-        public XPdfStyle() { }
-
-        public XPdfStyle(
-            string name, 
-            Core.XColor fill, 
-            Core.XColor stroke, 
-            double thickness)
-        {
-            Name = name;
-            Fill = fill;
-            Stroke = stroke;
-            Thickness = thickness;
-        }
-    }
-
     public class PdfWriter : Core.IRenderer
     {
         #region Properties
@@ -208,6 +183,7 @@ namespace Logic.Util
 
         public IList<KeyValuePair<string, Core.IProperty>> Database { get; set; }
         public ICollection<Core.IShape> Selected { get; set; }
+        public double Zoom { get; set; }
         public double InvertSize { get; set; }
         public double PinRadius { get; set; }
         public double HitTreshold { get; set; }

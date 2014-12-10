@@ -45,18 +45,22 @@ namespace Logic.Templates
                 Shapes = new ObservableCollection<IShape>()
             };
 
-            var tableStyle = new NativeStyle(
-                name: "Table",
-                fill: new XColor() { A = 0x00, R = 0x00, G = 0x00, B = 0x00 },
-                stroke: new XColor() { A = 0xFF, R = 0xD3, G = 0xD3, B = 0xD3 },
-                thickness: 1.0);
+            var tableStyle = new XStyle()
+            {
+                Name = "Table",
+                Fill = new XColor() { A = 0x00, R = 0x00, G = 0x00, B = 0x00 },
+                Stroke = new XColor() { A = 0xFF, R = 0xD3, G = 0xD3, B = 0xD3 },
+                Thickness = 1.0
+            };
             this.Table.Styles.Add(tableStyle);
 
-            var frameStyle = new NativeStyle(
-                name: "Frame",
-                fill: new XColor() { A = 0x00, R = 0x00, G = 0x00, B = 0x00 },
-                stroke: new XColor() { A = 0xFF, R = 0xA9, G = 0xA9, B = 0xA9 },
-                thickness: 1.0);
+            var frameStyle = new XStyle()
+            {
+                Name = "Frame",
+                Fill = new XColor() { A = 0x00, R = 0x00, G = 0x00, B = 0x00 },
+                Stroke = new XColor() { A = 0xFF, R = 0xA9, G = 0xA9, B = 0xA9 },
+                Thickness = 1.0
+            };
             this.Frame.Styles.Add(frameStyle);
 
             // table
