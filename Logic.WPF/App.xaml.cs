@@ -2131,7 +2131,7 @@ namespace Logic.WPF
 
         private void SimulationOptions()
         {
-            throw new NotImplementedException();
+            // TODO: Display simulation options window
         }
 
         #endregion
