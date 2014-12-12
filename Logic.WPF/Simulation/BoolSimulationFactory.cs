@@ -20,6 +20,7 @@ namespace Logic.Simulation
             { "AND", (block) => { return new AndSimulation(null); } },
             { "INVERTER", (block) => { return new InverterSimulation(null); } },
             { "OR", (block) => { return new OrSimulation(null, GetIntPropertyValue(block, "Counter")); } },
+            { "XOR", (block) => { return new XorSimulation(null); } },
             // Memory
             { "SR-RESET", (block) => { return new MemorySetResetSimulation(MemoryPriority.Reset); } },
             { "SR-RESET-V", (block) => { return new MemorySetResetSimulation(MemoryPriority.Reset); } },
