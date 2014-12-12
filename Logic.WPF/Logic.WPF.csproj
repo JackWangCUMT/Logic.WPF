@@ -103,6 +103,7 @@
     <Compile Include="Blocks\Gates\And.cs" />
     <Compile Include="Blocks\Gates\Inverter.cs" />
     <Compile Include="Blocks\Gates\Or.cs" />
+    <Compile Include="Blocks\Gates\Xor.cs" />
     <Compile Include="Blocks\Memory\MemoryReset.cs" />
     <Compile Include="Blocks\Memory\MemoryResetVertical.cs" />
     <Compile Include="Blocks\Memory\MemorySet.cs" />
