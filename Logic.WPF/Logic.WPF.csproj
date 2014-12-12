@@ -117,6 +117,7 @@
     <Compile Include="Blocks\Timers\TimerPulse.cs" />
     <Compile Include="Util\Defaults.cs" />
     <Compile Include="Templates\TitlePageTemplate.cs" />
+    <Compile Include="Util\PropertyExtensions.cs" />
     <Compile Include="Util\WirePosition.cs" />
     <Compile Include="Serialization\LogicContractResolver.cs" />
     <Compile Include="Native\NativeBoolSimulationRenderer.cs" />
