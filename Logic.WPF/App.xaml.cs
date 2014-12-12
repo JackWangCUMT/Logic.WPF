@@ -35,6 +35,7 @@ namespace Logic.WPF
         private MainView _view = null;
         private IStringSerializer _serializer = null;
         private System.Threading.Timer _timer = null;
+        private BoolSimulationFactory _simulationFactory = null;
         private Clock _clock = null;
         private Point _dragStartPoint;
         private bool _isContextMenu = false;
@@ -76,6 +77,9 @@ namespace Logic.WPF
 
                 _serializer.Log = _log;
             }
+
+            // simulation factory
+            _simulationFactory = new BoolSimulationFactory();
 
             try
             {
@@ -2042,7 +2046,7 @@ namespace Logic.WPF
                     var context = PageGraph.Create(temp);
                     if (context != null)
                     {
-                        var simulations = BoolSimulationFactory.Create(context);
+                        var simulations = _simulationFactory.Create(context);
                         if (simulations != null)
                         {
                             OverlayInit(simulations);
@@ -2087,7 +2091,7 @@ namespace Logic.WPF
             {
                 if (IsSimulationRunning())
                 {
-                    BoolSimulationFactory.Run(simulations, _clock);
+                    _simulationFactory.Run(simulations, _clock);
                     _clock.Tick();
                     Dispatcher.Invoke(() => _model.OverlayLayer.InvalidateVisual());
                 }
