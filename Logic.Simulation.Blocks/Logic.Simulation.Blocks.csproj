@@ -53,6 +53,7 @@
     <Compile Include="TimerOffSimulation.cs" />
     <Compile Include="TimerOnSimulation.cs" />
     <Compile Include="TimerPulseSimulation.cs" />
+    <Compile Include="XorSimulation.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
