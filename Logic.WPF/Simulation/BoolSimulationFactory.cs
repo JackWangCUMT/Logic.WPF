@@ -18,51 +18,29 @@ namespace Logic.Simulation
         public BoolSimulationFactory()
         {
             Registry = new Dictionary<string, Func<XBlock, BoolSimulation>>();
+        }
 
-            // Gates
-            Register("AND", (block) => { return new AndSimulation(null); });
-            Register("INVERTER", (block) => { return new InverterSimulation(null); });
-            Register("OR", (block) => { return new OrSimulation(null, block.GetIntPropertyValue("Counter")); });
-            Register("XOR", (block) => { return new XorSimulation(null); });
-            // Memory
-            Register("SR-RESET", (block) => { return new MemorySetResetSimulation(MemoryPriority.Reset); });
-            Register("SR-RESET-V", (block) => { return new MemorySetResetSimulation(MemoryPriority.Reset); });
-            Register("SR-SET", (block) => { return new MemorySetResetSimulation(MemoryPriority.Set); });
-            Register("SR-SET-V", (block) => { return new MemorySetResetSimulation(MemoryPriority.Set); });
-            // Shortcut
-            Register("SHORTCUT", (block) => { return new ShortcutSimulation(); });
-            // Signal
-            Register("SIGNAL", (block) => { return new SignalSimulation(false); });
-            Register("INPUT", (block) => { return new InputSimulation(false); });
-            Register("OUTPUT", (block) => { return new OutputSimulation(false); });
-            // Timers
-            Register(
-                "TIMER-OFF",
-                (block) =>
-                {
-                    double delay = block.GetDoublePropertyValue("Delay");
-                    string unit = block.GetStringPropertyValue("Unit");
-                    double seconds = delay.ConvertToSeconds(unit);
-                    return new TimerOffSimulation(false, seconds);
-                });
-            Register(
-                "TIMER-ON",
-                (block) =>
-                {
-                    double delay = block.GetDoublePropertyValue("Delay");
-                    string unit = block.GetStringPropertyValue("Unit");
-                    double seconds = delay.ConvertToSeconds(unit);
-                    return new TimerOnSimulation(false, seconds);
-                } );
-            Register(
-                "TIMER-PULSE",
-                (block) =>
-                {
-                    double delay = block.GetDoublePropertyValue("Delay");
-                    string unit = block.GetStringPropertyValue("Unit");
-                    double seconds = delay.ConvertToSeconds(unit);
-                    return new TimerPulseSimulation(false, seconds);
-                });
+        public static T GetInstance<T>() where T: BoolSimulation
+        {
+            return (T)Activator.CreateInstance(typeof(T), true);
+        }
+
+        public bool Register(BoolSimulation simulation)
+        {
+            if (Registry.ContainsKey(simulation.Key))
+            {
+                return false;
+            }
+            Registry.Add(simulation.Key, simulation.Factory);
+            return true;
+        }
+
+        public void Register(IEnumerable<BoolSimulation> simulations)
+        {
+            foreach (var simulation in simulations)
+            {
+                Register(simulation);
+            }
         }
 
         public bool Register(string key, Func<XBlock, BoolSimulation> factory)

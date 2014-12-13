@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Logic.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,6 +8,16 @@ namespace Logic.Simulation.Blocks
 {
     public class InputSimulation : BoolSimulation
     {
+        public override string Key
+        {
+            get { return "INPUT"; }
+        }
+
+        public override Func<XBlock, BoolSimulation> Factory
+        {
+            get { return (block) => { return new InputSimulation(false); }; }
+        }
+
         public InputSimulation()
             : base()
         {

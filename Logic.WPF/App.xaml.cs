@@ -3,6 +3,7 @@ using Logic.Graph;
 using Logic.Native;
 using Logic.Serialization;
 using Logic.Simulation;
+using Logic.Simulation.Blocks;
 using Logic.Util;
 using Logic.ViewModels;
 using Logic.WPF.Views;
@@ -81,6 +82,7 @@ namespace Logic.WPF
             // simulation factory
             _simulationFactory = new BoolSimulationFactory();
 
+            // initialize main view
             try
             {
                 _view = new MainView();
@@ -862,6 +864,9 @@ namespace Logic.WPF
                 var builder = new ConventionBuilder();
                 builder.ForTypesDerivedFrom<XBlock>().Export<XBlock>();
                 builder.ForTypesDerivedFrom<ITemplate>().Export<ITemplate>();
+                builder.ForTypesDerivedFrom<BoolSimulation>()
+                    .Export<BoolSimulation>()
+                    .SelectConstructor(selector => selector.FirstOrDefault());
 
                 var configuration = new ContainerConfiguration()
                         .WithAssembly(Assembly.GetExecutingAssembly())
@@ -874,6 +879,9 @@ namespace Logic.WPF
 
                     var templates = container.GetExports<ITemplate>();
                     _model.Templates = new ObservableCollection<ITemplate>(templates);
+
+                    var simulations = container.GetExports<BoolSimulation>();
+                    _simulationFactory.Register(simulations);
                 }
             }
             catch (Exception ex)

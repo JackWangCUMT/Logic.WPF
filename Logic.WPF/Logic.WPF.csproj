@@ -115,9 +115,23 @@
     <Compile Include="Blocks\Timers\TimerOff.cs" />
     <Compile Include="Blocks\Timers\TimerOn.cs" />
     <Compile Include="Blocks\Timers\TimerPulse.cs" />
+    <Compile Include="Simulation\Blocks\AndSimulation.cs" />
+    <Compile Include="Simulation\Blocks\InputSimulation.cs" />
+    <Compile Include="Simulation\Blocks\InverterSimulation.cs" />
+    <Compile Include="Simulation\Blocks\MemoryResetPrioritySimulation.cs" />
+    <Compile Include="Simulation\Blocks\MemoryResetPriorityVSimulation.cs" />
+    <Compile Include="Simulation\Blocks\MemorySetPrioritySimulation.cs" />
+    <Compile Include="Simulation\Blocks\MemorySetPriorityVSimulation.cs" />
+    <Compile Include="Simulation\Blocks\OrSimulation.cs" />
+    <Compile Include="Simulation\Blocks\OutputSimulation.cs" />
+    <Compile Include="Simulation\Blocks\ShortcutSimulation.cs" />
+    <Compile Include="Simulation\Blocks\SignalSimulation.cs" />
+    <Compile Include="Simulation\Blocks\TimerOffSimulation.cs" />
+    <Compile Include="Simulation\Blocks\TimerOnSimulation.cs" />
+    <Compile Include="Simulation\Blocks\TimerPulseSimulation.cs" />
+    <Compile Include="Simulation\Blocks\XorSimulation.cs" />
     <Compile Include="Util\Defaults.cs" />
     <Compile Include="Templates\TitlePageTemplate.cs" />
-    <Compile Include="Util\PropertyExtensions.cs" />
     <Compile Include="Util\WirePosition.cs" />
     <Compile Include="Serialization\LogicContractResolver.cs" />
     <Compile Include="Native\NativeBoolSimulationRenderer.cs" />
@@ -189,10 +203,6 @@
     <ProjectReference Include="..\Logic.Graph\Logic.Graph.csproj">
       <Project>{aa8c3513-6fc1-46a4-9db7-16d4563da912}</Project>
       <Name>Logic.Graph</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Logic.Simulation.Blocks\Logic.Simulation.Blocks.csproj">
-      <Project>{5f8c1001-8d43-4d42-b806-4feacc7885ce}</Project>
-      <Name>Logic.Simulation.Blocks</Name>
     </ProjectReference>
     <ProjectReference Include="..\Logic.Simulation\Logic.Simulation.csproj">
       <Project>{65628359-e4d7-4031-95c8-760ae5ceed5f}</Project>

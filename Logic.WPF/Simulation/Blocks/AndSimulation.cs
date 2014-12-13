@@ -1,3 +1,4 @@
+﻿using Logic.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -5,14 +6,24 @@ using System.Text;
 
 namespace Logic.Simulation.Blocks
 {
-    public class XorSimulation : BoolSimulation
+    public class AndSimulation : BoolSimulation
     {
-        public XorSimulation()
+        public override string Key
+        {
+            get { return "AND"; }
+        }
+
+        public override Func<XBlock, BoolSimulation> Factory
+        {
+            get { return (block) => { return new AndSimulation(null); }; }
+        }
+
+        public AndSimulation()
             : base()
         {
         }
 
-        public XorSimulation(bool? state)
+        public AndSimulation(bool? state)
             : base()
         {
             base.State = state;
@@ -37,7 +48,7 @@ namespace Logic.Simulation.Blocks
                 }
                 else
                 {
-                    result ^= input.IsInverted ? !(input.Simulation.State) : input.Simulation.State;
+                    result &= input.IsInverted ? !(input.Simulation.State) : input.Simulation.State;
                 }
             }
             base.State = result;

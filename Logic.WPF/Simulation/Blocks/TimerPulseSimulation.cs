@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Logic.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,6 +8,25 @@ namespace Logic.Simulation.Blocks
 {
     public class TimerPulseSimulation : BoolSimulation
     {
+        public override string Key 
+        {
+            get { return "TIMER-PULSE"; } 
+        }
+
+        public override Func<XBlock, BoolSimulation> Factory
+        {
+            get 
+            {
+                return (block) =>
+                {
+                    double delay = block.GetDoublePropertyValue("Delay");
+                    string unit = block.GetStringPropertyValue("Unit");
+                    double seconds = delay.ConvertToSeconds(unit);
+                    return new TimerPulseSimulation(false, seconds);
+                };
+            }
+        }
+
         public double Delay { get; set; }
 
         public TimerPulseSimulation()
