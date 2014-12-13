@@ -301,6 +301,7 @@ namespace Logic.ViewModels
         public ICommand SimulationPauseCommand { get; set; }
         public ICommand SimulationTickCommand { get; set; }
         public ICommand SimulationCreateGraphCommand { get; set; }
+        public ICommand SimulationImportCodeCommand { get; set; }
         public ICommand SimulationOptionsCommand { get; set; }
 
         #endregion

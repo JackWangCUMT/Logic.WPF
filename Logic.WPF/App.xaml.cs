@@ -578,6 +578,10 @@ namespace Logic.WPF
                 (parameter) => this.Graph(),
                 (parameter) => IsSimulationRunning() ? false : true);
 
+            _model.SimulationImportCodeCommand = new NativeCommand(
+                (parameter) => this.SimulationImportFromCode(),
+                (parameter) => IsSimulationRunning() ? false : true);
+
             _model.SimulationOptionsCommand = new NativeCommand(
                 (parameter) => this.SimulationOptions(),
                 (parameter) => IsSimulationRunning() ? false : true);
@@ -2138,6 +2142,57 @@ namespace Logic.WPF
                     ex.Message,
                     Environment.NewLine,
                     ex.StackTrace);
+            }
+        }
+
+        private void SimulationImportFromCode()
+        {
+            var dlg = new Microsoft.Win32.OpenFileDialog()
+            {
+                Filter = "CSharp (*.cs)|*.cs",
+                Multiselect = true
+            };
+
+            if (dlg.ShowDialog(_view) == true)
+            {
+                SimulationImportFromCode(dlg.FileNames);
+            }
+        }
+
+        private void SimulationImportFromCode(string[] paths)
+        {
+            try
+            {
+                foreach (var path in paths)
+                {
+                    using (var fs = System.IO.File.OpenText(path))
+                    {
+                        var csharp = fs.ReadToEnd();
+                        if (!string.IsNullOrEmpty(csharp))
+                        {
+                            SimulationImport(csharp);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (_log != null)
+                {
+                    _log.LogError("{0}{1}{2}",
+                        ex.Message,
+                        Environment.NewLine,
+                        ex.StackTrace);
+                }
+            }
+        }
+
+        private void SimulationImport(string csharp)
+        {
+            IEnumerable<BoolSimulation> exports = CSharpCodeImporter.Import<BoolSimulation>(csharp, _log);
+            if (exports != null)
+            {
+                _simulationFactory.Register(exports);
             }
         }
 

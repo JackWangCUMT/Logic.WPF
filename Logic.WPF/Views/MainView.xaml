@@ -476,6 +476,8 @@
                 <Separator/>
                 <MenuItem Header="Create _Graph..." InputGestureText="" Command="{Binding SimulationCreateGraphCommand}"/>
                 <Separator/>
+                <MenuItem Header="_Import From Code..." InputGestureText="" Command="{Binding SimulationImportCodeCommand}"/>
+                <Separator/>
                 <MenuItem Header="_Options..." InputGestureText="" Command="{Binding SimulationOptionsCommand}"/>
             </MenuItem>
         </Menu>

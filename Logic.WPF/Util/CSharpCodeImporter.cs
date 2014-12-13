@@ -27,6 +27,7 @@ namespace Logic.Util
                 MetadataReference.CreateFromFile(System.IO.Path.Combine(assemblyPath, "System.dll")),
                 MetadataReference.CreateFromFile(System.IO.Path.Combine(assemblyPath, "System.Core.dll")),
                 MetadataReference.CreateFromFile(System.IO.Path.Combine(executingPath, "Logic.Core.dll")),
+                MetadataReference.CreateFromFile(System.IO.Path.Combine(executingPath, "Logic.Simulation.dll")),
                 MetadataReference.CreateFromFile((Assembly.GetEntryAssembly().Location))
             };
         }
@@ -34,7 +35,9 @@ namespace Logic.Util
         public static IEnumerable<T> Compose<T>(Assembly assembly)
         {
             var builder = new ConventionBuilder();
-            builder.ForTypesDerivedFrom<T>().Export<T>();
+            builder.ForTypesDerivedFrom<T>()
+                .Export<T>()
+                .SelectConstructor(selector => selector.FirstOrDefault());
 
             var configuration = new ContainerConfiguration()
                 .WithAssembly(assembly)
