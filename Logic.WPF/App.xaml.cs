@@ -95,6 +95,8 @@ namespace Logic.WPF
                     _model.Invalidate();
                 };
 
+                _view.status.DataContext = _log;
+
                 InitializeModel();
                 InitializeView();
                 InitializeBlocks();

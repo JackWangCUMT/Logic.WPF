@@ -5,8 +5,8 @@
         xmlns:local="clr-namespace:Logic.WPF"
         xmlns:native="clr-namespace:Logic.Native"
         Title="{Binding FileName, StringFormat={}{0} - Logic, FallbackValue=Logic, TargetNullValue=Logic}" 
-        Height="710" Width="1060"
-        Background="White"
+        Height="715" Width="1060"
+        Background="WhiteSmoke"
         WindowStartupLocation="CenterScreen" WindowState="Maximized"
         SnapsToDevicePixels="True" UseLayoutRounding="False"
         TextOptions.TextFormattingMode="Display" 
@@ -346,18 +346,22 @@
     <Grid FocusVisualStyle="{x:Null}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="6"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="22"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="6"/>
             <ColumnDefinition Width="100"/>
             <ColumnDefinition Width="6"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="6"/>
             <ColumnDefinition Width="120"/>
+            <ColumnDefinition Width="6"/>
         </Grid.ColumnDefinitions>
         <Menu x:Name="menu"
-              Background="WhiteSmoke"
-              Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="0">
+              Background="Transparent"
+              Grid.Column="0" Grid.ColumnSpan="7" Grid.Row="0">
             <MenuItem Header="_File">
                 <MenuItem Header="_New" InputGestureText="Ctrl+N" Command="{Binding FileNewCommand}"/>
                 <Separator/>
@@ -488,7 +492,7 @@
                  BorderBrush="{x:Null}"
                  BorderThickness="0,0,0,0"
                  HorizontalContentAlignment="Stretch"
-                 Grid.Column="0" Grid.Row="1">
+                 Grid.Column="1" Grid.Row="2">
             <ListBox.InputBindings>
                 <KeyBinding Command="{Binding BlockDeleteCommand}" CommandParameter="{Binding Path=SelectedItem, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBox}}}" Gesture="Del"/>
             </ListBox.InputBindings>
@@ -504,14 +508,14 @@
             </ListBox.ItemTemplate>
         </ListBox>
         <GridSplitter x:Name="left"
-                      Background="WhiteSmoke" 
-                      Grid.Column="1" Grid.Row="1" 
+                      Background="Transparent" 
+                      Grid.Column="2" Grid.Row="2" 
                       HorizontalAlignment="Stretch"
                       ShowsPreview="True"/>
-        <Grid ClipToBounds="True"
-              Grid.Column="2" Grid.Row="1" 
-              Margin="10"
-              Background="Transparent"
+        <Grid x:Name="page"
+              ClipToBounds="True"
+              Grid.Column="3" Grid.Row="2" 
+              Background="White"
               FocusVisualStyle="{x:Null}"
               Focusable="False">
             <native:NativeZoom x:Name="zoom"
@@ -542,8 +546,8 @@
             </native:NativeZoom>
         </Grid>
         <GridSplitter x:Name="right"
-                      Background="WhiteSmoke" 
-                      Grid.Column="3" Grid.Row="1" 
+                      Background="Transparent" 
+                      Grid.Column="4" Grid.Row="2" 
                       HorizontalAlignment="Stretch"
                       ShowsPreview="True"/>
         <TreeView x:Name="tree" 
@@ -552,7 +556,7 @@
                   Background="White"
                   BorderBrush="{x:Null}"
                   BorderThickness="0,0,0,0"
-                  Grid.Column="4" Grid.Row="1">
+                  Grid.Column="5" Grid.Row="2">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectedItemChanged">
                     <i:InvokeCommandAction Command="{Binding SelectedItemChangedCommand}" CommandParameter="{Binding ElementName=tree, Path=SelectedItem}"/>
@@ -608,5 +612,8 @@
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
         </TreeView>
+        <StatusBar x:Name="status" Background="Transparent" Grid.Column="1" Grid.ColumnSpan="5" Grid.Row="3">
+            <TextBlock Text="{Binding LastMessage}"/>
+        </StatusBar>
     </Grid>
 </Window>

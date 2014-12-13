@@ -8,8 +8,19 @@ using System.Threading.Tasks;
 
 namespace Logic.Util
 {
-    public class TraceLog : ILog
+    public class TraceLog : NotifyObject, ILog
     {
+        private string _lastMessage;
+        public string LastMessage
+        {
+            get { return _lastMessage; }
+            set
+            {
+                _lastMessage = value;
+                Notify("LastMessage");
+            }
+        }
+
         public void Initialize(string path)
         {
             Trace.Listeners.Add(new TextWriterTraceListener(path, "listener"));
@@ -22,32 +33,38 @@ namespace Logic.Util
 
         public void LogInformation(string message)
         {
-            Trace.TraceInformation(message); 
+            Trace.TraceInformation(message);
+            LastMessage = "Information: " + message;
         }
 
         public void LogInformation(string format, params object[] args)
         {
-            Trace.TraceInformation(format, args); 
+            Trace.TraceInformation(format, args);
+            LastMessage = "Information: " + string.Format(format, args);
         }
 
         public void LogWarning(string message)
         {
-            Trace.TraceWarning(message); 
+            Trace.TraceWarning(message);
+            LastMessage = "Warning: " + message;
         }
 
         public void LogWarning(string format, params object[] args)
         {
-            Trace.TraceWarning(format, args); 
+            Trace.TraceWarning(format, args);
+            LastMessage = "Warning: " + string.Format(format, args);
         }
 
         public void LogError(string message)
         {
-            Trace.TraceError(message); 
+            Trace.TraceError(message);
+            LastMessage = "Error: " + message;
         }
 
         public void LogError(string format, params object[] args)
         {
-            Trace.TraceError(format, args); 
+            Trace.TraceError(format, args);
+            LastMessage = "Error: " + string.Format(format, args);
         }
     }
 }

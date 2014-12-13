@@ -7,6 +7,7 @@ namespace Logic.Core
 {
     public interface ILog
     {
+        string LastMessage { get; set; }
         void Initialize(string path);
         void Close();
         void LogInformation(string message);
