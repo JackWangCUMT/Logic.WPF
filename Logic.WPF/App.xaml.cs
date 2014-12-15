@@ -222,7 +222,7 @@ namespace Logic.WPF
             _model.Clipboard = new NativeTextClipboard();
 
             // history
-            _model.History = new History<IPage>(new Bson() { Log = _log });
+            _model.History = new History<IPage>(new Bson());
 
             // tool
             _model.Tool = _model.Tool;

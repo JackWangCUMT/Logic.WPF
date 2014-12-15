@@ -13,71 +13,41 @@ namespace Logic.Serialization
 {
     public class Bson : IBinarySerializer
     {
-        public ILog Log { get; set; }
-
         public byte[] Serialize<T>(T obj) where T : class
         {
-            try
+            using (var ms = new System.IO.MemoryStream())
             {
-                using (var ms = new System.IO.MemoryStream())
+                using (var writer = new BsonWriter(ms))
                 {
-                    using (var writer = new BsonWriter(ms))
+                    var serializer = new JsonSerializer()
                     {
-                        var serializer = new JsonSerializer()
-                        {
-                            TypeNameHandling = TypeNameHandling.Objects,
-                            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                            ReferenceLoopHandling = ReferenceLoopHandling.Serialize
-                        };
-                        serializer.Serialize(writer, obj);
-                    }
-                    return ms.ToArray();
+                        TypeNameHandling = TypeNameHandling.Objects,
+                        PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                        ReferenceLoopHandling = ReferenceLoopHandling.Serialize
+                    };
+                    serializer.Serialize(writer, obj);
                 }
+                return ms.ToArray();
             }
-            catch (Exception ex)
-            {
-                if (Log != null)
-                {
-                    Log.LogError("{0}{1}{2}",
-                        ex.Message,
-                        Environment.NewLine,
-                        ex.StackTrace);
-                }
-            }
-            return null;
         }
 
         public T Deserialize<T>(byte[] bson) where T : class
         {
-            try
+            using (var ms = new System.IO.MemoryStream(bson))
             {
-                using (var ms = new System.IO.MemoryStream(bson))
+                using (BsonReader reader = new BsonReader(ms))
                 {
-                    using (BsonReader reader = new BsonReader(ms))
+                    var serializer = new JsonSerializer()
                     {
-                        var serializer = new JsonSerializer()
-                        {
-                            TypeNameHandling = TypeNameHandling.Objects,
-                            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-                            ContractResolver = new LogicContractResolver()
-                        };
-                        var page = serializer.Deserialize<T>(reader);
-                        return page;
-                    }
+                        TypeNameHandling = TypeNameHandling.Objects,
+                        PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                        ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+                        ContractResolver = new LogicContractResolver()
+                    };
+                    var page = serializer.Deserialize<T>(reader);
+                    return page;
                 }
             }
-            catch (Exception ex)
-            {
-                if (Log != null)
-                {
-                    Log.LogError("{0}{1}{2}",
-                        ex.Message,
-                        Environment.NewLine,
-                        ex.StackTrace);
-                }
-            }
-            return null;
         }
     }
 }
