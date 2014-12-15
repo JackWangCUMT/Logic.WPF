@@ -227,115 +227,115 @@ namespace Logic.WPF
 
             // commands
             _model.PageAddCommand = new NativeCommand(
-                (parameter) => this.PageAdd(parameter),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.PageAdd(p),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.PageInsertBeforeCommand = new NativeCommand(
-                (parameter) => { this.PageInsertBefore(parameter); },
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.PageInsertBefore(p),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.PageInsertAfterCommand = new NativeCommand(
-                (parameter) => { this.PageInsertAfter(parameter); },
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.PageInsertAfter(p),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.PageCutCommand = new NativeCommand(
-                (parameter) => { this.PageCut(parameter); },
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.PageCut(p),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.PageCopyCommand = new NativeCommand(
-                (parameter) => { this.PageCopy(parameter); },
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.PageCopy(p),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.PagePasteCommand = new NativeCommand(
-                (parameter) => { this.PagePaste(parameter); },
-                (parameter) =>
+                (p) => this.PagePaste(p),
+                (p) =>
                 {
                     return IsSimulationRunning()
                         || _pageToPaste == null ? false : true;
                 });
 
             _model.PageDeleteCommand = new NativeCommand(
-                (parameter) => this.PageDelete(parameter),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.PageDelete(p),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.DocumentAddCommand = new NativeCommand(
-                (parameter) => this.DocumentAdd(parameter),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.DocumentAdd(p),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.DocumentInsertBeforeCommand = new NativeCommand(
-                (parameter) => { this.DocumentInsertBefore(parameter); },
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.DocumentInsertBefore(p),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.DocumentInsertAfterCommand = new NativeCommand(
-                (parameter) => { this.DocumentInsertAfter(parameter); },
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.DocumentInsertAfter(p),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.DocumentCutCommand = new NativeCommand(
-                (parameter) => { this.DocumentCut(parameter); },
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.DocumentCut(p),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.DocumentCopyCommand = new NativeCommand(
-                (parameter) => { this.DocumentCopy(parameter); },
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.DocumentCopy(p),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.DocumentPasteCommand = new NativeCommand(
-                (parameter) => { this.DocumentPaste(parameter); },
-                (parameter) =>
+                (p) => this.DocumentPaste(p),
+                (p) =>
                 {
                     return IsSimulationRunning()
                         || _documentToPaste == null ? false : true;
                 });
 
             _model.DocumentDeleteCommand = new NativeCommand(
-                (parameter) => this.DocumentDelete(parameter),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.DocumentDelete(p),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.ProjectAddCommand = new NativeCommand(
-                (parameter) => this.ProjectAdd(parameter),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.ProjectAdd(p),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.ProjectCutCommand = new NativeCommand(
-                (parameter) => this.ProjectCut(parameter),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.ProjectCut(p),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.ProjectCopyCommand = new NativeCommand(
-                (parameter) => this.ProjectCopy(parameter),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.ProjectCopy(p),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.ProjectPasteCommand = new NativeCommand(
-                (parameter) => this.ProjectPaste(parameter),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.ProjectPaste(p),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.ProjectDeleteCommand = new NativeCommand(
-                (parameter) => this.ProjectDelete(parameter),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.ProjectDelete(p),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.SelectedItemChangedCommand = new NativeCommand(
-                (parameter) => this.PageUpdateView(parameter),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.PageUpdateView(p),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.FileNewCommand = new NativeCommand(
-                (parameter) => this.FileNew(),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.FileNew(),
+                (p) => IsSimulationRunning() ? false : true);
 
-            _model.FileOpenCommand = new NativeCommand
-                ((parameter) => this.FileOpen(),
-                (parameter) => IsSimulationRunning() ? false : true);
+            _model.FileOpenCommand = new NativeCommand(
+                (p) => this.FileOpen(),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.FileSaveCommand = new NativeCommand(
-                (parameter) => this.FileSave(),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.FileSave(),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.FileSaveAsCommand = new NativeCommand(
-                (parameter) => this.FileSaveAs(),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.FileSaveAs(),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.FileSaveAsPDFCommand = new NativeCommand(
-                (parameter) => this.FileSaveAsPDF(),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.FileSaveAsPDF(),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.FileExitCommand = new NativeCommand(
-                (parameter) =>
+                (p) =>
                 {
                     if (IsSimulationRunning())
                     {
@@ -343,42 +343,42 @@ namespace Logic.WPF
                     }
                     _view.Close();
                 },
-                (parameter) => true);
+                (p) => true);
 
             _model.EditUndoCommand = new NativeCommand(
-                (parameter) => _model.Undo(),
-                (parameter) =>
+                (p) => _model.Undo(),
+                (p) =>
                 {
                     return IsSimulationRunning()
                         || !_model.History.CanUndo() ? false : true;
                 });
 
             _model.EditRedoCommand = new NativeCommand(
-                (parameter) => _model.Redo(),
-                (parameter) =>
+                (p) => _model.Redo(),
+                (p) =>
                 {
                     return IsSimulationRunning()
                         || !_model.History.CanRedo() ? false : true;
                 });
 
             _model.EditCutCommand = new NativeCommand(
-                (parameter) => _model.Cut(),
-                (parameter) =>
+                (p) => _model.Cut(),
+                (p) =>
                 {
                     return IsSimulationRunning()
                         || !_model.CanCopy() ? false : true;
                 });
 
             _model.EditCopyCommand = new NativeCommand(
-                (parameter) => _model.Copy(),
-                (parameter) =>
+                (p) => _model.Copy(),
+                (p) =>
                 {
                     return IsSimulationRunning()
                         || !_model.CanCopy() ? false : true;
                 });
 
             _model.EditPasteCommand = new NativeCommand(
-                (parameter) =>
+                (p) =>
                 {
                     _model.Paste();
                     if (_isContextMenu && _model.Renderer.Selected != null)
@@ -391,98 +391,98 @@ namespace Logic.WPF
                         _model.EditorLayer.Move(_model.Renderer.Selected, x, y);
                     }
                 },
-                (parameter) =>
+                (p) =>
                 {
                     return IsSimulationRunning()
                         || !_model.CanPaste() ? false : true;
                 });
 
             _model.EditDeleteCommand = new NativeCommand(
-                (parameter) => _model.SelectionDelete(),
-                (parameter) =>
+                (p) => _model.SelectionDelete(),
+                (p) =>
                 {
                     return IsSimulationRunning()
                         || !_model.HaveSelection() ? false : true;
                 });
 
             _model.EditSelectAllCommand = new NativeCommand(
-                (parameter) =>
+                (p) =>
                 {
                     _model.SelectAll();
                     _model.Invalidate();
                 },
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.EditAlignLeftBottomCommand = new NativeCommand(
-                (parameter) =>
+                (p) =>
                 {
                     _model.EditorLayer.ShapeSetTextHAlignment(HAlignment.Left);
                     _model.EditorLayer.ShapeSetTextVAlignment(VAlignment.Bottom);
                 },
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.EditAlignBottomCommand = new NativeCommand(
-                (parameter) => _model.EditorLayer.ShapeSetTextVAlignment(VAlignment.Bottom),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => _model.EditorLayer.ShapeSetTextVAlignment(VAlignment.Bottom),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.EditAlignRightBottomCommand = new NativeCommand(
-                (parameter) =>
+                (p) =>
                 {
                     _model.EditorLayer.ShapeSetTextHAlignment(HAlignment.Right);
                     _model.EditorLayer.ShapeSetTextVAlignment(VAlignment.Bottom);
                 },
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.EditAlignLeftCommand = new NativeCommand(
-                (parameter) => _model.EditorLayer.ShapeSetTextHAlignment(HAlignment.Left),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => _model.EditorLayer.ShapeSetTextHAlignment(HAlignment.Left),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.EditAlignCenterCenterCommand = new NativeCommand(
-                (parameter) =>
+                (p) =>
                 {
                     _model.EditorLayer.ShapeSetTextHAlignment(HAlignment.Center);
                     _model.EditorLayer.ShapeSetTextVAlignment(VAlignment.Center);
                 },
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.EditAlignRightCommand = new NativeCommand(
-                (parameter) => _model.EditorLayer.ShapeSetTextHAlignment(HAlignment.Right),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => _model.EditorLayer.ShapeSetTextHAlignment(HAlignment.Right),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.EditAlignLeftTopCommand = new NativeCommand(
-                (parameter) =>
+                (p) =>
                 {
                     _model.EditorLayer.ShapeSetTextHAlignment(HAlignment.Left);
                     _model.EditorLayer.ShapeSetTextVAlignment(VAlignment.Top);
                 },
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.EditAlignTopCommand = new NativeCommand(
-                (parameter) => _model.EditorLayer.ShapeSetTextVAlignment(VAlignment.Top),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => _model.EditorLayer.ShapeSetTextVAlignment(VAlignment.Top),
+                (p) => IsSimulationRunning() ? false : true);
 
-            _model.EditAlignRightTopCommand = new NativeCommand
-                ((parameter) =>
+            _model.EditAlignRightTopCommand = new NativeCommand(
+                (p) =>
                 {
                     _model.EditorLayer.ShapeSetTextHAlignment(HAlignment.Right);
                     _model.EditorLayer.ShapeSetTextVAlignment(VAlignment.Top);
                 },
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.EditIncreaseTextSizeCommand = new NativeCommand(
-                (parameter) => _model.EditorLayer.ShapeSetTextSizeDelta(+1.0),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => _model.EditorLayer.ShapeSetTextSizeDelta(+1.0),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.EditDecreaseTextSizeCommand = new NativeCommand(
-                (parameter) => _model.EditorLayer.ShapeSetTextSizeDelta(-1.0),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => _model.EditorLayer.ShapeSetTextSizeDelta(-1.0),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.EditToggleFillCommand = new NativeCommand(
-                (parameter) => _model.EditorLayer.ShapeToggleFill(),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => _model.EditorLayer.ShapeToggleFill(),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.EditToggleSnapCommand = new NativeCommand(
-                (parameter) => 
+                (p) => 
                 {
                     _defaults.EnableSnap = !_defaults.EnableSnap;
                     _model.ShapeLayer.EnableSnap = _defaults.EnableSnap;
@@ -492,93 +492,93 @@ namespace Logic.WPF
                     _model.EditorLayer.EnableSnap = _defaults.EnableSnap;
                     _model.OverlayLayer.EnableSnap = _defaults.EnableSnap;
                 },
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.EditToggleInvertStartCommand = new NativeCommand(
-                (parameter) => _model.EditorLayer.ShapeToggleInvertStart(),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => _model.EditorLayer.ShapeToggleInvertStart(),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.EditToggleInvertEndCommand = new NativeCommand(
-                (parameter) => _model.EditorLayer.ShapeToggleInvertEnd(),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => _model.EditorLayer.ShapeToggleInvertEnd(),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.EditToggleShortenWireCommand = new NativeCommand(
-                (parameter) => 
+                (p) => 
                     {
                         _defaults.ShortenWire = !_defaults.ShortenWire;
                         _model.Renderer.ShortenWire = _defaults.ShortenWire;
                         _model.WireLayer.InvalidateVisual();
                     },
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.EditCancelCommand = new NativeCommand(
-                (parameter) => _model.EditorLayer.MouseCancel(),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => _model.EditorLayer.MouseCancel(),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.ToolNoneCommand = new NativeCommand(
-                (parameter) => _model.Tool.CurrentTool = ToolMenuModel.Tool.None,
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => _model.Tool.CurrentTool = ToolMenuModel.Tool.None,
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.ToolSelectionCommand = new NativeCommand(
-                (parameter) => _model.Tool.CurrentTool = ToolMenuModel.Tool.Selection,
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => _model.Tool.CurrentTool = ToolMenuModel.Tool.Selection,
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.ToolWireCommand = new NativeCommand(
-                (parameter) => _model.Tool.CurrentTool = ToolMenuModel.Tool.Wire,
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => _model.Tool.CurrentTool = ToolMenuModel.Tool.Wire,
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.ToolPinCommand = new NativeCommand(
-                (parameter) => _model.Tool.CurrentTool = ToolMenuModel.Tool.Pin,
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => _model.Tool.CurrentTool = ToolMenuModel.Tool.Pin,
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.ToolLineCommand = new NativeCommand(
-                (parameter) => _model.Tool.CurrentTool = ToolMenuModel.Tool.Line,
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => _model.Tool.CurrentTool = ToolMenuModel.Tool.Line,
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.ToolEllipseCommand = new NativeCommand(
-                (parameter) => _model.Tool.CurrentTool = ToolMenuModel.Tool.Ellipse,
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => _model.Tool.CurrentTool = ToolMenuModel.Tool.Ellipse,
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.ToolRectangleCommand = new NativeCommand(
-                (parameter) => _model.Tool.CurrentTool = ToolMenuModel.Tool.Rectangle,
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => _model.Tool.CurrentTool = ToolMenuModel.Tool.Rectangle,
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.ToolTextCommand = new NativeCommand(
-                (parameter) => _model.Tool.CurrentTool = ToolMenuModel.Tool.Text,
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => _model.Tool.CurrentTool = ToolMenuModel.Tool.Text,
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.ToolImageCommand = new NativeCommand(
-                (parameter) => _model.Tool.CurrentTool = ToolMenuModel.Tool.Image,
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => _model.Tool.CurrentTool = ToolMenuModel.Tool.Image,
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.BlockImportCommand = new NativeCommand(
-                (parameter) => this.BlockImport(),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.BlockImport(),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.BlockImportCodeCommand = new NativeCommand(
-                (parameter) => this.BlocksImportFromCode(),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.BlocksImportFromCode(),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.BlockExportCommand = new NativeCommand(
-                (parameter) => this.BlockExport(),
-                (parameter) =>
+                (p) => this.BlockExport(),
+                (p) =>
                 {
                     return IsSimulationRunning()
                         || !_model.HaveSelection() ? false : true;
                 });
 
             _model.BlockExportAsCodeCommand = new NativeCommand(
-                (parameter) => this.BlockExportAsCode(),
-                (parameter) =>
+                (p) => this.BlockExportAsCode(),
+                (p) =>
                 {
                     return IsSimulationRunning()
                         || !_model.HaveSelection() ? false : true;
                 });
 
             _model.BlockInsertCommand = new NativeCommand(
-                (parameter) =>
+                (p) =>
                 {
-                    XBlock block = parameter as XBlock;
+                    XBlock block = p as XBlock;
                     if (block != null)
                     {
                         double x = _isContextMenu ? _model.EditorLayer.RightX : 0.0;
@@ -586,35 +586,35 @@ namespace Logic.WPF
                         BlockInsert(block, x, y);
                     }
                 },
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.BlockDeleteCommand = new NativeCommand(
-                (parameter) =>
+                (p) =>
                 {
-                    XBlock block = parameter as XBlock;
+                    XBlock block = p as XBlock;
                     if (block != null)
                     {
                         _model.Blocks.Remove(block);
                     }
                 },
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.TemplateImportCommand = new NativeCommand(
-                (parameter) => this.TemplateImport(),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.TemplateImport(),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.TemplateImportCodeCommand = new NativeCommand(
-                (parameter) => this.TemplatesImportFromCode(),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.TemplatesImportFromCode(),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.TemplateExportCommand = new NativeCommand(
-                (parameter) => this.TemplateExport(),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.TemplateExport(),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.ApplyTemplateCommand = new NativeCommand(
-                (parameter) =>
+                (p) =>
                 {
-                    ITemplate template = parameter as ITemplate;
+                    ITemplate template = p as ITemplate;
                     if (template != null)
                     {
                         _model.Page.Template = template;
@@ -622,39 +622,39 @@ namespace Logic.WPF
                         TemplateInvalidate();
                     }
                 },
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.SimulationStartCommand = new NativeCommand(
-                (parameter) => this.SimulationStart(),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.SimulationStart(),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.SimulationStopCommand = new NativeCommand(
-                (parameter) => this.SimulationStop(),
-                (parameter) => IsSimulationRunning() ? true : false);
+                (p) => this.SimulationStop(),
+                (p) => IsSimulationRunning() ? true : false);
 
             _model.SimulationRestartCommand = new NativeCommand(
-                (parameter) => this.SimulationRestart(),
-                (parameter) => IsSimulationRunning() ? true : false);
+                (p) => this.SimulationRestart(),
+                (p) => IsSimulationRunning() ? true : false);
 
             _model.SimulationPauseCommand = new NativeCommand(
-                (parameter) => this.SimulationPause(),
-                (parameter) => IsSimulationRunning() ? true : false);
+                (p) => this.SimulationPause(),
+                (p) => IsSimulationRunning() ? true : false);
 
             _model.SimulationTickCommand = new NativeCommand(
-                (parameter) => this.SimulationTick(_model.OverlayLayer.Simulations),
-                (parameter) => IsSimulationRunning() && _model.IsSimulationPaused ? true : false);
+                (p) => this.SimulationTick(_model.OverlayLayer.Simulations),
+                (p) => IsSimulationRunning() && _model.IsSimulationPaused ? true : false);
 
             _model.SimulationCreateGraphCommand = new NativeCommand(
-                (parameter) => this.Graph(),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.Graph(),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.SimulationImportCodeCommand = new NativeCommand(
-                (parameter) => this.SimulationImportFromCode(),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.SimulationImportFromCode(),
+                (p) => IsSimulationRunning() ? false : true);
 
             _model.SimulationOptionsCommand = new NativeCommand(
-                (parameter) => this.SimulationOptions(),
-                (parameter) => IsSimulationRunning() ? false : true);
+                (p) => this.SimulationOptions(),
+                (p) => IsSimulationRunning() ? false : true);
         }
 
         private void InitializeMEF()
