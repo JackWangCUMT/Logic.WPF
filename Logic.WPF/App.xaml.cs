@@ -51,40 +51,18 @@ namespace Logic.WPF
         {
             base.OnStartup(e);
 
-            // serializer
-            _serializer = new Json();
-
-            // defaults
-            if (System.IO.File.Exists(_defaultsPath))
-            {
-                var defaults = Open<Defaults>(_defaultsPath);
-                if (defaults != null)
-                {
-                    _defaults = defaults;
-                }
-            }
-
-            if (_defaults == null)
-            {
-                _defaults = new Defaults();
-                _defaults.Reset();
-            }
-
-            // log
-            if (_defaults.EnableLog && !string.IsNullOrEmpty(_defaults.LogPath))
-            {
-                _log = new TraceLog();
-                _log.Initialize(_defaults.LogPath);
-
-                _serializer.Log = _log;
-            }
-
-            // simulation factory
-            _simulationFactory = new BoolSimulationFactory();
-
             // initialize main view
             try
             {
+                // serializer
+                _serializer = new Json();
+
+                InitializeDefaults();
+                InitializeLog();
+
+                // simulation factory
+                _simulationFactory = new BoolSimulationFactory();
+
                 _view = new MainView();
 
                 _view.zoom.InvalidateChild = (zoom) =>
@@ -98,10 +76,10 @@ namespace Logic.WPF
                 _view.status.DataContext = _log;
 
                 InitializeModel();
-                InitializeView();
-                InitializeBlocks();
                 InitializeMEF();
-                InitializeProject();
+                InitializeView();
+
+                ProjectNew();
 
                 _view.DataContext = _model;
                 _view.Show();
@@ -116,7 +94,7 @@ namespace Logic.WPF
                         ex.StackTrace);
                 }
             }
-        } 
+        }
 
         #endregion
 
@@ -143,6 +121,35 @@ namespace Logic.WPF
 
         #region Initialize
 
+        private void InitializeDefaults()
+        {
+            if (System.IO.File.Exists(_defaultsPath))
+            {
+                var defaults = Open<Defaults>(_defaultsPath);
+                if (defaults != null)
+                {
+                    _defaults = defaults;
+                }
+            }
+
+            if (_defaults == null)
+            {
+                _defaults = new Defaults();
+                _defaults.Reset();
+            }
+        } 
+
+        private void InitializeLog()
+        {
+            if (_defaults.EnableLog && !string.IsNullOrEmpty(_defaults.LogPath))
+            {
+                _log = new TraceLog();
+                _log.Initialize(_defaults.LogPath);
+
+                _serializer.Log = _log;
+            }
+        }
+
         private void InitializeModel()
         {
             _model = new MainViewModel();
@@ -157,6 +164,108 @@ namespace Logic.WPF
 
             _model.Tool = new ToolMenuModel();
 
+            // view
+            _model.GridView = new ViewViewModel();
+            _model.TableView = new ViewViewModel();
+            _model.FrameView = new ViewViewModel();
+
+            // layers
+            _model.ShapeLayer = new CanvasViewModel()
+            {
+                Shapes = new ObservableCollection<IShape>(),
+                Hidden = new HashSet<IShape>(),
+                EnableSnap = _defaults.EnableSnap,
+                SnapSize = _defaults.SnapSize
+            };
+            _model.BlockLayer = new CanvasViewModel()
+            {
+                Shapes = new ObservableCollection<IShape>(),
+                Hidden = new HashSet<IShape>(),
+                EnableSnap = _defaults.EnableSnap,
+                SnapSize = _defaults.SnapSize
+            };
+            _model.WireLayer = new CanvasViewModel()
+            {
+                Shapes = new ObservableCollection<IShape>(),
+                Hidden = new HashSet<IShape>(),
+                EnableSnap = _defaults.EnableSnap,
+                SnapSize = _defaults.SnapSize
+            };
+            _model.PinLayer = new CanvasViewModel()
+            {
+                Shapes = new ObservableCollection<IShape>(),
+                Hidden = new HashSet<IShape>(),
+                EnableSnap = _defaults.EnableSnap,
+                SnapSize = _defaults.SnapSize
+            };
+            _model.EditorLayer = new CanvasViewModel()
+            {
+                Shapes = new ObservableCollection<IShape>(),
+                Hidden = new HashSet<IShape>(),
+                EnableSnap = _defaults.EnableSnap,
+                SnapSize = _defaults.SnapSize
+            };
+            _model.OverlayLayer = new CanvasViewModel()
+            {
+                Shapes = new ObservableCollection<IShape>(),
+                Hidden = new HashSet<IShape>(),
+                EnableSnap = _defaults.EnableSnap,
+                SnapSize = _defaults.SnapSize
+            };
+
+            // log
+            _model.GridView.Log = _log;
+            _model.TableView.Log = _log;
+            _model.FrameView.Log = _log;
+
+            _model.ShapeLayer.Log = _log;
+            _model.BlockLayer.Log = _log;
+            _model.WireLayer.Log = _log;
+            _model.PinLayer.Log = _log;
+            _model.EditorLayer.Log = _log;
+            _model.OverlayLayer.Log = _log;
+
+            // editor
+            _model.EditorLayer.Layers = _model;
+            _model.EditorLayer.GetFilePath = this.GetFilePath;
+
+            // overlay
+            _model.OverlayLayer.IsOverlay = true;
+
+            // serializer
+            _model.Serializer = _serializer;
+
+            // renderer
+            IRenderer renderer = new NativeRenderer()
+            {
+                Zoom = 1.0,
+                InvertSize = _defaults.InvertSize,
+                PinRadius = _defaults.PinRadius,
+                HitTreshold = _defaults.HitTreshold,
+                ShortenWire = _defaults.ShortenWire,
+                ShortenSize = _defaults.ShortenSize
+            };
+
+            _model.Renderer = renderer;
+
+            _model.ShapeLayer.Renderer = renderer;
+            _model.BlockLayer.Renderer = renderer;
+            _model.WireLayer.Renderer = renderer;
+            _model.PinLayer.Renderer = renderer;
+            _model.EditorLayer.Renderer = renderer;
+            _model.OverlayLayer.Renderer = renderer;
+
+            // clipboard
+            _model.Clipboard = new NativeTextClipboard();
+
+            // history
+            _model.History = new History<IPage>(new Bson() { Log = _log });
+
+            // tool
+            _model.Tool = _model.Tool;
+            _model.Tool.CurrentTool = ToolMenuModel.Tool.Selection;
+
+            // commands
             _model.PageAddCommand = new NativeCommand(
                 (parameter) => this.PageAdd(parameter),
                 (parameter) => IsSimulationRunning() ? false : true);
@@ -441,7 +550,6 @@ namespace Logic.WPF
                         _model.WireLayer.InvalidateVisual();
                     },
                 (parameter) => IsSimulationRunning() ? false : true);
-            
 
             _model.EditCancelCommand = new NativeCommand(
                 (parameter) => _model.EditorLayer.MouseCancel(),
@@ -589,109 +697,47 @@ namespace Logic.WPF
                 (parameter) => IsSimulationRunning() ? false : true);
         }
 
+        private void InitializeMEF()
+        {
+            try
+            {
+                var builder = new ConventionBuilder();
+                builder.ForTypesDerivedFrom<XBlock>().Export<XBlock>();
+                builder.ForTypesDerivedFrom<ITemplate>().Export<ITemplate>();
+                builder.ForTypesDerivedFrom<BoolSimulation>()
+                    .Export<BoolSimulation>()
+                    .SelectConstructor(selector => selector.FirstOrDefault());
+
+                var configuration = new ContainerConfiguration()
+                        .WithAssembly(Assembly.GetExecutingAssembly())
+                        .WithDefaultConventions(builder);
+
+                using (var container = configuration.CreateContainer())
+                {
+                    var blocks = container.GetExports<XBlock>();
+                    _model.Blocks = new ObservableCollection<XBlock>(blocks);
+
+                    var templates = container.GetExports<ITemplate>();
+                    _model.Templates = new ObservableCollection<ITemplate>(templates);
+
+                    var simulations = container.GetExports<BoolSimulation>();
+                    _simulationFactory.Register(simulations);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (_log != null)
+                {
+                    _log.LogError("{0}{1}{2}",
+                        ex.Message,
+                        Environment.NewLine,
+                        ex.StackTrace);
+                }
+            }
+        }
+
         private void InitializeView()
         {
-            // view
-            _model.GridView = new ViewViewModel();
-            _model.TableView = new ViewViewModel();
-            _model.FrameView = new ViewViewModel();
-
-            // layers
-            _model.ShapeLayer = new CanvasViewModel()
-            {
-                Shapes = new ObservableCollection<IShape>(),
-                Hidden = new HashSet<IShape>(),
-                EnableSnap = _defaults.EnableSnap,
-                SnapSize = _defaults.SnapSize
-            };
-            _model.BlockLayer = new CanvasViewModel()
-            {
-                Shapes = new ObservableCollection<IShape>(),
-                Hidden = new HashSet<IShape>(),
-                EnableSnap = _defaults.EnableSnap,
-                SnapSize = _defaults.SnapSize
-            };
-            _model.WireLayer = new CanvasViewModel()
-            {
-                Shapes = new ObservableCollection<IShape>(),
-                Hidden = new HashSet<IShape>(),
-                EnableSnap = _defaults.EnableSnap,
-                SnapSize = _defaults.SnapSize
-            };
-            _model.PinLayer = new CanvasViewModel()
-            {
-                Shapes = new ObservableCollection<IShape>(),
-                Hidden = new HashSet<IShape>(),
-                EnableSnap = _defaults.EnableSnap,
-                SnapSize = _defaults.SnapSize
-            };
-            _model.EditorLayer = new CanvasViewModel()
-            {
-                Shapes = new ObservableCollection<IShape>(),
-                Hidden = new HashSet<IShape>(),
-                EnableSnap = _defaults.EnableSnap,
-                SnapSize = _defaults.SnapSize
-            };
-            _model.OverlayLayer = new CanvasViewModel()
-            {
-                Shapes = new ObservableCollection<IShape>(),
-                Hidden = new HashSet<IShape>(),
-                EnableSnap = _defaults.EnableSnap,
-                SnapSize = _defaults.SnapSize
-            };
-
-            // log
-            _model.GridView.Log = _log;
-            _model.TableView.Log = _log;
-            _model.FrameView.Log = _log;
-
-            _model.ShapeLayer.Log = _log;
-            _model.BlockLayer.Log = _log;
-            _model.WireLayer.Log = _log;
-            _model.PinLayer.Log = _log;
-            _model.EditorLayer.Log = _log;
-            _model.OverlayLayer.Log = _log;
-
-            // editor
-            _model.EditorLayer.Layers = _model;
-            _model.EditorLayer.GetFilePath = this.GetFilePath;
-
-            // overlay
-            _model.OverlayLayer.IsOverlay = true;
-
-            // serializer
-            _model.Serializer = _serializer;
-
-            // renderer
-            IRenderer renderer = new NativeRenderer()
-            {
-                Zoom = 1.0,
-                InvertSize = _defaults.InvertSize,
-                PinRadius = _defaults.PinRadius,
-                HitTreshold = _defaults.HitTreshold,
-                ShortenWire = _defaults.ShortenWire,
-                ShortenSize = _defaults.ShortenSize
-            };
-
-            _model.Renderer = renderer;
-
-            _model.ShapeLayer.Renderer = renderer;
-            _model.BlockLayer.Renderer = renderer;
-            _model.WireLayer.Renderer = renderer;
-            _model.PinLayer.Renderer = renderer;
-            _model.EditorLayer.Renderer = renderer;
-            _model.OverlayLayer.Renderer = renderer;
-
-            // clipboard
-            _model.Clipboard = new NativeTextClipboard();
-
-            // history
-            _model.History = new History<IPage>(new Bson() { Log = _log });
-
-            // tool
-            _model.Tool = _model.Tool;
-            _model.Tool.CurrentTool = ToolMenuModel.Tool.Selection;
-
             // drag & drop
             _view.pageView.AllowDrop = true;
 
@@ -819,10 +865,8 @@ namespace Logic.WPF
 
                 _isContextMenu = false;
             };
-        }
 
-        private void InitializeBlocks()
-        {
+            // blocks
             _view.blocks.PreviewMouseLeftButtonDown += (s, e) =>
             {
                 if (IsSimulationRunning())
@@ -861,59 +905,6 @@ namespace Logic.WPF
                     }
                 }
             };
-        }
-
-        private void InitializeMEF()
-        {
-            try
-            {
-                var builder = new ConventionBuilder();
-                builder.ForTypesDerivedFrom<XBlock>().Export<XBlock>();
-                builder.ForTypesDerivedFrom<ITemplate>().Export<ITemplate>();
-                builder.ForTypesDerivedFrom<BoolSimulation>()
-                    .Export<BoolSimulation>()
-                    .SelectConstructor(selector => selector.FirstOrDefault());
-
-                var configuration = new ContainerConfiguration()
-                        .WithAssembly(Assembly.GetExecutingAssembly())
-                        .WithDefaultConventions(builder);
-
-                using (var container = configuration.CreateContainer())
-                {
-                    var blocks = container.GetExports<XBlock>();
-                    _model.Blocks = new ObservableCollection<XBlock>(blocks);
-
-                    var templates = container.GetExports<ITemplate>();
-                    _model.Templates = new ObservableCollection<ITemplate>(templates);
-
-                    var simulations = container.GetExports<BoolSimulation>();
-                    _simulationFactory.Register(simulations);
-                }
-            }
-            catch (Exception ex)
-            {
-                if (_log != null)
-                {
-                    _log.LogError("{0}{1}{2}",
-                        ex.Message,
-                        Environment.NewLine,
-                        ex.StackTrace);
-                }
-            }
-        }
-
-        private void InitializeProject()
-        {
-            _pageToPaste = null;
-            _documentToPaste = null;
-
-            _model.Project = ProjectNew();
-            _model.Project.Documents.Add(_defaults.EmptyDocument());
-            _model.Project.Documents[0].Pages.Add(_defaults.EmptyTitlePage());
-
-            ProjectUpdateStyles(_model.Project);
-            ProjectSetDefaultTemplate(_model.Project);
-            ProjectLoadFirstPage(_model.Project);
         }
 
         #endregion
@@ -974,7 +965,7 @@ namespace Logic.WPF
         {
             _model.Renderer.Dispose();
 
-            InitializeProject();
+            ProjectNew();
 
             _model.FileName = null;
             _model.FilePath = null;
@@ -1110,7 +1101,7 @@ namespace Logic.WPF
 
         #region Project
 
-        private IProject ProjectNew()
+        private void ProjectNew()
         {
             // project
             var project = _defaults.EmptyProject();
@@ -1205,7 +1196,16 @@ namespace Logic.WPF
                 project.Templates.Add(_model.Clone(template));
             }
 
-            return project;
+            _model.Project = project;
+            _model.Project.Documents.Add(_defaults.EmptyDocument());
+            _model.Project.Documents[0].Pages.Add(_defaults.EmptyTitlePage());
+
+            _pageToPaste = null;
+            _documentToPaste = null;
+
+            ProjectUpdateStyles(_model.Project);
+            ProjectSetDefaultTemplate(_model.Project);
+            ProjectLoadFirstPage(_model.Project);
         }
 
         private void ProjectUpdateStyles(IProject project)
