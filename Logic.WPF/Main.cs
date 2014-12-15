@@ -95,12 +95,12 @@ namespace Logic.WPF
 
         private bool IsEditMode()
         {
-            return IsSimulationRunning() ? false : true;
+            return _timer == null;
         }
 
         private bool IsSimulationMode()
         {
-            return IsSimulationRunning() ? true : false;
+            return _timer != null;
         }
 
         #endregion
@@ -340,7 +340,7 @@ namespace Logic.WPF
             _model.FileExitCommand = ToCommand(
                 (p) =>
                 {
-                    if (IsSimulationRunning())
+                    if (IsSimulationMode())
                     {
                         this.SimulationStop();
                     }
@@ -613,7 +613,7 @@ namespace Logic.WPF
 
             _model.SimulationTickCommand = ToCommand(
                 (p) => this.SimulationTick(_model.OverlayLayer.Simulations),
-                (p) => IsSimulationRunning() && _model.IsSimulationPaused);
+                (p) => IsSimulationMode() && _model.IsSimulationPaused);
 
             _model.SimulationCreateGraphCommand = ToCommand(
                 (p) => this.Graph(),
@@ -688,7 +688,7 @@ namespace Logic.WPF
 
             _view.pageView.DragEnter += (s, e) =>
             {
-                if (IsSimulationRunning())
+                if (IsSimulationMode())
                 {
                     return;
                 }
@@ -701,7 +701,7 @@ namespace Logic.WPF
 
             _view.pageView.Drop += (s, e) =>
             {
-                if (IsSimulationRunning())
+                if (IsSimulationMode())
                 {
                     return;
                 }
@@ -774,7 +774,7 @@ namespace Logic.WPF
                 else
                 {
                     if (_model.Renderer.Selected == null
-                        && !IsSimulationRunning())
+                        && !IsSimulationMode())
                     {
                         Point2 point = new Point2(
                             _model.EditorLayer.RightX,
@@ -814,7 +814,7 @@ namespace Logic.WPF
             // blocks
             _view.blocks.PreviewMouseLeftButtonDown += (s, e) =>
             {
-                if (IsSimulationRunning())
+                if (IsSimulationMode())
                 {
                     return;
                 }
@@ -824,7 +824,7 @@ namespace Logic.WPF
 
             _view.blocks.PreviewMouseMove += (s, e) =>
             {
-                if (IsSimulationRunning())
+                if (IsSimulationMode())
                 {
                     return;
                 }
@@ -1979,11 +1979,6 @@ namespace Logic.WPF
 
         #region Simulation
 
-        private bool IsSimulationRunning()
-        {
-            return _timer != null;
-        }
-
         private void SimulationStart(IDictionary<XBlock, BoolSimulation> simulations)
         {
             _clock = new Clock(cycle: 0L, resolution: 100);
@@ -2010,7 +2005,7 @@ namespace Logic.WPF
 
                         _view.Dispatcher.Invoke(() =>
                         {
-                            if (IsSimulationRunning())
+                            if (IsSimulationMode())
                             {
                                 SimulationStop();
                             }
@@ -2024,7 +2019,7 @@ namespace Logic.WPF
         {
             try
             {
-                if (IsSimulationRunning())
+                if (IsSimulationMode())
                 {
                     return;
                 }
@@ -2060,7 +2055,7 @@ namespace Logic.WPF
         {
             try
             {
-                if (IsSimulationRunning())
+                if (IsSimulationMode())
                 {
                     _model.IsSimulationPaused = !_model.IsSimulationPaused;
                 }
@@ -2078,7 +2073,7 @@ namespace Logic.WPF
         {
             try
             {
-                if (IsSimulationRunning())
+                if (IsSimulationMode())
                 {
                     _simulationFactory.Run(simulations, _clock);
                     _clock.Tick();
@@ -2109,7 +2104,7 @@ namespace Logic.WPF
             {
                 OverlayReset();
 
-                if (IsSimulationRunning())
+                if (IsSimulationMode())
                 {
                     _timer.Dispose();
                     _timer = null;
