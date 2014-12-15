@@ -188,14 +188,6 @@ namespace Logic.WPF
                 SnapSize = _defaults.SnapSize
             };
 
-            // log
-            _model.ShapeLayer.Log = _log;
-            _model.BlockLayer.Log = _log;
-            _model.WireLayer.Log = _log;
-            _model.PinLayer.Log = _log;
-            _model.EditorLayer.Log = _log;
-            _model.OverlayLayer.Log = _log;
-
             // editor
             _model.EditorLayer.Layers = _model;
             _model.EditorLayer.GetFilePath = this.GetFilePath;

@@ -42,8 +42,6 @@ namespace Logic.ViewModels
 
         public Func<string> GetFilePath { get; set; }
 
-        public ILog Log { get; set; }
-
         public IList<IShape> Shapes { get; set; }
         public ICollection<IShape> Hidden { get; set; }
         public IRenderer Renderer { get; set; }
@@ -315,10 +313,7 @@ namespace Logic.ViewModels
                 sw.Stop();
                 if (sw.Elapsed.TotalMilliseconds > (1000.0 / 60.0))
                 {
-                    if (Log != null)
-                    {
-                        Log.LogWarning("Canvas OnRender: " + sw.Elapsed.TotalMilliseconds + "ms");
-                    }
+                    Debug.WriteLine("Canvas OnRender: " + sw.Elapsed.TotalMilliseconds + "ms");
                 }
             }
         }
