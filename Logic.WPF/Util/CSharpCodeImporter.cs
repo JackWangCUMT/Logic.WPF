@@ -17,7 +17,7 @@ namespace Logic.Util
 {
     public class CSharpCodeImporter
     {
-        public static PortableExecutableReference[] GetReferences()
+        private static PortableExecutableReference[] GetReferences()
         {
             var assemblyPath = System.IO.Path.GetDirectoryName(typeof(object).Assembly.Location);
             var executingPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
