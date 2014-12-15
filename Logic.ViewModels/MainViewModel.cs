@@ -1100,50 +1100,141 @@ namespace Logic.ViewModels
 
         public void Snapshot()
         {
-            History.Snapshot(ToPageWithoutTemplate(Page));
+            try
+            {
+                History.Snapshot(ToPageWithoutTemplate(Page));
+            }
+            catch (Exception ex)
+            {
+                if (Log != null)
+                {
+                    Log.LogError("{0}{1}{2}",
+                        ex.Message,
+                        Environment.NewLine,
+                        ex.StackTrace);
+                }
+            }
         }
 
         public void Reset()
         {
-            History.Reset();
+            try
+            {
+                History.Reset();
+            }
+            catch (Exception ex)
+            {
+                if (Log != null)
+                {
+                    Log.LogError("{0}{1}{2}",
+                        ex.Message,
+                        Environment.NewLine,
+                        ex.StackTrace);
+                }
+            }
         }
 
         public void Hold()
         {
-            History.Hold(ToPageWithoutTemplate(Page));
+            try
+            {
+                History.Hold(ToPageWithoutTemplate(Page));
+            }
+            catch (Exception ex)
+            {
+                if (Log != null)
+                {
+                    Log.LogError("{0}{1}{2}",
+                        ex.Message,
+                        Environment.NewLine,
+                        ex.StackTrace);
+                }
+            }
         }
 
         public void Commit()
         {
-            History.Commit();
+            try
+            {
+                History.Commit();
+            }
+            catch (Exception ex)
+            {
+                if (Log != null)
+                {
+                    Log.LogError("{0}{1}{2}",
+                        ex.Message,
+                        Environment.NewLine,
+                        ex.StackTrace);
+                }
+            }
         }
 
         public void Release()
         {
-            History.Release();
+            try
+            {
+                History.Release();
+            }
+            catch (Exception ex)
+            {
+                if (Log != null)
+                {
+                    Log.LogError("{0}{1}{2}",
+                        ex.Message,
+                        Environment.NewLine,
+                        ex.StackTrace);
+                }
+            }
         }
 
         public void Undo()
         {
-            var page = History.Undo(ToPageWithoutTemplate(Page));
-            if (page != null)
+            try
             {
-                SelectionReset();
-                Load(page);
-                Update(page);
-                Invalidate();
+                var page = History.Undo(ToPageWithoutTemplate(Page));
+                if (page != null)
+                {
+                    SelectionReset();
+                    Load(page);
+                    Update(page);
+                    Invalidate();
+                }
+            }
+            catch (Exception ex)
+            {
+                if (Log != null)
+                {
+                    Log.LogError("{0}{1}{2}",
+                        ex.Message,
+                        Environment.NewLine,
+                        ex.StackTrace);
+                }
             }
         }
 
         public void Redo()
         {
-            var page = History.Redo(ToPageWithoutTemplate(Page));
-            if (page != null)
+            try
+            { 
+                var page = History.Redo(ToPageWithoutTemplate(Page));
+                if (page != null)
+                {
+                    SelectionReset();
+                    Load(page);
+                    Update(page);
+                    Invalidate();
+                }
+            }
+            catch (Exception ex)
             {
-                SelectionReset();
-                Load(page);
-                Update(page);
-                Invalidate();
+                if (Log != null)
+                {
+                    Log.LogError("{0}{1}{2}",
+                        ex.Message,
+                        Environment.NewLine,
+                        ex.StackTrace);
+                }
             }
         }
 

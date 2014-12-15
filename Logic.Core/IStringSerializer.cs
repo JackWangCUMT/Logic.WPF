@@ -7,7 +7,6 @@ namespace Logic.Core
 {
     public interface IStringSerializer
     {
-        ILog Log { get; set; }
         T Deserialize<T>(string str) where T : class;
         string Serialize<T>(T obj) where T : class;
     }

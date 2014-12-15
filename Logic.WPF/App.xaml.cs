@@ -120,8 +120,6 @@ namespace Logic.WPF
             {
                 _log = new TraceLog();
                 _log.Initialize(_defaults.LogPath);
-
-                _serializer.Log = _log;
             }
         } 
 
@@ -225,7 +223,6 @@ namespace Logic.WPF
             _model.History = new History<IPage>(new Bson());
 
             // tool
-            _model.Tool = _model.Tool;
             _model.Tool.CurrentTool = ToolMenuModel.Tool.Selection;
 
             // commands
@@ -1367,34 +1364,47 @@ namespace Logic.WPF
         {
             if (parameter is IDocument && _documentToPaste != null)
             {
-                IDocument document = parameter as IDocument;
-
-                document.Name = _documentToPaste.Name;
-                document.Pages.Clear();
-
-                bool haveFirstPage = false;
-
-                foreach (var original in _documentToPaste.Pages)
+                try
                 {
-                    ITemplate template = original.Template;
-                    IPage copy = _model.ToPageWithoutTemplate(original);
-                    string json = _serializer.Serialize(copy);
-                    IPage page = _serializer.Deserialize<XPage>(json);
+                    IDocument document = parameter as IDocument;
 
-                    page.Template = template;
+                    document.Name = _documentToPaste.Name;
+                    document.Pages.Clear();
 
-                    document.Pages.Add(page);
+                    bool haveFirstPage = false;
+
+                    foreach (var original in _documentToPaste.Pages)
+                    {
+                        ITemplate template = original.Template;
+                        IPage copy = _model.ToPageWithoutTemplate(original);
+                        string json = _serializer.Serialize(copy);
+                        IPage page = _serializer.Deserialize<XPage>(json);
+
+                        page.Template = template;
+
+                        document.Pages.Add(page);
+
+                        if (!haveFirstPage)
+                        {
+                            haveFirstPage = true;
+                            PageLoad(page, true);
+                        }
+                    }
 
                     if (!haveFirstPage)
                     {
-                        haveFirstPage = true;
-                        PageLoad(page, true);
+                        PageEmptyView();
                     }
                 }
-
-                if (!haveFirstPage)
+                catch (Exception ex)
                 {
-                    PageEmptyView();
+                    if (_log != null)
+                    {
+                        _log.LogError("{0}{1}{2}",
+                            ex.Message,
+                            Environment.NewLine,
+                            ex.StackTrace);
+                    }
                 }
             }
         }
@@ -1533,23 +1543,36 @@ namespace Logic.WPF
         {
             if (parameter is IPage && _pageToPaste != null)
             {
-                IPage destination = parameter as IPage;
-                ITemplate template = _pageToPaste.Template;
-                IPage copy = _model.ToPageWithoutTemplate(_pageToPaste);
-                string json = _serializer.Serialize(copy);
-                IPage page = _serializer.Deserialize<XPage>(json);
+                try
+                {
+                    IPage destination = parameter as IPage;
+                    ITemplate template = _pageToPaste.Template;
+                    IPage copy = _model.ToPageWithoutTemplate(_pageToPaste);
+                    string json = _serializer.Serialize(copy);
+                    IPage page = _serializer.Deserialize<XPage>(json);
 
-                page.Template = template;
+                    page.Template = template;
 
-                IDocument document = _model
-                    .Project
-                    .Documents
-                    .Where(d => d.Pages.Contains(destination))
-                    .First();
-                int index = document.Pages.IndexOf(destination);
-                document.Pages[index] = page;
+                    IDocument document = _model
+                        .Project
+                        .Documents
+                        .Where(d => d.Pages.Contains(destination))
+                        .First();
+                    int index = document.Pages.IndexOf(destination);
+                    document.Pages[index] = page;
 
-                PageLoad(page, true);
+                    PageLoad(page, true);
+                }
+                catch (Exception ex)
+                {
+                    if (_log != null)
+                    {
+                        _log.LogError("{0}{1}{2}",
+                            ex.Message,
+                            Environment.NewLine,
+                            ex.StackTrace);
+                    }
+                }
             }
         }
 

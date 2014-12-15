@@ -20,12 +20,12 @@ namespace Logic.Util
 
         public void Reset()
         {
-            if (_undos.Count > 0)
+            if (_undos != null && _undos.Count > 0)
             {
                 _undos.Clear();
             }
 
-            if (_redos.Count > 0)
+            if (_redos != null && _redos.Count > 0)
             {
                 _redos.Clear();
             }
@@ -93,12 +93,12 @@ namespace Logic.Util
 
         public bool CanUndo()
         {
-            return _undos.Count > 0;
+            return _undos != null && _undos.Count > 0;
         }
 
         public bool CanRedo()
         {
-            return _redos.Count > 0;
+            return _redos != null && _redos.Count > 0;
         }
     }
 }
