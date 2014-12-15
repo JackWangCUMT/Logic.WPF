@@ -51,38 +51,13 @@ namespace Logic.WPF
         {
             base.OnStartup(e);
 
-            // initialize main view
             try
             {
-                // serializer
-                _serializer = new Json();
-
                 InitializeDefaults();
-                InitializeLog();
-
-                // simulation factory
-                _simulationFactory = new BoolSimulationFactory();
-
-                _view = new MainView();
-
-                _view.zoom.InvalidateChild = (zoom) =>
-                {
-                    _model.Renderer.Zoom = zoom;
-
-                    TemplateInvalidate();
-                    _model.Invalidate();
-                };
-
-                _view.status.DataContext = _log;
-
                 InitializeModel();
                 InitializeMEF();
                 InitializeView();
-
                 ProjectNew();
-
-                _view.DataContext = _model;
-                _view.Show();
             }
             catch (Exception ex)
             {
@@ -123,6 +98,9 @@ namespace Logic.WPF
 
         private void InitializeDefaults()
         {
+            _serializer = new Json();
+            _simulationFactory = new BoolSimulationFactory();
+
             if (System.IO.File.Exists(_defaultsPath))
             {
                 var defaults = Open<Defaults>(_defaultsPath);
@@ -137,10 +115,7 @@ namespace Logic.WPF
                 _defaults = new Defaults();
                 _defaults.Reset();
             }
-        } 
 
-        private void InitializeLog()
-        {
             if (_defaults.EnableLog && !string.IsNullOrEmpty(_defaults.LogPath))
             {
                 _log = new TraceLog();
@@ -148,7 +123,7 @@ namespace Logic.WPF
 
                 _serializer.Log = _log;
             }
-        }
+        } 
 
         private void InitializeModel()
         {
@@ -738,6 +713,20 @@ namespace Logic.WPF
 
         private void InitializeView()
         {
+            _view = new MainView();
+
+            // status
+            _view.status.DataContext = _log;
+
+            // zoom
+            _view.zoom.InvalidateChild = (zoom) =>
+            {
+                _model.Renderer.Zoom = zoom;
+
+                TemplateInvalidate();
+                _model.Invalidate();
+            };
+
             // drag & drop
             _view.pageView.AllowDrop = true;
 
@@ -905,6 +894,10 @@ namespace Logic.WPF
                     }
                 }
             };
+
+            // show
+            _view.DataContext = _model;
+            _view.Show();
         }
 
         #endregion
