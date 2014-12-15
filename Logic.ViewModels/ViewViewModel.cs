@@ -13,7 +13,6 @@ namespace Logic.ViewModels
     {
         #region Properties
 
-        public ILog Log { get; set; }
         public IRenderer Renderer { get; set; }
         public IContainer Container { get; set; }
 
@@ -54,10 +53,7 @@ namespace Logic.ViewModels
                 sw.Stop();
                 if (sw.Elapsed.TotalMilliseconds > (1000.0 / 60.0))
                 {
-                    if (Log != null)
-                    {
-                        Log.LogWarning("View OnRender: " + sw.Elapsed.TotalMilliseconds + "ms");
-                    }
+                    Debug.WriteLine("View OnRender: " + sw.Elapsed.TotalMilliseconds + "ms");
                 }
             }
         }

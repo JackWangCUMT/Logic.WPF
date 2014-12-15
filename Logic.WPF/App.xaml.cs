@@ -189,10 +189,6 @@ namespace Logic.WPF
             };
 
             // log
-            _model.GridView.Log = _log;
-            _model.TableView.Log = _log;
-            _model.FrameView.Log = _log;
-
             _model.ShapeLayer.Log = _log;
             _model.BlockLayer.Log = _log;
             _model.WireLayer.Log = _log;
