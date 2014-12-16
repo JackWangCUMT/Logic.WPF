@@ -6,6 +6,7 @@ using Logic.Simulation;
 using Logic.Util;
 using Logic.ViewModels;
 using Logic.WPF.Views;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -760,7 +761,7 @@ namespace Logic.WPF
 
         private void FileOpen()
         {
-            var dlg = new Microsoft.Win32.OpenFileDialog()
+            var dlg = new OpenFileDialog()
             {
                 Filter = "Logic Project (*.lproject)|*.lproject"
             };
@@ -808,7 +809,7 @@ namespace Logic.WPF
             string fileName = string.IsNullOrEmpty(_model.FilePath) ?
                 "logic" : System.IO.Path.GetFileName(_model.FilePath);
 
-            var dlg = new Microsoft.Win32.SaveFileDialog()
+            var dlg = new SaveFileDialog()
             {
                 Filter = "Logic Project (*.lproject)|*.lproject",
                 FileName = fileName
@@ -827,7 +828,7 @@ namespace Logic.WPF
             string fileName = string.IsNullOrEmpty(_model.FilePath) ?
                 "logic" : System.IO.Path.GetFileNameWithoutExtension(_model.FilePath);
 
-            var dlg = new Microsoft.Win32.SaveFileDialog()
+            var dlg = new SaveFileDialog()
             {
                 Filter = "PDF (*.pdf)|*.pdf",
                 FileName = fileName
@@ -1419,7 +1420,7 @@ namespace Logic.WPF
 
         private void BlockImport()
         {
-            var dlg = new Microsoft.Win32.OpenFileDialog()
+            var dlg = new OpenFileDialog()
             {
                 Filter = "Logic Block (*.lblock)|*.lblock"
             };
@@ -1450,7 +1451,7 @@ namespace Logic.WPF
                 a[0] = char.ToUpper(a[0]);
                 string className = new string(a);
 
-                var dlg = new Microsoft.Win32.SaveFileDialog()
+                var dlg = new SaveFileDialog()
                 {
                     Filter = "C# (*.cs)|*.cs",
                     FileName = className
@@ -1486,7 +1487,7 @@ namespace Logic.WPF
 
         private void BlocksImportFromCode()
         {
-            var dlg = new Microsoft.Win32.OpenFileDialog()
+            var dlg = new OpenFileDialog()
             {
                 Filter = "CSharp (*.cs)|*.cs",
                 Multiselect = true
@@ -1543,7 +1544,7 @@ namespace Logic.WPF
             var block = _model.EditorLayer.BlockCreateFromSelected("BLOCK");
             if (block != null)
             {
-                var dlg = new Microsoft.Win32.SaveFileDialog()
+                var dlg = new SaveFileDialog()
                 {
                     Filter = "Logic Block (*.lblock)|*.lblock",
                     FileName = "block"
@@ -1564,7 +1565,7 @@ namespace Logic.WPF
 
         public string GetFilePath()
         {
-            var dlg = new Microsoft.Win32.OpenFileDialog()
+            var dlg = new OpenFileDialog()
             {
                 Filter = "All Files (*.*)|*.*"
             };
@@ -1618,7 +1619,7 @@ namespace Logic.WPF
 
         private void TemplateImport()
         {
-            var dlg = new Microsoft.Win32.OpenFileDialog()
+            var dlg = new OpenFileDialog()
             {
                 Filter = "Logic Template (*.ltemplate)|*.ltemplate"
             };
@@ -1635,7 +1636,7 @@ namespace Logic.WPF
 
         private void TemplatesImportFromCode()
         {
-            var dlg = new Microsoft.Win32.OpenFileDialog()
+            var dlg = new OpenFileDialog()
             {
                 Filter = "CSharp (*.cs)|*.cs",
                 Multiselect = true
@@ -1689,7 +1690,7 @@ namespace Logic.WPF
 
         private void TemplateExport()
         {
-            var dlg = new Microsoft.Win32.SaveFileDialog()
+            var dlg = new SaveFileDialog()
             {
                 Filter = "Logic Template (*.ltemplate)|*.ltemplate",
                 FileName = _model.Page.Template.Name
@@ -1782,7 +1783,7 @@ namespace Logic.WPF
 
         private void GraphSave(PageGraphContext context)
         {
-            var dlg = new Microsoft.Win32.SaveFileDialog()
+            var dlg = new SaveFileDialog()
             {
                 Filter = "Graph (*.txt)|*.txt",
                 FileName = "graph"
@@ -1960,7 +1961,7 @@ namespace Logic.WPF
 
         private void SimulationImportFromCode()
         {
-            var dlg = new Microsoft.Win32.OpenFileDialog()
+            var dlg = new OpenFileDialog()
             {
                 Filter = "CSharp (*.cs)|*.cs",
                 Multiselect = true
