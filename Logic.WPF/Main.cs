@@ -23,19 +23,22 @@ namespace Logic.WPF
 {
     public class Main
     {
+        #region Properties
+
+        public bool IsContextMenuOpen { get; set; }
+
+        #endregion
+
         #region Fields
 
         private ILog _log = null;
         private Defaults _defaults = null;
         private string _defaultsPath = "Logic.WPF.lconfig";
         private MainViewModel _model = null;
-        private MainView _view = null;
         private IStringSerializer _serializer = null;
         private System.Threading.Timer _timer = null;
         private BoolSimulationFactory _simulationFactory = null;
         private Clock _clock = null;
-        private Point _dragStartPoint;
-        private bool _isContextMenu = false;
         private IPage _pageToPaste = null;
         private IDocument _documentToPaste = null;
 
@@ -93,12 +96,12 @@ namespace Logic.WPF
 
         #region Mode
 
-        private bool IsEditMode()
+        public bool IsEditMode()
         {
             return _timer == null;
         }
 
-        private bool IsSimulationMode()
+        public bool IsSimulationMode()
         {
             return _timer != null;
         }
@@ -344,7 +347,11 @@ namespace Logic.WPF
                     {
                         this.SimulationStop();
                     }
-                    _view.Close();
+
+                    for (int i = 0; i < Application.Current.Windows.Count; i++)
+                    {
+                        Application.Current.Windows[i].Close();
+                    }
                 },
                 (p) => true);
 
@@ -368,7 +375,7 @@ namespace Logic.WPF
                 (p) =>
                 {
                     _model.Paste();
-                    if (_isContextMenu && _model.Renderer.Selected != null)
+                    if (IsContextMenuOpen && _model.Renderer.Selected != null)
                     {
                         double minX = _model.Page.Template.Width;
                         double minY = _model.Page.Template.Height;
@@ -552,8 +559,8 @@ namespace Logic.WPF
                     XBlock block = p as XBlock;
                     if (block != null)
                     {
-                        double x = _isContextMenu ? _model.EditorLayer.RightX : 0.0;
-                        double y = _isContextMenu ? _model.EditorLayer.RightY : 0.0;
+                        double x = IsContextMenuOpen ? _model.EditorLayer.RightX : 0.0;
+                        double y = IsContextMenuOpen ? _model.EditorLayer.RightY : 0.0;
                         BlockInsert(block, x, y);
                     }
                 },
@@ -669,191 +676,9 @@ namespace Logic.WPF
 
         private void InitializeView()
         {
-            _view = new MainView();
-
-            // status
-            _view.status.DataContext = _log;
-
-            // zoom
-            _view.zoom.InvalidateChild = (zoom) =>
-            {
-                _model.Renderer.Zoom = zoom;
-
-                TemplateInvalidate();
-                _model.Invalidate();
-            };
-
-            // drag & drop
-            _view.pageView.AllowDrop = true;
-
-            _view.pageView.DragEnter += (s, e) =>
-            {
-                if (IsSimulationMode())
-                {
-                    return;
-                }
-
-                if (!e.Data.GetDataPresent("Block") || s == e.Source)
-                {
-                    e.Effects = DragDropEffects.None;
-                }
-            };
-
-            _view.pageView.Drop += (s, e) =>
-            {
-                if (IsSimulationMode())
-                {
-                    return;
-                }
-
-                // block
-                if (e.Data.GetDataPresent("Block"))
-                {
-                    try
-                    {
-                        XBlock block = e.Data.GetData("Block") as XBlock;
-                        if (block != null)
-                        {
-                            Point point = e.GetPosition(_view.pageView);
-                            BlockInsert(block, point.X, point.Y);
-                            e.Handled = true;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        if (_log != null)
-                        {
-                            _log.LogError("{0}{1}{2}",
-                                ex.Message,
-                                Environment.NewLine,
-                                ex.StackTrace);
-                        }
-                    }
-                }
-                // files
-                else if (e.Data.GetDataPresent(DataFormats.FileDrop))
-                {
-                    try
-                    {
-                        string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-                        if (files != null && files.Length == 1)
-                        {
-                            string path = files[0];
-                            if (!string.IsNullOrEmpty(path))
-                            {
-                                FileOpen(path);
-                                e.Handled = true;
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        if (_log != null)
-                        {
-                            _log.LogError("{0}{1}{2}",
-                                ex.Message,
-                                Environment.NewLine,
-                                ex.StackTrace);
-                        }
-                    }
-                }
-            };
-
-            // context menu
-            _view.pageView.ContextMenuOpening += (s, e) =>
-            {
-                if (_model.EditorLayer.CurrentMode != CanvasViewModel.Mode.None)
-                {
-                    e.Handled = true;
-                }
-                else if (_model.EditorLayer.SkipContextMenu == true)
-                {
-                    _model.EditorLayer.SkipContextMenu = false;
-                    e.Handled = true;
-                }
-                else
-                {
-                    if (_model.Renderer.Selected == null
-                        && !IsSimulationMode())
-                    {
-                        Point2 point = new Point2(
-                            _model.EditorLayer.RightX,
-                            _model.EditorLayer.RightY);
-                        IShape shape = _model.HitTest(point);
-                        if (shape != null && shape is XBlock)
-                        {
-                            _model.Selected = shape;
-                            _model.HaveSelected = true;
-                        }
-                        else
-                        {
-                            _model.Selected = null;
-                            _model.HaveSelected = false;
-                        }
-                    }
-                    else
-                    {
-                        _model.Selected = null;
-                        _model.HaveSelected = false;
-                    }
-
-                    _isContextMenu = true;
-                }
-            };
-
-            _view.pageView.ContextMenuClosing += (s, e) =>
-            {
-                if (_model.Selected != null)
-                {
-                    _model.Invalidate();
-                }
-
-                _isContextMenu = false;
-            };
-
-            // blocks
-            _view.blocks.PreviewMouseLeftButtonDown += (s, e) =>
-            {
-                if (IsSimulationMode())
-                {
-                    return;
-                }
-
-                _dragStartPoint = e.GetPosition(null);
-            };
-
-            _view.blocks.PreviewMouseMove += (s, e) =>
-            {
-                if (IsSimulationMode())
-                {
-                    return;
-                }
-
-                Point point = e.GetPosition(null);
-                Vector diff = _dragStartPoint - point;
-                if (e.LeftButton == MouseButtonState.Pressed &&
-                    (Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance ||
-                        Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance))
-                {
-                    var listBox = s as ListBox;
-                    var listBoxItem = ((DependencyObject)e.OriginalSource).FindVisualParent<ListBoxItem>();
-                    if (listBoxItem != null)
-                    {
-                        var block = (XBlock)listBox
-                            .ItemContainerGenerator
-                            .ItemFromContainer(listBoxItem);
-                        DataObject dragData = new DataObject("Block", block);
-                        DragDrop.DoDragDrop(
-                            listBoxItem,
-                            dragData,
-                            DragDropEffects.Move);
-                    }
-                }
-            };
-
-            // show
-            _view.DataContext = _model;
-            _view.Show();
+            var view = new MainView();
+            view.Initialize(_model, this);
+            view.Show();
         }
 
         #endregion
@@ -927,13 +752,13 @@ namespace Logic.WPF
                 Filter = "Logic Project (*.lproject)|*.lproject"
             };
 
-            if (dlg.ShowDialog(_view) == true)
+            if (dlg.ShowDialog() == true)
             {
                 FileOpen(dlg.FileName);
             }
         }
 
-        private void FileOpen(string path)
+        public void FileOpen(string path)
         {
             var project = Open<XProject>(path);
             if (project != null)
@@ -976,7 +801,7 @@ namespace Logic.WPF
                 FileName = fileName
             };
 
-            if (dlg.ShowDialog(_view) == true)
+            if (dlg.ShowDialog() == true)
             {
                 Save(dlg.FileName, _model.Project);
                 _model.FileName = System.IO.Path.GetFileNameWithoutExtension(dlg.FileName);
@@ -995,7 +820,7 @@ namespace Logic.WPF
                 FileName = fileName
             };
 
-            if (dlg.ShowDialog(_view) == true)
+            if (dlg.ShowDialog() == true)
             {
                 try
                 {
@@ -1569,7 +1394,7 @@ namespace Logic.WPF
 
         #region Block
 
-        private void BlockInsert(XBlock block, double x, double y)
+        public void BlockInsert(XBlock block, double x, double y)
         {
             _model.Snapshot();
             XBlock copy = _model.EditorLayer.Insert(block, x, y);
@@ -1586,7 +1411,7 @@ namespace Logic.WPF
                 Filter = "Logic Block (*.lblock)|*.lblock"
             };
 
-            if (dlg.ShowDialog(_view) == true)
+            if (dlg.ShowDialog() == true)
             {
                 var block = Open<XBlock>(dlg.FileName);
                 if (block != null)
@@ -1618,7 +1443,7 @@ namespace Logic.WPF
                     FileName = className
                 };
 
-                if (dlg.ShowDialog(_view) == true)
+                if (dlg.ShowDialog() == true)
                 {
                     string path = dlg.FileName;
 
@@ -1654,7 +1479,7 @@ namespace Logic.WPF
                 Multiselect = true
             };
 
-            if (dlg.ShowDialog(_view) == true)
+            if (dlg.ShowDialog() == true)
             {
                 BlocksImportFromCode(dlg.FileNames);
             }
@@ -1711,7 +1536,7 @@ namespace Logic.WPF
                     FileName = "block"
                 };
 
-                if (dlg.ShowDialog(_view) == true)
+                if (dlg.ShowDialog() == true)
                 {
                     var path = dlg.FileName;
                     Save<XBlock>(path, block);
@@ -1731,7 +1556,7 @@ namespace Logic.WPF
                 Filter = "All Files (*.*)|*.*"
             };
 
-            if (dlg.ShowDialog(_view) == true)
+            if (dlg.ShowDialog() == true)
             {
                 return dlg.FileName;
             }
@@ -1760,7 +1585,7 @@ namespace Logic.WPF
             _model.FrameView.Container = null;
         }
 
-        private void TemplateInvalidate()
+        public void TemplateInvalidate()
         {
             if (_model.GridView.InvalidateVisual != null)
             {
@@ -1785,7 +1610,7 @@ namespace Logic.WPF
                 Filter = "Logic Template (*.ltemplate)|*.ltemplate"
             };
 
-            if (dlg.ShowDialog(_view) == true)
+            if (dlg.ShowDialog() == true)
             {
                 var template = Open<XTemplate>(dlg.FileName);
                 if (template != null)
@@ -1803,7 +1628,7 @@ namespace Logic.WPF
                 Multiselect = true
             };
 
-            if (dlg.ShowDialog(_view) == true)
+            if (dlg.ShowDialog() == true)
             {
                 TemplatesImportFromCode(dlg.FileNames);
             }
@@ -1857,7 +1682,7 @@ namespace Logic.WPF
                 FileName = _model.Page.Template.Name
             };
 
-            if (dlg.ShowDialog(_view) == true)
+            if (dlg.ShowDialog() == true)
             {
                 var template = _model.Clone(_model.Page.Template);
                 var path = dlg.FileName;
@@ -1950,7 +1775,7 @@ namespace Logic.WPF
                 FileName = "graph"
             };
 
-            if (dlg.ShowDialog(_view) == true)
+            if (dlg.ShowDialog() == true)
             {
                 var path = dlg.FileName;
                 GraphSave(path, context);
@@ -2003,7 +1828,7 @@ namespace Logic.WPF
                                 ex.StackTrace);
                         }
 
-                        _view.Dispatcher.Invoke(() =>
+                        Application.Current.Dispatcher.Invoke(() =>
                         {
                             if (IsSimulationMode())
                             {
@@ -2077,7 +1902,7 @@ namespace Logic.WPF
                 {
                     _simulationFactory.Run(simulations, _clock);
                     _clock.Tick();
-                    _view.Dispatcher.Invoke(() =>
+                    Application.Current.Dispatcher.Invoke(() =>
                     {
                         _model.OverlayLayer.InvalidateVisual();
                     });
@@ -2128,7 +1953,7 @@ namespace Logic.WPF
                 Multiselect = true
             };
 
-            if (dlg.ShowDialog(_view) == true)
+            if (dlg.ShowDialog() == true)
             {
                 SimulationImportFromCode(dlg.FileNames);
             }
