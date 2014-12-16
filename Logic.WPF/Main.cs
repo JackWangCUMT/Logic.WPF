@@ -16,7 +16,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace Logic.WPF
@@ -41,6 +40,23 @@ namespace Logic.WPF
         private Clock _clock = null;
         private IPage _pageToPaste = null;
         private IDocument _documentToPaste = null;
+
+        #endregion
+
+        #region Windows
+
+        private void Close()
+        {
+            for (int i = 0; i < Application.Current.Windows.Count; i++)
+            {
+                Application.Current.Windows[i].Close();
+            }
+        }
+
+        private void Invoke(Action callback)
+        {
+            Application.Current.Dispatcher.Invoke(callback);
+        }
 
         #endregion
 
@@ -348,10 +364,7 @@ namespace Logic.WPF
                         this.SimulationStop();
                     }
 
-                    for (int i = 0; i < Application.Current.Windows.Count; i++)
-                    {
-                        Application.Current.Windows[i].Close();
-                    }
+                    Close();
                 },
                 (p) => true);
 
@@ -1828,7 +1841,7 @@ namespace Logic.WPF
                                 ex.StackTrace);
                         }
 
-                        Application.Current.Dispatcher.Invoke(() =>
+                        Invoke(() =>
                         {
                             if (IsSimulationMode())
                             {
@@ -1902,7 +1915,7 @@ namespace Logic.WPF
                 {
                     _simulationFactory.Run(simulations, _clock);
                     _clock.Tick();
-                    Application.Current.Dispatcher.Invoke(() =>
+                    Invoke(() =>
                     {
                         _model.OverlayLayer.InvalidateVisual();
                     });
