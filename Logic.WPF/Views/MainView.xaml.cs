@@ -38,7 +38,7 @@ namespace Logic.WPF.Views
             }
         }
 
-        public void Initialize(MainViewModel model, Main main)
+        public void Initialize(MainViewModel model, AppMain main)
         {
             // status
             this.status.DataContext = model.Log;

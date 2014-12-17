@@ -21,7 +21,7 @@ using System.Windows.Input;
 
 namespace Logic.WPF
 {
-    public class Main
+    public class AppMain
     {
         #region Properties
 

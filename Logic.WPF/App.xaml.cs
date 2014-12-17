@@ -10,7 +10,7 @@ namespace Logic.WPF
 {
     public partial class App : Application
     {
-        private Main _main;
+        private AppMain _main;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -18,7 +18,7 @@ namespace Logic.WPF
 
             if (_main == null)
             {
-                _main = new Main();
+                _main = new AppMain();
                 _main.Start();
             }
         }
