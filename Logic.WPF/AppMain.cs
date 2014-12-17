@@ -1045,7 +1045,7 @@ namespace Logic.WPF
                     && document.Pages.Count > 0)
                 {
                     IPage page = document.Pages.First();
-                    _model.Load(page);
+                    _model.LoadPage(page);
                     page.IsActive = true;
                 }
             }
@@ -1199,7 +1199,7 @@ namespace Logic.WPF
                         if (!haveFirstPage)
                         {
                             haveFirstPage = true;
-                            _model.Load(page);
+                            _model.LoadPage(page);
                             page.IsActive = true;
                         }
                     }
@@ -1241,7 +1241,7 @@ namespace Logic.WPF
             if (parameter is IPage)
             {
                 IPage page = parameter as IPage;
-                _model.Load(page);
+                _model.LoadPage(page);
                 page.IsActive = true;
             }
         }
@@ -1258,7 +1258,7 @@ namespace Logic.WPF
                     .Where(t => t.Name == _model.Project.DefaultTemplate)
                     .First();
                 document.Pages.Add(page);
-                _model.Load(page);
+                _model.LoadPage(page);
                 page.IsActive = false;
             }
         }
@@ -1284,7 +1284,7 @@ namespace Logic.WPF
                 int index = document.Pages.IndexOf(before);
 
                 document.Pages.Insert(index, page);
-                _model.Load(page);
+                _model.LoadPage(page);
                 page.IsActive = true;
             }
         }
@@ -1308,7 +1308,7 @@ namespace Logic.WPF
             int index = document.Pages.IndexOf(after);
 
             document.Pages.Insert(index + 1, page);
-            _model.Load(page);
+            _model.LoadPage(page);
             page.IsActive = true;
         }
 
@@ -1352,7 +1352,7 @@ namespace Logic.WPF
                     int index = document.Pages.IndexOf(destination);
                     document.Pages[index] = page;
 
-                    _model.Load(page);
+                    _model.LoadPage(page);
                     page.IsActive = true;
                 }
                 catch (Exception ex)

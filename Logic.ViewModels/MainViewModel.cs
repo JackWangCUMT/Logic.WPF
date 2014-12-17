@@ -1383,31 +1383,12 @@ namespace Logic.ViewModels
             };
         }
 
-        public void UpdateLayers(IPage page)
-        {
-            ShapeLayer.Shapes = page.Shapes;
-            BlockLayer.Shapes = page.Blocks;
-            WireLayer.Shapes = page.Wires;
-            PinLayer.Shapes = page.Pins;
-
-            EditorLayer.Shapes.Clear();
-            OverlayLayer.Shapes.Clear();
-        }
-
         public void UpdatePage(IPage page)
         {
             Page.Shapes = page.Shapes;
             Page.Blocks = page.Blocks;
             Page.Wires = page.Wires;
             Page.Pins = page.Pins;
-        }
-
-        public void ClearLayers()
-        {
-            ShapeLayer.Shapes = Enumerable.Empty<IShape>().ToList();
-            BlockLayer.Shapes = Enumerable.Empty<IShape>().ToList();
-            WireLayer.Shapes = Enumerable.Empty<IShape>().ToList();
-            PinLayer.Shapes = Enumerable.Empty<IShape>().ToList();
         }
 
         public void ClearPage()
@@ -1420,7 +1401,7 @@ namespace Logic.ViewModels
             InvalidateTemplate();
         }
 
-        public void Load(IPage page)
+        public void LoadPage(IPage page)
         {
             Reset();
             SelectionReset();
@@ -1430,6 +1411,57 @@ namespace Logic.ViewModels
             Renderer.Database = page.Database;
             ApplyTemplate(page.Template, Renderer);
             InvalidateTemplate();
+        }
+
+        #endregion
+
+        #region Layers
+
+        public void UpdateLayers(IPage page)
+        {
+            ShapeLayer.Shapes = page.Shapes;
+            BlockLayer.Shapes = page.Blocks;
+            WireLayer.Shapes = page.Wires;
+            PinLayer.Shapes = page.Pins;
+
+            EditorLayer.Shapes.Clear();
+            OverlayLayer.Shapes.Clear();
+        }
+
+        public void ClearLayers()
+        {
+            ShapeLayer.Shapes = Enumerable.Empty<IShape>().ToList();
+            BlockLayer.Shapes = Enumerable.Empty<IShape>().ToList();
+            WireLayer.Shapes = Enumerable.Empty<IShape>().ToList();
+            PinLayer.Shapes = Enumerable.Empty<IShape>().ToList();
+        }
+
+        public void InvalidateLayers()
+        {
+            if (ShapeLayer.InvalidateVisual != null)
+            {
+                ShapeLayer.InvalidateVisual();
+            }
+
+            if (BlockLayer.InvalidateVisual != null)
+            {
+                BlockLayer.InvalidateVisual();
+            }
+
+            if (PinLayer.InvalidateVisual != null)
+            {
+                PinLayer.InvalidateVisual();
+            }
+
+            if (WireLayer.InvalidateVisual != null)
+            {
+                WireLayer.InvalidateVisual();
+            }
+
+            if (OverlayLayer.InvalidateVisual != null)
+            {
+                OverlayLayer.InvalidateVisual();
+            }
         }
 
         #endregion
@@ -1452,6 +1484,24 @@ namespace Logic.ViewModels
             GridView.Container = null;
             TableView.Container = null;
             FrameView.Container = null;
+        }
+
+        public void InvalidateTemplate()
+        {
+            if (GridView.InvalidateVisual != null)
+            {
+                GridView.InvalidateVisual();
+            }
+
+            if (TableView.InvalidateVisual != null)
+            {
+                TableView.InvalidateVisual();
+            }
+
+            if (FrameView.InvalidateVisual != null)
+            {
+                FrameView.InvalidateVisual();
+            }
         }
 
         #endregion
@@ -1498,56 +1548,6 @@ namespace Logic.ViewModels
             OverlayLayer.Shapes.Clear();
             BlockLayer.InvalidateVisual();
             OverlayLayer.InvalidateVisual();
-        }
-
-        #endregion
-
-        #region Invalidate
-
-        public void InvalidateTemplate()
-        {
-            if (GridView.InvalidateVisual != null)
-            {
-                GridView.InvalidateVisual();
-            }
-
-            if (TableView.InvalidateVisual != null)
-            {
-                TableView.InvalidateVisual();
-            }
-
-            if (FrameView.InvalidateVisual != null)
-            {
-                FrameView.InvalidateVisual();
-            }
-        }
-
-        public void InvalidateLayers()
-        {
-            if (ShapeLayer.InvalidateVisual != null)
-            {
-                ShapeLayer.InvalidateVisual();
-            }
-
-            if (BlockLayer.InvalidateVisual != null)
-            {
-                BlockLayer.InvalidateVisual(); 
-            }
-
-            if (PinLayer.InvalidateVisual != null)
-            {
-                PinLayer.InvalidateVisual(); 
-            }
-
-            if (WireLayer.InvalidateVisual != null)
-            {
-                WireLayer.InvalidateVisual(); 
-            }
-
-            if (OverlayLayer.InvalidateVisual != null)
-            {
-                OverlayLayer.InvalidateVisual(); 
-            }
         }
 
         #endregion
