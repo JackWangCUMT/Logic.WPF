@@ -48,7 +48,7 @@ namespace Logic.WPF.Views
             {
                 model.Renderer.Zoom = zoom;
                 main.TemplateInvalidate();
-                model.Invalidate();
+                model.InvalidateLayers();
             };
 
             // drag & drop
@@ -173,7 +173,7 @@ namespace Logic.WPF.Views
             {
                 if (model.Selected != null)
                 {
-                    model.Invalidate();
+                    model.InvalidateLayers();
                 }
 
                 main.IsContextMenuOpen = false;

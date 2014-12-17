@@ -251,7 +251,7 @@ namespace Logic.ViewModels
             }
             else
             {
-                Layers.Invalidate();
+                Layers.InvalidateLayers();
             }
         }
 
@@ -385,7 +385,7 @@ namespace Logic.ViewModels
             {
                 Renderer.Selected = null;
             }
-            Layers.Invalidate();
+            Layers.InvalidateLayers();
         }
 
         private void SelectionCancel()

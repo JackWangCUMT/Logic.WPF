@@ -522,7 +522,7 @@ namespace Logic.ViewModels
                 && Renderer.Selected != null)
             {
                 Renderer.Selected = null;
-                Invalidate();
+                InvalidateLayers();
             }
         }
 
@@ -1199,7 +1199,7 @@ namespace Logic.ViewModels
                     SelectionReset();
                     Load(page);
                     Update(page);
-                    Invalidate();
+                    InvalidateLayers();
                 }
             }
             catch (Exception ex)
@@ -1224,7 +1224,7 @@ namespace Logic.ViewModels
                     SelectionReset();
                     Load(page);
                     Update(page);
-                    Invalidate();
+                    InvalidateLayers();
                 }
             }
             catch (Exception ex)
@@ -1362,7 +1362,7 @@ namespace Logic.ViewModels
             SelectionReset();
             Add(shapes);
             Renderer.Selected = new HashSet<IShape>(shapes);
-            Invalidate();
+            InvalidateLayers();
         }
 
         #endregion
@@ -1460,7 +1460,7 @@ namespace Logic.ViewModels
 
         #region Invalidate
 
-        public void Invalidate()
+        public void InvalidateLayers()
         {
             if (ShapeLayer.InvalidateVisual != null)
             {

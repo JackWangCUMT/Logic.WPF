@@ -409,7 +409,7 @@ namespace Logic.WPF
                 (p) =>
                 {
                     _model.SelectAll();
-                    _model.Invalidate();
+                    _model.InvalidateLayers();
                 },
                 (p) => IsEditMode());
 
@@ -782,7 +782,7 @@ namespace Logic.WPF
 
                 _model.SelectionReset();
                 _model.Reset();
-                _model.Invalidate();
+                _model.InvalidateLayers();
                 _model.Renderer.Dispose();
                 _model.Project = project;
                 _model.FileName = System.IO.Path.GetFileNameWithoutExtension(path);
@@ -1239,7 +1239,7 @@ namespace Logic.WPF
             _model.Page = null;
             _model.Clear();
             _model.Reset();
-            _model.Invalidate();
+            _model.InvalidateLayers();
             TemplateReset();
             TemplateInvalidate();
         }
@@ -1260,7 +1260,7 @@ namespace Logic.WPF
             _model.SelectionReset();
             _model.Page = page;
             _model.Load(page);
-            _model.Invalidate();
+            _model.InvalidateLayers();
 
             _model.Renderer.Database = page.Database;
 
