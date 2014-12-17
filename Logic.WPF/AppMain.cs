@@ -610,7 +610,7 @@ namespace Logic.WPF
                     if (template != null)
                     {
                         _model.Page.Template = template;
-                        TemplateApply(template, _model.Renderer);
+                        _model.ApplyTemplate(template, _model.Renderer);
                         _model.InvalidateTemplate();
                     }
                 },
@@ -1240,7 +1240,7 @@ namespace Logic.WPF
             _model.Clear();
             _model.Reset();
             _model.InvalidateLayers();
-            TemplateReset();
+            _model.ResetTemplate();
             _model.InvalidateTemplate();
         }
 
@@ -1261,10 +1261,8 @@ namespace Logic.WPF
             _model.Page = page;
             _model.Load(page);
             _model.InvalidateLayers();
-
             _model.Renderer.Database = page.Database;
-
-            TemplateApply(page.Template, _model.Renderer);
+            _model.ApplyTemplate(page.Template, _model.Renderer);
             _model.InvalidateTemplate();
         }
 
@@ -1580,24 +1578,6 @@ namespace Logic.WPF
         #endregion
 
         #region Template
-
-        private void TemplateApply(ITemplate template, IRenderer renderer)
-        {
-            _model.GridView.Container = template.Grid;
-            _model.TableView.Container = template.Table;
-            _model.FrameView.Container = template.Frame;
-
-            _model.GridView.Renderer = renderer;
-            _model.TableView.Renderer = renderer;
-            _model.FrameView.Renderer = renderer;
-        }
-
-        private void TemplateReset()
-        {
-            _model.GridView.Container = null;
-            _model.TableView.Container = null;
-            _model.FrameView.Container = null;
-        }
 
         private void TemplateImport()
         {

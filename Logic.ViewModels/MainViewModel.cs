@@ -1412,6 +1412,28 @@ namespace Logic.ViewModels
 
         #endregion
 
+        #region Template
+
+        public void ApplyTemplate(ITemplate template, IRenderer renderer)
+        {
+            GridView.Container = template.Grid;
+            TableView.Container = template.Table;
+            FrameView.Container = template.Frame;
+
+            GridView.Renderer = renderer;
+            TableView.Renderer = renderer;
+            FrameView.Renderer = renderer;
+        }
+
+        public void ResetTemplate()
+        {
+            GridView.Container = null;
+            TableView.Container = null;
+            FrameView.Container = null;
+        }
+
+        #endregion
+
         #region Overlay Layer
 
         public void InitOverlay(
