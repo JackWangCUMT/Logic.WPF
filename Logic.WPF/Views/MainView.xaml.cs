@@ -47,7 +47,7 @@ namespace Logic.WPF.Views
             this.zoom.InvalidateChild = (zoom) =>
             {
                 model.Renderer.Zoom = zoom;
-                main.TemplateInvalidate();
+                model.InvalidateTemplate();
                 model.InvalidateLayers();
             };
 

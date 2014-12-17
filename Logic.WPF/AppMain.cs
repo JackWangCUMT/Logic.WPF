@@ -611,7 +611,7 @@ namespace Logic.WPF
                     {
                         _model.Page.Template = template;
                         TemplateApply(template, _model.Renderer);
-                        TemplateInvalidate();
+                        _model.InvalidateTemplate();
                     }
                 },
                 (p) => IsEditMode());
@@ -1241,7 +1241,7 @@ namespace Logic.WPF
             _model.Reset();
             _model.InvalidateLayers();
             TemplateReset();
-            TemplateInvalidate();
+            _model.InvalidateTemplate();
         }
 
         private void PageUpdateView(object parameter)
@@ -1265,7 +1265,7 @@ namespace Logic.WPF
             _model.Renderer.Database = page.Database;
 
             TemplateApply(page.Template, _model.Renderer);
-            TemplateInvalidate();
+            _model.InvalidateTemplate();
         }
 
         private void PageAdd(object parameter)
@@ -1597,24 +1597,6 @@ namespace Logic.WPF
             _model.GridView.Container = null;
             _model.TableView.Container = null;
             _model.FrameView.Container = null;
-        }
-
-        public void TemplateInvalidate()
-        {
-            if (_model.GridView.InvalidateVisual != null)
-            {
-                _model.GridView.InvalidateVisual();
-            }
-
-            if (_model.TableView.InvalidateVisual != null)
-            {
-                _model.TableView.InvalidateVisual();
-            }
-
-            if (_model.FrameView.InvalidateVisual != null)
-            {
-                _model.FrameView.InvalidateVisual();
-            }
         }
 
         private void TemplateImport()

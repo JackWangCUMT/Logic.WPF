@@ -1460,6 +1460,24 @@ namespace Logic.ViewModels
 
         #region Invalidate
 
+        public void InvalidateTemplate()
+        {
+            if (GridView.InvalidateVisual != null)
+            {
+                GridView.InvalidateVisual();
+            }
+
+            if (TableView.InvalidateVisual != null)
+            {
+                TableView.InvalidateVisual();
+            }
+
+            if (FrameView.InvalidateVisual != null)
+            {
+                FrameView.InvalidateVisual();
+            }
+        }
+
         public void InvalidateLayers()
         {
             if (ShapeLayer.InvalidateVisual != null)
