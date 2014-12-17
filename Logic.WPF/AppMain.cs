@@ -1044,7 +1044,9 @@ namespace Logic.WPF
                     && document.Pages != null
                     && document.Pages.Count > 0)
                 {
-                    PageLoad(document.Pages.First(), true);
+                    IPage page = document.Pages.First();
+                    _model.Load(page);
+                    page.IsActive = true;
                 }
             }
         }
@@ -1197,7 +1199,8 @@ namespace Logic.WPF
                         if (!haveFirstPage)
                         {
                             haveFirstPage = true;
-                            PageLoad(page, true);
+                            _model.Load(page);
+                            page.IsActive = true;
                         }
                     }
 
@@ -1237,7 +1240,7 @@ namespace Logic.WPF
         private void PageEmptyView()
         {
             _model.Page = null;
-            _model.Clear();
+            _model.ClearLayers();
             _model.Reset();
             _model.InvalidateLayers();
             _model.ResetTemplate();
@@ -1248,22 +1251,10 @@ namespace Logic.WPF
         {
             if (parameter is IPage)
             {
-                PageLoad(parameter as IPage, true);
+                IPage page = parameter as IPage;
+                _model.Load(page);
+                page.IsActive = true;
             }
-        }
-
-        private void PageLoad(IPage page, bool activate)
-        {
-            page.IsActive = activate;
-
-            _model.Reset();
-            _model.SelectionReset();
-            _model.Page = page;
-            _model.Load(page);
-            _model.InvalidateLayers();
-            _model.Renderer.Database = page.Database;
-            _model.ApplyTemplate(page.Template, _model.Renderer);
-            _model.InvalidateTemplate();
         }
 
         private void PageAdd(object parameter)
@@ -1278,7 +1269,8 @@ namespace Logic.WPF
                     .Where(t => t.Name == _model.Project.DefaultTemplate)
                     .First();
                 document.Pages.Add(page);
-                PageLoad(page, false);
+                _model.Load(page);
+                page.IsActive = false;
             }
         }
 
@@ -1303,7 +1295,8 @@ namespace Logic.WPF
                 int index = document.Pages.IndexOf(before);
 
                 document.Pages.Insert(index, page);
-                PageLoad(page, true);
+                _model.Load(page);
+                page.IsActive = true;
             }
         }
 
@@ -1326,7 +1319,8 @@ namespace Logic.WPF
             int index = document.Pages.IndexOf(after);
 
             document.Pages.Insert(index + 1, page);
-            PageLoad(page, true);
+            _model.Load(page);
+            page.IsActive = true;
         }
 
         private void PageCut(object parameter)
@@ -1369,7 +1363,8 @@ namespace Logic.WPF
                     int index = document.Pages.IndexOf(destination);
                     document.Pages[index] = page;
 
-                    PageLoad(page, true);
+                    _model.Load(page);
+                    page.IsActive = true;
                 }
                 catch (Exception ex)
                 {

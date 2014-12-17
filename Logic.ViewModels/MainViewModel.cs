@@ -1197,8 +1197,8 @@ namespace Logic.ViewModels
                 if (page != null)
                 {
                     SelectionReset();
-                    Load(page);
-                    Update(page);
+                    UpdateLayers(page);
+                    UpdatePage(page);
                     InvalidateLayers();
                 }
             }
@@ -1222,8 +1222,8 @@ namespace Logic.ViewModels
                 if (page != null)
                 {
                     SelectionReset();
-                    Load(page);
-                    Update(page);
+                    UpdateLayers(page);
+                    UpdatePage(page);
                     InvalidateLayers();
                 }
             }
@@ -1383,7 +1383,7 @@ namespace Logic.ViewModels
             };
         }
 
-        public void Load(IPage page)
+        public void UpdateLayers(IPage page)
         {
             ShapeLayer.Shapes = page.Shapes;
             BlockLayer.Shapes = page.Blocks;
@@ -1394,7 +1394,7 @@ namespace Logic.ViewModels
             OverlayLayer.Shapes.Clear();
         }
 
-        public void Update(IPage page)
+        public void UpdatePage(IPage page)
         {
             Page.Shapes = page.Shapes;
             Page.Blocks = page.Blocks;
@@ -1402,12 +1402,24 @@ namespace Logic.ViewModels
             Page.Pins = page.Pins;
         }
 
-        public void Clear()
+        public void ClearLayers()
         {
             ShapeLayer.Shapes = Enumerable.Empty<IShape>().ToList();
             BlockLayer.Shapes = Enumerable.Empty<IShape>().ToList();
             WireLayer.Shapes = Enumerable.Empty<IShape>().ToList();
             PinLayer.Shapes = Enumerable.Empty<IShape>().ToList();
+        }
+
+        public void Load(IPage page)
+        {
+            Reset();
+            SelectionReset();
+            Page = page;
+            UpdateLayers(page);
+            InvalidateLayers();
+            Renderer.Database = page.Database;
+            ApplyTemplate(page.Template, Renderer);
+            InvalidateTemplate();
         }
 
         #endregion
