@@ -1707,52 +1707,6 @@ namespace Logic.WPF
 
         #endregion
 
-        #region Overlay
-
-        private void OverlayInit(IDictionary<XBlock, BoolSimulation> simulations)
-        {
-            _model.SelectionReset();
-
-            _model.OverlayLayer.EnableSimulationCache = true;
-            _model.OverlayLayer.CacheRenderer = null;
-
-            foreach (var simulation in simulations)
-            {
-                _model.BlockLayer.Hidden.Add(simulation.Key);
-                _model.OverlayLayer.Shapes.Add(simulation.Key);
-            }
-
-            _model.EditorLayer.Simulations = simulations;
-            _model.OverlayLayer.Simulations = simulations;
-
-            _model.OverlayLayer.CacheRenderer = new NativeBoolSimulationRenderer()
-            {
-                Renderer = _model.OverlayLayer.Renderer,
-                NullStateStyle = _model.OverlayLayer.NullStateStyle,
-                TrueStateStyle = _model.OverlayLayer.TrueStateStyle,
-                FalseStateStyle = _model.OverlayLayer.FalseStateStyle,
-                Shapes = _model.OverlayLayer.Shapes,
-                Simulations = _model.OverlayLayer.Simulations
-            };
-
-            _model.BlockLayer.InvalidateVisual();
-            _model.OverlayLayer.InvalidateVisual();
-        }
-
-        private void OverlayReset()
-        {
-            _model.EditorLayer.Simulations = null;
-            _model.OverlayLayer.Simulations = null;
-            _model.OverlayLayer.CacheRenderer = null;
-
-            _model.BlockLayer.Hidden.Clear();
-            _model.OverlayLayer.Shapes.Clear();
-            _model.BlockLayer.InvalidateVisual();
-            _model.OverlayLayer.InvalidateVisual();
-        }
-
-        #endregion
-
         #region Graph
 
         private void Graph()
@@ -1872,7 +1826,7 @@ namespace Logic.WPF
                         var simulations = _simulationFactory.Create(context);
                         if (simulations != null)
                         {
-                            OverlayInit(simulations);
+                            _model.InitOverlay(simulations, new NativeBoolSimulationRenderer());
                             SimulationStart(simulations);
                         }
                     }
@@ -1941,7 +1895,7 @@ namespace Logic.WPF
         {
             try
             {
-                OverlayReset();
+                _model.ResetOverlay();
 
                 if (IsSimulationMode())
                 {

@@ -1,4 +1,5 @@
 ﻿using Logic.Core;
+using Logic.Simulation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -1407,6 +1408,52 @@ namespace Logic.ViewModels
             BlockLayer.Shapes = Enumerable.Empty<IShape>().ToList();
             WireLayer.Shapes = Enumerable.Empty<IShape>().ToList();
             PinLayer.Shapes = Enumerable.Empty<IShape>().ToList();
+        }
+
+        #endregion
+
+        #region Overlay
+
+        public void InitOverlay(
+            IDictionary<XBlock, BoolSimulation> simulations,
+            IBoolSimulationRenderer cacheRenderer)
+        {
+            SelectionReset();
+
+            OverlayLayer.EnableSimulationCache = true;
+            OverlayLayer.CacheRenderer = null;
+
+            foreach (var simulation in simulations)
+            {
+                BlockLayer.Hidden.Add(simulation.Key);
+                OverlayLayer.Shapes.Add(simulation.Key);
+            }
+
+            EditorLayer.Simulations = simulations;
+            OverlayLayer.Simulations = simulations;
+
+            OverlayLayer.CacheRenderer = cacheRenderer;
+            cacheRenderer.Renderer = OverlayLayer.Renderer;
+            cacheRenderer.NullStateStyle = OverlayLayer.NullStateStyle;
+            cacheRenderer.TrueStateStyle = OverlayLayer.TrueStateStyle;
+            cacheRenderer.FalseStateStyle = OverlayLayer.FalseStateStyle;
+            cacheRenderer.Shapes = OverlayLayer.Shapes;
+            cacheRenderer.Simulations = OverlayLayer.Simulations;
+
+            BlockLayer.InvalidateVisual();
+            OverlayLayer.InvalidateVisual();
+        }
+
+        public void ResetOverlay()
+        {
+            EditorLayer.Simulations = null;
+            OverlayLayer.Simulations = null;
+            OverlayLayer.CacheRenderer = null;
+
+            BlockLayer.Hidden.Clear();
+            OverlayLayer.Shapes.Clear();
+            BlockLayer.InvalidateVisual();
+            OverlayLayer.InvalidateVisual();
         }
 
         #endregion
