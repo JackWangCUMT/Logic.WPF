@@ -1206,7 +1206,7 @@ namespace Logic.WPF
 
                     if (!haveFirstPage)
                     {
-                        PageEmptyView();
+                        _model.ClearPage();
                     }
                 }
                 catch (Exception ex)
@@ -1228,24 +1228,13 @@ namespace Logic.WPF
             {
                 IDocument document = parameter as IDocument;
                 _model.Project.Documents.Remove(document);
-
-                PageEmptyView();
+                _model.ClearPage();
             }
         }
 
         #endregion
 
         #region Page
-
-        private void PageEmptyView()
-        {
-            _model.Page = null;
-            _model.ClearLayers();
-            _model.Reset();
-            _model.InvalidateLayers();
-            _model.ResetTemplate();
-            _model.InvalidateTemplate();
-        }
 
         private void PageUpdateView(object parameter)
         {
@@ -1391,8 +1380,7 @@ namespace Logic.WPF
                 if (document != null && document.Pages != null)
                 {
                     document.Pages.Remove(page);
-
-                    PageEmptyView();
+                    _model.ClearPage();
                 }
             }
         }

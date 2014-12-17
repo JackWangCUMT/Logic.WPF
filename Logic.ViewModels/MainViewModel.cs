@@ -1410,6 +1410,16 @@ namespace Logic.ViewModels
             PinLayer.Shapes = Enumerable.Empty<IShape>().ToList();
         }
 
+        public void ClearPage()
+        {
+            Page = null;
+            ClearLayers();
+            Reset();
+            InvalidateLayers();
+            ResetTemplate();
+            InvalidateTemplate();
+        }
+
         public void Load(IPage page)
         {
             Reset();
