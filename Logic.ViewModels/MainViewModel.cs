@@ -1412,7 +1412,7 @@ namespace Logic.ViewModels
 
         #endregion
 
-        #region Overlay
+        #region Overlay Layer
 
         public void InitOverlay(
             IDictionary<XBlock, BoolSimulation> simulations,
