@@ -36,10 +36,15 @@
   <ItemGroup>
     <Compile Include="BoolInput.cs" />
     <Compile Include="BoolSimulation.cs" />
+    <Compile Include="BoolSimulationFactory.cs" />
     <Compile Include="Clock.cs" />
     <Compile Include="IBoolSimulationRenderer.cs" />
     <Compile Include="IClock.cs" />
+    <Compile Include="PageGraph.cs" />
+    <Compile Include="PageGraphContext.cs" />
+    <Compile Include="PageGraphDebug.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TopologicalSort.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Logic.Core\Logic.Core.csproj">

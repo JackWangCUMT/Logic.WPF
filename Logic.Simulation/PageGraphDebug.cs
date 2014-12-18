@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Logic.Graph
+namespace Logic.Simulation
 {
     public static class PageGraphDebug
     {
