@@ -1187,15 +1187,8 @@ namespace Logic.WPF
 
                     foreach (var original in _documentToPaste.Pages)
                     {
-                        ITemplate template = original.Template;
-                        IPage copy = _model.ToPageWithoutTemplate(original);
-                        string json = _serializer.Serialize(copy);
-                        IPage page = _serializer.Deserialize<XPage>(json);
-
-                        page.Template = template;
-
+                        IPage page = _model.Clone(original);
                         document.Pages.Add(page);
-
                         if (!haveFirstPage)
                         {
                             haveFirstPage = true;

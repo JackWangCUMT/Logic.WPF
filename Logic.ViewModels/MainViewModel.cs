@@ -407,6 +407,30 @@ namespace Logic.ViewModels
 
         #region Clone
 
+        public IPage Clone(IPage original)
+        {
+            try
+            {
+                var template = original.Template;
+                var page = ToPageWithoutTemplate(original);
+                var json = Serializer.Serialize(page);
+                var copy = Serializer.Deserialize<XPage>(json);
+                copy.Template = template;
+                return copy;
+            }
+            catch (Exception ex)
+            {
+                if (Log != null)
+                {
+                    Log.LogError("{0}{1}{2}",
+                        ex.Message,
+                        Environment.NewLine,
+                        ex.StackTrace);
+                }
+            }
+            return null;
+        }
+
         public XBlock Clone(XBlock original)
         {
             try
