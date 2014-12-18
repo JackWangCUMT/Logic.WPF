@@ -33,7 +33,4 @@ namespace Logic.WPF
             }
         } 
     }
-
-
-
 }
