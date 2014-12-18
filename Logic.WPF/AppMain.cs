@@ -1329,14 +1329,8 @@ namespace Logic.WPF
             {
                 try
                 {
+                    IPage page = _model.Clone(_pageToPaste);
                     IPage destination = parameter as IPage;
-                    ITemplate template = _pageToPaste.Template;
-                    IPage copy = _model.ToPageWithoutTemplate(_pageToPaste);
-                    string json = _serializer.Serialize(copy);
-                    IPage page = _serializer.Deserialize<XPage>(json);
-
-                    page.Template = template;
-
                     IDocument document = _model
                         .Project
                         .Documents
@@ -1344,7 +1338,6 @@ namespace Logic.WPF
                         .First();
                     int index = document.Pages.IndexOf(destination);
                     document.Pages[index] = page;
-
                     _model.LoadPage(page);
                     page.IsActive = true;
                 }
