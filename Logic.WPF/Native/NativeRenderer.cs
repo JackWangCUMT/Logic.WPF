@@ -122,7 +122,6 @@ namespace Logic.Native
                     });
             (dc as DrawingContext).PushGuidelineSet(gs);
 
-
             if (rectangle.IsFilled)
             {
                 var brush = new SolidColorBrush(
