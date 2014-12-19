@@ -12,7 +12,7 @@ using System.Windows.Media;
 
 namespace Logic.Native
 {
-    public class NativeCanvas : Canvas, INotifyPropertyChanged
+    public class NativeLayer : Canvas, INotifyPropertyChanged
     {
         #region INotifyPropertyChanged
 
@@ -50,7 +50,7 @@ namespace Logic.Native
 
         #region Constructor
 
-        public NativeCanvas()
+        public NativeLayer()
             : base()
         {
             InitializeEvents();
