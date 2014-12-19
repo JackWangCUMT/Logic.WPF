@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Logic.ViewModels
 {
-    public class CanvasViewModel : ILayer
+    public class LayerViewModel : ILayer
     {
         #region Enums
 

@@ -130,7 +130,7 @@ namespace Logic.WPF.Views
             // context menu
             this.pageView.ContextMenuOpening += (s, e) =>
             {
-                if (model.EditorLayer.CurrentMode != CanvasViewModel.Mode.None)
+                if (model.EditorLayer.CurrentMode != LayerViewModel.Mode.None)
                 {
                     e.Handled = true;
                 }

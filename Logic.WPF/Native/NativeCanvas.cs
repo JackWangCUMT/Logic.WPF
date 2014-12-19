@@ -31,8 +31,8 @@ namespace Logic.Native
 
         #region Properties
 
-        private CanvasViewModel _model;
-        public CanvasViewModel Model
+        private LayerViewModel _model;
+        public LayerViewModel Model
         {
             get { return _model; }
             set
@@ -68,9 +68,9 @@ namespace Logic.Native
             base.DataContextChanged += (s, e) =>
             {
                 if (base.DataContext != null
-                    && base.DataContext is CanvasViewModel)
+                    && base.DataContext is LayerViewModel)
                 {
-                    Model = base.DataContext as CanvasViewModel;
+                    Model = base.DataContext as LayerViewModel;
                 }
             };
 
@@ -109,7 +109,7 @@ namespace Logic.Native
             };
         }
 
-        public void InitializeModel(CanvasViewModel model)
+        public void InitializeModel(LayerViewModel model)
         {
             model.IsMouseCaptured = () =>
             {

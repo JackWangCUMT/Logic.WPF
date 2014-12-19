@@ -173,42 +173,42 @@ namespace Logic.WPF
             _model.FrameView = new ViewViewModel();
 
             // layers
-            _model.ShapeLayer = new CanvasViewModel()
+            _model.ShapeLayer = new LayerViewModel()
             {
                 Shapes = new ObservableCollection<IShape>(),
                 Hidden = new HashSet<IShape>(),
                 EnableSnap = _defaults.EnableSnap,
                 SnapSize = _defaults.SnapSize
             };
-            _model.BlockLayer = new CanvasViewModel()
+            _model.BlockLayer = new LayerViewModel()
             {
                 Shapes = new ObservableCollection<IShape>(),
                 Hidden = new HashSet<IShape>(),
                 EnableSnap = _defaults.EnableSnap,
                 SnapSize = _defaults.SnapSize
             };
-            _model.WireLayer = new CanvasViewModel()
+            _model.WireLayer = new LayerViewModel()
             {
                 Shapes = new ObservableCollection<IShape>(),
                 Hidden = new HashSet<IShape>(),
                 EnableSnap = _defaults.EnableSnap,
                 SnapSize = _defaults.SnapSize
             };
-            _model.PinLayer = new CanvasViewModel()
+            _model.PinLayer = new LayerViewModel()
             {
                 Shapes = new ObservableCollection<IShape>(),
                 Hidden = new HashSet<IShape>(),
                 EnableSnap = _defaults.EnableSnap,
                 SnapSize = _defaults.SnapSize
             };
-            _model.EditorLayer = new CanvasViewModel()
+            _model.EditorLayer = new LayerViewModel()
             {
                 Shapes = new ObservableCollection<IShape>(),
                 Hidden = new HashSet<IShape>(),
                 EnableSnap = _defaults.EnableSnap,
                 SnapSize = _defaults.SnapSize
             };
-            _model.OverlayLayer = new CanvasViewModel()
+            _model.OverlayLayer = new LayerViewModel()
             {
                 Shapes = new ObservableCollection<IShape>(),
                 Hidden = new HashSet<IShape>(),
@@ -997,7 +997,7 @@ namespace Logic.WPF
 
         private void ProjectUpdateStyles(IProject project)
         {
-            var layers = new List<CanvasViewModel>();
+            var layers = new List<LayerViewModel>();
             layers.Add(_model.ShapeLayer);
             layers.Add(_model.BlockLayer);
             layers.Add(_model.WireLayer);
