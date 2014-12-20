@@ -13,6 +13,8 @@ namespace Logic.Native
     public class NativeZoom : Border
     {
         public Action<double> InvalidateChild { get; set; }
+        public Action<double, double> AutoFitChild { get; set; }
+        public Action<double, double, double> ZoomAndPanChild { get; set; }
 
         public override UIElement Child
         {
@@ -33,6 +35,18 @@ namespace Logic.Native
 
                     child.RenderTransform = group;
                     child.RenderTransformOrigin = new Point(0.0, 0.0);
+
+                    this.ZoomAndPanChild = (x, y, zoom) =>
+                    {
+                        st.ScaleX = zoom;
+                        st.ScaleY = zoom;
+                        tt.X = x;
+                        tt.Y = y;
+                        if (InvalidateChild != null)
+                        {
+                            InvalidateChild(st.ScaleX);
+                        }
+                    };
 
                     this.MouseWheel += (s, e) =>
                     {
@@ -84,15 +98,7 @@ namespace Logic.Native
                             && e.ChangedButton == MouseButton.Middle
                             && e.ClickCount == 2)
                         {
-                            st.ScaleX = 1.0;
-                            st.ScaleY = 1.0;
-                            tt.X = 0.0;
-                            tt.Y = 0.0;
-
-                            if (InvalidateChild != null)
-                            {
-                                InvalidateChild(st.ScaleX);
-                            }
+                            ZoomAndPanChild(0.0, 0.0, 1.0);
                         }
                     };
 

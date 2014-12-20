@@ -118,6 +118,7 @@
     <Compile Include="Blocks\Timers\TimerOn.cs" />
     <Compile Include="Blocks\Timers\TimerPulse.cs" />
     <Compile Include="AppMain.cs" />
+    <Compile Include="Native\NativeGrid.cs" />
     <Compile Include="Simulation\Blocks\Gates\AndSimulation.cs" />
     <Compile Include="Simulation\Blocks\Signal\InputSimulation.cs" />
     <Compile Include="Simulation\Blocks\Gates\InverterSimulation.cs" />

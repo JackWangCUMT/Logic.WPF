@@ -512,7 +512,7 @@
                       Grid.Column="2" Grid.Row="2" 
                       HorizontalAlignment="Stretch"
                       ShowsPreview="True"/>
-        <Grid x:Name="page"
+        <native:NativeGrid x:Name="page"
               ClipToBounds="True"
               Grid.Column="3" Grid.Row="2" 
               Background="White"
@@ -544,7 +544,7 @@
                     </Control.Style>
                 </Control>
             </native:NativeZoom>
-        </Grid>
+        </native:NativeGrid>
         <GridSplitter x:Name="right"
                       Background="Transparent" 
                       Grid.Column="4" Grid.Row="2" 
