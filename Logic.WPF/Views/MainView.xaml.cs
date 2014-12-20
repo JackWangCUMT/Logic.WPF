@@ -62,16 +62,16 @@ namespace Logic.WPF.Views
                     double twidth = model.Page.Template.Width;
                     double theight = model.Page.Template.Height;
 
-                    double zoom = Math.Min(pwidth / twidth, pheight / theight);
-                    double panX = (pwidth - (twidth * zoom)) / 2.0;
-                    double panY = (pheight - (theight * zoom)) / 2.0;
-                    double dx = Math.Max(0, (pwidth - twidth) / 2.0);
-                    double dy = Math.Max(0, (pheight - theight) / 2.0);
+                    double zoom = Math.Min(pwidth / twidth, pheight / theight) - 0.001;
+                    double px = (pwidth - (twidth * zoom)) / 2.0;
+                    double py = (pheight - (theight * zoom)) / 2.0;
+                    double x = px - Math.Max(0, (pwidth - twidth) / 2.0);
+                    double y = py - Math.Max(0, (pheight - theight) / 2.0);
 
                     if (this.zoom != null 
                         && this.zoom.ZoomAndPanChild != null)
                     {
-                        this.zoom.ZoomAndPanChild(panX - dx, panY - dy, zoom);
+                        this.zoom.ZoomAndPanChild(x, y, zoom);
                     }
                 }
             };
