@@ -16,6 +16,20 @@ namespace Logic.Native
         public Action<double, double> AutoFitChild { get; set; }
         public Action<double, double, double> ZoomAndPanChild { get; set; }
 
+        public void AutoFit(double width, double height, double twidth, double theight)
+        {
+            double zoom = Math.Min(width / twidth, height / theight) - 0.001;
+            double px = (width - (twidth * zoom)) / 2.0;
+            double py = (height - (theight * zoom)) / 2.0;
+            double x = px - Math.Max(0, (width - twidth) / 2.0);
+            double y = py - Math.Max(0, (height - theight) / 2.0);
+
+            if (this.ZoomAndPanChild != null)
+            {
+                this.ZoomAndPanChild(x, y, zoom);
+            }
+        }
+
         public override UIElement Child
         {
             get { return base.Child; }

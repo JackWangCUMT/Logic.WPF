@@ -53,26 +53,18 @@ namespace Logic.WPF.Views
                 model.InvalidateLayers();
             };
 
-            this.zoom.AutoFitChild = (pwidth, pheight) =>
+            this.zoom.AutoFitChild = (width, height) =>
             {
-                if (model != null 
+                if (this.zoom != null
+                    && model != null 
                     && model.Page != null 
                     && model.Page.Template != null)
                 {
-                    double twidth = model.Page.Template.Width;
-                    double theight = model.Page.Template.Height;
-
-                    double zoom = Math.Min(pwidth / twidth, pheight / theight) - 0.001;
-                    double px = (pwidth - (twidth * zoom)) / 2.0;
-                    double py = (pheight - (theight * zoom)) / 2.0;
-                    double x = px - Math.Max(0, (pwidth - twidth) / 2.0);
-                    double y = py - Math.Max(0, (pheight - theight) / 2.0);
-
-                    if (this.zoom != null 
-                        && this.zoom.ZoomAndPanChild != null)
-                    {
-                        this.zoom.ZoomAndPanChild(x, y, zoom);
-                    }
+                    this.zoom.AutoFit(
+                        width, 
+                        height, 
+                        model.Page.Template.Width, 
+                        model.Page.Template.Height);
                 }
             };
 
