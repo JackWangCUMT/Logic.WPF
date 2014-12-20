@@ -331,8 +331,8 @@ namespace Logic.Native
             }
 
             var gs = new GuidelineSet(
-                new double[] { half, half },
-                new double[] { half, half });
+                new double[] { position.StartX + half, position.StartY + half },
+                new double[] { position.EndX + half, position.EndY + half });
             (dc as DrawingContext).PushGuidelineSet(gs);
 
             (dc as DrawingContext).DrawLine(
