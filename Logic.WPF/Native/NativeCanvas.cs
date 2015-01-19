@@ -111,25 +111,10 @@ namespace Logic.Native
 
         public void InitializeModel(LayerViewModel model)
         {
-            model.IsMouseCaptured = () =>
-            {
-                return this.IsMouseCaptured;
-            };
-
-            model.CaptureMouse = () =>
-            {
-                this.CaptureMouse();
-            };
-
-            model.ReleaseMouseCapture = () =>
-            {
-                this.ReleaseMouseCapture();
-            };
-
-            model.InvalidateVisual = () =>
-            {
-                this.InvalidateVisual();
-            };
+            model.IsMouseCaptured = () => this.IsMouseCaptured;
+            model.CaptureMouse = () => this.CaptureMouse();
+            model.ReleaseMouseCapture = () => this.ReleaseMouseCapture();
+            model.InvalidateVisual = () => this.InvalidateVisual();
         } 
 
         #endregion
@@ -139,7 +124,6 @@ namespace Logic.Native
         protected override void OnRender(DrawingContext dc)
         {
             base.OnRender(dc);
-
             if (_model != null)
             {
                 _model.OnRender(dc);
