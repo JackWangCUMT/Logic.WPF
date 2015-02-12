@@ -25,13 +25,13 @@ namespace Logic.WPF
         #region Properties
 
         public bool IsContextMenuOpen { get; set; }
+        public Defaults Options { get; set; }
 
         #endregion
 
         #region Fields
 
         private ILog _log = null;
-        private Defaults _defaults = null;
         private string _defaultsPath = "Logic.WPF.lconfig";
         private MainViewModel _model = null;
         private IStringSerializer _serializer = null;
@@ -93,9 +93,9 @@ namespace Logic.WPF
             }
 
             // defaults
-            if (_defaults != null)
+            if (Options != null)
             {
-                Save<Defaults>(_defaultsPath, _defaults);
+                Save<Defaults>(_defaultsPath, Options);
             }
         }
 
@@ -136,20 +136,20 @@ namespace Logic.WPF
                 var defaults = Open<Defaults>(_defaultsPath);
                 if (defaults != null)
                 {
-                    _defaults = defaults;
+                    Options = defaults;
                 }
             }
 
-            if (_defaults == null)
+            if (Options == null)
             {
-                _defaults = new Defaults();
-                _defaults.Reset();
+                Options = new Defaults();
+                Options.Reset();
             }
 
-            if (_defaults.EnableLog && !string.IsNullOrEmpty(_defaults.LogPath))
+            if (Options.EnableLog && !string.IsNullOrEmpty(Options.LogPath))
             {
                 _log = new TraceLog();
-                _log.Initialize(_defaults.LogPath);
+                _log.Initialize(Options.LogPath);
             }
         }
 
@@ -177,43 +177,43 @@ namespace Logic.WPF
             {
                 Shapes = new ObservableCollection<IShape>(),
                 Hidden = new HashSet<IShape>(),
-                EnableSnap = _defaults.EnableSnap,
-                SnapSize = _defaults.SnapSize
+                EnableSnap = Options.EnableSnap,
+                SnapSize = Options.SnapSize
             };
             _model.BlockLayer = new LayerViewModel()
             {
                 Shapes = new ObservableCollection<IShape>(),
                 Hidden = new HashSet<IShape>(),
-                EnableSnap = _defaults.EnableSnap,
-                SnapSize = _defaults.SnapSize
+                EnableSnap = Options.EnableSnap,
+                SnapSize = Options.SnapSize
             };
             _model.WireLayer = new LayerViewModel()
             {
                 Shapes = new ObservableCollection<IShape>(),
                 Hidden = new HashSet<IShape>(),
-                EnableSnap = _defaults.EnableSnap,
-                SnapSize = _defaults.SnapSize
+                EnableSnap = Options.EnableSnap,
+                SnapSize = Options.SnapSize
             };
             _model.PinLayer = new LayerViewModel()
             {
                 Shapes = new ObservableCollection<IShape>(),
                 Hidden = new HashSet<IShape>(),
-                EnableSnap = _defaults.EnableSnap,
-                SnapSize = _defaults.SnapSize
+                EnableSnap = Options.EnableSnap,
+                SnapSize = Options.SnapSize
             };
             _model.EditorLayer = new LayerViewModel()
             {
                 Shapes = new ObservableCollection<IShape>(),
                 Hidden = new HashSet<IShape>(),
-                EnableSnap = _defaults.EnableSnap,
-                SnapSize = _defaults.SnapSize
+                EnableSnap = Options.EnableSnap,
+                SnapSize = Options.SnapSize
             };
             _model.OverlayLayer = new LayerViewModel()
             {
                 Shapes = new ObservableCollection<IShape>(),
                 Hidden = new HashSet<IShape>(),
-                EnableSnap = _defaults.EnableSnap,
-                SnapSize = _defaults.SnapSize
+                EnableSnap = Options.EnableSnap,
+                SnapSize = Options.SnapSize
             };
 
             // editor
@@ -230,11 +230,11 @@ namespace Logic.WPF
             IRenderer renderer = new NativeRenderer()
             {
                 Zoom = 1.0,
-                InvertSize = _defaults.InvertSize,
-                PinRadius = _defaults.PinRadius,
-                HitTreshold = _defaults.HitTreshold,
-                ShortenWire = _defaults.ShortenWire,
-                ShortenSize = _defaults.ShortenSize
+                InvertSize = Options.InvertSize,
+                PinRadius = Options.PinRadius,
+                HitTreshold = Options.HitTreshold,
+                ShortenWire = Options.ShortenWire,
+                ShortenSize = Options.ShortenSize
             };
 
             _model.Renderer = renderer;
@@ -483,13 +483,13 @@ namespace Logic.WPF
             _model.EditToggleSnapCommand = ToCommand(
                 (p) =>
                 {
-                    _defaults.EnableSnap = !_defaults.EnableSnap;
-                    _model.ShapeLayer.EnableSnap = _defaults.EnableSnap;
-                    _model.BlockLayer.EnableSnap = _defaults.EnableSnap;
-                    _model.WireLayer.EnableSnap = _defaults.EnableSnap;
-                    _model.PinLayer.EnableSnap = _defaults.EnableSnap;
-                    _model.EditorLayer.EnableSnap = _defaults.EnableSnap;
-                    _model.OverlayLayer.EnableSnap = _defaults.EnableSnap;
+                    Options.EnableSnap = !Options.EnableSnap;
+                    _model.ShapeLayer.EnableSnap = Options.EnableSnap;
+                    _model.BlockLayer.EnableSnap = Options.EnableSnap;
+                    _model.WireLayer.EnableSnap = Options.EnableSnap;
+                    _model.PinLayer.EnableSnap = Options.EnableSnap;
+                    _model.EditorLayer.EnableSnap = Options.EnableSnap;
+                    _model.OverlayLayer.EnableSnap = Options.EnableSnap;
                 },
                 (p) => IsEditMode());
 
@@ -504,8 +504,8 @@ namespace Logic.WPF
             _model.EditToggleShortenWireCommand = ToCommand(
                 (p) =>
                 {
-                    _defaults.ShortenWire = !_defaults.ShortenWire;
-                    _model.Renderer.ShortenWire = _defaults.ShortenWire;
+                    Options.ShortenWire = !Options.ShortenWire;
+                    _model.Renderer.ShortenWire = Options.ShortenWire;
                     _model.WireLayer.InvalidateVisual();
                 },
                 (p) => IsEditMode());
@@ -891,7 +891,7 @@ namespace Logic.WPF
         private void ProjectNew()
         {
             // project
-            var project = _defaults.EmptyProject();
+            var project = Options.EmptyProject();
 
             // layer styles
             IStyle shapeStyle = new XStyle()
@@ -984,8 +984,8 @@ namespace Logic.WPF
             }
 
             _model.Project = project;
-            _model.Project.Documents.Add(_defaults.EmptyDocument());
-            _model.Project.Documents[0].Pages.Add(_defaults.EmptyTitlePage());
+            _model.Project.Documents.Add(Options.EmptyDocument());
+            _model.Project.Documents[0].Pages.Add(Options.EmptyTitlePage());
 
             _pageToPaste = null;
             _documentToPaste = null;
@@ -1122,7 +1122,7 @@ namespace Logic.WPF
         {
             if (parameter is MainViewModel)
             {
-                IDocument document = _defaults.EmptyDocument();
+                IDocument document = Options.EmptyDocument();
                 _model.Project.Documents.Add(document);
             }
         }
@@ -1133,7 +1133,7 @@ namespace Logic.WPF
             {
                 IDocument before = parameter as IDocument;
 
-                IDocument document = _defaults.EmptyDocument();
+                IDocument document = Options.EmptyDocument();
                 int index = _model.Project.Documents.IndexOf(before);
 
                 _model.Project.Documents.Insert(index, document);
@@ -1146,7 +1146,7 @@ namespace Logic.WPF
             {
                 IDocument after = parameter as IDocument;
 
-                IDocument document = _defaults.EmptyDocument();
+                IDocument document = Options.EmptyDocument();
                 int index = _model.Project.Documents.IndexOf(after);
 
                 _model.Project.Documents.Insert(index + 1, document);
@@ -1243,7 +1243,7 @@ namespace Logic.WPF
             if (parameter is IDocument)
             {
                 IDocument document = parameter as IDocument;
-                IPage page = _defaults.EmptyTitlePage();
+                IPage page = Options.EmptyTitlePage();
                 page.Template = _model
                     .Project
                     .Templates
@@ -1261,7 +1261,7 @@ namespace Logic.WPF
             {
                 IPage before = parameter as IPage;
 
-                IPage page = _defaults.EmptyTitlePage();
+                IPage page = Options.EmptyTitlePage();
                 page.Template = _model
                     .Project
                     .Templates
@@ -1285,7 +1285,7 @@ namespace Logic.WPF
         {
             IPage after = parameter as IPage;
 
-            IPage page = _defaults.EmptyTitlePage();
+            IPage page = Options.EmptyTitlePage();
             page.Template = _model
                 .Project
                 .Templates

@@ -27,6 +27,8 @@ namespace Logic.Util
         public bool EnableSnap { get; set; }
         public double SnapSize { get; set; }
 
+        public bool EnableAutoFit { get; set; }
+
         public void Reset()
         {
             // log
@@ -49,6 +51,9 @@ namespace Logic.Util
             // layer
             EnableSnap = true;
             SnapSize = 15.0;
+
+            // zoom
+            EnableAutoFit = true;
         }
 
         public IPage EmptyPage()

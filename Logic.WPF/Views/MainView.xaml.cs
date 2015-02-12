@@ -44,7 +44,7 @@ namespace Logic.WPF.Views
             this.status.DataContext = model.Log;
 
             // zoom
-            this.page.EnableAutoFit = true;
+            this.page.EnableAutoFit = main.Options.EnableAutoFit;
 
             this.zoom.InvalidateChild = (zoom) =>
             {
