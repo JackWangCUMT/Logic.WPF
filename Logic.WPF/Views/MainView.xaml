@@ -513,11 +513,11 @@
                       HorizontalAlignment="Stretch"
                       ShowsPreview="True"/>
         <native:NativeGrid x:Name="page"
-              ClipToBounds="True"
-              Grid.Column="3" Grid.Row="2" 
-              Background="White"
-              FocusVisualStyle="{x:Null}"
-              Focusable="False">
+                           ClipToBounds="True"
+                           Grid.Column="3" Grid.Row="2" 
+                           Background="White"
+                           FocusVisualStyle="{x:Null}"
+                           Focusable="False">
             <native:NativeZoom x:Name="zoom"
                                ClipToBounds="False"
                                Background="Transparent"
