@@ -79,7 +79,7 @@ namespace Logic.Native
                 if (_model != null)
                 {
                     Focus();
-                    _model.MouseLeftButtonDown(e.GetPosition(this).ToPoint1());
+                    _model.MouseLeftButtonDown(e.GetPosition(this).ToPoint2());
                 }
             };
 
@@ -87,7 +87,7 @@ namespace Logic.Native
             {
                 if (_model != null)
                 {
-                    _model.MouseLeftButtonUp(e.GetPosition(this).ToPoint1());
+                    _model.MouseLeftButtonUp(e.GetPosition(this).ToPoint2());
                 }
             };
 
@@ -95,7 +95,7 @@ namespace Logic.Native
             {
                 if (_model != null)
                 {
-                    _model.MouseMove(e.GetPosition(this).ToPoint1());
+                    _model.MouseMove(e.GetPosition(this).ToPoint2());
                 }
             };
 
@@ -104,7 +104,7 @@ namespace Logic.Native
                 if (_model != null)
                 {
                     Focus();
-                    _model.MouseRightButtonDown(e.GetPosition(this).ToPoint1());
+                    _model.MouseRightButtonDown(e.GetPosition(this).ToPoint2());
                 }
             };
         }
