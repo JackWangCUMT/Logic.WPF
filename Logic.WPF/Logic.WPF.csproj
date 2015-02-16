@@ -170,7 +170,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Native\NativeZoom.cs" />
-    <Compile Include="Native\NativeCanvas.cs" />
+    <Compile Include="Native\NativeLayer.cs" />
     <Compile Include="Native\NativeView.cs" />
     <Compile Include="Util\History.cs" />
     <Compile Include="Serialization\Json.cs" />
