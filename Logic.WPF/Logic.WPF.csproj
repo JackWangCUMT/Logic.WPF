@@ -145,7 +145,7 @@
     <Compile Include="Simulation\Blocks\Timers\TimerOnSimulation.cs" />
     <Compile Include="Simulation\Blocks\Timers\TimerPulseSimulation.cs" />
     <Compile Include="Simulation\Blocks\Gates\XorSimulation.cs" />
-    <Compile Include="Util\Defaults.cs" />
+    <Compile Include="Portable\Defaults.cs" />
     <Compile Include="Templates\TitlePageTemplate.cs" />
     <Compile Include="Util\WirePosition.cs" />
     <Compile Include="Serialization\LogicContractResolver.cs" />
