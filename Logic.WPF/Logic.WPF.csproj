@@ -122,14 +122,14 @@
     <Compile Include="Blocks\Timers\TimerOff.cs" />
     <Compile Include="Blocks\Timers\TimerOn.cs" />
     <Compile Include="Blocks\Timers\TimerPulse.cs" />
+    <Compile Include="Portable\FileDialogResult.cs" />
+    <Compile Include="Portable\ICurrentApplication.cs" />
+    <Compile Include="Portable\IFileDialog.cs" />
+    <Compile Include="Portable\IMainView.cs" />
     <Compile Include="Portable\Main.cs" />
     <Compile Include="Native\NativeCurrentApplication.cs" />
     <Compile Include="Native\NativeFileDialog.cs" />
-    <Compile Include="Portable\ICurrentApplication.cs" />
-    <Compile Include="Portable\FileDialogResult.cs" />
-    <Compile Include="Portable\IFileDialog.cs" />
     <Compile Include="Native\NativeGrid.cs" />
-    <Compile Include="Portable\IMainView.cs" />
     <Compile Include="Simulation\Blocks\Gates\AndSimulation.cs" />
     <Compile Include="Simulation\Blocks\Signal\InputSimulation.cs" />
     <Compile Include="Simulation\Blocks\Gates\InverterSimulation.cs" />
@@ -213,6 +213,10 @@
     <ProjectReference Include="..\Logic.Core\Logic.Core.csproj">
       <Project>{d7169bea-6ba7-4e6e-8487-b922dc1a8822}</Project>
       <Name>Logic.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Logic.Portbale\Logic.Portbale.csproj">
+      <Project>{6f71064e-a822-4a1e-8291-dd3e001791fb}</Project>
+      <Name>Logic.Portbale</Name>
     </ProjectReference>
     <ProjectReference Include="..\Logic.Simulation\Logic.Simulation.csproj">
       <Project>{65628359-e4d7-4031-95c8-760ae5ceed5f}</Project>
