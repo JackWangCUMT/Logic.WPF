@@ -1,6 +1,5 @@
 ﻿using Logic.Native;
 using Logic.Portable;
-using Logic.WPF.Native;
 using Logic.WPF.Views;
 using System;
 using System.Collections.Generic;

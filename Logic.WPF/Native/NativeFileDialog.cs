@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Logic.WPF.Native
+namespace Logic.Native
 {
     public class NativeFileDialog : IFileDialog
     {

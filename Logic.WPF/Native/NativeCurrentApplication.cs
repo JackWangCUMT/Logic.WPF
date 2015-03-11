@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Logic.WPF.Native
+namespace Logic.Native
 {
     public class NativeCurrentApplication : ICurrentApplication
     {
