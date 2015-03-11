@@ -1,11 +1,11 @@
 ﻿using Logic.Core;
 using Logic.Native;
+using Logic.Portable;
 using Logic.Serialization;
 using Logic.Simulation;
 using Logic.Util;
 using Logic.ViewModels;
 using Logic.WPF.Views;
-using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,7 +15,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 
 namespace Logic.WPF
@@ -31,6 +30,7 @@ namespace Logic.WPF
 
         #region Fields
 
+        private AppDependencies _dependencies = null;
         private ILog _log = null;
         private string _defaultsPath = "Logic.WPF.lconfig";
         private MainViewModel _model = null;
@@ -43,19 +43,11 @@ namespace Logic.WPF
 
         #endregion
 
-        #region Windows
+        #region Constructor
 
-        private void Close()
+        public AppMain(AppDependencies dependencies)
         {
-            for (int i = 0; i < Application.Current.Windows.Count; i++)
-            {
-                Application.Current.Windows[i].Close();
-            }
-        }
-
-        private void Invoke(Action callback)
-        {
-            Application.Current.Dispatcher.Invoke(callback);
+            _dependencies = dependencies;
         }
 
         #endregion
@@ -364,7 +356,7 @@ namespace Logic.WPF
                         this.SimulationStop();
                     }
 
-                    Close();
+                    _dependencies.CurrentApplication.Close();
                 },
                 (p) => true);
 
@@ -760,14 +752,10 @@ namespace Logic.WPF
 
         private void FileOpen()
         {
-            var dlg = new OpenFileDialog()
+            var result = _dependencies.FileDialog.GetProjetFileNameToOpen();
+            if (result.Success == true)
             {
-                Filter = "Logic Project (*.lproject)|*.lproject"
-            };
-
-            if (dlg.ShowDialog() == true)
-            {
-                FileOpen(dlg.FileName);
+                FileOpen(result.FileName);
             }
         }
 
@@ -808,17 +796,12 @@ namespace Logic.WPF
             string fileName = string.IsNullOrEmpty(_model.FilePath) ?
                 "logic" : System.IO.Path.GetFileName(_model.FilePath);
 
-            var dlg = new SaveFileDialog()
+            var result = _dependencies.FileDialog.GetProjetFileNameToSave(fileName);
+            if (result.Success == true)
             {
-                Filter = "Logic Project (*.lproject)|*.lproject",
-                FileName = fileName
-            };
-
-            if (dlg.ShowDialog() == true)
-            {
-                Save(dlg.FileName, _model.Project);
-                _model.FileName = System.IO.Path.GetFileNameWithoutExtension(dlg.FileName);
-                _model.FilePath = dlg.FileName;
+                Save(result.FileName, _model.Project);
+                _model.FileName = System.IO.Path.GetFileNameWithoutExtension(result.FileName);
+                _model.FilePath = result.FileName;
             }
         }
 
@@ -827,17 +810,12 @@ namespace Logic.WPF
             string fileName = string.IsNullOrEmpty(_model.FilePath) ?
                 "logic" : System.IO.Path.GetFileNameWithoutExtension(_model.FilePath);
 
-            var dlg = new SaveFileDialog()
-            {
-                Filter = "PDF (*.pdf)|*.pdf",
-                FileName = fileName
-            };
-
-            if (dlg.ShowDialog() == true)
+            var result = _dependencies.FileDialog.GetPdfFileNameToSave(fileName);
+            if (result.Success == true)
             {
                 try
                 {
-                    FileSaveAsPDF(path: dlg.FileName, ignoreStyles: true);
+                    FileSaveAsPDF(path: result.FileName, ignoreStyles: true);
                 }
                 catch (Exception ex)
                 {
@@ -1386,14 +1364,10 @@ namespace Logic.WPF
 
         private void BlockImport()
         {
-            var dlg = new OpenFileDialog()
+            var result = _dependencies.FileDialog.GetBlockFileNameToOpen();
+            if (result.Success == true)
             {
-                Filter = "Logic Block (*.lblock)|*.lblock"
-            };
-
-            if (dlg.ShowDialog() == true)
-            {
-                var block = Open<XBlock>(dlg.FileName);
+                var block = Open<XBlock>(result.FileName);
                 if (block != null)
                 {
                     _model.Blocks.Add(block);
@@ -1417,23 +1391,16 @@ namespace Logic.WPF
                 a[0] = char.ToUpper(a[0]);
                 string className = new string(a);
 
-                var dlg = new SaveFileDialog()
+                var result = _dependencies.FileDialog.GetCSharpFileNameToSave(className);
+                if (result.Success == true)
                 {
-                    Filter = "C# (*.cs)|*.cs",
-                    FileName = className
-                };
-
-                if (dlg.ShowDialog() == true)
-                {
-                    string path = dlg.FileName;
-
                     string code = new CSharpCodeCreator().Generate(
                         block,
                         "Logic.Blocks",
                         className,
                         blockName);
 
-                    using (var fs = System.IO.File.CreateText(path))
+                    using (var fs = System.IO.File.CreateText(result.FileName))
                     {
                         fs.Write(code);
                     };
@@ -1453,15 +1420,10 @@ namespace Logic.WPF
 
         private void BlocksImportFromCode()
         {
-            var dlg = new OpenFileDialog()
+            var result = _dependencies.FileDialog.GetCSharpFileNamesToOpen();
+            if (result.Success == true)
             {
-                Filter = "CSharp (*.cs)|*.cs",
-                Multiselect = true
-            };
-
-            if (dlg.ShowDialog() == true)
-            {
-                BlocksImportFromCode(dlg.FileNames);
+                BlocksImportFromCode(result.FileNames);
             }
         }
 
@@ -1510,17 +1472,10 @@ namespace Logic.WPF
             var block = _model.EditorLayer.BlockCreateFromSelected("BLOCK");
             if (block != null)
             {
-                var dlg = new SaveFileDialog()
+                var result = _dependencies.FileDialog.GetBlockFileNameToSave("block");
+                if (result.Success == true)
                 {
-                    Filter = "Logic Block (*.lblock)|*.lblock",
-                    FileName = "block"
-                };
-
-                if (dlg.ShowDialog() == true)
-                {
-                    var path = dlg.FileName;
-                    Save<XBlock>(path, block);
-                    System.Diagnostics.Process.Start("notepad", path);
+                    Save<XBlock>(result.FileName, block);
                 }
             }
         }
@@ -1531,15 +1486,12 @@ namespace Logic.WPF
 
         public string GetFilePath()
         {
-            var dlg = new OpenFileDialog()
+            var result = _dependencies.FileDialog.GetAllFileNameToOpen();
+            if (result.Success == true)
             {
-                Filter = "All Files (*.*)|*.*"
-            };
-
-            if (dlg.ShowDialog() == true)
-            {
-                return dlg.FileName;
+                return result.FileName;
             }
+
             return null;
         }
 
@@ -1549,14 +1501,10 @@ namespace Logic.WPF
 
         private void TemplateImport()
         {
-            var dlg = new OpenFileDialog()
+            var result = _dependencies.FileDialog.GetTemplateFileNameToOpen();
+            if (result.Success == true)
             {
-                Filter = "Logic Template (*.ltemplate)|*.ltemplate"
-            };
-
-            if (dlg.ShowDialog() == true)
-            {
-                var template = Open<XTemplate>(dlg.FileName);
+                var template = Open<XTemplate>(result.FileName);
                 if (template != null)
                 {
                     _model.Project.Templates.Add(template);
@@ -1566,15 +1514,10 @@ namespace Logic.WPF
 
         private void TemplatesImportFromCode()
         {
-            var dlg = new OpenFileDialog()
+            var result = _dependencies.FileDialog.GetCSharpFileNamesToOpen();
+            if (result.Success == true)
             {
-                Filter = "CSharp (*.cs)|*.cs",
-                Multiselect = true
-            };
-
-            if (dlg.ShowDialog() == true)
-            {
-                TemplatesImportFromCode(dlg.FileNames);
+                TemplatesImportFromCode(result.FileNames);
             }
         }
 
@@ -1620,18 +1563,12 @@ namespace Logic.WPF
 
         private void TemplateExport()
         {
-            var dlg = new SaveFileDialog()
+            var result = _dependencies.FileDialog.GetTemplateFileNameToSave(_model.Page.Template.Name);
+            if (result.Success == true)
             {
-                Filter = "Logic Template (*.ltemplate)|*.ltemplate",
-                FileName = _model.Page.Template.Name
-            };
-
-            if (dlg.ShowDialog() == true)
-            {
-                var template = _model.Clone(_model.Page.Template);
-                var path = dlg.FileName;
-                Save<XTemplate>(path, template);
-                System.Diagnostics.Process.Start("notepad", path);
+                Save<XTemplate>(
+                    result.FileName, 
+                    _model.Clone(_model.Page.Template));
             }
         }
 
@@ -1667,17 +1604,10 @@ namespace Logic.WPF
 
         private void GraphSave(PageGraphContext context)
         {
-            var dlg = new SaveFileDialog()
+            var result = _dependencies.FileDialog.GetGraphFileNameToSave("graph");
+            if (result.Success == true)
             {
-                Filter = "Graph (*.txt)|*.txt",
-                FileName = "graph"
-            };
-
-            if (dlg.ShowDialog() == true)
-            {
-                var path = dlg.FileName;
-                GraphSave(path, context);
-                System.Diagnostics.Process.Start("notepad", path);
+                GraphSave(result.FileName, context);
             }
         }
 
@@ -1726,7 +1656,7 @@ namespace Logic.WPF
                                 ex.StackTrace);
                         }
 
-                        Invoke(() =>
+                        _dependencies.CurrentApplication.Invoke(() =>
                         {
                             if (IsSimulationMode())
                             {
@@ -1800,7 +1730,7 @@ namespace Logic.WPF
                 {
                     _simulationFactory.Run(simulations, _clock);
                     _clock.Tick();
-                    Invoke(() =>
+                    _dependencies.CurrentApplication.Invoke(() =>
                     {
                         _model.OverlayLayer.InvalidateVisual();
                     });
@@ -1845,15 +1775,10 @@ namespace Logic.WPF
 
         private void SimulationImportFromCode()
         {
-            var dlg = new OpenFileDialog()
+            var result = _dependencies.FileDialog.GetCSharpFileNamesToOpen();
+            if (result.Success == true)
             {
-                Filter = "CSharp (*.cs)|*.cs",
-                Multiselect = true
-            };
-
-            if (dlg.ShowDialog() == true)
-            {
-                SimulationImportFromCode(dlg.FileNames);
+                SimulationImportFromCode(result.FileNames);
             }
         }
 

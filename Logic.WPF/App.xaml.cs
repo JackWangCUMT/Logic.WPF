@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Logic.WPF.Native;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -18,7 +19,13 @@ namespace Logic.WPF
 
             if (_main == null)
             {
-                _main = new AppMain();
+                var dependencies = new AppDependencies()
+                {
+                    CurrentApplication = new NativeCurrentApplication(),
+                    FileDialog = new NativeFileDialog()
+                };
+
+                _main = new AppMain(dependencies);
                 _main.Start();
             }
         }

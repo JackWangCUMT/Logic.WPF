@@ -106,6 +106,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AppDependencies.cs" />
     <Compile Include="Blocks\Gates\And.cs" />
     <Compile Include="Blocks\Gates\Inverter.cs" />
     <Compile Include="Blocks\Gates\Or.cs" />
@@ -122,6 +123,11 @@
     <Compile Include="Blocks\Timers\TimerOn.cs" />
     <Compile Include="Blocks\Timers\TimerPulse.cs" />
     <Compile Include="AppMain.cs" />
+    <Compile Include="Native\NativeCurrentApplication.cs" />
+    <Compile Include="Native\NativeFileDialog.cs" />
+    <Compile Include="Portable\ICurrentApplication.cs" />
+    <Compile Include="Portable\FileDialogResult.cs" />
+    <Compile Include="Portable\IFileDialog.cs" />
     <Compile Include="Native\NativeGrid.cs" />
     <Compile Include="Simulation\Blocks\Gates\AndSimulation.cs" />
     <Compile Include="Simulation\Blocks\Signal\InputSimulation.cs" />
