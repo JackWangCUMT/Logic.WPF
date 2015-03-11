@@ -94,7 +94,9 @@ namespace Logic.Portable
 
         #region ToCommand
 
-        private ICommand ToCommand(Action<object> execute, Func<object, bool> canExecute)
+        private ICommand ToCommand(
+            Action<object> execute, 
+            Func<object, bool> canExecute)
         {
             return new NativeCommand(execute, canExecute);
         }
