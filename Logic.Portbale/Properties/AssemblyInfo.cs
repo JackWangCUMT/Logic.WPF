@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Logic.Portbale")]
-[assembly: AssemblyDescription("Logic Diagram Editor Portbale")]
+[assembly: AssemblyTitle("Logic.Portable")]
+[assembly: AssemblyDescription("Logic Diagram Editor Portable")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Wiesław Šoltés")]
-[assembly: AssemblyProduct("Logic.Portbale")]
+[assembly: AssemblyProduct("Logic.Portable")]
 [assembly: AssemblyCopyright("Copyright © Wiesław Šoltés 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
