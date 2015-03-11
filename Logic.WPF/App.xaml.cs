@@ -1,4 +1,7 @@
-﻿using Logic.WPF.Native;
+﻿using Logic.Native;
+using Logic.Portable;
+using Logic.WPF.Native;
+using Logic.WPF.Views;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -11,7 +14,7 @@ namespace Logic.WPF
 {
     public partial class App : Application
     {
-        private AppMain _main;
+        private Main _main;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -19,13 +22,16 @@ namespace Logic.WPF
 
             if (_main == null)
             {
-                var dependencies = new AppDependencies()
+                var dependencies = new Dependencies()
                 {
+                    TextClipboard = new NativeTextClipboard(),
+                    Renderer = new NativeRenderer(),
                     CurrentApplication = new NativeCurrentApplication(),
-                    FileDialog = new NativeFileDialog()
+                    FileDialog = new NativeFileDialog(),
+                    MainView = new MainView()
                 };
 
-                _main = new AppMain(dependencies);
+                _main = new Main(dependencies);
                 _main.Start();
             }
         }

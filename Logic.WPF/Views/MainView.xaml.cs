@@ -1,4 +1,5 @@
 ﻿using Logic.Core;
+using Logic.Portable;
 using Logic.Util;
 using Logic.ViewModels;
 using System;
@@ -18,7 +19,7 @@ using System.Windows.Shapes;
 
 namespace Logic.WPF.Views
 {
-    public partial class MainView : Window
+    public partial class MainView : Window, IMainView
     {
         private Point _dragStartPoint;
 
@@ -38,7 +39,7 @@ namespace Logic.WPF.Views
             }
         }
 
-        public void Initialize(MainViewModel model, AppMain main)
+        public void Initialize(MainViewModel model, Main main)
         {
             // status
             this.status.DataContext = model.Log;
