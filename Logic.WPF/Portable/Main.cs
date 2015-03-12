@@ -599,9 +599,12 @@ namespace Logic.Portable
                     ITemplate template = p as ITemplate;
                     if (template != null)
                     {
-                        _model.Page.Template = template;
-                        _model.ApplyTemplate(template, _model.Renderer);
-                        _model.InvalidateTemplate();
+                        if (_model.Page != null)
+                        {
+                            _model.Page.Template = template;
+                            _model.ApplyTemplate(template, _model.Renderer);
+                            _model.InvalidateTemplate();
+                        }
                     }
                 },
                 (p) => IsEditMode());
