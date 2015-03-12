@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Logic.Portable
 {
-    public class Defaults
+    public class Options
     {
         public bool EnableLog { get; set; }
         public string LogPath { get; set; }
@@ -29,7 +29,7 @@ namespace Logic.Portable
 
         public bool EnableAutoFit { get; set; }
 
-        public void Reset()
+        public void Defaults()
         {
             // log
             EnableLog = true;

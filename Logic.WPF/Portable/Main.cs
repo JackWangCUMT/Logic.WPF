@@ -23,7 +23,7 @@ namespace Logic.Portable
         #region Properties
 
         public bool IsContextMenuOpen { get; set; }
-        public Defaults Options { get; set; }
+        public Options Options { get; set; }
 
         #endregion
 
@@ -86,7 +86,7 @@ namespace Logic.Portable
             // defaults
             if (Options != null)
             {
-                Save<Defaults>(_defaultsPath, Options);
+                Save<Options>(_defaultsPath, Options);
             }
         }
 
@@ -126,7 +126,7 @@ namespace Logic.Portable
 
             if (System.IO.File.Exists(_defaultsPath))
             {
-                var defaults = Open<Defaults>(_defaultsPath);
+                var defaults = Open<Options>(_defaultsPath);
                 if (defaults != null)
                 {
                     Options = defaults;
@@ -135,8 +135,8 @@ namespace Logic.Portable
 
             if (Options == null)
             {
-                Options = new Defaults();
-                Options.Reset();
+                Options = new Options();
+                Options.Defaults();
             }
 
             if (Options.EnableLog && !string.IsNullOrEmpty(Options.LogPath))
