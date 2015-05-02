@@ -214,10 +214,6 @@
       <Project>{d7169bea-6ba7-4e6e-8487-b922dc1a8822}</Project>
       <Name>Logic.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Logic.Portbale\Logic.Portable.csproj">
-      <Project>{6f71064e-a822-4a1e-8291-dd3e001791fb}</Project>
-      <Name>Logic.Portable</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Logic.Simulation\Logic.Simulation.csproj">
       <Project>{65628359-e4d7-4031-95c8-760ae5ceed5f}</Project>
       <Name>Logic.Simulation</Name>

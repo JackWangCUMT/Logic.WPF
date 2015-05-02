@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logic.Simulation", "Logic.S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logic.ViewModels", "Logic.ViewModels\Logic.ViewModels.csproj", "{E1184566-6DCF-40DE-A873-D5B9E3C101A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logic.Portable", "Logic.Portbale\Logic.Portable.csproj", "{6F71064E-A822-4A1E-8291-DD3E001791FB}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,10 +33,6 @@ Global
 		{E1184566-6DCF-40DE-A873-D5B9E3C101A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E1184566-6DCF-40DE-A873-D5B9E3C101A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E1184566-6DCF-40DE-A873-D5B9E3C101A3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6F71064E-A822-4A1E-8291-DD3E001791FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6F71064E-A822-4A1E-8291-DD3E001791FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6F71064E-A822-4A1E-8291-DD3E001791FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6F71064E-A822-4A1E-8291-DD3E001791FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
