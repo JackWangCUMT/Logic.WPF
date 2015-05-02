@@ -61,22 +61,22 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rect2.cs" />
     <Compile Include="VAlignment.cs" />
-    <Compile Include="XBlock.cs" />
+    <Compile Include="Shapes\XBlock.cs" />
     <Compile Include="XColor.cs" />
     <Compile Include="XContainer.cs" />
     <Compile Include="XDocument.cs" />
-    <Compile Include="XEllipse.cs" />
-    <Compile Include="XImage.cs" />
-    <Compile Include="XLine.cs" />
+    <Compile Include="Shapes\XEllipse.cs" />
+    <Compile Include="Shapes\XImage.cs" />
+    <Compile Include="Shapes\XLine.cs" />
     <Compile Include="XPage.cs" />
-    <Compile Include="XPin.cs" />
+    <Compile Include="Shapes\XPin.cs" />
     <Compile Include="XProject.cs" />
     <Compile Include="XProperty.cs" />
-    <Compile Include="XRectangle.cs" />
+    <Compile Include="Shapes\XRectangle.cs" />
     <Compile Include="XStyle.cs" />
     <Compile Include="XTemplate.cs" />
-    <Compile Include="XText.cs" />
-    <Compile Include="XWire.cs" />
+    <Compile Include="Shapes\XText.cs" />
+    <Compile Include="Shapes\XWire.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
