@@ -28,8 +28,6 @@ namespace Logic.Util
                 MetadataReference.CreateFromFile(System.IO.Path.Combine(assemblyPath, "mscorlib.dll")),
                 MetadataReference.CreateFromFile(System.IO.Path.Combine(assemblyPath, "System.dll")),
                 MetadataReference.CreateFromFile(System.IO.Path.Combine(assemblyPath, "System.Core.dll")),
-                MetadataReference.CreateFromFile(System.IO.Path.Combine(executingPath, "Logic.Core.dll")),
-                MetadataReference.CreateFromFile(System.IO.Path.Combine(executingPath, "Logic.Simulation.dll")),
                 MetadataReference.CreateFromFile((Assembly.GetEntryAssembly().Location))
             };
         }
@@ -92,7 +90,7 @@ namespace Logic.Util
                         log.LogError("Failed to compile code using Roslyn.");
                         foreach (var diagnostic in result.Diagnostics)
                         {
-                            log.LogError(diagnostic.Description);
+                            log.LogError(diagnostic.Descriptor.Description.ToString());
                         }
                     }
                 }
