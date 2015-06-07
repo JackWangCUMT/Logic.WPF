@@ -106,6 +106,45 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Core\Extensions.cs" />
+    <Compile Include="Core\HAlignment.cs" />
+    <Compile Include="Core\Interfaces\IBinarySerializer.cs" />
+    <Compile Include="Core\Interfaces\IColor.cs" />
+    <Compile Include="Core\Interfaces\IContainer.cs" />
+    <Compile Include="Core\Interfaces\IDocument.cs" />
+    <Compile Include="Core\Interfaces\IHistory.cs" />
+    <Compile Include="Core\Interfaces\ILayer.cs" />
+    <Compile Include="Core\Interfaces\ILog.cs" />
+    <Compile Include="Core\Interfaces\IPage.cs" />
+    <Compile Include="Core\Interfaces\IProject.cs" />
+    <Compile Include="Core\Interfaces\IProperty.cs" />
+    <Compile Include="Core\Interfaces\IRenderer.cs" />
+    <Compile Include="Core\Interfaces\IShape.cs" />
+    <Compile Include="Core\Interfaces\IStringSerializer.cs" />
+    <Compile Include="Core\Interfaces\IStyle.cs" />
+    <Compile Include="Core\Interfaces\ITemplate.cs" />
+    <Compile Include="Core\Interfaces\ITextClipboard.cs" />
+    <Compile Include="Core\Math\Point2.cs" />
+    <Compile Include="Core\Math\Rect2.cs" />
+    <Compile Include="Core\NotifyObject.cs" />
+    <Compile Include="Core\PinType.cs" />
+    <Compile Include="Core\Project\XColor.cs" />
+    <Compile Include="Core\Project\XContainer.cs" />
+    <Compile Include="Core\Project\XDocument.cs" />
+    <Compile Include="Core\Project\XPage.cs" />
+    <Compile Include="Core\Project\XProject.cs" />
+    <Compile Include="Core\Project\XProperty.cs" />
+    <Compile Include="Core\Project\XStyle.cs" />
+    <Compile Include="Core\Project\XTemplate.cs" />
+    <Compile Include="Core\Shapes\XBlock.cs" />
+    <Compile Include="Core\Shapes\XEllipse.cs" />
+    <Compile Include="Core\Shapes\XImage.cs" />
+    <Compile Include="Core\Shapes\XLine.cs" />
+    <Compile Include="Core\Shapes\XPin.cs" />
+    <Compile Include="Core\Shapes\XRectangle.cs" />
+    <Compile Include="Core\Shapes\XText.cs" />
+    <Compile Include="Core\Shapes\XWire.cs" />
+    <Compile Include="Core\VAlignment.cs" />
     <Compile Include="Portable\Dependencies.cs" />
     <Compile Include="Blocks\Gates\And.cs" />
     <Compile Include="Blocks\Gates\Inverter.cs" />
@@ -146,6 +185,16 @@
     <Compile Include="Simulation\Blocks\Timers\TimerPulseSimulation.cs" />
     <Compile Include="Simulation\Blocks\Gates\XorSimulation.cs" />
     <Compile Include="Portable\Options.cs" />
+    <Compile Include="Simulation\BoolInput.cs" />
+    <Compile Include="Simulation\BoolSimulation.cs" />
+    <Compile Include="Simulation\BoolSimulationFactory.cs" />
+    <Compile Include="Simulation\Clock.cs" />
+    <Compile Include="Simulation\IBoolSimulationRenderer.cs" />
+    <Compile Include="Simulation\IClock.cs" />
+    <Compile Include="Simulation\PageGraph.cs" />
+    <Compile Include="Simulation\PageGraphContext.cs" />
+    <Compile Include="Simulation\PageGraphDebug.cs" />
+    <Compile Include="Simulation\TopologicalSort.cs" />
     <Compile Include="Templates\TitlePageTemplate.cs" />
     <Compile Include="Util\WirePosition.cs" />
     <Compile Include="Serialization\LogicContractResolver.cs" />
@@ -170,6 +219,10 @@
     </Compile>
     <Compile Include="Native\NativeCommand.cs" />
     <Compile Include="Util\TraceLog.cs" />
+    <Compile Include="ViewModels\LayerViewModel.cs" />
+    <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\ToolMenuModel.cs" />
+    <Compile Include="ViewModels\ViewViewModel.cs" />
     <Compile Include="Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -208,20 +261,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Logic.Core\Logic.Core.csproj">
-      <Project>{d7169bea-6ba7-4e6e-8487-b922dc1a8822}</Project>
-      <Name>Logic.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Logic.Simulation\Logic.Simulation.csproj">
-      <Project>{65628359-e4d7-4031-95c8-760ae5ceed5f}</Project>
-      <Name>Logic.Simulation</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Logic.ViewModels\Logic.ViewModels.csproj">
-      <Project>{e1184566-6dcf-40de-a873-d5b9e3c101a3}</Project>
-      <Name>Logic.ViewModels</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
